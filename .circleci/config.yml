@@ -1,0 +1,59 @@
+version: "2.1"
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - cachedeps
+      - lint:
+          requires:
+            - cachedeps
+      - build:
+          requires:
+            - cachedeps
+
+jobs:
+  cachedeps:
+    docker:
+      - image: cimg/go:1.16
+    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore GOPATH/pkg/mod
+          keys:
+            - influxdb-gomod-sum-{{ checksum "go.sum" }}
+            - influxdb-gomod-sum-
+      - run:
+          name: Install Dependencies
+          command: go mod download -x
+      - save_cache:
+          name: Save GOPATH/pkg/mod
+          key: influxdb-gomod-sum-{{ checksum "go.sum" }}
+          paths:
+            - /home/circleci/go/pkg/mod
+
+  lint:
+    docker:
+      - image: cimg/go:1.16
+    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - influxdb-gomod-sum-{{ checksum "go.sum" }}
+      - run: make vet
+      - run: make checkfmt
+      - run: make checktidy
+      - run: make staticcheck
+
+  build:
+    docker:
+      - image: cimg/go:1.16
+    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - influxdb-gomod-sum-{{ checksum "go.sum" }}
+      - run: make influx
