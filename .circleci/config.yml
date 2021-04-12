@@ -4,47 +4,17 @@ workflows:
   version: 2
   build:
     jobs:
-      - vendor
-      - lint:
-          requires:
-            - vendor
-      - build:
-          requires:
-            - vendor
-      - test:
-          requires:
-            - vendor
+      - lint
+      - build
+      - test
 
 jobs:
-  vendor:
-    docker:
-      - image: cimg/go:1.16.3
-    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
-    steps:
-      - checkout
-      - restore_cache:
-          name: Restore vendor/
-          keys:
-            - gomod-sum-{{ checksum "go.sum" }}
-            - gomod-sum-
-      - run:
-          name: Install Dependencies
-          command: go mod vendor
-      - save_cache:
-          name: Save vendor/
-          key: gomod-sum-{{ checksum "go.sum" }}
-          paths:
-            - /home/circleci/go/src/github.com/influxdata/influx-cli/vendor
-
   lint:
     docker:
       - image: cimg/go:1.16.3
     working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - gomod-sum-{{ checksum "go.sum" }}
       - run: make vet
       - run: make checkfmt
       - run: make checktidy
@@ -56,9 +26,6 @@ jobs:
     working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - gomod-sum-{{ checksum "go.sum" }}
       - run: make influx
 
   test:
@@ -67,9 +34,6 @@ jobs:
     working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - gomod-sum-{{ checksum "go.sum" }}
       - run:
           name: Run parallel race tests
           command: |
