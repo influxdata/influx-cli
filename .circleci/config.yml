@@ -30,6 +30,7 @@ jobs:
       - run:
           name: Install Dependencies
           command: go mod download -x
+      - run: git diff go.sum
       - save_cache:
           name: Save GOPATH/pkg/mod
           key: gomod-sum-{{ checksum "go.sum" }}
