@@ -22,14 +22,14 @@ jobs:
       - restore_cache:
           name: Restore GOPATH/pkg/mod
           keys:
-            - influxdb-gomod-sum-{{ checksum "go.sum" }}
-            - influxdb-gomod-sum-
+            - gomod-sum-{{ checksum "go.sum" }}
+            - gomod-sum-
       - run:
           name: Install Dependencies
           command: go mod download -x
       - save_cache:
           name: Save GOPATH/pkg/mod
-          key: influxdb-gomod-sum-{{ checksum "go.sum" }}
+          key: gomod-sum-{{ checksum "go.sum" }}
           paths:
             - /home/circleci/go/pkg/mod
 
@@ -41,7 +41,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - influxdb-gomod-sum-{{ checksum "go.sum" }}
+            - gomod-sum-{{ checksum "go.sum" }}
       - run: make vet
       - run: make checkfmt
       - run: make checktidy
@@ -55,5 +55,5 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - influxdb-gomod-sum-{{ checksum "go.sum" }}
+            - gomod-sum-{{ checksum "go.sum" }}
       - run: make influx
