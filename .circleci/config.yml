@@ -11,6 +11,9 @@ workflows:
       - build:
           requires:
             - cachedeps
+      - test:
+          requires:
+            - cachedeps
 
 jobs:
   cachedeps:
@@ -57,3 +60,25 @@ jobs:
           keys:
             - gomod-sum-{{ checksum "go.sum" }}
       - run: make influx
+
+  test:
+    docker:
+      - image: cimg/go:1.16.3
+    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gomod-sum-{{ checksum "go.sum" }}
+      - run:
+          name: Run parallel race tests
+          command: |
+            mkdir -p /tmp/test-results
+            GO_TEST_CMD="gotestsum --format standard-quiet --junitfile /tmp/test-results/gotestsum.xml --"
+            TESTFILES=($(go list ./... | circleci tests split --split-by=timings))
+            make GO_TEST="$GO_TEST_CMD" GO_TEST_PATHS="${TESTFILES[*]}" test-race
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: raw-test-output
+      - store_test_results:
+          path: /tmp/test-results

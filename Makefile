@@ -15,11 +15,15 @@ LDFLAGS := $(LDFLAGS) -X main.commit=$(COMMIT) -X main.date=$(shell date -u +'%Y
 ifdef VERSION
 	LDFLAGS += -X main.version=$(VERSION)
 endif
-
 export GO_BUILD=go build -ldflags "$(LDFLAGS)"
 
 SOURCES := $(shell find . -name '*.go' -not -name '*_test.go') go.mod go.sum
 SOURCES_NO_VENDOR := $(shell find . -path ./vendor -prune -o -name "*.go" -not -name '*_test.go' -print)
+
+# Allow for `go test` to be swapped out by other tooling, i.e. `gotestsum`
+export GO_TEST=go test
+# Allow for a subset of tests to be specified.
+GO_TEST_PATHS=./...
 
 ### Build / dependency management
 fmt: $(SOURCES_NO_VENDOR)
@@ -53,5 +57,12 @@ staticcheck: $(SOURCES) vendor
 vet:
 	go vet ./...
 
+# Testing
+test:
+	$(GO_TEST) $(GO_TEST_PATHS)
+
+test-race:
+	$(GO_TEST) -v -race -count=1 $(GO_TEST_PATHS)
+
 ### List of all targets that don't produce a file
-.PHONY: influx fmt build checkfmt checktidy staticcheck vet
+.PHONY: influx fmt build checkfmt checktidy staticcheck vet test test-race
