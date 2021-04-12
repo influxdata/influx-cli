@@ -1,0 +1,48 @@
+version: "2.1"
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - lint
+      - build
+      - test
+
+jobs:
+  lint:
+    docker:
+      - image: cimg/go:1.16.3
+    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    steps:
+      - checkout
+      - run: make vet
+      - run: make checkfmt
+      - run: make checktidy
+      - run: make staticcheck
+
+  build:
+    docker:
+      - image: cimg/go:1.16.3
+    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    steps:
+      - checkout
+      - run: make influx
+
+  test:
+    docker:
+      - image: cimg/go:1.16.3
+    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    steps:
+      - checkout
+      - run:
+          name: Run parallel race tests
+          command: |
+            mkdir -p /tmp/test-results
+            GO_TEST_CMD="gotestsum --format standard-quiet --junitfile /tmp/test-results/gotestsum.xml --"
+            TESTFILES=($(go list ./... | circleci tests split --split-by=timings))
+            make GO_TEST="$GO_TEST_CMD" GO_TEST_PATHS="${TESTFILES[*]}" test-race
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: raw-test-output
+      - store_test_results:
+          path: /tmp/test-results
