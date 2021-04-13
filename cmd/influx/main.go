@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/ping"
 	"github.com/influxdata/influx-cli/v2/pkg/tracing"

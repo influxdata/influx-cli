@@ -3,7 +3,7 @@ package tracing
 import (
 	"context"
 
-	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/internal/api"
 )
 
 // Context is a convenience wrapper for tracking a global tracing

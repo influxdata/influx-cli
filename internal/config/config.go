@@ -6,7 +6,7 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/internal/api"
 )
 
 // Config store the crendentials of influxdb host and token.

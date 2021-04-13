@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/ping"
 	"github.com/influxdata/influx-cli/v2/pkg/tracing"
 	"github.com/stretchr/testify/require"
