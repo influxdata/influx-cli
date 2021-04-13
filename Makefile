@@ -26,10 +26,13 @@ export GO_TEST=go test
 GO_TEST_PATHS=./...
 
 ### Build / dependency management
-api/api.gen.go: api/api.yml api/gen.go
+api/types.gen.go: api/api.yml api/gen.go
 	go generate ./api
 
-openapi: api/api.gen.go
+api/client.gen.go: api/api.yml api/gen.go
+	go generate ./api
+
+openapi: api/types.gen.go api/client.gen.go
 
 fmt: $(SOURCES_NO_VENDOR)
 	gofmt -w -s $^
@@ -48,6 +51,7 @@ build: openapi fmt influx
 clean:
 	$(RM) -r bin
 	$(RM) -r vendor
+	$(RM) api/types.gen.go api/client.gen.go
 
 ### Linters
 checkfmt:

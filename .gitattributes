@@ -1,1 +1,2 @@
-api/api.gen.go  linguist-generated=true
+api/types.gen.go  linguist-generated=true
+api/client.gen.go linguist-generated=true
