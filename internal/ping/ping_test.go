@@ -10,7 +10,7 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/internal/ping"
-	"github.com/influxdata/influx-cli/v2/kit/tracing"
+	"github.com/influxdata/influx-cli/v2/pkg/tracing"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,7 +23,7 @@ func (tc *testClient) GetHealth(ctx context.Context, p *api.GetHealthParams, fns
 }
 
 // Default context, no trace ID
-var ctx = tracing.WrapContext(context.Background(), "")
+var ctx = tracing.WithTraceId(context.Background(), nil)
 
 func Test_PingSuccessNoTracing(t *testing.T) {
 	t.Parallel()
@@ -46,10 +46,10 @@ func Test_PingSuccessNoTracing(t *testing.T) {
 func Test_PingSuccessWithTracing(t *testing.T) {
 	t.Parallel()
 
-	traceId := "trace-id"
+	traceId := api.TraceSpan("trace-id")
 	client := &testClient{
 		GetHealthFn: func(_ context.Context, p *api.GetHealthParams, _ ...api.RequestEditorFn) (*http.Response, error) {
-			require.Equal(t, api.TraceSpan(traceId), *p.ZapTraceSpan)
+			require.Equal(t, traceId, *p.ZapTraceSpan)
 			respJson := `{"name":"test","status":"pass"}`
 			return &http.Response{
 				StatusCode: 200,
@@ -59,7 +59,7 @@ func Test_PingSuccessWithTracing(t *testing.T) {
 		},
 	}
 
-	ctx := tracing.WrapContext(context.Background(), traceId)
+	ctx := tracing.WithTraceId(context.Background(), &traceId)
 	require.NoError(t, ping.Ping(ctx, client))
 }
 

@@ -10,8 +10,9 @@ import (
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/ping"
-	"github.com/influxdata/influx-cli/v2/kit/tracing"
+	"github.com/influxdata/influx-cli/v2/pkg/tracing"
 	"github.com/urfave/cli/v2"
 )
 
@@ -27,11 +28,37 @@ var (
 	hostFlag       = "host"
 	skipVerifyFlag = "skip-verify"
 	traceIdFlag    = "trace-debug-id"
+	configPathFlag = "config-path"
+	configNameFlag = "active-config"
 )
+
+// loadConfig reads CLI configs from disk, returning the config with the
+// name specified over the CLI (or default if no name was given).
+func loadConfig(ctx *cli.Context) (config.Config, error) {
+	configs := config.GetConfigsOrDefault(ctx.String(configPathFlag))
+	configName := ctx.String(configNameFlag)
+	if configName != "" {
+		if err := configs.Switch(configName); err != nil {
+			return config.Config{}, err
+		}
+	}
+	return configs.Active(), nil
+}
 
 // newApiClient returns an API client configured to communicate with a remote InfluxDB instance over HTTP.
 // Client parameters are pulled from the CLI context.
 func newApiClient(ctx *cli.Context, injectToken bool) (api.ClientInterface, error) {
+	cfg, err := loadConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if ctx.IsSet(tokenFlag) {
+		cfg.Token = ctx.String(tokenFlag)
+	}
+	if ctx.IsSet(hostFlag) {
+		cfg.Host = ctx.String(hostFlag)
+	}
+
 	clientTransport := http.DefaultTransport.(*http.Transport)
 	clientTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: ctx.Bool(skipVerifyFlag)}
 
@@ -46,20 +73,25 @@ func newApiClient(ctx *cli.Context, injectToken bool) (api.ClientInterface, erro
 		}),
 	}
 	if injectToken {
-		authHeader := fmt.Sprintf("Token %s", ctx.String(tokenFlag))
+		authHeader := fmt.Sprintf("Token %s", cfg.Token)
 		opts = append(opts, api.WithRequestEditorFn(func(_ context.Context, req *http.Request) error {
 			req.Header.Set("Authorization", authHeader)
 			return nil
 		}))
 	}
 
-	return api.NewClient(ctx.String(hostFlag), opts...)
+	return api.NewClient(cfg.Host, opts...)
 }
 
 // tracingCtx bundles the Jaeger trace ID given on the CLI (if any) with
 // the underlying CLI context.
 func tracingCtx(ctx *cli.Context) tracing.Context {
-	return tracing.WrapContext(ctx.Context, ctx.String(traceIdFlag))
+	var traceId *api.TraceSpan
+	if ctx.IsSet(traceIdFlag) {
+		tid := api.TraceSpan(ctx.String(traceIdFlag))
+		traceId = &tid
+	}
+	return tracing.WithTraceId(ctx.Context, traceId)
 }
 
 func main() {
@@ -92,12 +124,12 @@ func main() {
 			Usage: "Skip TLS certificate chain and host name verification",
 		},
 		&cli.StringFlag{
-			Name:    "configs-path",
+			Name:    configPathFlag,
 			Usage:   "Path to the influx CLI configurations",
 			EnvVars: []string{"INFLUX_CLI_CONFIGS_PATH"},
 		},
 		&cli.StringFlag{
-			Name:    "active-config",
+			Name:    configNameFlag,
 			Usage:   "Config name to use for command",
 			Aliases: []string{"c"},
 			EnvVars: []string{"INFLUX_ACTIVE_CONFIG"},

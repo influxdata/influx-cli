@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/influxdata/influx-cli/v2/api"
-	"github.com/influxdata/influx-cli/v2/kit/tracing"
+	"github.com/influxdata/influx-cli/v2/pkg/tracing"
 )
 
 type Client interface {
