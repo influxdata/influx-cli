@@ -31,7 +31,7 @@ var (
 
 // newApiClient returns an API client configured to communicate with a remote InfluxDB instance over HTTP.
 // Client parameters are pulled from the CLI context.
-func newApiClient(ctx *cli.Context, injectToken bool) (api.ClientWithResponsesInterface, error) {
+func newApiClient(ctx *cli.Context, injectToken bool) (api.ClientInterface, error) {
 	clientTransport := http.DefaultTransport.(*http.Transport)
 	clientTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: ctx.Bool(skipVerifyFlag)}
 
@@ -53,7 +53,7 @@ func newApiClient(ctx *cli.Context, injectToken bool) (api.ClientWithResponsesIn
 		}))
 	}
 
-	return api.NewClientWithResponses(ctx.String(hostFlag), opts...)
+	return api.NewClient(ctx.String(hostFlag), opts...)
 }
 
 // tracingCtx bundles the Jaeger trace ID given on the CLI (if any) with
