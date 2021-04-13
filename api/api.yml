@@ -1,0 +1,113 @@
+openapi: 3.0.0
+info:
+  title: Influx API Service
+  version: 2.0.0
+servers:
+  - url: /api/v2
+paths:
+  /health:
+    servers:
+      - url: /
+    get:
+      operationId: GetHealth
+      tags:
+        - Health
+      summary: Get the health of an instance
+      parameters:
+        - $ref: '#/components/parameters/TraceSpan'
+      responses:
+        '200':
+          description: The instance is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheck'
+        '503':
+          description: The instance is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheck'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  parameters:
+    TraceSpan:
+      in: header
+      name: Zap-Trace-Span
+      description: OpenTracing span context
+      example:
+        trace_id: '1'
+        span_id: '1'
+        baggage:
+          key: value
+      required: false
+      schema:
+        type: string
+  schemas:
+    HealthCheck:
+      type: object
+      required:
+        - name
+        - status
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+        checks:
+          type: array
+          items:
+            $ref: '#/components/schemas/HealthCheck'
+        status:
+          $ref: '#/components/schemas/HealthCheckStatus'
+        version:
+          type: string
+        commit:
+          type: string
+    HealthCheckStatus:
+      type: string
+      readOnly: true
+      enum:
+        - pass
+        - fail
+    Error:
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          readOnly: true
+          description: message is a human-readable message.
+          type: string
+        op:
+          readOnly: true
+          description: op describes the logical code operation during error. Useful for debugging.
+          type: string
+        err:
+          readOnly: true
+          description: err is a stack of errors that occurred during processing of the request. Useful for debugging.
+          type: string
+      required:
+        - code
+        - message
+    ErrorCode:
+      description: machine-readable error code.
+      readOnly: true
+      type: string
+      enum:
+        - internal error
+        - not found
+        - conflict
+        - invalid
+        - unprocessable entity
+        - empty value
+        - unavailable
+        - forbidden
+        - too many requests
+        - unauthorized
+        - method not allowed
+        - request too large
