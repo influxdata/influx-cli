@@ -9,10 +9,9 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
-	"github.com/influxdata/influx-cli/v2/internal/ping"
-	"github.com/influxdata/influx-cli/v2/pkg/tracing"
 	"github.com/urfave/cli/v2"
 )
 
@@ -47,7 +46,7 @@ func loadConfig(ctx *cli.Context) (config.Config, error) {
 
 // newApiClient returns an API client configured to communicate with a remote InfluxDB instance over HTTP.
 // Client parameters are pulled from the CLI context.
-func newApiClient(ctx *cli.Context, injectToken bool) (api.ClientInterface, error) {
+func newApiClient(ctx *cli.Context, injectToken bool) (api.ClientWithResponsesInterface, error) {
 	cfg, err := loadConfig(ctx)
 	if err != nil {
 		return nil, err
@@ -80,18 +79,23 @@ func newApiClient(ctx *cli.Context, injectToken bool) (api.ClientInterface, erro
 		}))
 	}
 
-	return api.NewClient(cfg.Host, opts...)
+	return api.NewClientWithResponses(cfg.Host, opts...)
 }
 
-// tracingCtx bundles the Jaeger trace ID given on the CLI (if any) with
-// the underlying CLI context.
-func tracingCtx(ctx *cli.Context) tracing.Context {
+// newCli builds a CLI core that reads from stdin, writes to stdout/stderr, and
+// optionally tracks a trace ID specified over the CLI.
+func newCli(ctx *cli.Context) *internal.CLI {
 	var traceId *api.TraceSpan
 	if ctx.IsSet(traceIdFlag) {
 		tid := api.TraceSpan(ctx.String(traceIdFlag))
 		traceId = &tid
 	}
-	return tracing.WithTraceId(ctx.Context, traceId)
+	return &internal.CLI{
+		Stdin:   ctx.App.Reader,
+		Stdout:  ctx.App.Writer,
+		Stderr:  ctx.App.ErrWriter,
+		TraceId: traceId,
+	}
 }
 
 func main() {
@@ -163,7 +167,7 @@ func main() {
 					if err != nil {
 						return err
 					}
-					return ping.Ping(tracingCtx(ctx), client)
+					return newCli(ctx).Ping(ctx.Context, client)
 				},
 			},
 		},
