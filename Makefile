@@ -26,6 +26,14 @@ export GO_TEST=go test
 GO_TEST_PATHS=./...
 
 ### Build / dependency management
+internal/api/types.gen.go: internal/api/api.yml internal/api/gen.go
+	go generate ./api
+
+internal/api/client.gen.go: internal/api/api.yml internal/api/gen.go
+	go generate ./api
+
+openapi: internal/api/types.gen.go internal/api/client.gen.go
+
 fmt: $(SOURCES_NO_VENDOR)
 	gofmt -w -s $^
 	go run github.com/daixiang0/gci -w $^
@@ -38,11 +46,12 @@ influx: bin/$(GOOS)/influx
 vendor: go.mod go.sum
 	go mod vendor
 
-build: fmt influx
+build: openapi fmt influx
 
 clean:
 	$(RM) -r bin
 	$(RM) -r vendor
+	$(RM) internal/api/types.gen.go internal/api/client.gen.go
 
 ### Linters
 checkfmt:
@@ -65,4 +74,4 @@ test-race:
 	$(GO_TEST) -v -race -count=1 $(GO_TEST_PATHS)
 
 ### List of all targets that don't produce a file
-.PHONY: influx fmt build checkfmt checktidy staticcheck vet test test-race
+.PHONY: influx openapi fmt build checkfmt checktidy staticcheck vet test test-race
