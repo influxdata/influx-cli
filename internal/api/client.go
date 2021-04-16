@@ -1,3 +1,6 @@
+//lint:file-ignore ST1005 Ignore capitalized errors, they're generated
+//lint:file-ignore SA6005 Ignore old-fashioned way of comparing strings, it's generated
+
 /*
  * Subset of Influx API covered by Influx CLI
  *

@@ -1,3 +1,5 @@
+//lint:file-ignore ST1005 Ignore capitalized errors, they're generated
+
 /*
  * Subset of Influx API covered by Influx CLI
  *

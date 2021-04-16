@@ -26,3 +26,20 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   cd "${ROOT_DIR}"
   go mod tidy
 )
+
+# Inject linter directives into generated files to make staticcheck happy.
+(
+  cd "${ROOT_DIR}"
+  cat <<EOF > internal/api/client.go
+//lint:file-ignore ST1005 Ignore capitalized errors, they're generated
+//lint:file-ignore SA6005 Ignore old-fashioned way of comparing strings, it's generated
+
+$(cat internal/api/client.go)
+EOF
+
+  cat <<EOF > internal/api/configuration.go
+//lint:file-ignore ST1005 Ignore capitalized errors, they're generated
+
+$(cat internal/api/configuration.go)
+EOF
+)
