@@ -30,9 +30,9 @@ jobs:
           name: Upgrade Go
           command: |
             wget https://golang.org/dl/go1.16.3.src.tar.gz
-            rm -rf /usr/local/go
-            tar -C /usr/local -xzf go1.16.3.src.tar.gz
-            echo 'export PATH=/usr/local/go/bin:${PATH}' >> $BASH_ENV
+            mkdir ${HOME}/go
+            tar -C ${HOME} -xzf go1.16.3.src.tar.gz
+            echo 'export PATH=${HOME}/go/bin:${PATH}' >> $BASH_ENV
       - run: make checkopenapi
 
   build:
