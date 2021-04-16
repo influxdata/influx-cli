@@ -29,6 +29,7 @@ var (
 	traceIdFlag    = "trace-debug-id"
 	configPathFlag = "config-path"
 	configNameFlag = "active-config"
+	httpDebugFlag  = "http-debug"
 )
 
 // loadConfig reads CLI configs from disk, returning the config with the
@@ -74,6 +75,7 @@ func newApiClient(ctx *cli.Context, injectToken bool) (*api.APIClient, error) {
 	if injectToken {
 		apiConfig.DefaultHeader["Authorization"] = fmt.Sprintf("Token %s", cfg.Token)
 	}
+	apiConfig.Debug = ctx.Bool(httpDebugFlag)
 
 	return api.NewAPIClient(apiConfig), nil
 }
@@ -133,6 +135,10 @@ func main() {
 			Name:    traceIdFlag,
 			Hidden:  true,
 			EnvVars: []string{"INFLUX_TRACE_DEBUG_ID"},
+		},
+		&cli.BoolFlag{
+			Name:   httpDebugFlag,
+			Hidden: true,
 		},
 	}
 
