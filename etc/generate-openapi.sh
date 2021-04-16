@@ -21,25 +21,33 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   rm -rf go.mod go.sum git_push.sh api docs .openapi-generator .travis.yml .gitignore
 )
 
-# Since we deleted the generated go.mod, run `go mod tidy` to update parent dependencies.
+# Edit the generated files.
 (
   cd "${ROOT_DIR}"
-  go mod tidy
-)
 
-# Inject linter directives into generated files to make staticcheck happy.
-(
-  cd "${ROOT_DIR}"
+  # Inject linter directives into generated files to make staticcheck happy.
   cat <<EOF > internal/api/client.go
 //lint:file-ignore ST1005 Ignore capitalized errors, they're generated
 //lint:file-ignore SA6005 Ignore old-fashioned way of comparing strings, it's generated
 
 $(cat internal/api/client.go)
 EOF
-
   cat <<EOF > internal/api/configuration.go
 //lint:file-ignore ST1005 Ignore capitalized errors, they're generated
 
 $(cat internal/api/configuration.go)
 EOF
+
+  # Remove the OAuth code from the generated files.
+  # We don't use OAuth, and it pulls in a huge dependency on the Google Cloud libraries.
+  sed -i.bak -e '/OAuth2 authentication/,+10d' -e 's#"golang.org/x/oauth2"##' internal/api/client.go
+  sed -i.bak -e '/OAuth2/,+2d' internal/api/configuration.go
+  rm internal/api/client.go.bak internal/api/configuration.go.bak
+)
+
+# Since we deleted the generated go.mod, run `go mod tidy` to update parent dependencies.
+(
+  cd "${ROOT_DIR}"
+  make fmt
+  go mod tidy
 )

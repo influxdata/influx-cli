@@ -31,7 +31,7 @@ func (v *HealthCheckStatus) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := HealthCheckStatus(value)
-	for _, existing := range []HealthCheckStatus{ "pass", "fail",   } {
+	for _, existing := range []HealthCheckStatus{"pass", "fail"} {
 		if existing == enumTypeValue {
 			*v = enumTypeValue
 			return nil
@@ -81,4 +81,3 @@ func (v *NullableHealthCheckStatus) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-

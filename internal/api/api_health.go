@@ -43,8 +43,8 @@ type HealthApi interface {
 type HealthApiService service
 
 type ApiGetHealthRequest struct {
-	ctx _context.Context
-	ApiService HealthApi
+	ctx          _context.Context
+	ApiService   HealthApi
 	zapTraceSpan *string
 }
 
@@ -65,7 +65,7 @@ func (r ApiGetHealthRequest) Execute() (HealthCheck, *_nethttp.Response, error) 
 func (a *HealthApiService) GetHealth(ctx _context.Context) ApiGetHealthRequest {
 	return ApiGetHealthRequest{
 		ApiService: a,
-		ctx: ctx,
+		ctx:        ctx,
 	}
 }
 
@@ -146,13 +146,13 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 			newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-			var v Error
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.model = v
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 

@@ -16,12 +16,12 @@ import (
 
 // HealthCheck struct for HealthCheck
 type HealthCheck struct {
-	Name string `json:"name"`
-	Message *string `json:"message,omitempty"`
-	Checks *[]HealthCheck `json:"checks,omitempty"`
-	Status HealthCheckStatus `json:"status"`
-	Version *string `json:"version,omitempty"`
-	Commit *string `json:"commit,omitempty"`
+	Name    string            `json:"name"`
+	Message *string           `json:"message,omitempty"`
+	Checks  *[]HealthCheck    `json:"checks,omitempty"`
+	Status  HealthCheckStatus `json:"status"`
+	Version *string           `json:"version,omitempty"`
+	Commit  *string           `json:"commit,omitempty"`
 }
 
 // NewHealthCheck instantiates a new HealthCheck object
@@ -56,7 +56,7 @@ func (o *HealthCheck) GetName() string {
 // GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *HealthCheck) GetNameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.Name, true
@@ -144,7 +144,7 @@ func (o *HealthCheck) GetStatus() HealthCheckStatus {
 // GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *HealthCheck) GetStatusOk() (*HealthCheckStatus, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.Status, true
@@ -277,5 +277,3 @@ func (v *NullableHealthCheck) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-
