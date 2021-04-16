@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 
 declare -r ETC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 declare -r ROOT_DIR="$(dirname ${ETC_DIR})"
@@ -7,7 +6,7 @@ declare -r ROOT_DIR="$(dirname ${ETC_DIR})"
 declare -r GENERATOR_DOCKER_IMG=openapitools/openapi-generator-cli:v5.1.0
 
 # Run the generator - This produces many more files than we want to track in git.
-docker run --rm -it \
+docker run --rm -it -u "$(id -u):$(id -g)" \
   -v "${ROOT_DIR}":/influx \
   ${GENERATOR_DOCKER_IMG} \
   generate \
