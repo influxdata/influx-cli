@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 
 declare -r ETC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 declare -r ROOT_DIR="$(dirname ${ETC_DIR})"
