@@ -11,6 +11,5 @@ package influxcli
 
 import (
 	_ "github.com/daixiang0/gci"
-	_ "github.com/deepmap/oapi-codegen/cmd/oapi-codegen"
 	_ "honnef.co/go/tools/cmd/staticcheck"
 )

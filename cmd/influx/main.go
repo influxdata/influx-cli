@@ -1,10 +1,10 @@
 package main
 
 import (
-	"context"
 	"crypto/tls"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"runtime"
 	"time"
@@ -46,7 +46,7 @@ func loadConfig(ctx *cli.Context) (config.Config, error) {
 
 // newApiClient returns an API client configured to communicate with a remote InfluxDB instance over HTTP.
 // Client parameters are pulled from the CLI context.
-func newApiClient(ctx *cli.Context, injectToken bool) (api.ClientWithResponsesInterface, error) {
+func newApiClient(ctx *cli.Context, injectToken bool) (*api.APIClient, error) {
 	cfg, err := loadConfig(ctx)
 	if err != nil {
 		return nil, err
@@ -58,43 +58,34 @@ func newApiClient(ctx *cli.Context, injectToken bool) (api.ClientWithResponsesIn
 		cfg.Host = ctx.String(hostFlag)
 	}
 
+	parsedHost, err := url.Parse(cfg.Host)
+	if err != nil {
+		return nil, fmt.Errorf("host URL %q is invalid: %w", cfg.Host, err)
+	}
+
 	clientTransport := http.DefaultTransport.(*http.Transport)
 	clientTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: ctx.Bool(skipVerifyFlag)}
 
-	client := &http.Client{Transport: clientTransport}
-	userAgent := fmt.Sprintf("influx/%s (%s) Sha/%s Date/%s", version, runtime.GOOS, commit, date)
-
-	opts := []api.ClientOption{
-		api.WithHTTPClient(client),
-		api.WithRequestEditorFn(func(_ context.Context, req *http.Request) error {
-			req.Header.Set("User-Agent", userAgent)
-			return nil
-		}),
-	}
+	apiConfig := api.NewConfiguration()
+	apiConfig.Host = parsedHost.Host
+	apiConfig.Scheme = parsedHost.Scheme
+	apiConfig.UserAgent = fmt.Sprintf("influx/%s (%s) Sha/%s Date/%s", version, runtime.GOOS, commit, date)
+	apiConfig.HTTPClient = &http.Client{Transport: clientTransport}
 	if injectToken {
-		authHeader := fmt.Sprintf("Token %s", cfg.Token)
-		opts = append(opts, api.WithRequestEditorFn(func(_ context.Context, req *http.Request) error {
-			req.Header.Set("Authorization", authHeader)
-			return nil
-		}))
+		apiConfig.DefaultHeader["Authorization"] = fmt.Sprintf("Token %s", cfg.Token)
 	}
 
-	return api.NewClientWithResponses(cfg.Host, opts...)
+	return api.NewAPIClient(apiConfig), nil
 }
 
 // newCli builds a CLI core that reads from stdin, writes to stdout/stderr, and
 // optionally tracks a trace ID specified over the CLI.
 func newCli(ctx *cli.Context) *internal.CLI {
-	var traceId *api.TraceSpan
-	if ctx.IsSet(traceIdFlag) {
-		tid := api.TraceSpan(ctx.String(traceIdFlag))
-		traceId = &tid
-	}
 	return &internal.CLI{
 		Stdin:   ctx.App.Reader,
 		Stdout:  ctx.App.Writer,
 		Stderr:  ctx.App.ErrWriter,
-		TraceId: traceId,
+		TraceId: ctx.String(traceIdFlag),
 	}
 }
 
@@ -167,7 +158,7 @@ func main() {
 					if err != nil {
 						return err
 					}
-					return newCli(ctx).Ping(ctx.Context, client)
+					return newCli(ctx).Ping(ctx.Context, client.HealthApi)
 				},
 			},
 		},

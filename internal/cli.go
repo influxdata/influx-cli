@@ -2,8 +2,6 @@ package internal
 
 import (
 	"io"
-
-	"github.com/influxdata/influx-cli/v2/internal/api"
 )
 
 type CLI struct {
@@ -11,5 +9,5 @@ type CLI struct {
 	Stdout io.Writer
 	Stderr io.Writer
 
-	TraceId *api.TraceSpan
+	TraceId string
 }

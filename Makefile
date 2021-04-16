@@ -26,13 +26,8 @@ export GO_TEST=go test
 GO_TEST_PATHS=./...
 
 ### Build / dependency management
-internal/api/types.gen.go: internal/api/api.yml internal/api/gen.go
-	go generate ./api
-
-internal/api/client.gen.go: internal/api/api.yml internal/api/gen.go
-	go generate ./api
-
-openapi: internal/api/types.gen.go internal/api/client.gen.go
+openapi:
+	./etc/generate-openapi.sh
 
 fmt: $(SOURCES_NO_VENDOR)
 	gofmt -w -s $^
