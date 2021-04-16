@@ -11,7 +11,7 @@ import (
 func (c *CLI) Ping(ctx context.Context, client api.HealthApi) error {
 	req := client.GetHealth(ctx)
 	if c.TraceId != "" {
-		req.ZapTraceSpan(c.TraceId)
+		req = req.ZapTraceSpan(c.TraceId)
 	}
 	resp, _, err := client.GetHealthExecute(req)
 	if err != nil {
