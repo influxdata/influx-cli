@@ -36,17 +36,15 @@ fmt: $(SOURCES_NO_VENDOR)
 bin/$(GOOS)/influx: $(SOURCES)
 	$(GO_BUILD) -o $@ ./cmd/$(shell basename "$@")
 
+.DEFAULT_GOAL := influx
 influx: bin/$(GOOS)/influx
 
 vendor: go.mod go.sum
 	go mod vendor
 
-build: openapi fmt influx
-
 clean:
 	$(RM) -r bin
 	$(RM) -r vendor
-	$(RM) internal/api/types.gen.go internal/api/client.gen.go
 
 ### Linters
 checkfmt:
