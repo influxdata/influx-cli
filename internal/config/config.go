@@ -54,55 +54,15 @@ type Service interface {
 	DeleteConfig(name string) (Config, error)
 	UpdateConfig(Config) (Config, error)
 	SwitchActive(name string) (Config, error)
+	Active() (Config, error)
 	ListConfigs() (Configs, error)
 }
 
 // Configs is map of configs indexed by name.
 type Configs map[string]Config
 
-func GetConfigsOrDefault(path string) Configs {
-	r, err := os.Open(path)
-	if err != nil {
-		return Configs{
-			DefaultConfig.Name: DefaultConfig,
-		}
-	}
-	defer r.Close()
-
-	cfgs, err := NewLocalConfigService(path).ListConfigs()
-	if err != nil {
-		return Configs{
-			DefaultConfig.Name: DefaultConfig,
-		}
-	}
-
-	return cfgs
-}
-
-var badNames = map[string]bool{
-	"-":      false,
-	"list":   false,
-	"update": false,
-	"set":    false,
-	"delete": false,
-	"switch": false,
-	"create": false,
-}
-
-func blockBadName(cfgs Configs) error {
-	for n := range cfgs {
-		if _, ok := badNames[n]; ok {
-			return &api.Error{
-				Code:    api.ERRORCODE_INVALID,
-				Message: fmt.Sprintf("%q is not a valid config name", n),
-			}
-		}
-	}
-	return nil
-}
-
 // Switch to another config.
-func (cfgs Configs) Switch(name string) error {
+func (cfgs Configs) switchActive(name string) error {
 	if _, ok := cfgs[name]; !ok {
 		return &api.Error{
 			Code:    api.ERRORCODE_NOT_FOUND,
@@ -117,7 +77,7 @@ func (cfgs Configs) Switch(name string) error {
 	return nil
 }
 
-func (cfgs Configs) Active() Config {
+func (cfgs Configs) active() Config {
 	for _, cfg := range cfgs {
 		if cfg.Active {
 			return cfg

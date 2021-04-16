@@ -1,12 +1,12 @@
 package internal_test
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"net/http"
 	"testing"
 
+	"github.com/Netflix/go-expect"
 	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/stretchr/testify/require"
@@ -35,11 +35,14 @@ func Test_PingSuccess(t *testing.T) {
 		},
 	}
 
-	out := &bytes.Buffer{}
-	cli := &internal.CLI{Stdout: out}
+	tc, err := expect.NewConsole()
+	require.NoError(t, err)
+	defer tc.Close()
+	cli := &internal.CLI{Stdout: tc.Tty()}
 
 	require.NoError(t, cli.Ping(context.Background(), client))
-	require.Equal(t, "OK\n", out.String())
+	_, err = tc.ExpectString("OK")
+	require.NoError(t, err)
 }
 
 func Test_PingFailedRequest(t *testing.T) {
@@ -52,13 +55,10 @@ func Test_PingFailedRequest(t *testing.T) {
 		},
 	}
 
-	out := &bytes.Buffer{}
-	cli := &internal.CLI{Stdout: out}
-
+	cli := &internal.CLI{}
 	err := cli.Ping(context.Background(), client)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), e)
-	require.Empty(t, out.String())
 }
 
 func Test_PingFailedStatus(t *testing.T) {
@@ -71,13 +71,10 @@ func Test_PingFailedStatus(t *testing.T) {
 		},
 	}
 
-	out := &bytes.Buffer{}
-	cli := &internal.CLI{Stdout: out}
-
+	cli := &internal.CLI{}
 	err := cli.Ping(context.Background(), client)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), e)
-	require.Empty(t, out.String())
 }
 
 func Test_PingFailedStatusNoMessage(t *testing.T) {
@@ -90,11 +87,8 @@ func Test_PingFailedStatusNoMessage(t *testing.T) {
 		},
 	}
 
-	out := &bytes.Buffer{}
-	cli := &internal.CLI{Stdout: out}
-
+	cli := &internal.CLI{}
 	err := cli.Ping(context.Background(), client)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), name)
-	require.Empty(t, out.String())
 }
