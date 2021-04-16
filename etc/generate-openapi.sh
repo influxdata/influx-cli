@@ -18,7 +18,7 @@ docker run --rm -it \
 # Clean up files we don't care about.
 (
   cd "${ROOT_DIR}/internal/api"
-  rm -r go.mod go.sum git_push.sh api docs .openapi-generator .travis.yml .gitignore
+  rm -rf go.mod go.sum git_push.sh api docs .openapi-generator .travis.yml .gitignore
 )
 
 # Since we deleted the generated go.mod, run `go mod tidy` to update parent dependencies.
