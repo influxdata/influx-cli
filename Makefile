@@ -26,13 +26,8 @@ export GO_TEST=go test
 GO_TEST_PATHS=./...
 
 ### Build / dependency management
-internal/api/types.gen.go: internal/api/api.yml internal/api/gen.go
-	go generate ./api
-
-internal/api/client.gen.go: internal/api/api.yml internal/api/gen.go
-	go generate ./api
-
-openapi: internal/api/types.gen.go internal/api/client.gen.go
+openapi:
+	./etc/generate-openapi.sh
 
 fmt: $(SOURCES_NO_VENDOR)
 	gofmt -w -s $^
@@ -41,17 +36,15 @@ fmt: $(SOURCES_NO_VENDOR)
 bin/$(GOOS)/influx: $(SOURCES)
 	$(GO_BUILD) -o $@ ./cmd/$(shell basename "$@")
 
+.DEFAULT_GOAL := influx
 influx: bin/$(GOOS)/influx
 
 vendor: go.mod go.sum
 	go mod vendor
 
-build: openapi fmt influx
-
 clean:
 	$(RM) -r bin
 	$(RM) -r vendor
-	$(RM) internal/api/types.gen.go internal/api/client.gen.go
 
 ### Linters
 checkfmt:
@@ -59,6 +52,9 @@ checkfmt:
 
 checktidy:
 	./etc/checktidy.sh
+
+checkopenapi:
+	./etc/checkopenapi.sh
 
 staticcheck: $(SOURCES) vendor
 	go run honnef.co/go/tools/cmd/staticcheck -go $(GOVERSION) ./...

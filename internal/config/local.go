@@ -35,7 +35,7 @@ func NewLocalConfigService(path string) Service {
 func (svc localConfigsSVC) CreateConfig(cfg Config) (Config, error) {
 	if cfg.Name == "" {
 		return Config{}, &api.Error{
-			Code:    api.ErrorCode_invalid,
+			Code:    api.ERRORCODE_INVALID,
 			Message: "config name is empty",
 		}
 	}
@@ -45,7 +45,7 @@ func (svc localConfigsSVC) CreateConfig(cfg Config) (Config, error) {
 	}
 	if _, ok := cfgs[cfg.Name]; ok {
 		return Config{}, &api.Error{
-			Code:    api.ErrorCode_conflict,
+			Code:    api.ERRORCODE_CONFLICT,
 			Message: fmt.Sprintf("config %q already exists", cfg.Name),
 		}
 	}
@@ -69,7 +69,7 @@ func (svc localConfigsSVC) DeleteConfig(name string) (Config, error) {
 	p, ok := cfgs[name]
 	if !ok {
 		return Config{}, &api.Error{
-			Code:    api.ErrorCode_not_found,
+			Code:    api.ERRORCODE_NOT_FOUND,
 			Message: fmt.Sprintf("config %q is not found", name),
 		}
 	}
@@ -111,7 +111,7 @@ func (svc localConfigsSVC) UpdateConfig(up Config) (Config, error) {
 	p0, ok := cfgs[up.Name]
 	if !ok {
 		return Config{}, &api.Error{
-			Code:    api.ErrorCode_not_found,
+			Code:    api.ERRORCODE_NOT_FOUND,
 			Message: fmt.Sprintf("config %q is not found", up.Name),
 		}
 	}
@@ -213,7 +213,7 @@ func (s baseRW) parseActiveConfig(currentOrPrevious bool) (Config, error) {
 			hasActive = true
 		} else if check {
 			return DefaultConfig, &api.Error{
-				Code:    api.ErrorCode_conflict,
+				Code:    api.ERRORCODE_CONFLICT,
 				Message: fmt.Sprintf("more than one %s activated configs found", previousText),
 			}
 		}
@@ -222,7 +222,7 @@ func (s baseRW) parseActiveConfig(currentOrPrevious bool) (Config, error) {
 		return activated, nil
 	}
 	return DefaultConfig, &api.Error{
-		Code:    api.ErrorCode_not_found,
+		Code:    api.ERRORCODE_NOT_FOUND,
 		Message: fmt.Sprintf("%s activated config is not found", previousText),
 	}
 }

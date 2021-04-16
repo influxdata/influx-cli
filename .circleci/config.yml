@@ -5,6 +5,7 @@ workflows:
   build:
     jobs:
       - lint
+      - check-openapi
       - build
       - test
 
@@ -19,6 +20,19 @@ jobs:
       - run: make checkfmt
       - run: make checktidy
       - run: make staticcheck
+
+  check-openapi:
+    machine: true
+    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    steps:
+      - checkout
+      - run:
+          name: Upgrade Go
+          command: |
+            wget https://golang.org/dl/go1.16.3.linux-amd64.tar.gz
+            tar -C ${HOME} -xzf go1.16.3.linux-amd64.tar.gz
+            echo 'export PATH=${HOME}/go/bin:${PATH}' >> $BASH_ENV
+      - run: make checkopenapi
 
   build:
     docker:

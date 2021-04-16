@@ -93,7 +93,7 @@ func blockBadName(cfgs Configs) error {
 	for n := range cfgs {
 		if _, ok := badNames[n]; ok {
 			return &api.Error{
-				Code:    api.ErrorCode_invalid,
+				Code:    api.ERRORCODE_INVALID,
 				Message: fmt.Sprintf("%q is not a valid config name", n),
 			}
 		}
@@ -105,7 +105,7 @@ func blockBadName(cfgs Configs) error {
 func (cfgs Configs) Switch(name string) error {
 	if _, ok := cfgs[name]; !ok {
 		return &api.Error{
-			Code:    api.ErrorCode_not_found,
+			Code:    api.ERRORCODE_NOT_FOUND,
 			Message: fmt.Sprintf("config %q is not found", name),
 		}
 	}
