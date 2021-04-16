@@ -55,6 +55,9 @@ checkfmt:
 checktidy:
 	./etc/checktidy.sh
 
+checkopenapi:
+	./etc/checkopenapi.sh
+
 staticcheck: $(SOURCES) vendor
 	go run honnef.co/go/tools/cmd/staticcheck -go $(GOVERSION) ./...
 
