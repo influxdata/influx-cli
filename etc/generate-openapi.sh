@@ -40,9 +40,22 @@ EOF
 
   # Remove the OAuth code from the generated files.
   # We don't use OAuth, and it pulls in a huge dependency on the Google Cloud libraries.
+  #
+  # See https://github.com/OpenAPITools/openapi-generator/issues/9281 for a feature request
+  # to add a toggle that would prevent OAuth code from even being generated.
   sed -i.bak -e '/OAuth2 authentication/,+10d' -e 's#"golang.org/x/oauth2"##' internal/api/client.go
   sed -i.bak -e '/OAuth2/,+2d' internal/api/configuration.go
-  rm internal/api/client.go.bak internal/api/configuration.go.bak
+
+  # Replace all uses of int32 with int64 in our generated models.
+  #
+  # See https://github.com/OpenAPITools/openapi-generator/issues/9280 for a feature request
+  # to make the Go generator's number-handling compliant with the spec, so we can generate int64
+  # fields directly without making our public docs invalid.
+  for m in internal/api/model_*.go; do
+    sed -i.bak -e 's/int32/int64/g' ${m}
+  done
+
+  rm internal/api/*.bak
 )
 
 # Since we deleted the generated go.mod, run `go mod tidy` to update parent dependencies.
