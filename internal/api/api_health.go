@@ -23,12 +23,28 @@ var (
 	_ _context.Context
 )
 
+type HealthApi interface {
+
+	/*
+	 * GetHealth Get the health of an instance
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @return ApiGetHealthRequest
+	 */
+	GetHealth(ctx _context.Context) ApiGetHealthRequest
+
+	/*
+	 * GetHealthExecute executes the request
+	 * @return HealthCheck
+	 */
+	GetHealthExecute(r ApiGetHealthRequest) (HealthCheck, *_nethttp.Response, error)
+}
+
 // HealthApiService HealthApi service
 type HealthApiService service
 
 type ApiGetHealthRequest struct {
 	ctx _context.Context
-	ApiService *HealthApiService
+	ApiService HealthApi
 	zapTraceSpan *string
 }
 

@@ -13,7 +13,7 @@ docker run --rm -it \
   -g go \
   -i /influx/internal/api/api.yml \
   -o /influx/internal/api \
-  --additional-properties packageName=api,enumClassPrefix=true
+  --additional-properties packageName=api,enumClassPrefix=true,generateInterfaces=true
 
 # Clean up files we don't care about.
 (

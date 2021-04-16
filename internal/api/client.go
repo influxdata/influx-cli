@@ -48,7 +48,7 @@ type APIClient struct {
 
 	// API Services
 
-	HealthApi *HealthApiService
+	HealthApi HealthApi
 }
 
 type service struct {

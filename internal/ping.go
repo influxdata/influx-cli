@@ -3,18 +3,12 @@ package internal
 import (
 	"context"
 	"fmt"
-	"net/http"
 
 	"github.com/influxdata/influx-cli/v2/internal/api"
 )
 
-type Client interface {
-	GetHealth(context.Context) api.ApiGetHealthRequest
-	GetHealthExecute(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error)
-}
-
 // Ping checks the health of a remote InfluxDB instance.
-func (c *CLI) Ping(ctx context.Context, client Client) error {
+func (c *CLI) Ping(ctx context.Context, client api.HealthApi) error {
 	req := client.GetHealth(ctx)
 	if c.TraceId != "" {
 		req.ZapTraceSpan(c.TraceId)
