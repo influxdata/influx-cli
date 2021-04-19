@@ -68,6 +68,10 @@ func (r ApiGetSetupRequest) ZapTraceSpan(zapTraceSpan string) ApiGetSetupRequest
 	return r
 }
 
+func (r ApiGetSetupRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
 func (r ApiGetSetupRequest) Execute() (InlineResponse200, *_nethttp.Response, error) {
 	return r.ApiService.GetSetupExecute(r)
 }
@@ -178,9 +182,17 @@ func (r ApiPostSetupRequest) OnboardingRequest(onboardingRequest OnboardingReque
 	r.onboardingRequest = &onboardingRequest
 	return r
 }
+
+func (r ApiPostSetupRequest) GetOnboardingRequest() *OnboardingRequest {
+	return r.onboardingRequest
+}
 func (r ApiPostSetupRequest) ZapTraceSpan(zapTraceSpan string) ApiPostSetupRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
+}
+
+func (r ApiPostSetupRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
 }
 
 func (r ApiPostSetupRequest) Execute() (OnboardingResponse, *_nethttp.Response, error) {

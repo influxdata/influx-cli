@@ -171,6 +171,7 @@ components:
           type: string
         retentionPeriodSeconds:
           type: integer
+          format: int64
         retentionPeriodHrs:
           type: integer
           deprecated: true
@@ -361,6 +362,7 @@ components:
             - expire
         everySeconds:
           type: integer
+          format: int64
           description: Duration in seconds for how long data will be kept in the database. 0 means infinite.
           example: 86400
           minimum: 0

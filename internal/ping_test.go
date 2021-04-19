@@ -58,11 +58,14 @@ func Test_PingSuccessWithTracing(t *testing.T) {
 		},
 	}
 
-	out := &bytes.Buffer{}
-	cli := &internal.CLI{Stdout: out, TraceId: traceId}
+	tc, err := expect.NewConsole()
+	require.NoError(t, err)
+	defer tc.Close()
+	cli := &internal.CLI{Stdout: tc.Tty(), TraceId: traceId}
 
 	require.NoError(t, cli.Ping(context.Background(), client))
-	require.Equal(t, "OK\n", out.String())
+	_, err = tc.ExpectString("OK")
+	require.NoError(t, err)
 }
 
 func Test_PingFailedRequest(t *testing.T) {

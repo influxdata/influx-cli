@@ -22,7 +22,7 @@ type OnboardingRequest struct {
 	Bucket                 string  `json:"bucket"`
 	RetentionPeriodSeconds *int64  `json:"retentionPeriodSeconds,omitempty"`
 	// Retention period *in nanoseconds* for the new bucket. This key's name has been misleading since OSS 2.0 GA, please transition to use `retentionPeriodSeconds`
-	RetentionPeriodHrs *int64 `json:"retentionPeriodHrs,omitempty"`
+	RetentionPeriodHrs *int32 `json:"retentionPeriodHrs,omitempty"`
 	// Authentication token to set on the initial user. If not specified, the server will generate a token.
 	Token *string `json:"token,omitempty"`
 }
@@ -184,9 +184,9 @@ func (o *OnboardingRequest) SetRetentionPeriodSeconds(v int64) {
 }
 
 // GetRetentionPeriodHrs returns the RetentionPeriodHrs field value if set, zero value otherwise.
-func (o *OnboardingRequest) GetRetentionPeriodHrs() int64 {
+func (o *OnboardingRequest) GetRetentionPeriodHrs() int32 {
 	if o == nil || o.RetentionPeriodHrs == nil {
-		var ret int64
+		var ret int32
 		return ret
 	}
 	return *o.RetentionPeriodHrs
@@ -194,7 +194,7 @@ func (o *OnboardingRequest) GetRetentionPeriodHrs() int64 {
 
 // GetRetentionPeriodHrsOk returns a tuple with the RetentionPeriodHrs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OnboardingRequest) GetRetentionPeriodHrsOk() (*int64, bool) {
+func (o *OnboardingRequest) GetRetentionPeriodHrsOk() (*int32, bool) {
 	if o == nil || o.RetentionPeriodHrs == nil {
 		return nil, false
 	}
@@ -210,8 +210,8 @@ func (o *OnboardingRequest) HasRetentionPeriodHrs() bool {
 	return false
 }
 
-// SetRetentionPeriodHrs gets a reference to the given int64 and assigns it to the RetentionPeriodHrs field.
-func (o *OnboardingRequest) SetRetentionPeriodHrs(v int64) {
+// SetRetentionPeriodHrs gets a reference to the given int32 and assigns it to the RetentionPeriodHrs field.
+func (o *OnboardingRequest) SetRetentionPeriodHrs(v int32) {
 	o.RetentionPeriodHrs = &v
 }
 
