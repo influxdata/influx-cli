@@ -11,6 +11,9 @@ multiple locations.
 
 ## What have we changed?
 
+`api.mustache`
+* Add `GetX()` methods for each request parameter `X`, for use in unit tests
+
 `client.mustache`
 * Removed use of `golang.org/x/oauth2` to avoid its heavy dependencies
 * Fixed error strings to be idiomatic according to staticcheck (lowercase, no punctuation)
