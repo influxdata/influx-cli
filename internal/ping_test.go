@@ -30,13 +30,33 @@ func Test_PingSuccess(t *testing.T) {
 	t.Parallel()
 
 	client := &testClient{
-		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
+		GetHealthExecuteFn: func(req api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
+			require.Nil(t, req.GetZapTraceSpan())
 			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_PASS}, nil, nil
 		},
 	}
 
 	out := &bytes.Buffer{}
 	cli := &internal.CLI{Stdout: out}
+
+	require.NoError(t, cli.Ping(context.Background(), client))
+	require.Equal(t, "OK\n", out.String())
+}
+
+func Test_PingSuccessWithTracing(t *testing.T) {
+	t.Parallel()
+
+	traceId := "trace-id"
+	client := &testClient{
+		GetHealthExecuteFn: func(req api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
+			require.NotNil(t, req.GetZapTraceSpan())
+			require.Equal(t, traceId, *req.GetZapTraceSpan())
+			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_PASS}, nil, nil
+		},
+	}
+
+	out := &bytes.Buffer{}
+	cli := &internal.CLI{Stdout: out, TraceId: traceId}
 
 	require.NoError(t, cli.Ping(context.Background(), client))
 	require.Equal(t, "OK\n", out.String())
