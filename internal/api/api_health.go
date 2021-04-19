@@ -53,6 +53,10 @@ func (r ApiGetHealthRequest) ZapTraceSpan(zapTraceSpan string) ApiGetHealthReque
 	return r
 }
 
+func (r ApiGetHealthRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
 func (r ApiGetHealthRequest) Execute() (HealthCheck, *_nethttp.Response, error) {
 	return r.ApiService.GetHealthExecute(r)
 }
