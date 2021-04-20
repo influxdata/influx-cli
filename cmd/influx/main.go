@@ -12,6 +12,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
+	"github.com/influxdata/influx-cli/v2/internal/stdio"
 	"github.com/urfave/cli/v2"
 )
 
@@ -23,13 +24,15 @@ var (
 )
 
 var (
-	tokenFlag      = "token"
-	hostFlag       = "host"
-	skipVerifyFlag = "skip-verify"
-	traceIdFlag    = "trace-debug-id"
-	configPathFlag = "configs-path"
-	configNameFlag = "active-config"
-	httpDebugFlag  = "http-debug"
+	tokenFlag       = "token"
+	hostFlag        = "host"
+	skipVerifyFlag  = "skip-verify"
+	traceIdFlag     = "trace-debug-id"
+	configPathFlag  = "configs-path"
+	configNameFlag  = "active-config"
+	httpDebugFlag   = "http-debug"
+	printJsonFlag   = "json"
+	hideHeadersFlag = "hide-headers"
 )
 
 // newCli builds a CLI core that reads from stdin, writes to stdout/stderr, manages a local config store,
@@ -54,12 +57,12 @@ func newCli(ctx *cli.Context) (*internal.CLI, error) {
 	}
 
 	return &internal.CLI{
-		Stdin:         os.Stdin,
-		Stdout:        os.Stdout,
-		Stderr:        os.Stderr,
-		TraceId:       ctx.String(traceIdFlag),
-		ActiveConfig:  activeConfig,
-		ConfigService: configSvc,
+		StdIO:            stdio.TerminalStdio,
+		TraceId:          ctx.String(traceIdFlag),
+		PrintAsJSON:      ctx.Bool(printJsonFlag),
+		HideTableHeaders: ctx.Bool(hideHeadersFlag),
+		ActiveConfig:     activeConfig,
+		ConfigService:    configSvc,
 	}, nil
 }
 
@@ -231,12 +234,12 @@ func main() {
 						Aliases: []string{"n"},
 					},
 					&cli.BoolFlag{
-						Name:    "json",
+						Name:    printJsonFlag,
 						Usage:   "Output data as JSON",
 						EnvVars: []string{"INFLUX_OUTPUT_JSON"},
 					},
 					&cli.BoolFlag{
-						Name:    "hide-headers",
+						Name:    hideHeadersFlag,
 						Usage:   "Hide the table headers in output data",
 						EnvVars: []string{"INFLUX_HIDE_HEADERS"},
 					},

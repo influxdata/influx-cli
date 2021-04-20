@@ -28,6 +28,6 @@ func (c *CLI) Ping(ctx context.Context, client api.HealthApi) error {
 		return fmt.Errorf("health check failed: %s", message)
 	}
 
-	_, err = c.Stdout.Write([]byte("OK\n"))
+	_, err = c.StdIO.Write([]byte("OK\n"))
 	return err
 }
