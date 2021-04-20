@@ -46,7 +46,7 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 	// Check if setup is even allowed.
 	checkReq := client.GetSetup(ctx)
 	if c.TraceId != "" {
-		checkReq.ZapTraceSpan(c.TraceId)
+		checkReq = checkReq.ZapTraceSpan(c.TraceId)
 	}
 	checkResp, _, err := client.GetSetupExecute(checkReq)
 	if err != nil {
@@ -63,7 +63,7 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 	}
 	setupReq := client.PostSetup(ctx).OnboardingRequest(setupBody)
 	if c.TraceId != "" {
-		setupReq.ZapTraceSpan(c.TraceId)
+		setupReq = setupReq.ZapTraceSpan(c.TraceId)
 	}
 	resp, _, err := client.PostSetupExecute(setupReq)
 	if err != nil {
