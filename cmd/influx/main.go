@@ -149,12 +149,12 @@ func main() {
 	}
 
 	// Most commands use this form of the token flag.
-	commonFlags := append(commonFlagsNoToken, &cli.StringFlag{
-		Name:    tokenFlag,
-		Usage:   "Authentication token",
-		Aliases: []string{"t"},
-		EnvVars: []string{"INFLUX_TOKEN"},
-	})
+	//commonFlags := append(commonFlagsNoToken, &cli.StringFlag{
+	//	Name:    tokenFlag,
+	//	Usage:   "Authentication token",
+	//	Aliases: []string{"t"},
+	//	EnvVars: []string{"INFLUX_TOKEN"},
+	//})
 
 	app := cli.App{
 		Name:      "influx",
@@ -172,7 +172,7 @@ func main() {
 			{
 				Name:  "ping",
 				Usage: "Check the InfluxDB /health endpoint",
-				Flags: commonFlags,
+				Flags: commonFlagsNoToken,
 				Action: func(ctx *cli.Context) error {
 					cli, err := newCli(ctx)
 					if err != nil {
