@@ -51,7 +51,7 @@ func (svc localConfigsSVC) CreateConfig(cfg Config) (Config, error) {
 	}
 	cfgs[cfg.Name] = cfg
 	if cfg.Active {
-		if err := cfgs.Switch(cfg.Name); err != nil {
+		if err := cfgs.switchActive(cfg.Name); err != nil {
 			return Config{}, err
 		}
 	}
@@ -84,6 +84,14 @@ func (svc localConfigsSVC) DeleteConfig(name string) (Config, error) {
 	}
 
 	return p, svc.writeConfigs(cfgs)
+}
+
+func (svc localConfigsSVC) Active() (Config, error) {
+	cfgs, err := svc.ListConfigs()
+	if err != nil {
+		return Config{}, err
+	}
+	return cfgs.active(), nil
 }
 
 // SwitchActive will active the config by name, if name is "-", active the previous one.
@@ -127,7 +135,7 @@ func (svc localConfigsSVC) UpdateConfig(up Config) (Config, error) {
 
 	cfgs[up.Name] = p0
 	if up.Active {
-		if err := cfgs.Switch(up.Name); err != nil {
+		if err := cfgs.switchActive(up.Name); err != nil {
 			return Config{}, err
 		}
 	}
@@ -188,6 +196,28 @@ func (s baseRW) writeConfigs(cfgs Configs) error {
 			break
 		}
 		s.w.Write([]byte("# " + string(line) + "\n"))
+	}
+	return nil
+}
+
+var badNames = map[string]bool{
+	"-":      false,
+	"list":   false,
+	"update": false,
+	"set":    false,
+	"delete": false,
+	"switch": false,
+	"create": false,
+}
+
+func blockBadName(cfgs Configs) error {
+	for n := range cfgs {
+		if _, ok := badNames[n]; ok {
+			return &api.Error{
+				Code:    api.ERRORCODE_INVALID,
+				Message: fmt.Sprintf("%q is not a valid config name", n),
+			}
+		}
 	}
 	return nil
 }

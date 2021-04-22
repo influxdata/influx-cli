@@ -12,6 +12,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
+	"github.com/influxdata/influx-cli/v2/internal/stdio"
 	"github.com/urfave/cli/v2"
 )
 
@@ -23,32 +24,52 @@ var (
 )
 
 var (
-	tokenFlag      = "token"
-	hostFlag       = "host"
-	skipVerifyFlag = "skip-verify"
-	traceIdFlag    = "trace-debug-id"
-	configPathFlag = "config-path"
-	configNameFlag = "active-config"
-	httpDebugFlag  = "http-debug"
+	tokenFlag       = "token"
+	hostFlag        = "host"
+	skipVerifyFlag  = "skip-verify"
+	traceIdFlag     = "trace-debug-id"
+	configPathFlag  = "configs-path"
+	configNameFlag  = "active-config"
+	httpDebugFlag   = "http-debug"
+	printJsonFlag   = "json"
+	hideHeadersFlag = "hide-headers"
 )
 
-// loadConfig reads CLI configs from disk, returning the config with the
-// name specified over the CLI (or default if no name was given).
-func loadConfig(ctx *cli.Context) (config.Config, error) {
-	configs := config.GetConfigsOrDefault(ctx.String(configPathFlag))
-	configName := ctx.String(configNameFlag)
-	if configName != "" {
-		if err := configs.Switch(configName); err != nil {
-			return config.Config{}, err
+// newCli builds a CLI core that reads from stdin, writes to stdout/stderr, manages a local config store,
+// and optionally tracks a trace ID specified over the CLI.
+func newCli(ctx *cli.Context) (*internal.CLI, error) {
+	configPath := ctx.String(configPathFlag)
+	var err error
+	if configPath == "" {
+		configPath, err = config.DefaultPath()
+		if err != nil {
+			return nil, err
 		}
 	}
-	return configs.Active(), nil
+	configSvc := config.NewLocalConfigService(configPath)
+	var activeConfig config.Config
+	if ctx.IsSet(configNameFlag) {
+		if activeConfig, err = configSvc.SwitchActive(ctx.String(configNameFlag)); err != nil {
+			return nil, err
+		}
+	} else if activeConfig, err = configSvc.Active(); err != nil {
+		return nil, err
+	}
+
+	return &internal.CLI{
+		StdIO:            stdio.TerminalStdio,
+		TraceId:          ctx.String(traceIdFlag),
+		PrintAsJSON:      ctx.Bool(printJsonFlag),
+		HideTableHeaders: ctx.Bool(hideHeadersFlag),
+		ActiveConfig:     activeConfig,
+		ConfigService:    configSvc,
+	}, nil
 }
 
 // newApiClient returns an API client configured to communicate with a remote InfluxDB instance over HTTP.
 // Client parameters are pulled from the CLI context.
-func newApiClient(ctx *cli.Context, injectToken bool) (*api.APIClient, error) {
-	cfg, err := loadConfig(ctx)
+func newApiClient(ctx *cli.Context, cli *internal.CLI, injectToken bool) (*api.APIClient, error) {
+	cfg, err := cli.ConfigService.Active()
 	if err != nil {
 		return nil, err
 	}
@@ -80,17 +101,6 @@ func newApiClient(ctx *cli.Context, injectToken bool) (*api.APIClient, error) {
 	return api.NewAPIClient(apiConfig), nil
 }
 
-// newCli builds a CLI core that reads from stdin, writes to stdout/stderr, and
-// optionally tracks a trace ID specified over the CLI.
-func newCli(ctx *cli.Context) *internal.CLI {
-	return &internal.CLI{
-		Stdin:   ctx.App.Reader,
-		Stdout:  ctx.App.Writer,
-		Stderr:  ctx.App.ErrWriter,
-		TraceId: ctx.String(traceIdFlag),
-	}
-}
-
 func main() {
 	if len(date) == 0 {
 		date = time.Now().UTC().Format(time.RFC3339)
@@ -104,13 +114,9 @@ func main() {
 	// to be specified after _all_ command names were given.
 	//
 	// We replicate the pattern from the old CLI so existing scripts and docs stay valid.
-	commonFlags := []cli.Flag{
-		&cli.StringFlag{
-			Name:    tokenFlag,
-			Usage:   "Authentication token",
-			Aliases: []string{"t"},
-			EnvVars: []string{"INFLUX_TOKEN"},
-		},
+
+	// Some commands (i.e. `setup` use custom help-text for the token flag).
+	commonFlagsNoToken := []cli.Flag{
 		&cli.StringFlag{
 			Name:    hostFlag,
 			Usage:   "HTTP address of InfluxDB",
@@ -120,7 +126,7 @@ func main() {
 			Name:  skipVerifyFlag,
 			Usage: "Skip TLS certificate chain and host name verification",
 		},
-		&cli.StringFlag{
+		&cli.PathFlag{
 			Name:    configPathFlag,
 			Usage:   "Path to the influx CLI configurations",
 			EnvVars: []string{"INFLUX_CLI_CONFIGS_PATH"},
@@ -142,6 +148,14 @@ func main() {
 		},
 	}
 
+	// Most commands use this form of the token flag.
+	//commonFlags := append(commonFlagsNoToken, &cli.StringFlag{
+	//	Name:    tokenFlag,
+	//	Usage:   "Authentication token",
+	//	Aliases: []string{"t"},
+	//	EnvVars: []string{"INFLUX_TOKEN"},
+	//})
+
 	app := cli.App{
 		Name:      "influx",
 		Usage:     "Influx Client",
@@ -158,20 +172,104 @@ func main() {
 			{
 				Name:  "ping",
 				Usage: "Check the InfluxDB /health endpoint",
-				Flags: commonFlags,
+				Flags: commonFlagsNoToken,
 				Action: func(ctx *cli.Context) error {
-					client, err := newApiClient(ctx, false)
+					cli, err := newCli(ctx)
 					if err != nil {
 						return err
 					}
-					return newCli(ctx).Ping(ctx.Context, client.HealthApi)
+					client, err := newApiClient(ctx, cli, false)
+					if err != nil {
+						return err
+					}
+					return cli.Ping(ctx.Context, client.HealthApi)
+				},
+			},
+			{
+				Name:  "setup",
+				Usage: "Setup instance with initial user, org, bucket",
+				Flags: append(
+					commonFlagsNoToken,
+					&cli.StringFlag{
+						Name:    "username",
+						Usage:   "Name of initial user to create",
+						Aliases: []string{"u"},
+					},
+					&cli.StringFlag{
+						Name:    "password",
+						Usage:   "Password to set on initial user",
+						Aliases: []string{"p"},
+					},
+					&cli.StringFlag{
+						Name:        tokenFlag,
+						Usage:       "Auth token to set on the initial user",
+						Aliases:     []string{"t"},
+						EnvVars:     []string{"INFLUX_TOKEN"},
+						DefaultText: "auto-generated",
+					},
+					&cli.StringFlag{
+						Name:    "org",
+						Usage:   "Name of initial organization to create",
+						Aliases: []string{"o"},
+					},
+					&cli.StringFlag{
+						Name:    "bucket",
+						Usage:   "Name of initial bucket to create",
+						Aliases: []string{"b"},
+					},
+					&cli.StringFlag{
+						Name:        "retention",
+						Usage:       "Duration initial bucket will retain data, or 0 for infinite",
+						Aliases:     []string{"r"},
+						DefaultText: "infinite",
+					},
+					&cli.BoolFlag{
+						Name:    "force",
+						Usage:   "Skip confirmation prompt",
+						Aliases: []string{"f"},
+					},
+					&cli.StringFlag{
+						Name:    "name",
+						Usage:   "Name to set on CLI config generated for the InfluxDB instance, required if other configs exist",
+						Aliases: []string{"n"},
+					},
+					&cli.BoolFlag{
+						Name:    printJsonFlag,
+						Usage:   "Output data as JSON",
+						EnvVars: []string{"INFLUX_OUTPUT_JSON"},
+					},
+					&cli.BoolFlag{
+						Name:    hideHeadersFlag,
+						Usage:   "Hide the table headers in output data",
+						EnvVars: []string{"INFLUX_HIDE_HEADERS"},
+					},
+				),
+				Action: func(ctx *cli.Context) error {
+					cli, err := newCli(ctx)
+					if err != nil {
+						return err
+					}
+					client, err := newApiClient(ctx, cli, false)
+					if err != nil {
+						return err
+					}
+					return cli.Setup(ctx.Context, client.SetupApi, &internal.SetupParams{
+						Username:   ctx.String("username"),
+						Password:   ctx.String("password"),
+						AuthToken:  ctx.String(tokenFlag),
+						Org:        ctx.String("org"),
+						Bucket:     ctx.String("bucket"),
+						Retention:  ctx.String("retention"),
+						Force:      ctx.Bool("force"),
+						ConfigName: ctx.String("name"),
+					})
 				},
 			},
 		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Error: %v", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 }
