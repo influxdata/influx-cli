@@ -43,7 +43,7 @@ func DefaultPath() (string, error) {
 		}
 		dir = wd
 	}
-	dir = filepath.Join(dir, ".influxdbv2", "config")
+	dir = filepath.Join(dir, ".influxdbv2", "configs")
 
 	return dir, nil
 }
