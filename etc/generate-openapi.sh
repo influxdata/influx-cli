@@ -24,5 +24,5 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
 
   # Clean up the generated code.
   cd "${ROOT_DIR}"
-  make fmt
+  >/dev/null make fmt
 )
