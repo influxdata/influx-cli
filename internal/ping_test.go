@@ -12,24 +12,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type pingTestClient struct {
-	GetHealthExecuteFn func(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error)
-}
-
-func (tc *pingTestClient) GetHealth(context.Context) api.ApiGetHealthRequest {
-	return api.ApiGetHealthRequest{
-		ApiService: tc,
-	}
-}
-
-func (tc *pingTestClient) GetHealthExecute(req api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
-	return tc.GetHealthExecuteFn(req)
-}
-
 func Test_PingSuccess(t *testing.T) {
 	t.Parallel()
 
-	client := &pingTestClient{
+	client := &mock.HealthApi{
 		GetHealthExecuteFn: func(req api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
 			require.Nil(t, req.GetZapTraceSpan())
 			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_PASS}, nil, nil
@@ -47,7 +33,7 @@ func Test_PingSuccessWithTracing(t *testing.T) {
 	t.Parallel()
 
 	traceId := "trace-id"
-	client := &pingTestClient{
+	client := &mock.HealthApi{
 		GetHealthExecuteFn: func(req api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
 			require.NotNil(t, req.GetZapTraceSpan())
 			require.Equal(t, traceId, *req.GetZapTraceSpan())
@@ -66,7 +52,7 @@ func Test_PingFailedRequest(t *testing.T) {
 	t.Parallel()
 
 	e := "the internet is down"
-	client := &pingTestClient{
+	client := &mock.HealthApi{
 		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
 			return api.HealthCheck{}, nil, errors.New(e)
 		},
@@ -82,7 +68,7 @@ func Test_PingFailedStatus(t *testing.T) {
 	t.Parallel()
 
 	e := "I broke"
-	client := &pingTestClient{
+	client := &mock.HealthApi{
 		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
 			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Message: &e}, nil, nil
 		},
@@ -98,7 +84,7 @@ func Test_PingFailedStatusNoMessage(t *testing.T) {
 	t.Parallel()
 
 	name := "foo"
-	client := &pingTestClient{
+	client := &mock.HealthApi{
 		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
 			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Name: name}, nil, nil
 		},
