@@ -52,7 +52,6 @@ func (r ApiGetHealthRequest) ZapTraceSpan(zapTraceSpan string) ApiGetHealthReque
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-
 func (r ApiGetHealthRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
@@ -147,7 +146,7 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-			newErr.model = v
+			newErr.model = &v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
@@ -156,7 +155,7 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 			newErr.error = err.Error()
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		newErr.model = v
+		newErr.model = &v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 

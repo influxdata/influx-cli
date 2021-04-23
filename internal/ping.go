@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/influxdata/influx-cli/v2/internal/api"
 )
@@ -13,21 +12,10 @@ func (c *CLI) Ping(ctx context.Context, client api.HealthApi) error {
 	if c.TraceId != "" {
 		req = req.ZapTraceSpan(c.TraceId)
 	}
-	resp, _, err := client.GetHealthExecute(req)
-	if err != nil {
-		return fmt.Errorf("failed to make health check request: %w", err)
+	if _, _, err := client.GetHealthExecute(req); err != nil {
+		return err
 	}
 
-	if resp.Status == api.HEALTHCHECKSTATUS_FAIL {
-		var message string
-		if resp.Message != nil {
-			message = *resp.Message
-		} else {
-			message = fmt.Sprintf("check %s failed", resp.Name)
-		}
-		return fmt.Errorf("health check failed: %s", message)
-	}
-
-	_, err = c.StdIO.Write([]byte("OK\n"))
+	_, err := c.StdIO.Write([]byte("OK\n"))
 	return err
 }
