@@ -101,7 +101,7 @@ func (state *CsvToLineReader) Read(p []byte) (n int, err error) {
 	}
 	// state3: fill buffer with data to read from
 	for {
-		// Open each record from csv
+		// Read each record from csv
 		row, err := state.csv.Read()
 		state.LineNumber = state.lineReader.LastLineNumber
 		if parseError, ok := err.(*csv.ParseError); ok && parseError.Err == csv.ErrFieldCount {
