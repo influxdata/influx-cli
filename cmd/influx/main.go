@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/stdio"
+	"github.com/influxdata/influx-cli/v2/pkg/signals"
 	"github.com/urfave/cli/v2"
 )
 
@@ -101,6 +103,11 @@ func newApiClient(ctx *cli.Context, cli *internal.CLI, injectToken bool) (*api.A
 	return api.NewAPIClient(apiConfig), nil
 }
 
+// standardCtx returns a context that will cancel on SIGINT and SIGTERM.
+func standardCtx(ctx *cli.Context) context.Context {
+	return signals.WithStandardSignals(ctx.Context)
+}
+
 func main() {
 	if len(date) == 0 {
 		date = time.Now().UTC().Format(time.RFC3339)
@@ -182,7 +189,7 @@ func main() {
 					if err != nil {
 						return err
 					}
-					return cli.Ping(ctx.Context, client.HealthApi)
+					return cli.Ping(standardCtx(ctx), client.HealthApi)
 				},
 			},
 			{
@@ -253,7 +260,7 @@ func main() {
 					if err != nil {
 						return err
 					}
-					return cli.Setup(ctx.Context, client.SetupApi, &internal.SetupParams{
+					return cli.Setup(standardCtx(ctx), client.SetupApi, &internal.SetupParams{
 						Username:   ctx.String("username"),
 						Password:   ctx.String("password"),
 						AuthToken:  ctx.String(tokenFlag),
