@@ -85,14 +85,6 @@ var commonFlagsNoToken = []cli.Flag{
 	},
 }
 
-// Most commands use this form of the token flag.
-//var commonFlags = append(commonFlagsNoToken, &cli.StringFlag{
-//	Name:    tokenFlag,
-//	Usage:   "Authentication token",
-//	Aliases: []string{"t"},
-//	EnvVars: []string{"INFLUX_TOKEN"},
-//})
-
 // newCli builds a CLI core that reads from stdin, writes to stdout/stderr, manages a local config store,
 // and optionally tracks a trace ID specified over the CLI.
 func newCli(ctx *cli.Context) (*internal.CLI, error) {
