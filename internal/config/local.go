@@ -148,11 +148,6 @@ type baseRW struct {
 	w io.Writer
 }
 
-// ParseActiveConfig returns the active config from the reader.
-func ParseActiveConfig(r io.Reader) (Config, error) {
-	return (baseRW{r: r}).parseActiveConfig(true)
-}
-
 // parsePreviousActive return the previous active config from the reader
 func (s baseRW) parsePreviousActive() (Config, error) {
 	return s.parseActiveConfig(false)
@@ -267,6 +262,7 @@ func (s ioStore) ListConfigs() (Configs, error) {
 	if err != nil {
 		return make(Configs), nil
 	}
+	defer r.Close()
 	return (baseRW{r: r}).ListConfigs()
 }
 
@@ -276,6 +272,7 @@ func (s ioStore) parsePreviousActive() (Config, error) {
 	if err != nil {
 		return Config{}, nil
 	}
+	defer r.Close()
 	return (baseRW{r: r}).parsePreviousActive()
 }
 
