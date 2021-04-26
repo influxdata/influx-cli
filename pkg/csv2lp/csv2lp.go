@@ -34,7 +34,7 @@ func CreateRowColumnError(line int, columnLabel string, err error) CsvLineError 
 	}
 }
 
-// CsvToLineReader represents state of transformation from csv data to lien protocol reader
+// CsvToLineReader represents state of transformation from csv data to line protocol reader
 type CsvToLineReader struct {
 	// csv reading
 	csv *csv.Reader
