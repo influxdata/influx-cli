@@ -12,6 +12,7 @@ package api
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
 	"encoding/json"
 	"encoding/xml"
@@ -297,7 +298,14 @@ func (c *APIClient) prepareRequest(
 
 	// Generate a new request
 	if body != nil {
-		localVarRequest, err = http.NewRequest(method, url.String(), body)
+		var b io.Reader = body
+		if enc, ok := headerParams["Content-Encoding"]; ok && enc == "gzip" {
+			b, err = compressWithGzip(b)
+			if err != nil {
+				return nil, err
+			}
+		}
+		localVarRequest, err = http.NewRequest(method, url.String(), b)
 	} else {
 		localVarRequest, err = http.NewRequest(method, url.String(), nil)
 	}
@@ -427,6 +435,20 @@ func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err e
 	return bodyBuf, nil
 }
 
+func compressWithGzip(data io.Reader) (io.Reader, error) {
+	pr, pw := io.Pipe()
+	gw := gzip.NewWriter(pw)
+	var err error
+
+	go func() {
+		_, err = io.Copy(gw, data)
+		gw.Close()
+		pw.Close()
+	}()
+
+	return pr, err
+}
+
 // detectContentType method is used to figure out `Request.Body` content type for request header
 func detectContentType(body interface{}) string {
 	contentType := "text/plain; charset=utf-8"
@@ -506,11 +528,14 @@ func strlen(s string) int {
 type GenericOpenAPIError struct {
 	body  []byte
 	error string
-	model interface{}
+	model error
 }
 
 // Error returns non-empty string if there was an error.
 func (e GenericOpenAPIError) Error() string {
+	if e.model != nil {
+		return e.model.Error()
+	}
 	return e.error
 }
 

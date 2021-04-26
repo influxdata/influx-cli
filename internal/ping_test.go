@@ -70,7 +70,7 @@ func Test_PingFailedStatus(t *testing.T) {
 	e := "I broke"
 	client := &mock.HealthApi{
 		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
-			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Message: &e}, nil, nil
+			return api.HealthCheck{}, nil, &api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Message: &e}
 		},
 	}
 
@@ -86,7 +86,7 @@ func Test_PingFailedStatusNoMessage(t *testing.T) {
 	name := "foo"
 	client := &mock.HealthApi{
 		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
-			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Name: name}, nil, nil
+			return api.HealthCheck{}, nil, &api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Name: name}
 		},
 	}
 

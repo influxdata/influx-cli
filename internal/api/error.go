@@ -5,7 +5,8 @@ import (
 	"strings"
 )
 
-// Extension to let our API error type be used as a "standard" error.
+// Extensions to let our API error types be used as "standard" errors.
+
 func (o *Error) Error() string {
 	if o.Message != "" && o.Err != nil {
 		var b strings.Builder
@@ -19,4 +20,18 @@ func (o *Error) Error() string {
 		return *o.Err
 	}
 	return fmt.Sprintf("<%s>", o.Code)
+}
+
+func (o *HealthCheck) Error() string {
+	if o.Status == HEALTHCHECKSTATUS_PASS {
+		// Make sure we aren't misusing HealthCheck responses.
+		panic("successful healthcheck used as an error!")
+	}
+	var message string
+	if o.Message != nil {
+		message = *o.Message
+	} else {
+		message = fmt.Sprintf("check %s failed", o.Name)
+	}
+	return fmt.Sprintf("health check failed: %s", message)
 }
