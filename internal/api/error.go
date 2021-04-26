@@ -35,3 +35,11 @@ func (o *HealthCheck) Error() string {
 	}
 	return fmt.Sprintf("health check failed: %s", message)
 }
+
+func (o *LineProtocolError) Error() string {
+	return o.Message
+}
+
+func (o *LineProtocolLengthError) Error() string {
+	return o.Message
+}
