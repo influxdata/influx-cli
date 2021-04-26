@@ -25,7 +25,7 @@ func (mc *multiCloser) Close() error {
 	return err
 }
 
-//MultiCloser creates am io.Closer that silently closes supplied io.Closer instances
+//MultiCloser creates an io.Closer that silently closes supplied io.Closer instances
 func MultiCloser(closers ...io.Closer) io.Closer {
 	c := make([]io.Closer, len(closers))
 	copy(c, closers)
