@@ -88,7 +88,7 @@ func (b *BufferBatcher) read(ctx context.Context, r io.Reader, lines chan<- []by
 }
 
 // finishes when the lines channel is closed or context is done.
-// if an error occurs while writing data to the write service, the error is send in the
+// if an error occurs while writing data to the write service, the error is sent in the
 // errC channel and the function returns.
 func (b *BufferBatcher) write(ctx context.Context, writeFn func(batch []byte) error, lines <-chan []byte, errC chan<- error) {
 	flushInterval := b.MaxFlushInterval
