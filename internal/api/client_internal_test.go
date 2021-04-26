@@ -12,7 +12,7 @@ import (
 
 func TestNoGzipRequest(t *testing.T) {
 	client := APIClient{cfg: NewConfiguration()}
-	body := []byte("This should get gzipped")
+	body := []byte("This should not get gzipped")
 	req, err := client.prepareRequest(
 		context.Background(),
 		"/foo", "POST", body,
