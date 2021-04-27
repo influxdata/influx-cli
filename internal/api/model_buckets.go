@@ -16,8 +16,8 @@ import (
 
 // Buckets struct for Buckets
 type Buckets struct {
-	Links   *BucketsLinks `json:"links,omitempty"`
-	Buckets *[]Bucket     `json:"buckets,omitempty"`
+	Links   *Links    `json:"links,omitempty"`
+	Buckets *[]Bucket `json:"buckets,omitempty"`
 }
 
 // NewBuckets instantiates a new Buckets object
@@ -38,9 +38,9 @@ func NewBucketsWithDefaults() *Buckets {
 }
 
 // GetLinks returns the Links field value if set, zero value otherwise.
-func (o *Buckets) GetLinks() BucketsLinks {
+func (o *Buckets) GetLinks() Links {
 	if o == nil || o.Links == nil {
-		var ret BucketsLinks
+		var ret Links
 		return ret
 	}
 	return *o.Links
@@ -48,7 +48,7 @@ func (o *Buckets) GetLinks() BucketsLinks {
 
 // GetLinksOk returns a tuple with the Links field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *Buckets) GetLinksOk() (*BucketsLinks, bool) {
+func (o *Buckets) GetLinksOk() (*Links, bool) {
 	if o == nil || o.Links == nil {
 		return nil, false
 	}
@@ -64,8 +64,8 @@ func (o *Buckets) HasLinks() bool {
 	return false
 }
 
-// SetLinks gets a reference to the given BucketsLinks and assigns it to the Links field.
-func (o *Buckets) SetLinks(v BucketsLinks) {
+// SetLinks gets a reference to the given Links and assigns it to the Links field.
+func (o *Buckets) SetLinks(v Links) {
 	o.Links = &v
 }
 
