@@ -66,9 +66,6 @@ func (c *CLI) BucketsCreate(ctx context.Context, clients *BucketsClients, params
 			name = c.ActiveConfig.Org
 		}
 		lookupReq := clients.OrgApi.GetOrgs(ctx).Org(name)
-		if c.TraceId != "" {
-			lookupReq = lookupReq.ZapTraceSpan(c.TraceId)
-		}
 		resp, _, err := clients.OrgApi.GetOrgsExecute(lookupReq)
 		if err != nil {
 			return fmt.Errorf("failed to lookup ID of org %q: %w", name, err)
@@ -81,9 +78,6 @@ func (c *CLI) BucketsCreate(ctx context.Context, clients *BucketsClients, params
 	}
 
 	req := clients.BucketApi.PostBuckets(ctx).PostBucketRequest(reqBody)
-	if c.TraceId != "" {
-		req = req.ZapTraceSpan(c.TraceId)
-	}
 	bucket, _, err := clients.BucketApi.PostBucketsExecute(req)
 	if err != nil {
 		return fmt.Errorf("failed to create bucket: %w", err)
@@ -105,9 +99,6 @@ func (c *CLI) BucketsList(ctx context.Context, clients *BucketsClients, params *
 	}
 
 	req := clients.BucketApi.GetBuckets(ctx)
-	if c.TraceId != "" {
-		req = req.ZapTraceSpan(c.TraceId)
-	}
 	if params.OrgID != "" {
 		req = req.OrgID(params.OrgID)
 	}
@@ -172,10 +163,6 @@ func (c *CLI) BucketsUpdate(ctx context.Context, client api.BucketsApi, params *
 	}
 
 	req := client.PatchBucketsID(ctx, params.ID).PatchBucketRequest(reqBody)
-	if c.TraceId != "" {
-		req = req.ZapTraceSpan(c.TraceId)
-	}
-
 	bucket, _, err := client.PatchBucketsIDExecute(req)
 	if err != nil {
 		return fmt.Errorf("failed to update bucket %q: %w", params.ID, err)
@@ -198,9 +185,6 @@ func (c *CLI) BucketsDelete(ctx context.Context, clients *BucketsClients, params
 			return errors.New("must specify org ID or org name when deleting bucket by name")
 		}
 		req := clients.BucketApi.GetBuckets(ctx).Name(params.Name)
-		if c.TraceId != "" {
-			req = req.ZapTraceSpan(c.TraceId)
-		}
 		if params.OrgID != "" {
 			req = req.OrgID(params.OrgID)
 		}
@@ -223,18 +207,12 @@ func (c *CLI) BucketsDelete(ctx context.Context, clients *BucketsClients, params
 	}
 
 	getReq := clients.BucketApi.GetBucketsID(ctx, id)
-	if c.TraceId != "" {
-		getReq = getReq.ZapTraceSpan(c.TraceId)
-	}
 	bucket, _, err := clients.BucketApi.GetBucketsIDExecute(getReq)
 	if err != nil {
 		return fmt.Errorf("failed to find bucket with ID %q: %w", id, err)
 	}
 
 	req := clients.BucketApi.DeleteBucketsID(ctx, id)
-	if c.TraceId != "" {
-		req = req.ZapTraceSpan(c.TraceId)
-	}
 	if _, err := clients.BucketApi.DeleteBucketsIDExecute(req); err != nil {
 		return fmt.Errorf("failed to delete bucket with ID %q: %w", id, err)
 	}
