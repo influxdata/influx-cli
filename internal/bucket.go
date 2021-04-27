@@ -144,7 +144,7 @@ type BucketsUpdateParams struct {
 	ShardGroupDuration string
 }
 
-func (c *CLI) BucketsUpdate(ctx context.Context, clients *BucketsClients, params *BucketsUpdateParams) error {
+func (c *CLI) BucketsUpdate(ctx context.Context, client api.BucketsApi, params *BucketsUpdateParams) error {
 	reqBody := api.PatchBucketRequest{}
 	if params.Name != "" {
 		reqBody.SetName(params.Name)
@@ -171,12 +171,12 @@ func (c *CLI) BucketsUpdate(ctx context.Context, clients *BucketsClients, params
 		reqBody.SetRetentionRules([]api.PatchRetentionRule{*patchRule})
 	}
 
-	req := clients.BucketApi.PatchBucketsID(ctx, params.ID).PatchBucketRequest(reqBody)
+	req := client.PatchBucketsID(ctx, params.ID).PatchBucketRequest(reqBody)
 	if c.TraceId != "" {
 		req = req.ZapTraceSpan(c.TraceId)
 	}
 
-	bucket, _, err := clients.BucketApi.PatchBucketsIDExecute(req)
+	bucket, _, err := client.PatchBucketsIDExecute(req)
 	if err != nil {
 		return fmt.Errorf("failed to update bucket %q: %w", params.ID, err)
 	}

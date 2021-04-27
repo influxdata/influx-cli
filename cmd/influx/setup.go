@@ -53,16 +53,6 @@ var setupCmd = cli.Command{
 			Usage:   "Name to set on CLI config generated for the InfluxDB instance, required if other configs exist",
 			Aliases: []string{"n"},
 		},
-		&cli.BoolFlag{
-			Name:    printJsonFlag,
-			Usage:   "Output data as JSON",
-			EnvVars: []string{"INFLUX_OUTPUT_JSON"},
-		},
-		&cli.BoolFlag{
-			Name:    hideHeadersFlag,
-			Usage:   "Hide the table headers in output data",
-			EnvVars: []string{"INFLUX_HIDE_HEADERS"},
-		},
 	),
 	Action: func(ctx *cli.Context) error {
 		cli, err := newCli(ctx)

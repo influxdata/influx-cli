@@ -52,8 +52,8 @@ var (
 //
 // We replicate the pattern from the old CLI so existing scripts and docs stay valid.
 
-// Some commands (i.e. `setup` use custom help-text for the token flag).
-var commonFlagsNoToken = []cli.Flag{
+// Flags used by all CLI commands.
+var coreFlags = []cli.Flag{
 	&cli.StringFlag{
 		Name:    hostFlag,
 		Usage:   "HTTP address of InfluxDB",
@@ -85,13 +85,30 @@ var commonFlagsNoToken = []cli.Flag{
 	},
 }
 
-// Most commands use this form of the token flag.
-var commonFlags = append(commonFlagsNoToken, &cli.StringFlag{
+// Flags used by commands that display API resources to the user.
+var printFlags = []cli.Flag{
+	&cli.BoolFlag{
+		Name:    printJsonFlag,
+		Usage:   "Output data as JSON",
+		EnvVars: []string{"INFLUX_OUTPUT_JSON"},
+	},
+	&cli.BoolFlag{
+		Name:    hideHeadersFlag,
+		Usage:   "Hide the table headers in output data",
+		EnvVars: []string{"INFLUX_HIDE_HEADERS"},
+	},
+}
+// Flag used by commands that hit an authenticated API.
+var commonTokenFlag = cli.StringFlag{
 	Name:    tokenFlag,
 	Usage:   "Authentication token",
 	Aliases: []string{"t"},
 	EnvVars: []string{"INFLUX_TOKEN"},
-})
+}
+
+var commonFlagsNoToken = append(coreFlags, printFlags...)
+var commonFlagsNoPrint = append(coreFlags, &commonTokenFlag)
+var commonFlags = append(commonFlagsNoToken, &commonTokenFlag)
 
 // newCli builds a CLI core that reads from stdin, writes to stdout/stderr, manages a local config store,
 // and optionally tracks a trace ID specified over the CLI.
@@ -181,6 +198,7 @@ var app = cli.App{
 		&pingCmd,
 		&setupCmd,
 		&writeCmd,
+		&bucketCmd,
 	},
 }
 

@@ -15,7 +15,7 @@ import (
 )
 
 var writeFlags = append(
-	commonFlags,
+	commonFlagsNoPrint,
 	&cli.StringFlag{
 		Name:    "bucket-id",
 		Usage:   "The ID of destination bucket",
