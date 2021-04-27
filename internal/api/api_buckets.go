@@ -562,11 +562,11 @@ func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucke
 }
 
 type ApiPatchBucketsIDRequest struct {
-	ctx          _context.Context
-	ApiService   BucketsApi
-	bucketID     string
-	bucket       *Bucket
-	zapTraceSpan *string
+	ctx                _context.Context
+	ApiService         BucketsApi
+	bucketID           string
+	patchBucketRequest *PatchBucketRequest
+	zapTraceSpan       *string
 }
 
 func (r ApiPatchBucketsIDRequest) BucketID(bucketID string) ApiPatchBucketsIDRequest {
@@ -577,12 +577,12 @@ func (r ApiPatchBucketsIDRequest) GetBucketID() string {
 	return r.bucketID
 }
 
-func (r ApiPatchBucketsIDRequest) Bucket(bucket Bucket) ApiPatchBucketsIDRequest {
-	r.bucket = &bucket
+func (r ApiPatchBucketsIDRequest) PatchBucketRequest(patchBucketRequest PatchBucketRequest) ApiPatchBucketsIDRequest {
+	r.patchBucketRequest = &patchBucketRequest
 	return r
 }
-func (r ApiPatchBucketsIDRequest) GetBucket() *Bucket {
-	return r.bucket
+func (r ApiPatchBucketsIDRequest) GetPatchBucketRequest() *PatchBucketRequest {
+	return r.patchBucketRequest
 }
 
 func (r ApiPatchBucketsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiPatchBucketsIDRequest {
@@ -636,8 +636,8 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
-	if r.bucket == nil {
-		return localVarReturnValue, nil, reportError("bucket is required and must be specified")
+	if r.patchBucketRequest == nil {
+		return localVarReturnValue, nil, reportError("patchBucketRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -661,7 +661,7 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
 	// body params
-	localVarPostBody = r.bucket
+	localVarPostBody = r.patchBucketRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
