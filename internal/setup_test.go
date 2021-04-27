@@ -152,69 +152,6 @@ func Test_SetupSuccessNoninteractive(t *testing.T) {
 	require.Regexp(t, fmt.Sprintf("%s\\s+%s\\s+%s", params.Username, params.Org, params.Bucket), data)
 }
 
-func Test_SetupSuccessNoninteractiveWithTracing(t *testing.T) {
-	t.Parallel()
-
-	traceId := "trace-id"
-	retentionSecs := int64(duration.Week.Seconds())
-	params := internal.SetupParams{
-		Username:   "user",
-		Password:   "mysecretpassword",
-		AuthToken:  "mytoken",
-		Org:        "org",
-		Bucket:     "bucket",
-		Retention:  fmt.Sprintf("%ds", retentionSecs),
-		Force:      true,
-		ConfigName: "my-config",
-	}
-	resp := api.OnboardingResponse{
-		Auth:   &api.Authorization{Token: &params.AuthToken},
-		Org:    &api.Organization{Name: params.Org},
-		User:   &api.UserResponse{Name: params.Username},
-		Bucket: &api.Bucket{Name: params.Bucket},
-	}
-	client := &mock.SetupApi{
-		GetSetupExecuteFn: func(req api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
-			require.Equal(t, traceId, *req.GetZapTraceSpan())
-			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil, nil
-		},
-		PostSetupExecuteFn: func(req api.ApiPostSetupRequest) (api.OnboardingResponse, *http.Response, error) {
-			require.Equal(t, traceId, *req.GetZapTraceSpan())
-			body := req.GetOnboardingRequest()
-			require.Equal(t, params.Username, body.Username)
-			require.Equal(t, params.Password, *body.Password)
-			require.Equal(t, params.AuthToken, *body.Token)
-			require.Equal(t, params.Org, body.Org)
-			require.Equal(t, params.Bucket, body.Bucket)
-			require.Equal(t, retentionSecs, *body.RetentionPeriodSeconds)
-			return resp, nil, nil
-		},
-	}
-
-	host := "fake-host"
-	configSvc := &mock.ConfigService{
-		ListConfigsFn: func() (config.Configs, error) {
-			return nil, nil
-		},
-		CreateConfigFn: func(cfg config.Config) (config.Config, error) {
-			require.Equal(t, params.ConfigName, cfg.Name)
-			require.Equal(t, params.AuthToken, cfg.Token)
-			require.Equal(t, host, cfg.Host)
-			require.Equal(t, params.Org, cfg.Org)
-			return cfg, nil
-		},
-	}
-	stdio := mock.NewMockStdio(nil, true)
-	cli := &internal.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio, TraceId: traceId}
-	require.NoError(t, cli.Setup(context.Background(), client, &params))
-
-	outLines := strings.Split(strings.TrimSpace(stdio.Stdout()), "\n")
-	require.Len(t, outLines, 2)
-	header, data := outLines[0], outLines[1]
-	require.Regexp(t, "User\\s+Organization\\s+Bucket", header)
-	require.Regexp(t, fmt.Sprintf("%s\\s+%s\\s+%s", params.Username, params.Org, params.Bucket), data)
-}
-
 func Test_SetupSuccessInteractive(t *testing.T) {
 	t.Parallel()
 

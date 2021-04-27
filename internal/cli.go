@@ -12,7 +12,6 @@ import (
 type CLI struct {
 	StdIO stdio.StdIO
 
-	TraceId          string
 	HideTableHeaders bool
 	PrintAsJSON      bool
 

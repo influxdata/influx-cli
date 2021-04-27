@@ -17,32 +17,12 @@ func Test_PingSuccess(t *testing.T) {
 
 	client := &mock.HealthApi{
 		GetHealthExecuteFn: func(req api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
-			require.Nil(t, req.GetZapTraceSpan())
 			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_PASS}, nil, nil
 		},
 	}
 
 	stdio := mock.NewMockStdio(nil, true)
 	cli := &internal.CLI{StdIO: stdio}
-
-	require.NoError(t, cli.Ping(context.Background(), client))
-	require.Equal(t, "OK\n", stdio.Stdout())
-}
-
-func Test_PingSuccessWithTracing(t *testing.T) {
-	t.Parallel()
-
-	traceId := "trace-id"
-	client := &mock.HealthApi{
-		GetHealthExecuteFn: func(req api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
-			require.NotNil(t, req.GetZapTraceSpan())
-			require.Equal(t, traceId, *req.GetZapTraceSpan())
-			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_PASS}, nil, nil
-		},
-	}
-
-	stdio := mock.NewMockStdio(nil, true)
-	cli := &internal.CLI{TraceId: traceId, StdIO: stdio}
 
 	require.NoError(t, cli.Ping(context.Background(), client))
 	require.Equal(t, "OK\n", stdio.Stdout())

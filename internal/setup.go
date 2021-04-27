@@ -45,9 +45,6 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 
 	// Check if setup is even allowed.
 	checkReq := client.GetSetup(ctx)
-	if c.TraceId != "" {
-		checkReq = checkReq.ZapTraceSpan(c.TraceId)
-	}
 	checkResp, _, err := client.GetSetupExecute(checkReq)
 	if err != nil {
 		return fmt.Errorf("failed to check if already set up: %w", err)
@@ -62,9 +59,6 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 		return err
 	}
 	setupReq := client.PostSetup(ctx).OnboardingRequest(setupBody)
-	if c.TraceId != "" {
-		setupReq = setupReq.ZapTraceSpan(c.TraceId)
-	}
 	resp, _, err := client.PostSetupExecute(setupReq)
 	if err != nil {
 		return fmt.Errorf("failed to setup instance: %w", err)

@@ -109,7 +109,7 @@ func TestWriteByNames(t *testing.T) {
 		BucketName: "my-bucket",
 		Precision:  api.WRITEPRECISION_US,
 	}
-	cli := internal.CLI{TraceId: "my-trace-id", ActiveConfig: config.Config{Org: "my-default-org"}}
+	cli := internal.CLI{ActiveConfig: config.Config{Org: "my-default-org"}}
 
 	var writtenLines []string
 	client := mock.WriteApi{
@@ -118,7 +118,6 @@ func TestWriteByNames(t *testing.T) {
 			require.Equal(t, params.OrgName, *req.GetOrg())
 			require.Equal(t, params.BucketName, *req.GetBucket())
 			require.Equal(t, params.Precision, *req.GetPrecision())
-			require.Equal(t, cli.TraceId, *req.GetZapTraceSpan())
 
 			// Make sure the body is properly marked for compression, and record what was sent.
 			require.Equal(t, "gzip", *req.GetContentEncoding())
