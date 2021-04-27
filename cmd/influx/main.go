@@ -116,7 +116,6 @@ func newCli(ctx *cli.Context) (*internal.CLI, error) {
 
 	return &internal.CLI{
 		StdIO:            stdio.TerminalStdio,
-		TraceId:          ctx.String(traceIdFlag),
 		PrintAsJSON:      ctx.Bool(printJsonFlag),
 		HideTableHeaders: ctx.Bool(hideHeadersFlag),
 		ActiveConfig:     activeConfig,
@@ -153,6 +152,15 @@ func newApiClient(ctx *cli.Context, cli *internal.CLI, injectToken bool) (*api.A
 	apiConfig.HTTPClient = &http.Client{Transport: clientTransport}
 	if injectToken {
 		apiConfig.DefaultHeader["Authorization"] = fmt.Sprintf("Token %s", cfg.Token)
+	}
+	if ctx.IsSet(traceIdFlag) {
+		// NOTE: This is circumventing our codegen. If the header we use for tracing ever changes,
+		// we'll need to manually update the string here to match.
+		//
+		// The alternative is to pass the trace ID to the business logic for every CLI command, and
+		// use codegen'd logic to set the header on every HTTP request. Early versions of the CLI
+		// used that technique, and we found it to be error-prone and easy to forget during testing.
+		apiConfig.DefaultHeader["Zap-Trace-Span"] = ctx.String(traceIdFlag)
 	}
 	apiConfig.Debug = ctx.Bool(httpDebugFlag)
 

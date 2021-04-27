@@ -56,9 +56,6 @@ func (c *CLI) Write(ctx context.Context, clients *WriteClients, params *WritePar
 
 	writeBatch := func(batch []byte) error {
 		req := clients.Client.PostWrite(ctx).Body(batch).ContentEncoding("gzip").Precision(params.Precision)
-		if c.TraceId != "" {
-			req = req.ZapTraceSpan(c.TraceId)
-		}
 		if params.BucketID != "" {
 			req = req.Bucket(params.BucketID)
 		} else {
