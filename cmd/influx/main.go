@@ -98,6 +98,7 @@ var printFlags = []cli.Flag{
 		EnvVars: []string{"INFLUX_HIDE_HEADERS"},
 	},
 }
+
 // Flag used by commands that hit an authenticated API.
 var commonTokenFlag = cli.StringFlag{
 	Name:    tokenFlag,

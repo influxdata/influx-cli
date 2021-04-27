@@ -83,8 +83,8 @@ var bucketCmd = cli.Command{
 					Aliases: []string{"i"},
 				},
 				&cli.StringFlag{
-					Name:  "name",
-					Usage: "The bucket name, org or org-id will be required by choosing this",
+					Name:    "name",
+					Usage:   "The bucket name, org or org-id will be required by choosing this",
 					Aliases: []string{"n"},
 				},
 				&cli.StringFlag{
