@@ -237,6 +237,7 @@ type ApiGetBucketsRequest struct {
 	org          *string
 	orgID        *string
 	name         *string
+	id           *string
 }
 
 func (r ApiGetBucketsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetBucketsRequest {
@@ -293,6 +294,14 @@ func (r ApiGetBucketsRequest) Name(name string) ApiGetBucketsRequest {
 }
 func (r ApiGetBucketsRequest) GetName() *string {
 	return r.name
+}
+
+func (r ApiGetBucketsRequest) Id(id string) ApiGetBucketsRequest {
+	r.id = &id
+	return r
+}
+func (r ApiGetBucketsRequest) GetId() *string {
+	return r.id
 }
 
 func (r ApiGetBucketsRequest) Execute() (Buckets, *_nethttp.Response, error) {
@@ -353,6 +362,9 @@ func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, 
 	}
 	if r.name != nil {
 		localVarQueryParams.Add("name", parameterToString(*r.name, ""))
+	}
+	if r.id != nil {
+		localVarQueryParams.Add("id", parameterToString(*r.id, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}

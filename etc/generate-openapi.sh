@@ -4,7 +4,7 @@ declare -r ETC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 declare -r ROOT_DIR="$(dirname ${ETC_DIR})"
 
 declare -r GENERATOR_DOCKER_IMG=openapitools/openapi-generator-cli:v5.1.0
-declare -r OPENAPI_COMMIT=e42f5247189feb3730eb136939b2ccc44ee935af
+declare -r OPENAPI_COMMIT=5df066547d7e1eed00a3a34d9ebb6faad6e9e24a
 
 # Download our target API spec.
 # NOTE: openapi-generator supports HTTP references to API docs, but using that feature
