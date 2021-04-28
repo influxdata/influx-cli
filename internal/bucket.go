@@ -228,9 +228,11 @@ type bucketPrintOptions struct {
 
 func (c *CLI) printBuckets(options bucketPrintOptions) error {
 	if c.PrintAsJSON {
-		var v interface{} = options.buckets
-		if v == nil {
+		var v interface{}
+		if options.bucket != nil {
 			v = options.bucket
+		} else {
+			v = options.buckets
 		}
 		return c.PrintJSON(v)
 	}
