@@ -415,6 +415,142 @@ func TestBucketsList(t *testing.T) {
 
 func TestBucketsUpdate(t *testing.T) {
 	t.Parallel()
+
+	var testCases = []struct {
+		name                  string
+		params                internal.BucketsUpdateParams
+		buildBucketUpdateFn   func(*testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error)
+		expectedStdoutPattern string
+	}{
+		{
+			name: "name",
+			params: internal.BucketsUpdateParams{
+				ID:   "123",
+				Name: "cold-storage",
+			},
+			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+					require.Equal(t, "123", req.GetBucketID())
+					body := req.GetPatchBucketRequest()
+					require.Equal(t, "cold-storage", body.GetName())
+					require.Empty(t, body.GetDescription())
+					require.Empty(t, body.GetRetentionRules())
+
+					return api.Bucket{
+						Id:    api.PtrString("123"),
+						Name:  "cold-storage",
+						OrgID: api.PtrString("456"),
+					}, nil, nil
+				}
+			},
+			expectedStdoutPattern: "123\\s+cold-storage\\s+infinite\\s+n/a\\s+456",
+		},
+		{
+			name: "description",
+			params: internal.BucketsUpdateParams{
+				ID:          "123",
+				Description: "a very useful description",
+			},
+			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+					require.Equal(t, "123", req.GetBucketID())
+					body := req.GetPatchBucketRequest()
+					require.Equal(t, "a very useful description", body.GetDescription())
+					require.Empty(t, body.GetName())
+					require.Empty(t, body.GetRetentionRules())
+
+					return api.Bucket{
+						Id:          api.PtrString("123"),
+						Name:        "my-bucket",
+						Description: api.PtrString("a very useful description"),
+						OrgID:       api.PtrString("456"),
+					}, nil, nil
+				}
+			},
+			expectedStdoutPattern: "123\\s+my-bucket\\s+infinite\\s+n/a\\s+456",
+		},
+		{
+			name: "retention",
+			params: internal.BucketsUpdateParams{
+				ID:        "123",
+				Retention: "3w",
+			},
+			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+					require.Equal(t, "123", req.GetBucketID())
+					body := req.GetPatchBucketRequest()
+					require.Len(t, body.GetRetentionRules(), 1)
+					rule := body.GetRetentionRules()[0]
+					require.Nil(t, rule.ShardGroupDurationSeconds)
+					require.Equal(t, int64(3*7*24*3600), rule.GetEverySeconds())
+					require.Nil(t, body.Name)
+					require.Nil(t, body.Description)
+
+					return api.Bucket{
+						Id:    api.PtrString("123"),
+						Name:  "my-bucket",
+						OrgID: api.PtrString("456"),
+						RetentionRules: []api.RetentionRule{
+							{EverySeconds: rule.GetEverySeconds()},
+						},
+					}, nil, nil
+				}
+			},
+			expectedStdoutPattern: "123\\s+my-bucket\\s+504h0m0s\\s+n/a\\s+456",
+		},
+		{
+			name: "shard-group duration",
+			params: internal.BucketsUpdateParams{
+				ID:                 "123",
+				ShardGroupDuration: "10h30m",
+			},
+			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+					require.Equal(t, "123", req.GetBucketID())
+					body := req.GetPatchBucketRequest()
+					require.Len(t, body.GetRetentionRules(), 1)
+					rule := body.GetRetentionRules()[0]
+					require.Nil(t, rule.EverySeconds)
+					require.Equal(t, int64(10*3600 + 30*60), rule.GetShardGroupDurationSeconds())
+					require.Nil(t, body.Name)
+					require.Nil(t, body.Description)
+
+					return api.Bucket{
+						Id:    api.PtrString("123"),
+						Name:  "my-bucket",
+						OrgID: api.PtrString("456"),
+						RetentionRules: []api.RetentionRule{
+							{ShardGroupDurationSeconds: rule.ShardGroupDurationSeconds},
+						},
+					}, nil, nil
+				}
+			},
+			expectedStdoutPattern: "123\\s+my-bucket\\s+infinite\\s+10h30m0s\\s+456",
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			stdio := mock.NewMockStdio(nil, false)
+			cli := internal.CLI{StdIO: stdio}
+			client := mock.BucketsApi{
+				PatchBucketsIDExecuteFn: tc.buildBucketUpdateFn(t),
+			}
+
+			err := cli.BucketsUpdate(context.Background(), &client, &tc.params)
+			require.NoError(t, err)
+			outLines := strings.Split(stdio.Stdout(), "\n")
+			if outLines[len(outLines)-1] == "" {
+				outLines = outLines[:len(outLines)-1]
+			}
+			require.Equal(t, 2, len(outLines))
+			require.Regexp(t, "ID\\s+Name\\s+Retention\\s+Shard group duration\\s+Organization ID", outLines[0])
+			require.Regexp(t, tc.expectedStdoutPattern, outLines[1])
+		})
+	}
 }
 
 func TestBucketsDelete(t *testing.T) {
