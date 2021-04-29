@@ -167,6 +167,26 @@ func TestBucketsCreate(t *testing.T) {
 			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
 		},
 		{
+			name: "no org specified",
+			params: internal.BucketsCreateParams{
+				Name:               "my-bucket",
+				Description:        "my cool bucket",
+				Retention:          "24h",
+				ShardGroupDuration: "1h",
+			},
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
+				return func(req api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
+					return api.Organizations{}, nil, errors.New("shouldn't be called")
+				}
+			},
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+					return api.Bucket{}, nil, errors.New("shouldn't be called")
+				}
+			},
+			expectedInErr: "must specify org ID or org name",
+		},
+		{
 			name: "no such org",
 			params: internal.BucketsCreateParams{
 				Name:               "my-bucket",
@@ -190,6 +210,7 @@ func TestBucketsCreate(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
@@ -225,6 +246,171 @@ func TestBucketsCreate(t *testing.T) {
 
 func TestBucketsList(t *testing.T) {
 	t.Parallel()
+
+	var testCases = []struct {
+		name                   string
+		configOrgName          string
+		params                 internal.BucketsListParams
+		buildBucketLookupFn    func(*testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error)
+		expectedStdoutPatterns []string
+		expectedInErr          string
+	}{
+		{
+			name: "by ID",
+			params: internal.BucketsListParams{
+				ID: "123",
+			},
+			configOrgName: "my-default-org",
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					require.Equal(t, "123", *req.GetId())
+					require.Equal(t, "my-default-org", *req.GetOrg())
+					require.Nil(t, req.GetName())
+					require.Nil(t, req.GetOrgID())
+					return api.Buckets{
+						Buckets: &[]api.Bucket{
+							{
+								Id:    api.PtrString("123"),
+								Name:  "my-bucket",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 3600},
+								},
+							},
+						},
+					}, nil, nil
+				}
+			},
+			expectedStdoutPatterns: []string{
+				"123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+			},
+		},
+		{
+			name: "by name",
+			params: internal.BucketsListParams{
+				Name: "my-bucket",
+			},
+			configOrgName: "my-default-org",
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					require.Equal(t, "my-bucket", *req.GetName())
+					require.Equal(t, "my-default-org", *req.GetOrg())
+					require.Nil(t, req.GetId())
+					require.Nil(t, req.GetOrgID())
+					return api.Buckets{
+						Buckets: &[]api.Bucket{
+							{
+								Id:    api.PtrString("123"),
+								Name:  "my-bucket",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 3600},
+								},
+							},
+						},
+					}, nil, nil
+				}
+			},
+			expectedStdoutPatterns: []string{
+				"123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+			},
+		},
+		{
+			name: "override org by ID",
+			params: internal.BucketsListParams{
+				OrgID: "456",
+			},
+			configOrgName: "my-default-org",
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					require.Equal(t, "456", *req.GetOrgID())
+					require.Nil(t, req.GetId())
+					require.Nil(t, req.GetOrg())
+					require.Nil(t, req.GetOrg())
+					return api.Buckets{}, nil, nil
+				}
+			},
+		},
+		{
+			name: "override org by name",
+			params: internal.BucketsListParams{
+				OrgName: "my-org",
+			},
+			configOrgName: "my-default-org",
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					require.Equal(t, "my-org", *req.GetOrg())
+					require.Nil(t, req.GetId())
+					require.Nil(t, req.GetName())
+					require.Nil(t, req.GetOrgID())
+					return api.Buckets{
+						Buckets: &[]api.Bucket{
+							{
+								Id:    api.PtrString("123"),
+								Name:  "my-bucket",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 3600},
+								},
+							},
+							{
+								Id:    api.PtrString("999"),
+								Name:  "bucket2",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 0, ShardGroupDurationSeconds: api.PtrInt64(60)},
+								},
+							},
+						},
+					}, nil, nil
+				}
+			},
+			expectedStdoutPatterns: []string{
+				"123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+				"999\\s+bucket2\\s+infinite\\s+1m0s\\s+456",
+			},
+		},
+		{
+			name:          "no org specified",
+			expectedInErr: "must specify org ID or org name",
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					return api.Buckets{}, nil, errors.New("shouldn't be called")
+				}
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			stdio := mock.NewMockStdio(nil, false)
+			cli := internal.CLI{ActiveConfig: config.Config{Org: tc.configOrgName}, StdIO: stdio}
+			client := mock.BucketsApi{
+				GetBucketsExecuteFn: tc.buildBucketLookupFn(t),
+			}
+
+			err := cli.BucketsList(context.Background(), &client, &tc.params)
+			if tc.expectedInErr != "" {
+				require.Error(t, err)
+				require.Contains(t, err.Error(), tc.expectedInErr)
+				require.Empty(t, stdio.Stdout())
+				return
+			}
+			require.NoError(t, err)
+			outLines := strings.Split(stdio.Stdout(), "\n")
+			if outLines[len(outLines)-1] == "" {
+				outLines = outLines[:len(outLines)-1]
+			}
+			require.Equal(t, len(tc.expectedStdoutPatterns)+1, len(outLines))
+			require.Regexp(t, "ID\\s+Name\\s+Retention\\s+Shard group duration\\s+Organization ID", outLines[0])
+			for i, pattern := range tc.expectedStdoutPatterns {
+				require.Regexp(t, pattern, outLines[i+1])
+			}
+		})
+	}
 }
 
 func TestBucketsUpdate(t *testing.T) {

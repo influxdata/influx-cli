@@ -158,11 +158,7 @@ var bucketCmd = cli.Command{
 				if err != nil {
 					return err
 				}
-				clients := internal.BucketsClients{
-					BucketApi: client.BucketsApi,
-					OrgApi:    client.OrganizationsApi,
-				}
-				return cli.BucketsList(standardCtx(ctx), &clients, &internal.BucketsListParams{
+				return cli.BucketsList(standardCtx(ctx), client.BucketsApi, &internal.BucketsListParams{
 					ID:      ctx.String("id"),
 					Name:    ctx.String("name"),
 					OrgID:   ctx.String("org-id"),

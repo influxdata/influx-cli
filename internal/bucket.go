@@ -93,12 +93,12 @@ type BucketsListParams struct {
 	ID      string
 }
 
-func (c *CLI) BucketsList(ctx context.Context, clients *BucketsClients, params *BucketsListParams) error {
+func (c *CLI) BucketsList(ctx context.Context, client api.BucketsApi, params *BucketsListParams) error {
 	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return errors.New("must specify org ID or org name")
 	}
 
-	req := clients.BucketApi.GetBuckets(ctx)
+	req := client.GetBuckets(ctx)
 	if params.OrgID != "" {
 		req = req.OrgID(params.OrgID)
 	}
@@ -115,7 +115,7 @@ func (c *CLI) BucketsList(ctx context.Context, clients *BucketsClients, params *
 		req = req.Id(params.ID)
 	}
 
-	buckets, _, err := clients.BucketApi.GetBucketsExecute(req)
+	buckets, _, err := client.GetBucketsExecute(req)
 	if err != nil {
 		return fmt.Errorf("failed to list buckets: %w", err)
 	}
