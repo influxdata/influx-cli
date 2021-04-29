@@ -178,43 +178,49 @@ type BucketsDeleteParams struct {
 	OrgName string
 }
 
-func (c *CLI) BucketsDelete(ctx context.Context, clients *BucketsClients, params *BucketsDeleteParams) error {
-	id := params.ID
-	if id == "" {
+func (c *CLI) BucketsDelete(ctx context.Context, client api.BucketsApi, params *BucketsDeleteParams) error {
+	if params.ID == "" && params.Name == "" {
+		return errors.New("must specify bucket ID or bucket name")
+	}
+
+	var bucket api.Bucket
+	getReq := client.GetBuckets(ctx)
+	if params.ID != "" {
+		getReq = getReq.Id(params.ID)
+	} else {
 		if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 			return errors.New("must specify org ID or org name when deleting bucket by name")
 		}
-		req := clients.BucketApi.GetBuckets(ctx).Name(params.Name)
+		getReq = getReq.Name(params.Name)
 		if params.OrgID != "" {
-			req = req.OrgID(params.OrgID)
+			getReq = getReq.OrgID(params.OrgID)
 		}
 		if params.OrgName != "" {
-			req = req.Org(params.OrgName)
+			getReq = getReq.Org(params.OrgName)
 		}
 		if params.OrgID == "" && params.OrgName == "" {
-			req = req.Org(c.ActiveConfig.Org)
+			getReq = getReq.Org(c.ActiveConfig.Org)
 		}
-
-		resp, _, err := clients.BucketApi.GetBucketsExecute(req)
-		if err != nil {
-			return fmt.Errorf("failed to find bucket %q: %w", params.Name, err)
-		}
-		buckets := resp.GetBuckets()
-		if len(buckets) == 0 {
-			return fmt.Errorf("no bucket found with name %q", params.Name)
-		}
-		id = buckets[0].GetId()
 	}
 
-	getReq := clients.BucketApi.GetBucketsID(ctx, id)
-	bucket, _, err := clients.BucketApi.GetBucketsIDExecute(getReq)
+	displayId := params.ID
+	if displayId == "" {
+		displayId = params.Name
+	}
+
+	resp, _, err := client.GetBucketsExecute(getReq)
 	if err != nil {
-		return fmt.Errorf("failed to find bucket with ID %q: %w", id, err)
+		return fmt.Errorf("failed to find bucket %q: %w", displayId, err)
 	}
+	buckets := resp.GetBuckets()
+	if len(buckets) == 0 {
+		return fmt.Errorf("bucket %q not found", displayId)
+	}
+	bucket = buckets[0]
 
-	req := clients.BucketApi.DeleteBucketsID(ctx, id)
-	if _, err := clients.BucketApi.DeleteBucketsIDExecute(req); err != nil {
-		return fmt.Errorf("failed to delete bucket with ID %q: %w", id, err)
+	req := client.DeleteBucketsID(ctx, bucket.GetId())
+	if _, err := client.DeleteBucketsIDExecute(req); err != nil {
+		return fmt.Errorf("failed to delete bucket %q: %w", displayId, err)
 	}
 
 	return c.printBuckets(bucketPrintOptions{bucket: &bucket, deleted: true})

@@ -11,6 +11,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -511,7 +512,7 @@ func TestBucketsUpdate(t *testing.T) {
 					require.Len(t, body.GetRetentionRules(), 1)
 					rule := body.GetRetentionRules()[0]
 					require.Nil(t, rule.EverySeconds)
-					require.Equal(t, int64(10*3600 + 30*60), rule.GetShardGroupDurationSeconds())
+					require.Equal(t, int64(10*3600+30*60), rule.GetShardGroupDurationSeconds())
 					require.Nil(t, body.Name)
 					require.Nil(t, body.Description)
 
@@ -555,4 +556,220 @@ func TestBucketsUpdate(t *testing.T) {
 
 func TestBucketsDelete(t *testing.T) {
 	t.Parallel()
+
+	var testCases = []struct {
+		name                  string
+		configOrgName         string
+		params                internal.BucketsDeleteParams
+		buildBucketsLookupFn  func(*testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error)
+		buildBucketDeleteFn   func(*testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error)
+		expectedStdoutPattern string
+		expectedInErr         string
+	}{
+		{
+			name: "by ID",
+			configOrgName: "my-default-org",
+			params: internal.BucketsDeleteParams{
+				ID: "123",
+			},
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					require.Equal(t, "123", *req.GetId())
+					require.Nil(t, req.GetName())
+					require.Nil(t, req.GetOrgID())
+					require.Nil(t, req.GetOrg())
+
+					return api.Buckets{
+						Buckets: &[]api.Bucket{
+							{
+								Id:    api.PtrString("123"),
+								Name:  "my-bucket",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 3600},
+								},
+							},
+						},
+					}, nil, nil
+				}
+			},
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+				return func(req api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+					assert.Equal(t, "123", req.GetBucketID())
+					return nil, nil
+				}
+			},
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+		},
+		{
+			name: "by name and org ID",
+			configOrgName: "my-default-org",
+			params: internal.BucketsDeleteParams{
+				Name: "my-bucket",
+				OrgID: "456",
+			},
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					require.Equal(t, "my-bucket", *req.GetName())
+					require.Equal(t, "456", *req.GetOrgID())
+					require.Nil(t, req.GetId())
+					require.Nil(t, req.GetOrg())
+
+					return api.Buckets{
+						Buckets: &[]api.Bucket{
+							{
+								Id:    api.PtrString("123"),
+								Name:  "my-bucket",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 3600},
+								},
+							},
+						},
+					}, nil, nil
+				}
+			},
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+				return func(req api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+					assert.Equal(t, "123", req.GetBucketID())
+					return nil, nil
+				}
+			},
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+		},
+		{
+			name: "by name and org name",
+			configOrgName: "my-default-org",
+			params: internal.BucketsDeleteParams{
+				Name: "my-bucket",
+				OrgName: "my-org",
+			},
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					require.Equal(t, "my-bucket", *req.GetName())
+					require.Equal(t, "my-org", *req.GetOrg())
+					require.Nil(t, req.GetId())
+					require.Nil(t, req.GetOrgID())
+
+					return api.Buckets{
+						Buckets: &[]api.Bucket{
+							{
+								Id:    api.PtrString("123"),
+								Name:  "my-bucket",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 3600},
+								},
+							},
+						},
+					}, nil, nil
+				}
+			},
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+				return func(req api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+					assert.Equal(t, "123", req.GetBucketID())
+					return nil, nil
+				}
+			},
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+		},
+		{
+			name: "by name in default org",
+			configOrgName: "my-default-org",
+			params: internal.BucketsDeleteParams{
+				Name: "my-bucket",
+			},
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					require.Equal(t, "my-bucket", *req.GetName())
+					require.Equal(t, "my-default-org", *req.GetOrg())
+					require.Nil(t, req.GetId())
+					require.Nil(t, req.GetOrgID())
+
+					return api.Buckets{
+						Buckets: &[]api.Bucket{
+							{
+								Id:    api.PtrString("123"),
+								Name:  "my-bucket",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 3600},
+								},
+							},
+						},
+					}, nil, nil
+				}
+			},
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+				return func(req api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+					assert.Equal(t, "123", req.GetBucketID())
+					return nil, nil
+				}
+			},
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+		},
+		{
+			name: "by name without org",
+			params: internal.BucketsDeleteParams{
+				Name: "my-bucket",
+			},
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					return api.Buckets{}, nil, errors.New("shouldn't be called")
+				}
+			},
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+				return func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+					return nil, errors.New("shouldn't be called")
+				}
+			},
+			expectedInErr: "must specify org ID or org name",
+		},
+		{
+			name: "no such bucket",
+			params: internal.BucketsDeleteParams{
+				ID: "123",
+			},
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					return api.Buckets{}, nil, nil
+				}
+			},
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+				return func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+					return nil, errors.New("shouldn't be called")
+				}
+			},
+			expectedInErr: "not found",
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			stdio := mock.NewMockStdio(nil, false)
+			cli := internal.CLI{ActiveConfig: config.Config{Org: tc.configOrgName}, StdIO: stdio}
+			client := mock.BucketsApi{
+				GetBucketsExecuteFn:      tc.buildBucketsLookupFn(t),
+				DeleteBucketsIDExecuteFn: tc.buildBucketDeleteFn(t),
+			}
+
+			err := cli.BucketsDelete(context.Background(), &client, &tc.params)
+			if tc.expectedInErr != "" {
+				require.Error(t, err)
+				require.Contains(t, err.Error(), tc.expectedInErr)
+				require.Empty(t, stdio.Stdout())
+				return
+			}
+			require.NoError(t, err)
+			outLines := strings.Split(stdio.Stdout(), "\n")
+			if outLines[len(outLines)-1] == "" {
+				outLines = outLines[:len(outLines)-1]
+			}
+			require.Regexp(t, "ID\\s+Name\\s+Retention\\s+Shard group duration\\s+Organization ID\\s+Deleted", outLines[0])
+			require.Regexp(t, tc.expectedStdoutPattern+"\\s+true", outLines[1])
+		})
+	}
 }

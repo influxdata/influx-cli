@@ -108,11 +108,7 @@ var bucketCmd = cli.Command{
 				if err != nil {
 					return err
 				}
-				clients := internal.BucketsClients{
-					BucketApi: client.BucketsApi,
-					OrgApi:    client.OrganizationsApi,
-				}
-				return cli.BucketsDelete(standardCtx(ctx), &clients, &internal.BucketsDeleteParams{
+				return cli.BucketsDelete(standardCtx(ctx), client.BucketsApi, &internal.BucketsDeleteParams{
 					ID:      ctx.String("id"),
 					Name:    ctx.String("name"),
 					OrgID:   ctx.String("org-id"),
