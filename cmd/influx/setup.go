@@ -5,73 +5,68 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var setupCmd = cli.Command{
-	Name:  "setup",
-	Usage: "Setup instance with initial user, org, bucket",
-	Flags: append(
-		commonFlagsNoToken,
-		&cli.StringFlag{
-			Name:    "username",
-			Usage:   "Name of initial user to create",
-			Aliases: []string{"u"},
+func newSetupCmd() *cli.Command {
+	var params internal.SetupParams
+	return &cli.Command{
+		Name:  "setup",
+		Usage: "Setup instance with initial user, org, bucket",
+		Flags: append(
+			commonFlagsNoToken,
+			&cli.StringFlag{
+				Name:        "username",
+				Usage:       "Name of initial user to create",
+				Aliases:     []string{"u"},
+				Destination: &params.Username,
+			},
+			&cli.StringFlag{
+				Name:        "password",
+				Usage:       "Password to set on initial user",
+				Aliases:     []string{"p"},
+				Destination: &params.Password,
+			},
+			&cli.StringFlag{
+				Name:        tokenFlag,
+				Usage:       "Auth token to set on the initial user",
+				Aliases:     []string{"t"},
+				EnvVars:     []string{"INFLUX_TOKEN"},
+				DefaultText: "auto-generated",
+				Destination: &params.AuthToken,
+			},
+			&cli.StringFlag{
+				Name:        "org",
+				Usage:       "Name of initial organization to create",
+				Aliases:     []string{"o"},
+				Destination: &params.Org,
+			},
+			&cli.StringFlag{
+				Name:        "bucket",
+				Usage:       "Name of initial bucket to create",
+				Aliases:     []string{"b"},
+				Destination: &params.Bucket,
+			},
+			&cli.StringFlag{
+				Name:        "retention",
+				Usage:       "Duration initial bucket will retain data, or 0 for infinite",
+				Aliases:     []string{"r"},
+				DefaultText: "infinite",
+				Destination: &params.Retention,
+			},
+			&cli.BoolFlag{
+				Name:        "force",
+				Usage:       "Skip confirmation prompt",
+				Aliases:     []string{"f"},
+				Destination: &params.Force,
+			},
+			&cli.StringFlag{
+				Name:        "name",
+				Usage:       "Name to set on CLI config generated for the InfluxDB instance, required if other configs exist",
+				Aliases:     []string{"n"},
+				Destination: &params.ConfigName,
+			},
+		),
+		Action: func(ctx *cli.Context) error {
+			client := getAPINoToken(ctx)
+			return getCLI(ctx).Setup(ctx.Context, client.SetupApi, &params)
 		},
-		&cli.StringFlag{
-			Name:    "password",
-			Usage:   "Password to set on initial user",
-			Aliases: []string{"p"},
-		},
-		&cli.StringFlag{
-			Name:        tokenFlag,
-			Usage:       "Auth token to set on the initial user",
-			Aliases:     []string{"t"},
-			EnvVars:     []string{"INFLUX_TOKEN"},
-			DefaultText: "auto-generated",
-		},
-		&cli.StringFlag{
-			Name:    "org",
-			Usage:   "Name of initial organization to create",
-			Aliases: []string{"o"},
-		},
-		&cli.StringFlag{
-			Name:    "bucket",
-			Usage:   "Name of initial bucket to create",
-			Aliases: []string{"b"},
-		},
-		&cli.StringFlag{
-			Name:        "retention",
-			Usage:       "Duration initial bucket will retain data, or 0 for infinite",
-			Aliases:     []string{"r"},
-			DefaultText: "infinite",
-		},
-		&cli.BoolFlag{
-			Name:    "force",
-			Usage:   "Skip confirmation prompt",
-			Aliases: []string{"f"},
-		},
-		&cli.StringFlag{
-			Name:    "name",
-			Usage:   "Name to set on CLI config generated for the InfluxDB instance, required if other configs exist",
-			Aliases: []string{"n"},
-		},
-	),
-	Action: func(ctx *cli.Context) error {
-		cli, err := newCli(ctx)
-		if err != nil {
-			return err
-		}
-		client, err := newApiClient(ctx, cli, false)
-		if err != nil {
-			return err
-		}
-		return cli.Setup(standardCtx(ctx), client.SetupApi, &internal.SetupParams{
-			Username:   ctx.String("username"),
-			Password:   ctx.String("password"),
-			AuthToken:  ctx.String(tokenFlag),
-			Org:        ctx.String("org"),
-			Bucket:     ctx.String("bucket"),
-			Retention:  ctx.String("retention"),
-			Force:      ctx.Bool("force"),
-			ConfigName: ctx.String("name"),
-		})
-	},
+	}
 }

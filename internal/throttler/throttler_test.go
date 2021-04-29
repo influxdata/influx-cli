@@ -14,8 +14,9 @@ func TestThrottlerPassthrough(t *testing.T) {
 	// Hard to test that rate-limiting actually works, so we just check
 	// that no data is lost.
 	in := "Hello world!"
-	throttler, err := throttler.NewThrottler("1B/s")
+	bps, err := throttler.ToBytesPerSecond("1B/s")
 	require.NoError(t, err)
+	throttler := throttler.NewThrottler(bps)
 	r := throttler.Throttle(context.Background(), strings.NewReader(in))
 
 	out := bytes.Buffer{}
@@ -72,7 +73,7 @@ func TestToBytesPerSecond(t *testing.T) {
 		t.Run(test.in, func(t *testing.T) {
 			bytesPerSec, err := throttler.ToBytesPerSecond(test.in)
 			if len(test.error) == 0 {
-				require.Equal(t, test.out, bytesPerSec)
+				require.Equal(t, test.out, float64(bytesPerSec))
 				require.Nil(t, err)
 			} else {
 				require.NotNil(t, err)

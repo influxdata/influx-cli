@@ -29,6 +29,33 @@ const (
 	InputFormatLP
 )
 
+func (i *InputFormat) Set(v string) error {
+	switch v {
+	case "":
+		*i = InputFormatDerived
+	case "lp":
+		*i = InputFormatLP
+	case "csv":
+		*i = InputFormatCSV
+	default:
+		return fmt.Errorf("unsupported format: %q", v)
+	}
+	return nil
+}
+
+func (i InputFormat) String() string {
+	switch i {
+	case InputFormatLP:
+		return "lp"
+	case InputFormatCSV:
+		return "csv"
+	case InputFormatDerived:
+		fallthrough
+	default:
+		return ""
+	}
+}
+
 type InputCompression int
 
 const (
@@ -36,6 +63,33 @@ const (
 	InputCompressionGZIP
 	InputCompressionNone
 )
+
+func (i *InputCompression) Set(v string) error {
+	switch v {
+	case "":
+		*i = InputCompressionDerived
+	case "none":
+		*i = InputCompressionNone
+	case "gzip":
+		*i = InputCompressionGZIP
+	default:
+		return fmt.Errorf("unsupported compression: %q", v)
+	}
+	return nil
+}
+
+func (i InputCompression) String() string {
+	switch i {
+	case InputCompressionNone:
+		return "none"
+	case InputCompressionGZIP:
+		return "gzip"
+	case InputCompressionDerived:
+		fallthrough
+	default:
+		return ""
+	}
+}
 
 type MultiInputLineReader struct {
 	StdIn      io.Reader
