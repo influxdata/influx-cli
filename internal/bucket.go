@@ -56,8 +56,12 @@ func (c *CLI) BucketsCreate(ctx context.Context, clients *BucketsClients, params
 	// array of rules to represent infinite retention.
 	if rp > 0 || sgd > 0 {
 		rule := api.NewRetentionRuleWithDefaults()
-		rule.SetEverySeconds(int64(rp.Round(time.Second) / time.Second))
-		rule.SetShardGroupDurationSeconds(int64(sgd.Round(time.Second) / time.Second))
+		if rp > 0 {
+			rule.SetEverySeconds(int64(rp.Round(time.Second) / time.Second))
+		}
+		if sgd > 0 {
+			rule.SetShardGroupDurationSeconds(int64(sgd.Round(time.Second) / time.Second))
+		}
 		reqBody.RetentionRules = append(reqBody.RetentionRules, *rule)
 	}
 	if reqBody.OrgID == "" {

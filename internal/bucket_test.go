@@ -92,6 +92,38 @@ func TestBucketsCreate(t *testing.T) {
 			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
 		},
 		{
+			name: "retention but not shard-group duration",
+			params: internal.BucketsCreateParams{
+				OrgID:       "123",
+				Name:        "my-bucket",
+				Retention:   "24h",
+			},
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
+				return func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
+					return api.Organizations{}, nil, errors.New("unexpected org lookup call")
+				}
+			},
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+					body := req.GetPostBucketRequest()
+					require.NotNil(t, body)
+					require.Equal(t, "123", body.OrgID)
+					require.Equal(t, "my-bucket", body.Name)
+					require.Nil(t, body.Description)
+					require.Equal(t, 1, len(body.RetentionRules))
+					require.Equal(t, int64(86400), body.RetentionRules[0].EverySeconds)
+					require.Nil(t, body.RetentionRules[0].ShardGroupDurationSeconds)
+
+					return api.Bucket{
+						Id:             api.PtrString("456"),
+						OrgID:          api.PtrString("123"),
+						Name:           "my-bucket",
+						RetentionRules: body.RetentionRules,
+					}, nil, nil
+				}
+			},
+		},
+		{
 			name: "look up org by name",
 			params: internal.BucketsCreateParams{
 				OrgName:            "my-org",
@@ -567,7 +599,7 @@ func TestBucketsDelete(t *testing.T) {
 		expectedInErr         string
 	}{
 		{
-			name: "by ID",
+			name:          "by ID",
 			configOrgName: "my-default-org",
 			params: internal.BucketsDeleteParams{
 				ID: "123",
@@ -602,10 +634,10 @@ func TestBucketsDelete(t *testing.T) {
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
 		},
 		{
-			name: "by name and org ID",
+			name:          "by name and org ID",
 			configOrgName: "my-default-org",
 			params: internal.BucketsDeleteParams{
-				Name: "my-bucket",
+				Name:  "my-bucket",
 				OrgID: "456",
 			},
 			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
@@ -638,10 +670,10 @@ func TestBucketsDelete(t *testing.T) {
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
 		},
 		{
-			name: "by name and org name",
+			name:          "by name and org name",
 			configOrgName: "my-default-org",
 			params: internal.BucketsDeleteParams{
-				Name: "my-bucket",
+				Name:    "my-bucket",
 				OrgName: "my-org",
 			},
 			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
@@ -674,7 +706,7 @@ func TestBucketsDelete(t *testing.T) {
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
 		},
 		{
-			name: "by name in default org",
+			name:          "by name in default org",
 			configOrgName: "my-default-org",
 			params: internal.BucketsDeleteParams{
 				Name: "my-bucket",
