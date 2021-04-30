@@ -44,8 +44,7 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 	}
 
 	// Check if setup is even allowed.
-	checkReq := client.GetSetup(ctx)
-	checkResp, _, err := client.GetSetupExecute(checkReq)
+	checkResp, _, err := client.GetSetup(ctx).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to check if already set up: %w", err)
 	}
@@ -58,8 +57,7 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 	if err != nil {
 		return err
 	}
-	setupReq := client.PostSetup(ctx).OnboardingRequest(setupBody)
-	resp, _, err := client.PostSetupExecute(setupReq)
+	resp, _, err := client.PostSetup(ctx).OnboardingRequest(setupBody).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to setup instance: %w", err)
 	}
