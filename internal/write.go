@@ -69,7 +69,7 @@ func (c *CLI) Write(ctx context.Context, clients *WriteClients, params *WritePar
 			req = req.Org(c.ActiveConfig.Org)
 		}
 
-		if _, err := clients.Client.PostWriteExecute(req); err != nil {
+		if _, err := req.Execute(); err != nil {
 			return err
 		}
 
