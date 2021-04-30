@@ -75,8 +75,7 @@ func (c *CLI) BucketsCreate(ctx context.Context, clients *BucketsClients, params
 		if name == "" {
 			name = c.ActiveConfig.Org
 		}
-		lookupReq := clients.OrgApi.GetOrgs(ctx).Org(name)
-		resp, _, err := clients.OrgApi.GetOrgsExecute(lookupReq)
+		resp, _, err := clients.OrgApi.GetOrgs(ctx).Org(name).Execute()
 		if err != nil {
 			return fmt.Errorf("failed to lookup ID of org %q: %w", name, err)
 		}
@@ -87,8 +86,7 @@ func (c *CLI) BucketsCreate(ctx context.Context, clients *BucketsClients, params
 		reqBody.OrgID = orgs[0].GetId()
 	}
 
-	req := clients.BucketApi.PostBuckets(ctx).PostBucketRequest(reqBody)
-	bucket, _, err := clients.BucketApi.PostBucketsExecute(req)
+	bucket, _, err := clients.BucketApi.PostBuckets(ctx).PostBucketRequest(reqBody).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to create bucket: %w", err)
 	}
@@ -125,7 +123,7 @@ func (c *CLI) BucketsList(ctx context.Context, client api.BucketsApi, params *Bu
 		req = req.Id(params.ID)
 	}
 
-	buckets, _, err := client.GetBucketsExecute(req)
+	buckets, _, err := req.Execute()
 	if err != nil {
 		return fmt.Errorf("failed to list buckets: %w", err)
 	}
@@ -172,8 +170,7 @@ func (c *CLI) BucketsUpdate(ctx context.Context, client api.BucketsApi, params *
 		reqBody.SetRetentionRules([]api.PatchRetentionRule{*patchRule})
 	}
 
-	req := client.PatchBucketsID(ctx, params.ID).PatchBucketRequest(reqBody)
-	bucket, _, err := client.PatchBucketsIDExecute(req)
+	bucket, _, err := client.PatchBucketsID(ctx, params.ID).PatchBucketRequest(reqBody).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to update bucket %q: %w", params.ID, err)
 	}
@@ -218,7 +215,7 @@ func (c *CLI) BucketsDelete(ctx context.Context, client api.BucketsApi, params *
 		displayId = params.Name
 	}
 
-	resp, _, err := client.GetBucketsExecute(getReq)
+	resp, _, err := getReq.Execute()
 	if err != nil {
 		return fmt.Errorf("failed to find bucket %q: %w", displayId, err)
 	}
@@ -228,8 +225,7 @@ func (c *CLI) BucketsDelete(ctx context.Context, client api.BucketsApi, params *
 	}
 	bucket = buckets[0]
 
-	req := client.DeleteBucketsID(ctx, bucket.GetId())
-	if _, err := client.DeleteBucketsIDExecute(req); err != nil {
+	if _, err := client.DeleteBucketsID(ctx, bucket.GetId()).Execute(); err != nil {
 		return fmt.Errorf("failed to delete bucket %q: %w", displayId, err)
 	}
 
