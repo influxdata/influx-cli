@@ -26,9 +26,15 @@ type BucketsCreateParams struct {
 	ShardGroupDuration string
 }
 
+var (
+	ErrMustSpecifyOrg             = errors.New("must specify org ID or org name")
+	ErrMustSpecifyOrgDeleteByName = errors.New("must specify org ID or org name when deleting bucket by name")
+	ErrMustSpecifyBucket          = errors.New("must specify bucket ID or bucket name")
+)
+
 func (c *CLI) BucketsCreate(ctx context.Context, clients *BucketsClients, params *BucketsCreateParams) error {
 	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return errors.New("must specify org ID or org name")
+		return ErrMustSpecifyOrg
 	}
 
 	rp, err := duration.RawDurationToTimeDuration(params.Retention)
@@ -99,7 +105,7 @@ type BucketsListParams struct {
 
 func (c *CLI) BucketsList(ctx context.Context, client api.BucketsApi, params *BucketsListParams) error {
 	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return errors.New("must specify org ID or org name")
+		return ErrMustSpecifyOrg
 	}
 
 	req := client.GetBuckets(ctx)
@@ -184,7 +190,7 @@ type BucketsDeleteParams struct {
 
 func (c *CLI) BucketsDelete(ctx context.Context, client api.BucketsApi, params *BucketsDeleteParams) error {
 	if params.ID == "" && params.Name == "" {
-		return errors.New("must specify bucket ID or bucket name")
+		return ErrMustSpecifyBucket
 	}
 
 	var bucket api.Bucket
@@ -193,7 +199,7 @@ func (c *CLI) BucketsDelete(ctx context.Context, client api.BucketsApi, params *
 		getReq = getReq.Id(params.ID)
 	} else {
 		if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-			return errors.New("must specify org ID or org name when deleting bucket by name")
+			return ErrMustSpecifyOrgDeleteByName
 		}
 		getReq = getReq.Name(params.Name)
 		if params.OrgID != "" {
