@@ -60,7 +60,7 @@ func Test_SetupAlreadySetup(t *testing.T) {
 
 	configSvc := &mock.ConfigService{
 		ListConfigsFn: func() (config.Configs, error) {
-			return nil, nil
+			return map[string]config.Config{"foo": {}}, nil
 		},
 	}
 	cli := &internal.CLI{ConfigService: configSvc}

@@ -34,12 +34,6 @@ var (
 const MinPasswordLen = 8
 
 func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParams) error {
-	// Ensure we'll be able to write onboarding results to local config.
-	// Do this first so we catch any problems before modifying state on the server side.
-	if err := c.validateNoNameCollision(params.ConfigName); err != nil {
-		return err
-	}
-
 	// Check if setup is even allowed.
 	checkResp, _, err := client.GetSetup(ctx).Execute()
 	if err != nil {
@@ -47,6 +41,12 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 	}
 	if checkResp.Allowed == nil || !*checkResp.Allowed {
 		return ErrAlreadySetUp
+	}
+
+	// Ensure we'll be able to write onboarding results to local config.
+	// Do this so we catch any problems before modifying state on the server side.
+	if err := c.validateNoNameCollision(params.ConfigName); err != nil {
+		return err
 	}
 
 	// Initialize the server.
