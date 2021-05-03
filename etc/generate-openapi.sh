@@ -2,9 +2,14 @@
 
 declare -r ETC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 declare -r ROOT_DIR="$(dirname ${ETC_DIR})"
+declare -r API_DIR="${ROOT_DIR}/internal/api"
 
+declare -r GENERATED_PATTERN='^// Code generated .* DO NOT EDIT\.$'
 declare -r GENERATOR_DOCKER_IMG=openapitools/openapi-generator-cli:v5.1.0
 declare -r OPENAPI_COMMIT=e41d5e327a67e472a46cd6edfe673496e1b066dd
+
+# Clean up all the generated files in the target directory.
+rm $(grep -Elr "${GENERATED_PATTERN}" "${API_DIR}")
 
 # Download our target API spec.
 # NOTE: openapi-generator supports HTTP references to API docs, but using that feature
@@ -25,8 +30,14 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
 # Edit the generated files.
 (
   # Clean up files we don't care about.
-  cd "${ROOT_DIR}/internal/api"
+  cd "${API_DIR}"
   rm -rf go.mod go.sum git_push.sh api docs .openapi-generator .travis.yml .gitignore
+
+  # Change extension of generated files.
+  for f in $(grep -El "${GENERATED_PATTERN}" *.go); do
+    base=$(basename ${f} .go)
+    mv ${f} ${base}.gen.go
+  done
 
   # Clean up the generated code.
   cd "${ROOT_DIR}"
