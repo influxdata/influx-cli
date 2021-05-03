@@ -11,7 +11,6 @@ import (
 	"github.com/influxdata/influx-cli/v2/internal/batcher"
 	"github.com/influxdata/influx-cli/v2/internal/linereader"
 	"github.com/influxdata/influx-cli/v2/internal/throttler"
-	"github.com/influxdata/influx-cli/v2/pkg/cli/flag"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
@@ -57,7 +56,7 @@ func (p *writeParams) makeLineReader(args []string, errorOut io.Writer) *linerea
 }
 
 func (p *writeParams) makeErrorFile(ctx *cli.Context) (*os.File, error) {
-	if !ctx.IsSet("errors-file") {
+	if p.ErrorsFile == "" {
 		return nil, nil
 	}
 	errorFile, err := os.Open(p.ErrorsFile)
@@ -100,7 +99,7 @@ func (p *writeParams) Flags() []cli.Flag {
 			Usage:   "Precision of the timestamps of the lines",
 			Aliases: []string{"p"},
 			EnvVars: []string{"INFLUX_PRECISION"},
-			Value:   flag.WritePrecisionVar(&p.Precision),
+			Value:   &p.Precision,
 		},
 		&cli.GenericFlag{
 			Name:        "format",
