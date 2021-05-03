@@ -5,8 +5,10 @@ go 1.16
 require (
 	github.com/AlecAivazis/survey/v2 v2.2.9
 	github.com/BurntSushi/toml v0.3.1
+	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/daixiang0/gci v0.2.8
 	github.com/fujiwara/shapeio v1.0.0
+	github.com/gocarina/gocsv v0.0.0-20210408192840-02d7211d929d
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli/v2 v2.3.0
