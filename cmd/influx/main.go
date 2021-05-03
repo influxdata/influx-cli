@@ -14,6 +14,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/stdio"
+	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/signals"
 	"github.com/urfave/cli/v2"
 )
@@ -185,26 +186,75 @@ func newApiClient(ctx *cli.Context, cli *internal.CLI, injectToken bool) (*api.A
 	return api.NewAPIClient(apiConfig), nil
 }
 
-// standardCtx returns a context that will cancel on SIGINT and SIGTERM.
-func standardCtx(ctx *cli.Context) context.Context {
-	return signals.WithStandardSignals(ctx.Context)
-}
-
 var app = cli.App{
 	Name:      "influx",
 	Usage:     "Influx Client",
 	UsageText: "influx [command]",
 	Commands: []*cli.Command{
-		&versionCmd,
-		&pingCmd,
-		&setupCmd,
-		&writeCmd,
-		&bucketCmd,
+		newVersionCmd(),
+		newPingCmd(),
+		newSetupCmd(),
+		newWriteCmd(),
+		newBucketCmd(),
 	},
 }
 
+func withCli() cli.BeforeFunc {
+	return func(ctx *cli.Context) error {
+		c, err := newCli(ctx)
+		if err != nil {
+			return err
+		}
+		ctx.App.Metadata["cli"] = c
+		return nil
+	}
+}
+
+func getCLI(ctx *cli.Context) *internal.CLI {
+	i, ok := ctx.App.Metadata["cli"].(*internal.CLI)
+	if !ok {
+		panic("missing CLI")
+	}
+	return i
+}
+
+func withApi(injectToken bool) cli.BeforeFunc {
+	key := "api-no-token"
+	if injectToken {
+		key = "api"
+	}
+
+	makeFn := func(ctx *cli.Context) error {
+		c := getCLI(ctx)
+		apiClient, err := newApiClient(ctx, c, injectToken)
+		if err != nil {
+			return err
+		}
+		ctx.App.Metadata[key] = apiClient
+		return nil
+	}
+	return middleware.WithBeforeFns(makeFn)
+}
+
+func getAPI(ctx *cli.Context) *api.APIClient {
+	i, ok := ctx.App.Metadata["api"].(*api.APIClient)
+	if !ok {
+		panic("missing APIClient with token")
+	}
+	return i
+}
+
+func getAPINoToken(ctx *cli.Context) *api.APIClient {
+	i, ok := ctx.App.Metadata["api-no-token"].(*api.APIClient)
+	if !ok {
+		panic("missing APIClient without token")
+	}
+	return i
+}
+
 func main() {
-	if err := app.Run(os.Args); err != nil {
+	ctx := signals.WithStandardSignals(context.Background())
+	if err := app.RunContext(ctx, os.Args); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}

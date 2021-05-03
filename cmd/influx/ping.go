@@ -1,20 +1,18 @@
 package main
 
-import "github.com/urfave/cli/v2"
+import (
+	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
+	"github.com/urfave/cli/v2"
+)
 
-var pingCmd = cli.Command{
-	Name:  "ping",
-	Usage: "Check the InfluxDB /health endpoint",
-	Flags: coreFlags,
-	Action: func(ctx *cli.Context) error {
-		cli, err := newCli(ctx)
-		if err != nil {
-			return err
-		}
-		client, err := newApiClient(ctx, cli, false)
-		if err != nil {
-			return err
-		}
-		return cli.Ping(standardCtx(ctx), client.HealthApi)
-	},
+func newPingCmd() *cli.Command {
+	return &cli.Command{
+		Name:   "ping",
+		Usage:  "Check the InfluxDB /health endpoint",
+		Before: middleware.WithBeforeFns(withCli(), withApi(false)),
+		Flags:  coreFlags,
+		Action: func(ctx *cli.Context) error {
+			return getCLI(ctx).Ping(ctx.Context, getAPINoToken(ctx).HealthApi)
+		},
+	}
 }

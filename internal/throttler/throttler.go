@@ -16,12 +16,8 @@ type Throttler struct {
 	bytesPerSecond float64
 }
 
-func NewThrottler(rate string) (*Throttler, error) {
-	bytesPerSec, err := ToBytesPerSecond(rate)
-	if err != nil {
-		return nil, err
-	}
-	return &Throttler{bytesPerSecond: bytesPerSec}, nil
+func NewThrottler(bytesPerSec BytesPerSec) *Throttler {
+	return &Throttler{bytesPerSecond: float64(bytesPerSec)}
 }
 
 func (t *Throttler) Throttle(ctx context.Context, in io.Reader) io.Reader {
@@ -41,10 +37,25 @@ var rateLimitRegexp = regexp.MustCompile(`^(\d*\.?\d*)(B|kB|MB)/?(\d*)?(s|sec|m|
 var bytesUnitMultiplier = map[string]float64{"B": 1, "kB": 1024, "MB": 1_048_576}
 var timeUnitMultiplier = map[string]float64{"s": 1, "sec": 1, "m": 60, "min": 60}
 
+type BytesPerSec float64
+
+func (b *BytesPerSec) Set(v string) (err error) {
+	bps, err := ToBytesPerSecond(v)
+	if err != nil {
+		return err
+	}
+	*b = BytesPerSec(bps)
+	return nil
+}
+
+func (b BytesPerSec) String() string {
+	return strconv.FormatFloat(float64(b), 'E', -1, 64)
+}
+
 // ToBytesPerSecond converts rate from string to number. The supplied string
 // value format must be COUNT(B|kB|MB)/TIME(s|sec|m|min) with / and TIME being optional.
 // All spaces are ignored, they can help with formatting. Examples: "5 MB / 5 min", 17kbs. 5.1MB5m.
-func ToBytesPerSecond(rateLimit string) (float64, error) {
+func ToBytesPerSecond(rateLimit string) (BytesPerSec, error) {
 	// ignore all spaces
 	strVal := strings.ReplaceAll(rateLimit, " ", "")
 	if len(strVal) == 0 {
@@ -74,5 +85,5 @@ func ToBytesPerSecond(rateLimit string) (float64, error) {
 		time = float64(int64Val)
 	}
 	time = time * timeUnitMultiplier[matches[4]]
-	return bytes / time, nil
+	return BytesPerSec(bytes / time), nil
 }
