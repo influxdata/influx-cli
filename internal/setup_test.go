@@ -20,6 +20,12 @@ import (
 func Test_SetupConfigNameCollision(t *testing.T) {
 	t.Parallel()
 
+	client := &mock.SetupApi{
+		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
+			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil, nil
+		},
+	}
+
 	cfg := "foo"
 	configSvc := &mock.ConfigService{
 		ListConfigsFn: func() (config.Configs, error) {
@@ -28,7 +34,7 @@ func Test_SetupConfigNameCollision(t *testing.T) {
 	}
 	cli := &internal.CLI{ConfigService: configSvc}
 
-	err := cli.Setup(context.Background(), &mock.SetupApi{}, &internal.SetupParams{ConfigName: cfg})
+	err := cli.Setup(context.Background(), client, &internal.SetupParams{ConfigName: cfg})
 	require.Error(t, err)
 	require.Contains(t, err.Error(), cfg)
 	require.Contains(t, err.Error(), "already exists")
@@ -37,6 +43,12 @@ func Test_SetupConfigNameCollision(t *testing.T) {
 func Test_SetupConfigNameRequired(t *testing.T) {
 	t.Parallel()
 
+	client := &mock.SetupApi{
+		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
+			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil, nil
+		},
+	}
+
 	configSvc := &mock.ConfigService{
 		ListConfigsFn: func() (config.Configs, error) {
 			return map[string]config.Config{"foo": {}}, nil
@@ -44,7 +56,7 @@ func Test_SetupConfigNameRequired(t *testing.T) {
 	}
 	cli := &internal.CLI{ConfigService: configSvc}
 
-	err := cli.Setup(context.Background(), &mock.SetupApi{}, &internal.SetupParams{})
+	err := cli.Setup(context.Background(), client, &internal.SetupParams{})
 	require.Error(t, err)
 	require.Equal(t, internal.ErrConfigNameRequired, err)
 }
@@ -60,7 +72,7 @@ func Test_SetupAlreadySetup(t *testing.T) {
 
 	configSvc := &mock.ConfigService{
 		ListConfigsFn: func() (config.Configs, error) {
-			return nil, nil
+			return map[string]config.Config{"foo": {}}, nil
 		},
 	}
 	cli := &internal.CLI{ConfigService: configSvc}
