@@ -11,7 +11,7 @@ import (
 func withMSClient() cli.BeforeFunc {
 	return middleware.WithBeforeFns(
 		withCli(),
-		withApi(),
+		withApi(true),
 		func(ctx *cli.Context) error {
 			c := getCLI(ctx)
 			client := getAPI(ctx)

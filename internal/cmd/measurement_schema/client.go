@@ -211,6 +211,16 @@ func (c Client) List(ctx context.Context, params ListParams) error {
 	return c.printMeasurements(ids.BucketID, res.MeasurementSchemas, params.ExtendedOutput)
 }
 
+// Constants for table column headers
+const (
+	IDHdr              = "ID"
+	MeasurementNameHdr = "Measurement Name"
+	ColumnNameHdr      = "Column Name"
+	ColumnTypeHdr      = "Column Type"
+	ColumnDataTypeHdr  = "Column Data Type"
+	BucketIDHdr        = "Bucket ID"
+)
+
 func (c Client) printMeasurements(bucketID string, m []api.MeasurementSchema, extended bool) error {
 	if len(m) == 0 {
 		return nil
@@ -223,18 +233,18 @@ func (c Client) printMeasurements(bucketID string, m []api.MeasurementSchema, ex
 	var headers []string
 	if extended {
 		headers = []string{
-			"id",
-			"measurement_name",
-			"column_name",
-			"column_type",
-			"column_data_type",
-			"bucket_id",
+			IDHdr,
+			MeasurementNameHdr,
+			ColumnNameHdr,
+			ColumnTypeHdr,
+			ColumnDataTypeHdr,
+			BucketIDHdr,
 		}
 	} else {
 		headers = []string{
-			"id",
-			"measurement_name",
-			"bucket_id",
+			IDHdr,
+			MeasurementNameHdr,
+			BucketIDHdr,
 		}
 	}
 
@@ -259,9 +269,9 @@ type measurementRowFn func(bucketID string, m *api.MeasurementSchema) []map[stri
 func makeMeasurementRows(bucketID string, m *api.MeasurementSchema) []map[string]interface{} {
 	return []map[string]interface{}{
 		{
-			"ID":               m.Id,
-			"Measurement Name": m.Name,
-			"Bucket ID":        bucketID,
+			IDHdr:              m.Id,
+			MeasurementNameHdr: m.Name,
+			BucketIDHdr:        bucketID,
 		},
 	}
 }
@@ -272,12 +282,12 @@ func makeExtendedMeasurementRows(bucketID string, m *api.MeasurementSchema) []ma
 	for i := range m.Columns {
 		col := &m.Columns[i]
 		rows = append(rows, map[string]interface{}{
-			"ID":               m.Id,
-			"Measurement Name": m.Name,
-			"Column Name":      col.Name,
-			"Column Type":      col.Type,
-			"Column Data Type": col.GetDataType(),
-			"Bucket ID":        bucketID,
+			IDHdr:              m.Id,
+			MeasurementNameHdr: m.Name,
+			ColumnNameHdr:      col.Name,
+			ColumnTypeHdr:      col.Type,
+			ColumnDataTypeHdr:  col.GetDataType(),
+			BucketIDHdr:        bucketID,
 		})
 	}
 	return rows
