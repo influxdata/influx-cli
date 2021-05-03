@@ -31,10 +31,7 @@ var (
 	ErrSetupCanceled      = errors.New("setup was canceled")
 )
 
-const (
-	InfiniteRetention = 0
-	MinPasswordLen    = 8
-)
+const MinPasswordLen = 8
 
 func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParams) error {
 	// Ensure we'll be able to write onboarding results to local config.
