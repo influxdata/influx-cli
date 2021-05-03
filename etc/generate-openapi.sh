@@ -6,7 +6,7 @@ declare -r API_DIR="${ROOT_DIR}/internal/api"
 
 declare -r GENERATED_PATTERN='^// Code generated .* DO NOT EDIT\.$'
 declare -r GENERATOR_DOCKER_IMG=openapitools/openapi-generator-cli:v5.1.0
-declare -r OPENAPI_COMMIT=e41d5e327a67e472a46cd6edfe673496e1b066dd
+declare -r OPENAPI_COMMIT=af4e3efa496c8adcd2838145652fdd8d63a90702
 
 # Clean up all the generated files in the target directory.
 rm $(grep -Elr "${GENERATED_PATTERN}" "${API_DIR}")
