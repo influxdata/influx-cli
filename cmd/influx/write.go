@@ -55,7 +55,7 @@ func (p *writeParams) makeLineReader(args []string, errorOut io.Writer) *linerea
 	}
 }
 
-func (p *writeParams) makeErrorFile(ctx *cli.Context) (*os.File, error) {
+func (p *writeParams) makeErrorFile() (*os.File, error) {
 	if p.ErrorsFile == "" {
 		return nil, nil
 	}
@@ -194,7 +194,7 @@ func newWriteCmd() *cli.Command {
 		Before:      middleware.WithBeforeFns(withCli(), withApi()),
 		Flags:       append(commonFlagsNoPrint, params.Flags()...),
 		Action: func(ctx *cli.Context) error {
-			errorFile, err := params.makeErrorFile(ctx)
+			errorFile, err := params.makeErrorFile()
 			if err != nil {
 				return err
 			}
@@ -234,7 +234,7 @@ func newWriteDryRun() *cli.Command {
 		Before:      middleware.WithBeforeFns(withCli(), withApi()),
 		Flags:       append(commonFlagsNoPrint, params.Flags()...),
 		Action: func(ctx *cli.Context) error {
-			errorFile, err := params.makeErrorFile(ctx)
+			errorFile, err := params.makeErrorFile()
 			if err != nil {
 				return err
 			}

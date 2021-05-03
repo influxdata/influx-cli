@@ -191,8 +191,8 @@ var app = cli.App{
 	Usage:     "Influx Client",
 	UsageText: "influx [command]",
 	Commands: []*cli.Command{
-		&versionCmd,
-		&pingCmd,
+		newVersionCmd(),
+		newPingCmd(),
 		newSetupCmd(),
 		newWriteCmd(),
 		newBucketCmd(),

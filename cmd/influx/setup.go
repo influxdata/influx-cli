@@ -65,8 +65,7 @@ func newSetupCmd() *cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			client := getAPINoToken(ctx)
-			return getCLI(ctx).Setup(ctx.Context, client.SetupApi, &params)
+			return getCLI(ctx).Setup(ctx.Context, getAPINoToken(ctx).SetupApi, &params)
 		},
 	}
 }
