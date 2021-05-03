@@ -187,15 +187,17 @@ func newApiClient(ctx *cli.Context, cli *internal.CLI, injectToken bool) (*api.A
 }
 
 var app = cli.App{
-	Name:      "influx",
-	Usage:     "Influx Client",
-	UsageText: "influx [command]",
+	Name:                 "influx",
+	Usage:                "Influx Client",
+	UsageText:            "influx [command]",
+	EnableBashCompletion: true,
 	Commands: []*cli.Command{
 		newVersionCmd(),
 		newPingCmd(),
 		newSetupCmd(),
 		newWriteCmd(),
 		newBucketCmd(),
+		newCompletionCmd(),
 	},
 }
 
