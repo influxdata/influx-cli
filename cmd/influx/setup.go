@@ -2,14 +2,16 @@ package main
 
 import (
 	"github.com/influxdata/influx-cli/v2/internal"
+	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
 
 func newSetupCmd() *cli.Command {
 	var params internal.SetupParams
 	return &cli.Command{
-		Name:  "setup",
-		Usage: "Setup instance with initial user, org, bucket",
+		Name:   "setup",
+		Usage:  "Setup instance with initial user, org, bucket",
+		Before: middleware.WithBeforeFns(withCli(), withApi(false)),
 		Flags: append(
 			commonFlagsNoToken,
 			&cli.StringFlag{

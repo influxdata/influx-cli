@@ -9,7 +9,7 @@ import (
 func withBucketsClient() cli.BeforeFunc {
 	return middleware.WithBeforeFns(
 		withCli(),
-		withApi(),
+		withApi(true),
 		func(ctx *cli.Context) error {
 			client := getAPI(ctx)
 			ctx.App.Metadata["bucketsClient"] = internal.BucketsClients{
@@ -104,7 +104,7 @@ func newBucketDeleteCmd() *cli.Command {
 	return &cli.Command{
 		Name:   "delete",
 		Usage:  "Delete bucket",
-		Before: middleware.WithBeforeFns(withCli(), withApi()),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
 			commonFlags,
 			&cli.StringFlag{
@@ -145,7 +145,7 @@ func newBucketListCmd() *cli.Command {
 		Name:    "list",
 		Usage:   "List buckets",
 		Aliases: []string{"find", "ls"},
-		Before:  middleware.WithBeforeFns(withCli(), withApi()),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
 			commonFlags,
 			&cli.StringFlag{
@@ -186,7 +186,7 @@ func newBucketUpdateCmd() *cli.Command {
 		Name:    "update",
 		Usage:   "Update bucket",
 		Aliases: []string{"find", "ls"},
-		Before:  middleware.WithBeforeFns(withCli(), withApi()),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
 			commonFlags,
 			&cli.StringFlag{

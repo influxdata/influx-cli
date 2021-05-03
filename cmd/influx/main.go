@@ -218,19 +218,22 @@ func getCLI(ctx *cli.Context) *internal.CLI {
 	return i
 }
 
-func withApi() cli.BeforeFunc {
-	makeFn := func(key string, injectToken bool) cli.BeforeFunc {
-		return func(ctx *cli.Context) error {
-			c := getCLI(ctx)
-			apiClient, err := newApiClient(ctx, c, injectToken)
-			if err != nil {
-				return err
-			}
-			ctx.App.Metadata[key] = apiClient
-			return nil
-		}
+func withApi(injectToken bool) cli.BeforeFunc {
+	key := "api-no-token"
+	if injectToken {
+		key = "api"
 	}
-	return middleware.WithBeforeFns(makeFn("api", true), makeFn("api-no-token", false))
+
+	makeFn := func(ctx *cli.Context) error {
+		c := getCLI(ctx)
+		apiClient, err := newApiClient(ctx, c, injectToken)
+		if err != nil {
+			return err
+		}
+		ctx.App.Metadata[key] = apiClient
+		return nil
+	}
+	return middleware.WithBeforeFns(makeFn)
 }
 
 func getAPI(ctx *cli.Context) *api.APIClient {
