@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/influxdata/influx-cli/v2/internal"
+	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
@@ -44,7 +45,9 @@ func newBucketCmd() *cli.Command {
 }
 
 func newBucketCreateCmd() *cli.Command {
-	var params internal.BucketsCreateParams
+	params := internal.BucketsCreateParams{
+		SchemaType: api.SCHEMATYPE_IMPLICIT,
+	}
 	return &cli.Command{
 		Name:   "create",
 		Usage:  "Create bucket",
@@ -90,6 +93,12 @@ func newBucketCreateCmd() *cli.Command {
 				Aliases:     []string{"o"},
 				EnvVars:     []string{"INFLUX_ORG"},
 				Destination: &params.OrgName,
+			},
+			&cli.GenericFlag{
+				Name:        "schema-type",
+				Usage:       "The schema type (implicit, explicit)",
+				DefaultText: "implicit",
+				Value:       &params.SchemaType,
 			},
 		),
 		Action: func(ctx *cli.Context) error {

@@ -24,6 +24,7 @@ type BucketsCreateParams struct {
 	Description        string
 	Retention          string
 	ShardGroupDuration string
+	SchemaType         api.SchemaType
 }
 
 var (
@@ -50,6 +51,7 @@ func (c *CLI) BucketsCreate(ctx context.Context, clients *BucketsClients, params
 		OrgID:          params.OrgID,
 		Name:           params.Name,
 		RetentionRules: []api.RetentionRule{},
+		SchemaType:     &params.SchemaType,
 	}
 	if params.Description != "" {
 		reqBody.Description = &params.Description
@@ -249,7 +251,7 @@ func (c *CLI) printBuckets(options bucketPrintOptions) error {
 		return c.PrintJSON(v)
 	}
 
-	headers := []string{"ID", "Name", "Retention", "Shard group duration", "Organization ID"}
+	headers := []string{"ID", "Name", "Retention", "Shard group duration", "Organization ID", "Schema Type"}
 	if options.deleted {
 		headers = append(headers, "Deleted")
 	}
@@ -279,12 +281,19 @@ func (c *CLI) printBuckets(options bucketPrintOptions) error {
 			sgDur = "n/a"
 		}
 
+		schemaType := bkt.GetSchemaType()
+		if schemaType == "" {
+			// schemaType will be empty when querying OSS.
+			schemaType = api.SCHEMATYPE_IMPLICIT
+		}
+
 		row := map[string]interface{}{
 			"ID":                   bkt.GetId(),
 			"Name":                 bkt.GetName(),
 			"Retention":            rp,
 			"Shard group duration": sgDur,
 			"Organization ID":      bkt.GetOrgID(),
+			"Schema Type":          schemaType,
 		}
 		if options.deleted {
 			row["Deleted"] = true

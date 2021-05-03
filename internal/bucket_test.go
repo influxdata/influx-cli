@@ -94,9 +94,9 @@ func TestBucketsCreate(t *testing.T) {
 		{
 			name: "retention but not shard-group duration",
 			params: internal.BucketsCreateParams{
-				OrgID:       "123",
-				Name:        "my-bucket",
-				Retention:   "24h",
+				OrgID:     "123",
+				Name:      "my-bucket",
+				Retention: "24h",
 			},
 			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
 				return func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
@@ -631,7 +631,7 @@ func TestBucketsDelete(t *testing.T) {
 					return nil, nil
 				}
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
 		{
 			name:          "by name and org ID",
@@ -667,7 +667,7 @@ func TestBucketsDelete(t *testing.T) {
 					return nil, nil
 				}
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
 		{
 			name:          "by name and org name",
@@ -703,7 +703,7 @@ func TestBucketsDelete(t *testing.T) {
 					return nil, nil
 				}
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
 		{
 			name:          "by name in default org",
@@ -738,7 +738,7 @@ func TestBucketsDelete(t *testing.T) {
 					return nil, nil
 				}
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
 		{
 			name: "by name without org",
@@ -800,7 +800,7 @@ func TestBucketsDelete(t *testing.T) {
 			if outLines[len(outLines)-1] == "" {
 				outLines = outLines[:len(outLines)-1]
 			}
-			require.Regexp(t, "ID\\s+Name\\s+Retention\\s+Shard group duration\\s+Organization ID\\s+Deleted", outLines[0])
+			require.Regexp(t, `ID\s+Name\s+Retention\s+Shard group duration\s+Organization ID\s+Schema Type\s+Deleted`, outLines[0])
 			require.Regexp(t, tc.expectedStdoutPattern+"\\s+true", outLines[1])
 		})
 	}
