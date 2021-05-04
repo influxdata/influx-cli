@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/urfave/cli/v2"
 )
@@ -72,11 +73,11 @@ func newCompletionCmd() *cli.Command {
 		Usage:     "Generates completion scripts",
 		ArgsUsage: "[bash|zsh|powershell]",
 		Action: func(ctx *cli.Context) error {
-			prog := os.Args[0]
+			prog := path.Base(os.Args[0])
 			completeFlag := cli.BashCompletionFlag.Names()[0]
 
 			if ctx.NArg() != 1 {
-				return fmt.Errorf("usage: %s [bash|zsh|powershell]", prog)
+				return fmt.Errorf("usage: %s completion [bash|zsh|powershell]", prog)
 			}
 			shellString := ctx.Args().Get(0)
 			var script string
@@ -88,10 +89,10 @@ func newCompletionCmd() *cli.Command {
 			case "powershell":
 				script = ps1Pattern
 			default:
-				return fmt.Errorf("usage: %s [bash|zsh|powershell]", prog)
+				return fmt.Errorf("usage: %s completion [bash|zsh|powershell]", prog)
 			}
 
-			_, err := fmt.Printf(script, "influx", completeFlag)
+			_, err := fmt.Printf(script, prog, completeFlag)
 			return err
 		},
 	}
