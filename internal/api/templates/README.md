@@ -15,6 +15,9 @@ multiple locations.
 * Add `GetX()` methods for each request parameter `X`, for use in unit tests
 * Add checks for `isByteArray` to generate `[]byte` request fields instead of `*string`
 * Update creation of `GenericOpenAPIError` to track sub-error models by reference
+* Add checks for `isResponseBinary` to directly return the response-body-reader, instead of
+  pulling the entire body into memory and transforming it into an `*os.File`
+  
 
 `client.mustache`
 * Removed use of `golang.org/x/oauth2` to avoid its heavy dependencies
