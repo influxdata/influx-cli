@@ -55,6 +55,8 @@ type APIClient struct {
 
 	OrganizationsApi OrganizationsApi
 
+	QueryApi QueryApi
+
 	SetupApi SetupApi
 
 	WriteApi WriteApi
@@ -80,6 +82,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.BucketsApi = (*BucketsApiService)(&c.common)
 	c.HealthApi = (*HealthApiService)(&c.common)
 	c.OrganizationsApi = (*OrganizationsApiService)(&c.common)
+	c.QueryApi = (*QueryApiService)(&c.common)
 	c.SetupApi = (*SetupApiService)(&c.common)
 	c.WriteApi = (*WriteApiService)(&c.common)
 
