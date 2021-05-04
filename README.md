@@ -20,6 +20,22 @@ We use [`OpenAPITools/openapi-generator`](https://github.com/OpenAPITools/openap
 the underlying HTTP client used by the CLI. Run `make openapi` to re-generate the code. You'll  need Docker
 running locally for the script to work.
 
+## Running
+
+After building, use `influx -h` to see the list of available commands.
+
+### Enabling Completions
+
+The CLI supports generating completions for `bash`, `zsh`, and `powershell`:
+```
+# For bash:
+source <(influx completion bash)
+# For zsh:
+source <(influx completion zsh)
+# For pwsh:
+Invoke-Expression ((influx completion powershell) -join "`n`")
+```
+
 ## Testing
 
 Run `make test` to run unit tests.
