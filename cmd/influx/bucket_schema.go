@@ -2,20 +2,20 @@ package main
 
 import (
 	"github.com/influxdata/influx-cli/v2/internal"
-	"github.com/influxdata/influx-cli/v2/internal/cmd/measurement_schema"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket_schema"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/urfave/cli/v2"
 )
 
-func withMSClient() cli.BeforeFunc {
+func withBucketSchemaClient() cli.BeforeFunc {
 	return middleware.WithBeforeFns(
 		withCli(),
 		withApi(true),
 		func(ctx *cli.Context) error {
 			c := getCLI(ctx)
 			client := getAPI(ctx)
-			ctx.App.Metadata["measurement_schema"] = measurement_schema.Client{
+			ctx.App.Metadata["measurement_schema"] = bucket_schema.Client{
 				BucketApi:        client.BucketsApi,
 				BucketSchemasApi: client.BucketSchemasApi,
 				CLI:              c,
@@ -24,38 +24,38 @@ func withMSClient() cli.BeforeFunc {
 		})
 }
 
-func getMSClient(ctx *cli.Context) measurement_schema.Client {
-	i, ok := ctx.App.Metadata["measurement_schema"].(measurement_schema.Client)
+func getBucketSchemaClient(ctx *cli.Context) bucket_schema.Client {
+	i, ok := ctx.App.Metadata["measurement_schema"].(bucket_schema.Client)
 	if !ok {
 		panic("missing measurement schema client")
 	}
 	return i
 }
 
-func newMeasurementSchemaCmd() *cli.Command {
+func newBucketSchemaCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "bucket-schema",
 		Usage: "Bucket schema management commands",
 		Subcommands: []*cli.Command{
-			newMeasurementSchemaCreateCmd(),
-			newMeasurementSchemaUpdateCmd(),
-			newMeasurementSchemaListCmd(),
+			newBucketSchemaCreateCmd(),
+			newBucketSchemaUpdateCmd(),
+			newBucketSchemaListCmd(),
 		},
 	}
 }
 
-func newMeasurementSchemaCreateCmd() *cli.Command {
+func newBucketSchemaCreateCmd() *cli.Command {
 	var params struct {
 		internal.OrgBucketParams
 		Name           string
 		ColumnsFile    string
-		ColumnsFormat  measurement_schema.ColumnsFormat
+		ColumnsFormat  bucket_schema.ColumnsFormat
 		ExtendedOutput bool
 	}
 	return &cli.Command{
 		Name:   "create",
 		Usage:  "Create a measurement schema for a bucket",
-		Before: withMSClient(),
+		Before: withBucketSchemaClient(),
 		Flags: append(
 			commonFlags,
 			append(
@@ -85,8 +85,8 @@ func newMeasurementSchemaCreateCmd() *cli.Command {
 			)...,
 		),
 		Action: func(ctx *cli.Context) error {
-			return getMSClient(ctx).
-				Create(ctx.Context, measurement_schema.CreateParams{
+			return getBucketSchemaClient(ctx).
+				Create(ctx.Context, bucket_schema.CreateParams{
 					OrgBucketParams: params.OrgBucketParams,
 					Name:            params.Name,
 					Stdin:           ctx.App.Reader,
@@ -98,19 +98,19 @@ func newMeasurementSchemaCreateCmd() *cli.Command {
 	}
 }
 
-func newMeasurementSchemaUpdateCmd() *cli.Command {
+func newBucketSchemaUpdateCmd() *cli.Command {
 	var params struct {
 		internal.OrgBucketParams
 		ID             influxid.ID
 		Name           string
 		ColumnsFile    string
-		ColumnsFormat  measurement_schema.ColumnsFormat
+		ColumnsFormat  bucket_schema.ColumnsFormat
 		ExtendedOutput bool
 	}
 	return &cli.Command{
 		Name:   "update",
 		Usage:  "Update a measurement schema for a bucket",
-		Before: withMSClient(),
+		Before: withBucketSchemaClient(),
 		Flags: append(
 			commonFlags,
 			append(
@@ -145,8 +145,8 @@ func newMeasurementSchemaUpdateCmd() *cli.Command {
 			)...,
 		),
 		Action: func(ctx *cli.Context) error {
-			return getMSClient(ctx).
-				Update(ctx.Context, measurement_schema.UpdateParams{
+			return getBucketSchemaClient(ctx).
+				Update(ctx.Context, bucket_schema.UpdateParams{
 					OrgBucketParams: params.OrgBucketParams,
 					ID:              params.ID.String(),
 					Name:            params.Name,
@@ -159,12 +159,12 @@ func newMeasurementSchemaUpdateCmd() *cli.Command {
 	}
 }
 
-func newMeasurementSchemaListCmd() *cli.Command {
-	var params measurement_schema.ListParams
+func newBucketSchemaListCmd() *cli.Command {
+	var params bucket_schema.ListParams
 	return &cli.Command{
 		Name:   "list",
 		Usage:  "List schemas for a bucket",
-		Before: withMSClient(),
+		Before: withBucketSchemaClient(),
 		Flags: append(
 			commonFlags,
 			append(
@@ -183,7 +183,7 @@ func newMeasurementSchemaListCmd() *cli.Command {
 			)...,
 		),
 		Action: func(ctx *cli.Context) error {
-			return getMSClient(ctx).List(ctx.Context, params)
+			return getBucketSchemaClient(ctx).List(ctx.Context, params)
 		},
 	}
 }

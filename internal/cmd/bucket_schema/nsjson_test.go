@@ -1,4 +1,4 @@
-package measurement_schema
+package bucket_schema
 
 import (
 	"strings"
