@@ -11,7 +11,6 @@
 package api
 
 import (
-	"bytes"
 	_gzip "compress/gzip"
 	_context "context"
 	_io "io"
@@ -39,7 +38,7 @@ type SetupApi interface {
 	 * GetSetupExecute executes the request
 	 * @return InlineResponse200
 	 */
-	GetSetupExecute(r ApiGetSetupRequest) (InlineResponse200, *_nethttp.Response, error)
+	GetSetupExecute(r ApiGetSetupRequest) (InlineResponse200, error)
 
 	/*
 	 * PostSetup Set up initial user, org and bucket
@@ -53,7 +52,7 @@ type SetupApi interface {
 	 * PostSetupExecute executes the request
 	 * @return OnboardingResponse
 	 */
-	PostSetupExecute(r ApiPostSetupRequest) (OnboardingResponse, *_nethttp.Response, error)
+	PostSetupExecute(r ApiPostSetupRequest) (OnboardingResponse, error)
 }
 
 // setupApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
@@ -89,7 +88,7 @@ func (r ApiGetSetupRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetSetupRequest) Execute() (InlineResponse200, *_nethttp.Response, error) {
+func (r ApiGetSetupRequest) Execute() (InlineResponse200, error) {
 	return r.ApiService.GetSetupExecute(r)
 }
 
@@ -110,7 +109,7 @@ func (a *SetupApiService) GetSetup(ctx _context.Context) ApiGetSetupRequest {
  * Execute executes the request
  * @return InlineResponse200
  */
-func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse200, *_nethttp.Response, error) {
+func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse200, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -122,7 +121,7 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SetupApiService.GetSetup")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/setup"
@@ -153,12 +152,12 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
 	var body _io.ReadCloser = localVarHTTPResponse.Body
@@ -166,7 +165,7 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 		gzr, err := _gzip.NewReader(body)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, err
 		}
 		body = &setupApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
@@ -174,22 +173,20 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
-		localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, err
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -197,10 +194,10 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }
 
 type ApiPostSetupRequest struct {
@@ -226,7 +223,7 @@ func (r ApiPostSetupRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiPostSetupRequest) Execute() (OnboardingResponse, *_nethttp.Response, error) {
+func (r ApiPostSetupRequest) Execute() (OnboardingResponse, error) {
 	return r.ApiService.PostSetupExecute(r)
 }
 
@@ -247,7 +244,7 @@ func (a *SetupApiService) PostSetup(ctx _context.Context) ApiPostSetupRequest {
  * Execute executes the request
  * @return OnboardingResponse
  */
-func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingResponse, *_nethttp.Response, error) {
+func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingResponse, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -259,7 +256,7 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SetupApiService.PostSetup")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/setup"
@@ -268,7 +265,7 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.onboardingRequest == nil {
-		return localVarReturnValue, nil, reportError("onboardingRequest is required and must be specified")
+		return localVarReturnValue, reportError("onboardingRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -295,12 +292,12 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 	localVarPostBody = r.onboardingRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
 	var body _io.ReadCloser = localVarHTTPResponse.Body
@@ -308,7 +305,7 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 		gzr, err := _gzip.NewReader(body)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, err
 		}
 		body = &setupApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
@@ -316,9 +313,8 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
-		localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, err
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -328,17 +324,16 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -346,8 +341,8 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }

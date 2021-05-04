@@ -2,7 +2,6 @@ package mock
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/influxdata/influx-cli/v2/internal/api"
 )
@@ -10,8 +9,8 @@ import (
 var _ api.SetupApi = (*SetupApi)(nil)
 
 type SetupApi struct {
-	GetSetupExecuteFn  func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error)
-	PostSetupExecuteFn func(api.ApiPostSetupRequest) (api.OnboardingResponse, *http.Response, error)
+	GetSetupExecuteFn  func(api.ApiGetSetupRequest) (api.InlineResponse200, error)
+	PostSetupExecuteFn func(api.ApiPostSetupRequest) (api.OnboardingResponse, error)
 }
 
 func (s *SetupApi) GetSetup(context.Context) api.ApiGetSetupRequest {
@@ -19,7 +18,7 @@ func (s *SetupApi) GetSetup(context.Context) api.ApiGetSetupRequest {
 		ApiService: s,
 	}
 }
-func (s *SetupApi) GetSetupExecute(req api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
+func (s *SetupApi) GetSetupExecute(req api.ApiGetSetupRequest) (api.InlineResponse200, error) {
 	return s.GetSetupExecuteFn(req)
 }
 func (s *SetupApi) PostSetup(context.Context) api.ApiPostSetupRequest {
@@ -27,6 +26,6 @@ func (s *SetupApi) PostSetup(context.Context) api.ApiPostSetupRequest {
 		ApiService: s,
 	}
 }
-func (s *SetupApi) PostSetupExecute(req api.ApiPostSetupRequest) (api.OnboardingResponse, *http.Response, error) {
+func (s *SetupApi) PostSetupExecute(req api.ApiPostSetupRequest) (api.OnboardingResponse, error) {
 	return s.PostSetupExecuteFn(req)
 }

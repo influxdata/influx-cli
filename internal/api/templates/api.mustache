@@ -38,7 +38,7 @@ type {{classname}} interface {
 	 * {{nickname}}Execute executes the request{{#returnType}}
 	 * @return {{{.}}}{{/returnType}}
 	 */
-	{{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}*_nethttp.Response, error)
+	{{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error)
 	{{/operation}}
 }
 {{/generateInterfaces}}
@@ -83,7 +83,7 @@ func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Reques
 
 {{/allParams}}
 
-func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) Execute() ({{#returnType}}{{#isResponseBinary}}io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}*_nethttp.Response, error) {
+func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) Execute() ({{#returnType}}{{#isResponseBinary}}io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error) {
 	return r.ApiService.{{nickname}}Execute(r)
 }
 
@@ -110,7 +110,7 @@ func (a *{{{classname}}}Service) {{{nickname}}}(ctx _context.Context{{#pathParam
  * Execute executes the request{{#returnType}}
  * @return {{{.}}}{{/returnType}}
  */
-func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{.}}}{{/isResponseBinary}}, {{/returnType}}*_nethttp.Response, error) {
+func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{.}}}{{/isResponseBinary}}, {{/returnType}}error) {
 	var (
 		localVarHTTPMethod   = _nethttp.Method{{httpMethod}}
 		localVarPostBody     interface{}
@@ -129,7 +129,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "{{{classname}}}Service.{{{nickname}}}")
 	if err != nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, GenericOpenAPIError{error: err.Error()}
+		return {{#returnType}}localVarReturnValue, {{/returnType}}GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "{{{path}}}"{{#pathParams}}
@@ -142,27 +142,27 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	{{#required}}
 	{{^isPathParam}}
 	if r.{{paramName}} == nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} is required and must be specified")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} is required and must be specified")
 	}
 	{{/isPathParam}}
 	{{#minItems}}
 	if len({{^isPathParam}}*{{/isPathParam}}r.{{paramName}}) < {{minItems}} {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must have at least {{minItems}} elements")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must have at least {{minItems}} elements")
 	}
 	{{/minItems}}
 	{{#maxItems}}
 	if len({{^isPathParam}}*{{/isPathParam}}r.{{paramName}}) > {{maxItems}} {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must have less than {{maxItems}} elements")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must have less than {{maxItems}} elements")
 	}
 	{{/maxItems}}
 	{{#minLength}}
 	if strlen({{^isPathParam}}*{{/isPathParam}}r.{{paramName}}) < {{minLength}} {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must have at least {{minLength}} elements")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must have at least {{minLength}} elements")
 	}
 	{{/minLength}}
 	{{#maxLength}}
 	if strlen({{^isPathParam}}*{{/isPathParam}}r.{{paramName}}) > {{maxLength}} {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must have less than {{maxLength}} elements")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must have less than {{maxLength}} elements")
 	}
 	{{/maxLength}}
 	{{#minimum}}
@@ -173,7 +173,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	{{^isString}}
 	if {{^isPathParam}}*{{/isPathParam}}r.{{paramName}} < {{minimum}} {
 	{{/isString}}
-		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must be greater than {{minimum}}")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must be greater than {{minimum}}")
 	}
 	{{/minimum}}
 	{{#maximum}}
@@ -184,7 +184,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	{{^isString}}
 	if {{^isPathParam}}*{{/isPathParam}}r.{{paramName}} > {{maximum}} {
 	{{/isString}}
-		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must be less than {{maximum}}")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must be less than {{maximum}}")
 	}
 	{{/maximum}}
 	{{/required}}
@@ -287,7 +287,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	if r.{{paramName}} != nil {
 		paramJson, err := parameterToJson(*r.{{paramName}})
 		if err != nil {
-			return {{#returnType}}localVarReturnValue, {{/returnType}}nil, err
+			return {{#returnType}}localVarReturnValue, {{/returnType}}err
 		}
 		localVarFormParams.Add("{{baseName}}", paramJson)
 	}
@@ -342,12 +342,12 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 {{/authMethods}}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, err
+		return {{#returnType}}localVarReturnValue, {{/returnType}}err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, err
+		return {{#returnType}}localVarReturnValue, {{/returnType}}err
 	}
 
     var body _io.ReadCloser = localVarHTTPResponse.Body
@@ -355,7 +355,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
         gzr, err := _gzip.NewReader(body)
         if err != nil {
             body.Close()
-            return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, err
+            return {{#returnType}}localVarReturnValue, {{/returnType}}err
         }
         body = &{{#lambda.camelcase}}{{classname}}{{/lambda.camelcase}}GzipReadCloser{underlying: body, gzip: gzr}
     }
@@ -363,9 +363,8 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
-		localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 		if err != nil {
-			return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, err
+			return {{#returnType}}localVarReturnValue, {{/returnType}}err
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -382,11 +381,11 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, newErr
+				return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 			}
 			newErr.model = &v
 			{{^-last}}
-			return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, newErr
+			return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 			{{/-last}}
 		{{^wildcard}}
 		}
@@ -395,7 +394,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 		{{/is1xx}}
 		{{/dataType}}
 		{{/responses}}
-		return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, newErr
+		return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 	}
 
 	{{#returnType}}
@@ -405,9 +404,8 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	{{^isResponseBinary}}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, err
+		return {{#returnType}}localVarReturnValue, {{/returnType}}err
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -415,12 +413,12 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, newErr
+		return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 	}
 	{{/isResponseBinary}}
 
 	{{/returnType}}
-	return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, nil
+	return {{#returnType}}localVarReturnValue, {{/returnType}}nil
 }
 {{/operation}}
 {{/operations}}

@@ -11,7 +11,6 @@
 package api
 
 import (
-	"bytes"
 	_gzip "compress/gzip"
 	_context "context"
 	_io "io"
@@ -38,7 +37,7 @@ type OrganizationsApi interface {
 	 * GetOrgsExecute executes the request
 	 * @return Organizations
 	 */
-	GetOrgsExecute(r ApiGetOrgsRequest) (Organizations, *_nethttp.Response, error)
+	GetOrgsExecute(r ApiGetOrgsRequest) (Organizations, error)
 
 	/*
 	 * PostOrgs Create an organization
@@ -51,7 +50,7 @@ type OrganizationsApi interface {
 	 * PostOrgsExecute executes the request
 	 * @return Organization
 	 */
-	PostOrgsExecute(r ApiPostOrgsRequest) (Organization, *_nethttp.Response, error)
+	PostOrgsExecute(r ApiPostOrgsRequest) (Organization, error)
 }
 
 // organizationsApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
@@ -141,7 +140,7 @@ func (r ApiGetOrgsRequest) GetUserID() *string {
 	return r.userID
 }
 
-func (r ApiGetOrgsRequest) Execute() (Organizations, *_nethttp.Response, error) {
+func (r ApiGetOrgsRequest) Execute() (Organizations, error) {
 	return r.ApiService.GetOrgsExecute(r)
 }
 
@@ -161,7 +160,7 @@ func (a *OrganizationsApiService) GetOrgs(ctx _context.Context) ApiGetOrgsReques
  * Execute executes the request
  * @return Organizations
  */
-func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizations, *_nethttp.Response, error) {
+func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizations, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -173,7 +172,7 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.GetOrgs")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs"
@@ -222,12 +221,12 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
 	var body _io.ReadCloser = localVarHTTPResponse.Body
@@ -235,7 +234,7 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 		gzr, err := _gzip.NewReader(body)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, err
 		}
 		body = &organizationsApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
@@ -243,9 +242,8 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
-		localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, err
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -255,17 +253,16 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -273,10 +270,10 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }
 
 type ApiPostOrgsRequest struct {
@@ -302,7 +299,7 @@ func (r ApiPostOrgsRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiPostOrgsRequest) Execute() (Organization, *_nethttp.Response, error) {
+func (r ApiPostOrgsRequest) Execute() (Organization, error) {
 	return r.ApiService.PostOrgsExecute(r)
 }
 
@@ -322,7 +319,7 @@ func (a *OrganizationsApiService) PostOrgs(ctx _context.Context) ApiPostOrgsRequ
  * Execute executes the request
  * @return Organization
  */
-func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organization, *_nethttp.Response, error) {
+func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organization, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -334,7 +331,7 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.PostOrgs")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs"
@@ -343,7 +340,7 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.organization == nil {
-		return localVarReturnValue, nil, reportError("organization is required and must be specified")
+		return localVarReturnValue, reportError("organization is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -370,12 +367,12 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 	localVarPostBody = r.organization
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
 	var body _io.ReadCloser = localVarHTTPResponse.Body
@@ -383,7 +380,7 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 		gzr, err := _gzip.NewReader(body)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, err
 		}
 		body = &organizationsApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
@@ -391,9 +388,8 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
-		localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, err
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -403,17 +399,16 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -421,8 +416,8 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }

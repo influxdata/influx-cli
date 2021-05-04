@@ -35,7 +35,7 @@ const MinPasswordLen = 8
 
 func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParams) error {
 	// Check if setup is even allowed.
-	checkResp, _, err := client.GetSetup(ctx).Execute()
+	checkResp, err := client.GetSetup(ctx).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to check if already set up: %w", err)
 	}
@@ -54,7 +54,7 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 	if err != nil {
 		return err
 	}
-	resp, _, err := client.PostSetup(ctx).OnboardingRequest(setupBody).Execute()
+	resp, err := client.PostSetup(ctx).OnboardingRequest(setupBody).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to setup instance: %w", err)
 	}

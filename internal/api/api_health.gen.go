@@ -11,7 +11,6 @@
 package api
 
 import (
-	"bytes"
 	_gzip "compress/gzip"
 	_context "context"
 	_io "io"
@@ -38,7 +37,7 @@ type HealthApi interface {
 	 * GetHealthExecute executes the request
 	 * @return HealthCheck
 	 */
-	GetHealthExecute(r ApiGetHealthRequest) (HealthCheck, *_nethttp.Response, error)
+	GetHealthExecute(r ApiGetHealthRequest) (HealthCheck, error)
 }
 
 // healthApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
@@ -74,7 +73,7 @@ func (r ApiGetHealthRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetHealthRequest) Execute() (HealthCheck, *_nethttp.Response, error) {
+func (r ApiGetHealthRequest) Execute() (HealthCheck, error) {
 	return r.ApiService.GetHealthExecute(r)
 }
 
@@ -94,7 +93,7 @@ func (a *HealthApiService) GetHealth(ctx _context.Context) ApiGetHealthRequest {
  * Execute executes the request
  * @return HealthCheck
  */
-func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck, *_nethttp.Response, error) {
+func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -106,7 +105,7 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HealthApiService.GetHealth")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/health"
@@ -137,12 +136,12 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
 	var body _io.ReadCloser = localVarHTTPResponse.Body
@@ -150,7 +149,7 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 		gzr, err := _gzip.NewReader(body)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, err
 		}
 		body = &healthApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
@@ -158,9 +157,8 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
-		localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, err
+			return localVarReturnValue, err
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -171,26 +169,25 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
+				return localVarReturnValue, newErr
 			}
 			newErr.model = &v
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarReturnValue, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -198,8 +195,8 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }

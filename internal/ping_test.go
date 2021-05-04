@@ -3,7 +3,6 @@ package internal_test
 import (
 	"context"
 	"errors"
-	"net/http"
 	"testing"
 
 	"github.com/influxdata/influx-cli/v2/internal"
@@ -16,8 +15,8 @@ func Test_PingSuccess(t *testing.T) {
 	t.Parallel()
 
 	client := &mock.HealthApi{
-		GetHealthExecuteFn: func(req api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
-			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_PASS}, nil, nil
+		GetHealthExecuteFn: func(req api.ApiGetHealthRequest) (api.HealthCheck, error) {
+			return api.HealthCheck{Status: api.HEALTHCHECKSTATUS_PASS}, nil
 		},
 	}
 
@@ -33,8 +32,8 @@ func Test_PingFailedRequest(t *testing.T) {
 
 	e := "the internet is down"
 	client := &mock.HealthApi{
-		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
-			return api.HealthCheck{}, nil, errors.New(e)
+		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, error) {
+			return api.HealthCheck{}, errors.New(e)
 		},
 	}
 
@@ -49,8 +48,8 @@ func Test_PingFailedStatus(t *testing.T) {
 
 	e := "I broke"
 	client := &mock.HealthApi{
-		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
-			return api.HealthCheck{}, nil, &api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Message: &e}
+		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, error) {
+			return api.HealthCheck{}, &api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Message: &e}
 		},
 	}
 
@@ -65,8 +64,8 @@ func Test_PingFailedStatusNoMessage(t *testing.T) {
 
 	name := "foo"
 	client := &mock.HealthApi{
-		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
-			return api.HealthCheck{}, nil, &api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Name: name}
+		GetHealthExecuteFn: func(api.ApiGetHealthRequest) (api.HealthCheck, error) {
+			return api.HealthCheck{}, &api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Name: name}
 		},
 	}
 
