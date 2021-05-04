@@ -26,7 +26,8 @@ After building, use `influx -h` to see the list of available commands.
 
 ### Enabling Completions
 
-The CLI supports generating completions for `bash`, `zsh`, and `powershell`:
+The CLI supports generating completions for `bash`, `zsh`, and `powershell`. To enable completions for a
+single shell session, run one of these commands:
 ```
 # For bash:
 source <(influx completion bash)
@@ -35,6 +36,7 @@ source <(influx completion zsh)
 # For pwsh:
 Invoke-Expression ((influx completion powershell) -join "`n`")
 ```
+To enable completions across sessions, add the appropriate line to your shell's login profile (i.e. `~/.bash_profile`).
 
 ## Testing
 
