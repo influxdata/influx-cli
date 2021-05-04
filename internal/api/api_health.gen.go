@@ -12,7 +12,9 @@ package api
 
 import (
 	"bytes"
+	_gzip "compress/gzip"
 	_context "context"
+	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -37,6 +39,22 @@ type HealthApi interface {
 	 * @return HealthCheck
 	 */
 	GetHealthExecute(r ApiGetHealthRequest) (HealthCheck, *_nethttp.Response, error)
+}
+
+// healthApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
+type healthApiGzipReadCloser struct {
+	underlying _io.ReadCloser
+	gzip       _io.ReadCloser
+}
+
+func (gzrc *healthApiGzipReadCloser) Read(p []byte) (int, error) {
+	return gzrc.gzip.Read(p)
+}
+func (gzrc *healthApiGzipReadCloser) Close() error {
+	if err := gzrc.gzip.Close(); err != nil {
+		return err
+	}
+	return gzrc.underlying.Close()
 }
 
 // HealthApiService HealthApi service
@@ -127,9 +145,19 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, localVarHTTPResponse, err
+		}
+		body = &healthApiGzipReadCloser{underlying: body, gzip: gzr}
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
-		localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
 		localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 		if err != nil {
 			return localVarReturnValue, localVarHTTPResponse, err
@@ -158,8 +186,8 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
 	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
 		return localVarReturnValue, localVarHTTPResponse, err

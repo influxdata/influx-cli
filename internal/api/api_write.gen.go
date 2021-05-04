@@ -12,7 +12,9 @@ package api
 
 import (
 	"bytes"
+	_gzip "compress/gzip"
 	_context "context"
+	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -36,6 +38,22 @@ type WriteApi interface {
 	 * PostWriteExecute executes the request
 	 */
 	PostWriteExecute(r ApiPostWriteRequest) (*_nethttp.Response, error)
+}
+
+// writeApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
+type writeApiGzipReadCloser struct {
+	underlying _io.ReadCloser
+	gzip       _io.ReadCloser
+}
+
+func (gzrc *writeApiGzipReadCloser) Read(p []byte) (int, error) {
+	return gzrc.gzip.Read(p)
+}
+func (gzrc *writeApiGzipReadCloser) Close() error {
+	if err := gzrc.gzip.Close(); err != nil {
+		return err
+	}
+	return gzrc.underlying.Close()
 }
 
 // WriteApiService WriteApi service
@@ -236,9 +254,19 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) (*_nethttp.Res
 		return localVarHTTPResponse, err
 	}
 
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarHTTPResponse, err
+		}
+		body = &writeApiGzipReadCloser{underlying: body, gzip: gzr}
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
-		localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-		localVarHTTPResponse.Body.Close()
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
 		localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
 		if err != nil {
 			return localVarHTTPResponse, err
