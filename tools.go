@@ -11,5 +11,6 @@ package influxcli
 
 import (
 	_ "github.com/daixiang0/gci"
+	_ "golang.org/x/tools/cmd/goimports"
 	_ "honnef.co/go/tools/cmd/staticcheck"
 )
