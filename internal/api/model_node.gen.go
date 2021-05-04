@@ -12,7 +12,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 )
 
 // Node - struct for Node
@@ -66,11 +66,11 @@ func (dst *Node) UnmarshalJSON(data []byte) error {
 		dst.Block = nil
 		dst.Expression = nil
 
-		return fmt.Errorf("Data matches more than one schema in oneOf(Node)")
+		return errors.New("data matches more than one schema in oneOf(Node)")
 	} else if match == 1 {
 		return nil // exactly one match
 	} else { // no match
-		return fmt.Errorf("Data failed to match schemas in oneOf(Node)")
+		return errors.New("data failed to match schemas in oneOf(Node)")
 	}
 }
 

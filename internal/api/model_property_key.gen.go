@@ -12,7 +12,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 )
 
 // PropertyKey - struct for PropertyKey
@@ -66,11 +66,11 @@ func (dst *PropertyKey) UnmarshalJSON(data []byte) error {
 		dst.Identifier = nil
 		dst.StringLiteral = nil
 
-		return fmt.Errorf("Data matches more than one schema in oneOf(PropertyKey)")
+		return errors.New("data matches more than one schema in oneOf(PropertyKey)")
 	} else if match == 1 {
 		return nil // exactly one match
 	} else { // no match
-		return fmt.Errorf("Data failed to match schemas in oneOf(PropertyKey)")
+		return errors.New("data failed to match schemas in oneOf(PropertyKey)")
 	}
 }
 

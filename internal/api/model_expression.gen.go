@@ -12,7 +12,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 )
 
 // Expression - struct for Expression
@@ -486,11 +486,11 @@ func (dst *Expression) UnmarshalJSON(data []byte) error {
 		dst.UnaryExpression = nil
 		dst.UnsignedIntegerLiteral = nil
 
-		return fmt.Errorf("Data matches more than one schema in oneOf(Expression)")
+		return errors.New("data matches more than one schema in oneOf(Expression)")
 	} else if match == 1 {
 		return nil // exactly one match
 	} else { // no match
-		return fmt.Errorf("Data failed to match schemas in oneOf(Expression)")
+		return errors.New("data failed to match schemas in oneOf(Expression)")
 	}
 }
 
