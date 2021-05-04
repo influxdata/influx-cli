@@ -38,7 +38,7 @@ type {{classname}} interface {
 	 * {{nickname}}Execute executes the request{{#returnType}}
 	 * @return {{{.}}}{{/returnType}}
 	 */
-	{{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error)
+	{{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}_io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error)
 	{{/operation}}
 }
 {{/generateInterfaces}}
@@ -83,7 +83,7 @@ func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Reques
 
 {{/allParams}}
 
-func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) Execute() ({{#returnType}}{{#isResponseBinary}}io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error) {
+func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) Execute() ({{#returnType}}{{#isResponseBinary}}_io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error) {
 	return r.ApiService.{{nickname}}Execute(r)
 }
 
@@ -110,7 +110,7 @@ func (a *{{{classname}}}Service) {{{nickname}}}(ctx _context.Context{{#pathParam
  * Execute executes the request{{#returnType}}
  * @return {{{.}}}{{/returnType}}
  */
-func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{.}}}{{/isResponseBinary}}, {{/returnType}}error) {
+func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}_io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{.}}}{{/isResponseBinary}}, {{/returnType}}error) {
 	var (
 		localVarHTTPMethod   = _nethttp.Method{{httpMethod}}
 		localVarPostBody     interface{}
@@ -119,7 +119,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 		localVarFileBytes    []byte
 		{{#returnType}}
 		{{#isResponseBinary}}
-		localVarReturnValue  io.ReadCloser
+		localVarReturnValue  _io.ReadCloser
 		{{/isResponseBinary}}
 		{{^isResponseBinary}}
 		localVarReturnValue  {{{returnType}}}
