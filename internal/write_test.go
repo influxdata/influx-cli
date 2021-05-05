@@ -5,7 +5,6 @@ import (
 	"context"
 	"io"
 	"io/ioutil"
-	"net/http"
 	"strings"
 	"testing"
 
@@ -69,7 +68,7 @@ func TestWriteByIDs(t *testing.T) {
 
 	var writtenLines []string
 	client := mock.WriteApi{
-		PostWriteExecuteFn: func(req api.ApiPostWriteRequest) (*http.Response, error) {
+		PostWriteExecuteFn: func(req api.ApiPostWriteRequest) error {
 			// Make sure query params are set.
 			require.Equal(t, params.OrgID, *req.GetOrg())
 			require.Equal(t, params.BucketID, *req.GetBucket())
@@ -78,7 +77,7 @@ func TestWriteByIDs(t *testing.T) {
 			// Make sure the body is properly marked for compression, and record what was sent.
 			require.Equal(t, "gzip", *req.GetContentEncoding())
 			writtenLines = append(writtenLines, string(req.GetBody()))
-			return nil, nil
+			return nil
 		},
 	}
 
@@ -113,7 +112,7 @@ func TestWriteByNames(t *testing.T) {
 
 	var writtenLines []string
 	client := mock.WriteApi{
-		PostWriteExecuteFn: func(req api.ApiPostWriteRequest) (*http.Response, error) {
+		PostWriteExecuteFn: func(req api.ApiPostWriteRequest) error {
 			// Make sure query params are set.
 			require.Equal(t, params.OrgName, *req.GetOrg())
 			require.Equal(t, params.BucketName, *req.GetBucket())
@@ -122,7 +121,7 @@ func TestWriteByNames(t *testing.T) {
 			// Make sure the body is properly marked for compression, and record what was sent.
 			require.Equal(t, "gzip", *req.GetContentEncoding())
 			writtenLines = append(writtenLines, string(req.GetBody()))
-			return nil, nil
+			return nil
 		},
 	}
 
@@ -156,7 +155,7 @@ func TestWriteOrgFromConfig(t *testing.T) {
 
 	var writtenLines []string
 	client := mock.WriteApi{
-		PostWriteExecuteFn: func(req api.ApiPostWriteRequest) (*http.Response, error) {
+		PostWriteExecuteFn: func(req api.ApiPostWriteRequest) error {
 			// Make sure query params are set.
 			require.Equal(t, cli.ActiveConfig.Org, *req.GetOrg())
 			require.Equal(t, params.BucketName, *req.GetBucket())
@@ -165,7 +164,7 @@ func TestWriteOrgFromConfig(t *testing.T) {
 			// Make sure the body is properly marked for compression, and record what was sent.
 			require.Equal(t, "gzip", *req.GetContentEncoding())
 			writtenLines = append(writtenLines, string(req.GetBody()))
-			return nil, nil
+			return nil
 		},
 	}
 

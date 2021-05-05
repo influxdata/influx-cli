@@ -11,8 +11,9 @@
 package api
 
 import (
-	"bytes"
+	_gzip "compress/gzip"
 	_context "context"
+	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -35,7 +36,23 @@ type WriteApi interface {
 	/*
 	 * PostWriteExecute executes the request
 	 */
-	PostWriteExecute(r ApiPostWriteRequest) (*_nethttp.Response, error)
+	PostWriteExecute(r ApiPostWriteRequest) error
+}
+
+// writeApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
+type writeApiGzipReadCloser struct {
+	underlying _io.ReadCloser
+	gzip       _io.ReadCloser
+}
+
+func (gzrc *writeApiGzipReadCloser) Read(p []byte) (int, error) {
+	return gzrc.gzip.Read(p)
+}
+func (gzrc *writeApiGzipReadCloser) Close() error {
+	if err := gzrc.gzip.Close(); err != nil {
+		return err
+	}
+	return gzrc.underlying.Close()
 }
 
 // WriteApiService WriteApi service
@@ -136,7 +153,7 @@ func (r ApiPostWriteRequest) GetPrecision() *WritePrecision {
 	return r.precision
 }
 
-func (r ApiPostWriteRequest) Execute() (*_nethttp.Response, error) {
+func (r ApiPostWriteRequest) Execute() error {
 	return r.ApiService.PostWriteExecute(r)
 }
 
@@ -155,7 +172,7 @@ func (a *WriteApiService) PostWrite(ctx _context.Context) ApiPostWriteRequest {
 /*
  * Execute executes the request
  */
-func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) (*_nethttp.Response, error) {
+func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -166,7 +183,7 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) (*_nethttp.Res
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WriteApiService.PostWrite")
 	if err != nil {
-		return nil, GenericOpenAPIError{error: err.Error()}
+		return GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/write"
@@ -175,13 +192,13 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) (*_nethttp.Res
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.org == nil {
-		return nil, reportError("org is required and must be specified")
+		return reportError("org is required and must be specified")
 	}
 	if r.bucket == nil {
-		return nil, reportError("bucket is required and must be specified")
+		return reportError("bucket is required and must be specified")
 	}
 	if r.body == nil {
-		return nil, reportError("body is required and must be specified")
+		return reportError("body is required and must be specified")
 	}
 
 	localVarQueryParams.Add("org", parameterToString(*r.org, ""))
@@ -228,22 +245,30 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) (*_nethttp.Res
 	localVarPostBody = r.body
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
+		return err
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarHTTPResponse, err
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return err
+		}
+		body = &writeApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return err
+		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
@@ -253,50 +278,50 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) (*_nethttp.Res
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
+				return newErr
 			}
 			newErr.model = &v
-			return localVarHTTPResponse, newErr
+			return newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
+				return newErr
 			}
 			newErr.model = &v
-			return localVarHTTPResponse, newErr
+			return newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
+				return newErr
 			}
 			newErr.model = &v
-			return localVarHTTPResponse, newErr
+			return newErr
 		}
 		if localVarHTTPResponse.StatusCode == 413 {
 			var v LineProtocolLengthError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
+				return newErr
 			}
 			newErr.model = &v
-			return localVarHTTPResponse, newErr
+			return newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarHTTPResponse, newErr
+			return newErr
 		}
 		newErr.model = &v
-		return localVarHTTPResponse, newErr
+		return newErr
 	}
 
-	return localVarHTTPResponse, nil
+	return nil
 }

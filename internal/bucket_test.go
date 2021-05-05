@@ -3,7 +3,6 @@ package internal_test
 import (
 	"context"
 	"errors"
-	"net/http"
 	"strings"
 	"testing"
 
@@ -22,8 +21,8 @@ func TestBucketsCreate(t *testing.T) {
 		name                  string
 		configOrgName         string
 		params                internal.BucketsCreateParams
-		buildOrgLookupFn      func(*testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error)
-		buildBucketCreateFn   func(*testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error)
+		buildOrgLookupFn      func(*testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error)
+		buildBucketCreateFn   func(*testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error)
 		expectedStdoutPattern string
 		expectedInErr         string
 	}{
@@ -33,13 +32,13 @@ func TestBucketsCreate(t *testing.T) {
 				OrgID: "123",
 				Name:  "my-bucket",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-				return func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-					return api.Organizations{}, nil, errors.New("unexpected org lookup call")
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+				return func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+					return api.Organizations{}, errors.New("unexpected org lookup call")
 				}
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
 					body := req.GetPostBucketRequest()
 					require.NotNil(t, body)
 					require.Equal(t, "123", body.OrgID)
@@ -51,7 +50,7 @@ func TestBucketsCreate(t *testing.T) {
 						OrgID:          api.PtrString("123"),
 						Name:           "my-bucket",
 						RetentionRules: nil,
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPattern: "456\\s+my-bucket\\s+infinite\\s+n/a\\s+123",
@@ -65,13 +64,13 @@ func TestBucketsCreate(t *testing.T) {
 				Retention:          "24h",
 				ShardGroupDuration: "1h",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-				return func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-					return api.Organizations{}, nil, errors.New("unexpected org lookup call")
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+				return func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+					return api.Organizations{}, errors.New("unexpected org lookup call")
 				}
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
 					body := req.GetPostBucketRequest()
 					require.NotNil(t, body)
 					require.Equal(t, "123", body.OrgID)
@@ -86,7 +85,7 @@ func TestBucketsCreate(t *testing.T) {
 						OrgID:          api.PtrString("123"),
 						Name:           "my-bucket",
 						RetentionRules: body.RetentionRules,
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
@@ -98,13 +97,13 @@ func TestBucketsCreate(t *testing.T) {
 				Name:      "my-bucket",
 				Retention: "24h",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-				return func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-					return api.Organizations{}, nil, errors.New("unexpected org lookup call")
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+				return func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+					return api.Organizations{}, errors.New("unexpected org lookup call")
 				}
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
 					body := req.GetPostBucketRequest()
 					require.NotNil(t, body)
 					require.Equal(t, "123", body.OrgID)
@@ -119,7 +118,7 @@ func TestBucketsCreate(t *testing.T) {
 						OrgID:          api.PtrString("123"),
 						Name:           "my-bucket",
 						RetentionRules: body.RetentionRules,
-					}, nil, nil
+					}, nil
 				}
 			},
 		},
@@ -131,13 +130,13 @@ func TestBucketsCreate(t *testing.T) {
 				Retention:  "24h",
 				SchemaType: api.SCHEMATYPE_EXPLICIT,
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-				return func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-					return api.Organizations{}, nil, errors.New("unexpected org lookup call")
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+				return func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+					return api.Organizations{}, errors.New("unexpected org lookup call")
 				}
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
 					body := req.GetPostBucketRequest()
 					require.NotNil(t, body)
 					require.Equal(t, "123", body.OrgID)
@@ -150,7 +149,7 @@ func TestBucketsCreate(t *testing.T) {
 						Name:           "my-bucket",
 						RetentionRules: body.RetentionRules,
 						SchemaType:     api.SCHEMATYPE_EXPLICIT.Ptr(),
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPattern: `456\s+my-bucket\s+24h0m0s\s+n/a\s+123\s+explicit`,
@@ -164,16 +163,16 @@ func TestBucketsCreate(t *testing.T) {
 				Retention:          "24h",
 				ShardGroupDuration: "1h",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-				return func(req api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+				return func(req api.ApiGetOrgsRequest) (api.Organizations, error) {
 					require.Equal(t, "my-org", *req.GetOrg())
 					return api.Organizations{
 						Orgs: &[]api.Organization{{Id: api.PtrString("123")}},
-					}, nil, nil
+					}, nil
 				}
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
 					body := req.GetPostBucketRequest()
 					require.NotNil(t, body)
 					require.Equal(t, "123", body.OrgID)
@@ -188,7 +187,7 @@ func TestBucketsCreate(t *testing.T) {
 						OrgID:          api.PtrString("123"),
 						Name:           "my-bucket",
 						RetentionRules: body.RetentionRules,
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
@@ -202,16 +201,16 @@ func TestBucketsCreate(t *testing.T) {
 				ShardGroupDuration: "1h",
 			},
 			configOrgName: "my-org",
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-				return func(req api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+				return func(req api.ApiGetOrgsRequest) (api.Organizations, error) {
 					require.Equal(t, "my-org", *req.GetOrg())
 					return api.Organizations{
 						Orgs: &[]api.Organization{{Id: api.PtrString("123")}},
-					}, nil, nil
+					}, nil
 				}
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
 					body := req.GetPostBucketRequest()
 					require.NotNil(t, body)
 					require.Equal(t, "123", body.OrgID)
@@ -226,7 +225,7 @@ func TestBucketsCreate(t *testing.T) {
 						OrgID:          api.PtrString("123"),
 						Name:           "my-bucket",
 						RetentionRules: body.RetentionRules,
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
@@ -239,14 +238,14 @@ func TestBucketsCreate(t *testing.T) {
 				Retention:          "24h",
 				ShardGroupDuration: "1h",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-				return func(req api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-					return api.Organizations{}, nil, errors.New("shouldn't be called")
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+				return func(req api.ApiGetOrgsRequest) (api.Organizations, error) {
+					return api.Organizations{}, errors.New("shouldn't be called")
 				}
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-					return api.Bucket{}, nil, errors.New("shouldn't be called")
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
+					return api.Bucket{}, errors.New("shouldn't be called")
 				}
 			},
 			expectedInErr: "must specify org ID or org name",
@@ -260,14 +259,14 @@ func TestBucketsCreate(t *testing.T) {
 				Retention:          "24h",
 				ShardGroupDuration: "1h",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-				return func(req api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-					return api.Organizations{}, nil, nil
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+				return func(req api.ApiGetOrgsRequest) (api.Organizations, error) {
+					return api.Organizations{}, nil
 				}
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-					return api.Bucket{}, nil, errors.New("shouldn't be called")
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
+					return api.Bucket{}, errors.New("shouldn't be called")
 				}
 			},
 			expectedInErr: "no organization found",
@@ -316,7 +315,7 @@ func TestBucketsList(t *testing.T) {
 		name                   string
 		configOrgName          string
 		params                 internal.BucketsListParams
-		buildBucketLookupFn    func(*testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error)
+		buildBucketLookupFn    func(*testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error)
 		expectedStdoutPatterns []string
 		expectedInErr          string
 	}{
@@ -326,8 +325,8 @@ func TestBucketsList(t *testing.T) {
 				ID: "123",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
 					require.Equal(t, "123", *req.GetId())
 					require.Equal(t, "my-default-org", *req.GetOrg())
 					require.Nil(t, req.GetName())
@@ -343,7 +342,7 @@ func TestBucketsList(t *testing.T) {
 								},
 							},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPatterns: []string{
@@ -356,8 +355,8 @@ func TestBucketsList(t *testing.T) {
 				Name: "my-bucket",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
 					require.Equal(t, "my-bucket", *req.GetName())
 					require.Equal(t, "my-default-org", *req.GetOrg())
 					require.Nil(t, req.GetId())
@@ -373,7 +372,7 @@ func TestBucketsList(t *testing.T) {
 								},
 							},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPatterns: []string{
@@ -386,13 +385,13 @@ func TestBucketsList(t *testing.T) {
 				OrgID: "456",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
 					require.Equal(t, "456", *req.GetOrgID())
 					require.Nil(t, req.GetId())
 					require.Nil(t, req.GetOrg())
 					require.Nil(t, req.GetOrg())
-					return api.Buckets{}, nil, nil
+					return api.Buckets{}, nil
 				}
 			},
 		},
@@ -402,8 +401,8 @@ func TestBucketsList(t *testing.T) {
 				OrgName: "my-org",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
 					require.Equal(t, "my-org", *req.GetOrg())
 					require.Nil(t, req.GetId())
 					require.Nil(t, req.GetName())
@@ -427,7 +426,7 @@ func TestBucketsList(t *testing.T) {
 								},
 							},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPatterns: []string{
@@ -441,8 +440,8 @@ func TestBucketsList(t *testing.T) {
 				OrgName: "my-org",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
 					require.Equal(t, "my-org", *req.GetOrg())
 					require.Nil(t, req.GetId())
 					require.Nil(t, req.GetName())
@@ -476,7 +475,7 @@ func TestBucketsList(t *testing.T) {
 								SchemaType: api.SCHEMATYPE_EXPLICIT.Ptr(),
 							},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPatterns: []string{
@@ -488,9 +487,9 @@ func TestBucketsList(t *testing.T) {
 		{
 			name:          "no org specified",
 			expectedInErr: "must specify org ID or org name",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-					return api.Buckets{}, nil, errors.New("shouldn't be called")
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+					return api.Buckets{}, errors.New("shouldn't be called")
 				}
 			},
 		},
@@ -534,7 +533,7 @@ func TestBucketsUpdate(t *testing.T) {
 	var testCases = []struct {
 		name                  string
 		params                internal.BucketsUpdateParams
-		buildBucketUpdateFn   func(*testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error)
+		buildBucketUpdateFn   func(*testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, error)
 		expectedStdoutPattern string
 	}{
 		{
@@ -543,8 +542,8 @@ func TestBucketsUpdate(t *testing.T) {
 				ID:   "123",
 				Name: "cold-storage",
 			},
-			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
+				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
 					require.Equal(t, "123", req.GetBucketID())
 					body := req.GetPatchBucketRequest()
 					require.Equal(t, "cold-storage", body.GetName())
@@ -555,7 +554,7 @@ func TestBucketsUpdate(t *testing.T) {
 						Id:    api.PtrString("123"),
 						Name:  "cold-storage",
 						OrgID: api.PtrString("456"),
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPattern: "123\\s+cold-storage\\s+infinite\\s+n/a\\s+456",
@@ -566,8 +565,8 @@ func TestBucketsUpdate(t *testing.T) {
 				ID:          "123",
 				Description: "a very useful description",
 			},
-			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
+				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
 					require.Equal(t, "123", req.GetBucketID())
 					body := req.GetPatchBucketRequest()
 					require.Equal(t, "a very useful description", body.GetDescription())
@@ -579,7 +578,7 @@ func TestBucketsUpdate(t *testing.T) {
 						Name:        "my-bucket",
 						Description: api.PtrString("a very useful description"),
 						OrgID:       api.PtrString("456"),
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+infinite\\s+n/a\\s+456",
@@ -590,8 +589,8 @@ func TestBucketsUpdate(t *testing.T) {
 				ID:        "123",
 				Retention: "3w",
 			},
-			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
+				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
 					require.Equal(t, "123", req.GetBucketID())
 					body := req.GetPatchBucketRequest()
 					require.Len(t, body.GetRetentionRules(), 1)
@@ -608,7 +607,7 @@ func TestBucketsUpdate(t *testing.T) {
 						RetentionRules: []api.RetentionRule{
 							{EverySeconds: rule.GetEverySeconds()},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+504h0m0s\\s+n/a\\s+456",
@@ -619,8 +618,8 @@ func TestBucketsUpdate(t *testing.T) {
 				ID:                 "123",
 				ShardGroupDuration: "10h30m",
 			},
-			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
+				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
 					require.Equal(t, "123", req.GetBucketID())
 					body := req.GetPatchBucketRequest()
 					require.Len(t, body.GetRetentionRules(), 1)
@@ -637,7 +636,7 @@ func TestBucketsUpdate(t *testing.T) {
 						RetentionRules: []api.RetentionRule{
 							{ShardGroupDurationSeconds: rule.ShardGroupDurationSeconds},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+infinite\\s+10h30m0s\\s+456",
@@ -675,8 +674,8 @@ func TestBucketsDelete(t *testing.T) {
 		name                  string
 		configOrgName         string
 		params                internal.BucketsDeleteParams
-		buildBucketsLookupFn  func(*testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error)
-		buildBucketDeleteFn   func(*testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error)
+		buildBucketsLookupFn  func(*testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error)
+		buildBucketDeleteFn   func(*testing.T) func(api.ApiDeleteBucketsIDRequest) error
 		expectedStdoutPattern string
 		expectedInErr         string
 	}{
@@ -686,8 +685,8 @@ func TestBucketsDelete(t *testing.T) {
 			params: internal.BucketsDeleteParams{
 				ID: "123",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
 					require.Equal(t, "123", *req.GetId())
 					require.Nil(t, req.GetName())
 					require.Nil(t, req.GetOrgID())
@@ -704,13 +703,13 @@ func TestBucketsDelete(t *testing.T) {
 								},
 							},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
-				return func(req api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
+				return func(req api.ApiDeleteBucketsIDRequest) error {
 					assert.Equal(t, "123", req.GetBucketID())
-					return nil, nil
+					return nil
 				}
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
@@ -722,8 +721,8 @@ func TestBucketsDelete(t *testing.T) {
 				Name:  "my-bucket",
 				OrgID: "456",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
 					require.Equal(t, "my-bucket", *req.GetName())
 					require.Equal(t, "456", *req.GetOrgID())
 					require.Nil(t, req.GetId())
@@ -740,13 +739,13 @@ func TestBucketsDelete(t *testing.T) {
 								},
 							},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
-				return func(req api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
+				return func(req api.ApiDeleteBucketsIDRequest) error {
 					assert.Equal(t, "123", req.GetBucketID())
-					return nil, nil
+					return nil
 				}
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
@@ -758,8 +757,8 @@ func TestBucketsDelete(t *testing.T) {
 				Name:    "my-bucket",
 				OrgName: "my-org",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
 					require.Equal(t, "my-bucket", *req.GetName())
 					require.Equal(t, "my-org", *req.GetOrg())
 					require.Nil(t, req.GetId())
@@ -776,13 +775,13 @@ func TestBucketsDelete(t *testing.T) {
 								},
 							},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
-				return func(req api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
+				return func(req api.ApiDeleteBucketsIDRequest) error {
 					assert.Equal(t, "123", req.GetBucketID())
-					return nil, nil
+					return nil
 				}
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
@@ -793,8 +792,8 @@ func TestBucketsDelete(t *testing.T) {
 			params: internal.BucketsDeleteParams{
 				Name: "my-bucket",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
 					require.Equal(t, "my-bucket", *req.GetName())
 					require.Equal(t, "my-default-org", *req.GetOrg())
 					require.Nil(t, req.GetId())
@@ -811,13 +810,13 @@ func TestBucketsDelete(t *testing.T) {
 								},
 							},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
-				return func(req api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
+				return func(req api.ApiDeleteBucketsIDRequest) error {
 					assert.Equal(t, "123", req.GetBucketID())
-					return nil, nil
+					return nil
 				}
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
@@ -827,14 +826,14 @@ func TestBucketsDelete(t *testing.T) {
 			params: internal.BucketsDeleteParams{
 				Name: "my-bucket",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-					return api.Buckets{}, nil, errors.New("shouldn't be called")
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+					return api.Buckets{}, errors.New("shouldn't be called")
 				}
 			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
-				return func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
-					return nil, errors.New("shouldn't be called")
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
+				return func(api.ApiDeleteBucketsIDRequest) error {
+					return errors.New("shouldn't be called")
 				}
 			},
 			expectedInErr: "must specify org ID or org name",
@@ -844,14 +843,14 @@ func TestBucketsDelete(t *testing.T) {
 			params: internal.BucketsDeleteParams{
 				ID: "123",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-					return api.Buckets{}, nil, nil
+			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+					return api.Buckets{}, nil
 				}
 			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
-				return func(api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
-					return nil, errors.New("shouldn't be called")
+			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
+				return func(api.ApiDeleteBucketsIDRequest) error {
+					return errors.New("shouldn't be called")
 				}
 			},
 			expectedInErr: "not found",

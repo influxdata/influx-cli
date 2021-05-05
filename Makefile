@@ -30,7 +30,11 @@ openapi:
 	./etc/generate-openapi.sh
 
 fmt: $(SOURCES_NO_VENDOR)
+	# Format everything, but the import-format doesn't match our desired pattern.
 	gofmt -w -s $^
+	# Remove unused imports.
+	go run golang.org/x/tools/cmd/goimports -w $^
+	# Format imports.
 	go run github.com/daixiang0/gci -w $^
 
 bin/$(GOOS)/influx: $(SOURCES)

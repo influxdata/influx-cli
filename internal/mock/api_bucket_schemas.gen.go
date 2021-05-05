@@ -6,7 +6,6 @@ package mock
 
 import (
 	context "context"
-	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -51,13 +50,12 @@ func (mr *MockBucketSchemasApiMockRecorder) CreateMeasurementSchema(arg0, arg1 i
 }
 
 // CreateMeasurementSchemaExecute mocks base method.
-func (m *MockBucketSchemasApi) CreateMeasurementSchemaExecute(arg0 api.ApiCreateMeasurementSchemaRequest) (api.MeasurementSchema, *http.Response, error) {
+func (m *MockBucketSchemasApi) CreateMeasurementSchemaExecute(arg0 api.ApiCreateMeasurementSchemaRequest) (api.MeasurementSchema, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateMeasurementSchemaExecute", arg0)
 	ret0, _ := ret[0].(api.MeasurementSchema)
-	ret1, _ := ret[1].(*http.Response)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateMeasurementSchemaExecute indicates an expected call of CreateMeasurementSchemaExecute.
@@ -81,13 +79,12 @@ func (mr *MockBucketSchemasApiMockRecorder) GetMeasurementSchema(arg0, arg1, arg
 }
 
 // GetMeasurementSchemaExecute mocks base method.
-func (m *MockBucketSchemasApi) GetMeasurementSchemaExecute(arg0 api.ApiGetMeasurementSchemaRequest) (api.MeasurementSchema, *http.Response, error) {
+func (m *MockBucketSchemasApi) GetMeasurementSchemaExecute(arg0 api.ApiGetMeasurementSchemaRequest) (api.MeasurementSchema, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMeasurementSchemaExecute", arg0)
 	ret0, _ := ret[0].(api.MeasurementSchema)
-	ret1, _ := ret[1].(*http.Response)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetMeasurementSchemaExecute indicates an expected call of GetMeasurementSchemaExecute.
@@ -111,13 +108,12 @@ func (mr *MockBucketSchemasApiMockRecorder) GetMeasurementSchemas(arg0, arg1 int
 }
 
 // GetMeasurementSchemasExecute mocks base method.
-func (m *MockBucketSchemasApi) GetMeasurementSchemasExecute(arg0 api.ApiGetMeasurementSchemasRequest) (api.MeasurementSchemaList, *http.Response, error) {
+func (m *MockBucketSchemasApi) GetMeasurementSchemasExecute(arg0 api.ApiGetMeasurementSchemasRequest) (api.MeasurementSchemaList, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMeasurementSchemasExecute", arg0)
 	ret0, _ := ret[0].(api.MeasurementSchemaList)
-	ret1, _ := ret[1].(*http.Response)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetMeasurementSchemasExecute indicates an expected call of GetMeasurementSchemasExecute.
@@ -141,13 +137,12 @@ func (mr *MockBucketSchemasApiMockRecorder) UpdateMeasurementSchema(arg0, arg1, 
 }
 
 // UpdateMeasurementSchemaExecute mocks base method.
-func (m *MockBucketSchemasApi) UpdateMeasurementSchemaExecute(arg0 api.ApiUpdateMeasurementSchemaRequest) (api.MeasurementSchema, *http.Response, error) {
+func (m *MockBucketSchemasApi) UpdateMeasurementSchemaExecute(arg0 api.ApiUpdateMeasurementSchemaRequest) (api.MeasurementSchema, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateMeasurementSchemaExecute", arg0)
 	ret0, _ := ret[0].(api.MeasurementSchema)
-	ret1, _ := ret[1].(*http.Response)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // UpdateMeasurementSchemaExecute indicates an expected call of UpdateMeasurementSchemaExecute.

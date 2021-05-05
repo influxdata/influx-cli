@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
 	"strconv"
 	"strings"
 	"testing"
@@ -21,8 +20,8 @@ func Test_SetupConfigNameCollision(t *testing.T) {
 	t.Parallel()
 
 	client := &mock.SetupApi{
-		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
-			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil, nil
+		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, error) {
+			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil
 		},
 	}
 
@@ -44,8 +43,8 @@ func Test_SetupConfigNameRequired(t *testing.T) {
 	t.Parallel()
 
 	client := &mock.SetupApi{
-		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
-			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil, nil
+		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, error) {
+			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil
 		},
 	}
 
@@ -65,8 +64,8 @@ func Test_SetupAlreadySetup(t *testing.T) {
 	t.Parallel()
 
 	client := &mock.SetupApi{
-		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
-			return api.InlineResponse200{Allowed: api.PtrBool(false)}, nil, nil
+		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, error) {
+			return api.InlineResponse200{Allowed: api.PtrBool(false)}, nil
 		},
 	}
 
@@ -87,8 +86,8 @@ func Test_SetupCheckFailed(t *testing.T) {
 
 	e := "oh no"
 	client := &mock.SetupApi{
-		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
-			return api.InlineResponse200{}, nil, errors.New(e)
+		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, error) {
+			return api.InlineResponse200{}, errors.New(e)
 		},
 	}
 
@@ -125,10 +124,10 @@ func Test_SetupSuccessNoninteractive(t *testing.T) {
 		Bucket: &api.Bucket{Name: params.Bucket},
 	}
 	client := &mock.SetupApi{
-		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
-			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil, nil
+		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, error) {
+			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil
 		},
-		PostSetupExecuteFn: func(req api.ApiPostSetupRequest) (api.OnboardingResponse, *http.Response, error) {
+		PostSetupExecuteFn: func(req api.ApiPostSetupRequest) (api.OnboardingResponse, error) {
 			body := req.GetOnboardingRequest()
 			require.Equal(t, params.Username, body.Username)
 			require.Equal(t, params.Password, *body.Password)
@@ -136,7 +135,7 @@ func Test_SetupSuccessNoninteractive(t *testing.T) {
 			require.Equal(t, params.Org, body.Org)
 			require.Equal(t, params.Bucket, body.Bucket)
 			require.Equal(t, retentionSecs, *body.RetentionPeriodSeconds)
-			return resp, nil, nil
+			return resp, nil
 		},
 	}
 
@@ -182,10 +181,10 @@ func Test_SetupSuccessInteractive(t *testing.T) {
 		Bucket: &api.Bucket{Name: bucket},
 	}
 	client := &mock.SetupApi{
-		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
-			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil, nil
+		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, error) {
+			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil
 		},
-		PostSetupExecuteFn: func(req api.ApiPostSetupRequest) (api.OnboardingResponse, *http.Response, error) {
+		PostSetupExecuteFn: func(req api.ApiPostSetupRequest) (api.OnboardingResponse, error) {
 			body := req.GetOnboardingRequest()
 			require.Equal(t, username, body.Username)
 			require.Equal(t, password, *body.Password)
@@ -193,7 +192,7 @@ func Test_SetupSuccessInteractive(t *testing.T) {
 			require.Equal(t, org, body.Org)
 			require.Equal(t, bucket, body.Bucket)
 			require.Equal(t, retentionSecs, *body.RetentionPeriodSeconds)
-			return resp, nil, nil
+			return resp, nil
 		},
 	}
 
@@ -242,8 +241,8 @@ func Test_SetupPasswordParamToShort(t *testing.T) {
 		Force:     false,
 	}
 	client := &mock.SetupApi{
-		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
-			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil, nil
+		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, error) {
+			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil
 		},
 	}
 
@@ -273,8 +272,8 @@ func Test_SetupCancelAtConfirmation(t *testing.T) {
 		Force:     false,
 	}
 	client := &mock.SetupApi{
-		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
-			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil, nil
+		GetSetupExecuteFn: func(api.ApiGetSetupRequest) (api.InlineResponse200, error) {
+			return api.InlineResponse200{Allowed: api.PtrBool(true)}, nil
 		},
 	}
 

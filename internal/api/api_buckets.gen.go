@@ -11,8 +11,9 @@
 package api
 
 import (
-	"bytes"
+	_gzip "compress/gzip"
 	_context "context"
+	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -37,7 +38,7 @@ type BucketsApi interface {
 	/*
 	 * DeleteBucketsIDExecute executes the request
 	 */
-	DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) (*_nethttp.Response, error)
+	DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) error
 
 	/*
 	 * GetBuckets List all buckets
@@ -50,7 +51,7 @@ type BucketsApi interface {
 	 * GetBucketsExecute executes the request
 	 * @return Buckets
 	 */
-	GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, *_nethttp.Response, error)
+	GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, error)
 
 	/*
 	 * GetBucketsID Retrieve a bucket
@@ -64,7 +65,7 @@ type BucketsApi interface {
 	 * GetBucketsIDExecute executes the request
 	 * @return Bucket
 	 */
-	GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucket, *_nethttp.Response, error)
+	GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucket, error)
 
 	/*
 	 * PatchBucketsID Update a bucket
@@ -78,7 +79,7 @@ type BucketsApi interface {
 	 * PatchBucketsIDExecute executes the request
 	 * @return Bucket
 	 */
-	PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (Bucket, *_nethttp.Response, error)
+	PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (Bucket, error)
 
 	/*
 	 * PostBuckets Create a bucket
@@ -91,7 +92,23 @@ type BucketsApi interface {
 	 * PostBucketsExecute executes the request
 	 * @return Bucket
 	 */
-	PostBucketsExecute(r ApiPostBucketsRequest) (Bucket, *_nethttp.Response, error)
+	PostBucketsExecute(r ApiPostBucketsRequest) (Bucket, error)
+}
+
+// bucketsApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
+type bucketsApiGzipReadCloser struct {
+	underlying _io.ReadCloser
+	gzip       _io.ReadCloser
+}
+
+func (gzrc *bucketsApiGzipReadCloser) Read(p []byte) (int, error) {
+	return gzrc.gzip.Read(p)
+}
+func (gzrc *bucketsApiGzipReadCloser) Close() error {
+	if err := gzrc.gzip.Close(); err != nil {
+		return err
+	}
+	return gzrc.underlying.Close()
 }
 
 // BucketsApiService BucketsApi service
@@ -120,7 +137,7 @@ func (r ApiDeleteBucketsIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiDeleteBucketsIDRequest) Execute() (*_nethttp.Response, error) {
+func (r ApiDeleteBucketsIDRequest) Execute() error {
 	return r.ApiService.DeleteBucketsIDExecute(r)
 }
 
@@ -141,7 +158,7 @@ func (a *BucketsApiService) DeleteBucketsID(ctx _context.Context, bucketID strin
 /*
  * Execute executes the request
  */
-func (a *BucketsApiService) DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) (*_nethttp.Response, error) {
+func (a *BucketsApiService) DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) error {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -152,7 +169,7 @@ func (a *BucketsApiService) DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) 
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketsApiService.DeleteBucketsID")
 	if err != nil {
-		return nil, GenericOpenAPIError{error: err.Error()}
+		return GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}"
@@ -184,22 +201,30 @@ func (a *BucketsApiService) DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) 
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
+		return err
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarHTTPResponse, err
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return err
+		}
+		body = &bucketsApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return err
+		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
@@ -209,22 +234,22 @@ func (a *BucketsApiService) DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) 
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
+				return newErr
 			}
 			newErr.model = &v
-			return localVarHTTPResponse, newErr
+			return newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarHTTPResponse, newErr
+			return newErr
 		}
 		newErr.model = &v
-		return localVarHTTPResponse, newErr
+		return newErr
 	}
 
-	return localVarHTTPResponse, nil
+	return nil
 }
 
 type ApiGetBucketsRequest struct {
@@ -304,7 +329,7 @@ func (r ApiGetBucketsRequest) GetId() *string {
 	return r.id
 }
 
-func (r ApiGetBucketsRequest) Execute() (Buckets, *_nethttp.Response, error) {
+func (r ApiGetBucketsRequest) Execute() (Buckets, error) {
 	return r.ApiService.GetBucketsExecute(r)
 }
 
@@ -324,7 +349,7 @@ func (a *BucketsApiService) GetBuckets(ctx _context.Context) ApiGetBucketsReques
  * Execute executes the request
  * @return Buckets
  */
-func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, *_nethttp.Response, error) {
+func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -336,7 +361,7 @@ func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, 
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketsApiService.GetBuckets")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets"
@@ -388,22 +413,30 @@ func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, 
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, err
+		}
+		body = &bucketsApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, err
+		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
@@ -412,22 +445,27 @@ func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, 
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, err
+	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }
 
 type ApiGetBucketsIDRequest struct {
@@ -453,7 +491,7 @@ func (r ApiGetBucketsIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetBucketsIDRequest) Execute() (Bucket, *_nethttp.Response, error) {
+func (r ApiGetBucketsIDRequest) Execute() (Bucket, error) {
 	return r.ApiService.GetBucketsIDExecute(r)
 }
 
@@ -475,7 +513,7 @@ func (a *BucketsApiService) GetBucketsID(ctx _context.Context, bucketID string) 
  * Execute executes the request
  * @return Bucket
  */
-func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucket, *_nethttp.Response, error) {
+func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucket, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -487,7 +525,7 @@ func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucke
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketsApiService.GetBucketsID")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}"
@@ -519,22 +557,30 @@ func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucke
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, err
+		}
+		body = &bucketsApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, err
+		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
@@ -543,22 +589,27 @@ func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucke
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, err
+	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }
 
 type ApiPatchBucketsIDRequest struct {
@@ -593,7 +644,7 @@ func (r ApiPatchBucketsIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiPatchBucketsIDRequest) Execute() (Bucket, *_nethttp.Response, error) {
+func (r ApiPatchBucketsIDRequest) Execute() (Bucket, error) {
 	return r.ApiService.PatchBucketsIDExecute(r)
 }
 
@@ -615,7 +666,7 @@ func (a *BucketsApiService) PatchBucketsID(ctx _context.Context, bucketID string
  * Execute executes the request
  * @return Bucket
  */
-func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (Bucket, *_nethttp.Response, error) {
+func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (Bucket, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -627,7 +678,7 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketsApiService.PatchBucketsID")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}"
@@ -637,7 +688,7 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.patchBucketRequest == nil {
-		return localVarReturnValue, nil, reportError("patchBucketRequest is required and must be specified")
+		return localVarReturnValue, reportError("patchBucketRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -664,22 +715,30 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 	localVarPostBody = r.patchBucketRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, err
+		}
+		body = &bucketsApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, err
+		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
@@ -688,22 +747,27 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, err
+	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }
 
 type ApiPostBucketsRequest struct {
@@ -729,7 +793,7 @@ func (r ApiPostBucketsRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiPostBucketsRequest) Execute() (Bucket, *_nethttp.Response, error) {
+func (r ApiPostBucketsRequest) Execute() (Bucket, error) {
 	return r.ApiService.PostBucketsExecute(r)
 }
 
@@ -749,7 +813,7 @@ func (a *BucketsApiService) PostBuckets(ctx _context.Context) ApiPostBucketsRequ
  * Execute executes the request
  * @return Bucket
  */
-func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket, *_nethttp.Response, error) {
+func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -761,7 +825,7 @@ func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket,
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketsApiService.PostBuckets")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets"
@@ -770,7 +834,7 @@ func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket,
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.postBucketRequest == nil {
-		return localVarReturnValue, nil, reportError("postBucketRequest is required and must be specified")
+		return localVarReturnValue, reportError("postBucketRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -797,22 +861,30 @@ func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket,
 	localVarPostBody = r.postBucketRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, err
+		}
+		body = &bucketsApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, err
+		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
@@ -822,29 +894,34 @@ func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket,
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
+				return localVarReturnValue, newErr
 			}
 			newErr.model = &v
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarReturnValue, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, err
+	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }

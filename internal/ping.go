@@ -8,7 +8,7 @@ import (
 
 // Ping checks the health of a remote InfluxDB instance.
 func (c *CLI) Ping(ctx context.Context, client api.HealthApi) error {
-	if _, _, err := client.GetHealth(ctx).Execute(); err != nil {
+	if _, err := client.GetHealth(ctx).Execute(); err != nil {
 		return err
 	}
 	_, err := c.StdIO.Write([]byte("OK\n"))
