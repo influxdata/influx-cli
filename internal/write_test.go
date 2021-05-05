@@ -8,10 +8,13 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
+	"github.com/stretchr/testify/assert"
+	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -50,6 +53,8 @@ func (pb *lineBatcher) WriteBatches(_ context.Context, r io.Reader, writeFn func
 }
 
 func TestWriteByIDs(t *testing.T) {
+	t.Parallel()
+
 	inLines := []string{"fake line protocol 1", "fake line protocol 2", "fake line protocol 3"}
 	mockReader := bufferReader{}
 	for _, l := range inLines {
@@ -66,26 +71,25 @@ func TestWriteByIDs(t *testing.T) {
 	}
 	cli := internal.CLI{ActiveConfig: config.Config{Org: "my-default-org"}}
 
+	ctrl := gomock.NewController(t)
+	client := mock.NewMockWriteApi(ctrl)
 	var writtenLines []string
-	client := mock.WriteApi{
-		PostWriteExecuteFn: func(req api.ApiPostWriteRequest) error {
-			// Make sure query params are set.
-			require.Equal(t, params.OrgID, *req.GetOrg())
-			require.Equal(t, params.BucketID, *req.GetBucket())
-			require.Equal(t, params.Precision, *req.GetPrecision())
-
-			// Make sure the body is properly marked for compression, and record what was sent.
-			require.Equal(t, "gzip", *req.GetContentEncoding())
-			writtenLines = append(writtenLines, string(req.GetBody()))
-			return nil
-		},
-	}
+	client.EXPECT().PostWrite(gomock.Any()).Return(api.ApiPostWriteRequest{ApiService: client}).Times(len(inLines))
+	client.EXPECT().PostWriteExecute(tmock.MatchedBy(func(in api.ApiPostWriteRequest) bool {
+		return assert.Equal(t, params.OrgID, *in.GetOrg()) &&
+			assert.Equal(t, params.BucketID, *in.GetBucket()) &&
+			assert.Equal(t, params.Precision, *in.GetPrecision()) &&
+			assert.Equal(t, "gzip", *in.GetContentEncoding()) // Make sure the body is properly marked for compression.
+	})).DoAndReturn(func(in api.ApiPostWriteRequest) error {
+		writtenLines = append(writtenLines, string(in.GetBody()))
+		return nil
+	}).Times(len(inLines))
 
 	clients := internal.WriteClients{
 		Reader:    &mockReader,
 		Throttler: &mockThrottler,
 		Writer:    &mockBatcher,
-		Client:    &client,
+		Client:    client,
 	}
 
 	require.NoError(t, cli.Write(context.Background(), &clients, &params))
@@ -94,6 +98,8 @@ func TestWriteByIDs(t *testing.T) {
 }
 
 func TestWriteByNames(t *testing.T) {
+	t.Parallel()
+
 	inLines := []string{"fake line protocol 1", "fake line protocol 2", "fake line protocol 3"}
 	mockReader := bufferReader{}
 	for _, l := range inLines {
@@ -110,26 +116,25 @@ func TestWriteByNames(t *testing.T) {
 	}
 	cli := internal.CLI{ActiveConfig: config.Config{Org: "my-default-org"}}
 
+	ctrl := gomock.NewController(t)
+	client := mock.NewMockWriteApi(ctrl)
 	var writtenLines []string
-	client := mock.WriteApi{
-		PostWriteExecuteFn: func(req api.ApiPostWriteRequest) error {
-			// Make sure query params are set.
-			require.Equal(t, params.OrgName, *req.GetOrg())
-			require.Equal(t, params.BucketName, *req.GetBucket())
-			require.Equal(t, params.Precision, *req.GetPrecision())
-
-			// Make sure the body is properly marked for compression, and record what was sent.
-			require.Equal(t, "gzip", *req.GetContentEncoding())
-			writtenLines = append(writtenLines, string(req.GetBody()))
-			return nil
-		},
-	}
+	client.EXPECT().PostWrite(gomock.Any()).Return(api.ApiPostWriteRequest{ApiService: client}).Times(len(inLines))
+	client.EXPECT().PostWriteExecute(tmock.MatchedBy(func(in api.ApiPostWriteRequest) bool {
+		return assert.Equal(t, params.OrgName, *in.GetOrg()) &&
+			assert.Equal(t, params.BucketName, *in.GetBucket()) &&
+			assert.Equal(t, params.Precision, *in.GetPrecision()) &&
+			assert.Equal(t, "gzip", *in.GetContentEncoding()) // Make sure the body is properly marked for compression.
+	})).DoAndReturn(func(in api.ApiPostWriteRequest) error {
+		writtenLines = append(writtenLines, string(in.GetBody()))
+		return nil
+	}).Times(len(inLines))
 
 	clients := internal.WriteClients{
 		Reader:    &mockReader,
 		Throttler: &mockThrottler,
 		Writer:    &mockBatcher,
-		Client:    &client,
+		Client:    client,
 	}
 
 	require.NoError(t, cli.Write(context.Background(), &clients, &params))
@@ -138,6 +143,8 @@ func TestWriteByNames(t *testing.T) {
 }
 
 func TestWriteOrgFromConfig(t *testing.T) {
+	t.Parallel()
+
 	inLines := []string{"fake line protocol 1", "fake line protocol 2", "fake line protocol 3"}
 	mockReader := bufferReader{}
 	for _, l := range inLines {
@@ -153,26 +160,25 @@ func TestWriteOrgFromConfig(t *testing.T) {
 	}
 	cli := internal.CLI{ActiveConfig: config.Config{Org: "my-default-org"}}
 
+	ctrl := gomock.NewController(t)
+	client := mock.NewMockWriteApi(ctrl)
 	var writtenLines []string
-	client := mock.WriteApi{
-		PostWriteExecuteFn: func(req api.ApiPostWriteRequest) error {
-			// Make sure query params are set.
-			require.Equal(t, cli.ActiveConfig.Org, *req.GetOrg())
-			require.Equal(t, params.BucketName, *req.GetBucket())
-			require.Equal(t, params.Precision, *req.GetPrecision())
-
-			// Make sure the body is properly marked for compression, and record what was sent.
-			require.Equal(t, "gzip", *req.GetContentEncoding())
-			writtenLines = append(writtenLines, string(req.GetBody()))
-			return nil
-		},
-	}
+	client.EXPECT().PostWrite(gomock.Any()).Return(api.ApiPostWriteRequest{ApiService: client}).Times(len(inLines))
+	client.EXPECT().PostWriteExecute(tmock.MatchedBy(func(in api.ApiPostWriteRequest) bool {
+		return assert.Equal(t, cli.ActiveConfig.Org, *in.GetOrg()) &&
+			assert.Equal(t, params.BucketName, *in.GetBucket()) &&
+			assert.Equal(t, params.Precision, *in.GetPrecision()) &&
+			assert.Equal(t, "gzip", *in.GetContentEncoding()) // Make sure the body is properly marked for compression.
+	})).DoAndReturn(func(in api.ApiPostWriteRequest) error {
+		writtenLines = append(writtenLines, string(in.GetBody()))
+		return nil
+	}).Times(len(inLines))
 
 	clients := internal.WriteClients{
 		Reader:    &mockReader,
 		Throttler: &mockThrottler,
 		Writer:    &mockBatcher,
-		Client:    &client,
+		Client:    client,
 	}
 
 	require.NoError(t, cli.Write(context.Background(), &clients, &params))
@@ -181,6 +187,8 @@ func TestWriteOrgFromConfig(t *testing.T) {
 }
 
 func TestWriteDryRun(t *testing.T) {
+	t.Parallel()
+
 	inLines := `
 fake line protocol 1
 fake line protocol 2
@@ -189,9 +197,14 @@ fake line protocol 3
 	mockReader := bufferReader{}
 	_, err := io.Copy(&mockReader.buf, strings.NewReader(inLines))
 	require.NoError(t, err)
-	stdio := mock.NewMockStdio(nil, true)
+
+	ctrl := gomock.NewController(t)
+	stdio := mock.NewMockStdIO(ctrl)
+	bytesWritten := bytes.Buffer{}
+	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(bytesWritten.Write).AnyTimes()
+
 	cli := internal.CLI{ActiveConfig: config.Config{Org: "my-default-org"}, StdIO: stdio}
 
 	require.NoError(t, cli.WriteDryRun(context.Background(), &mockReader))
-	require.Equal(t, inLines, stdio.Stdout())
+	require.Equal(t, inLines, bytesWritten.String())
 }

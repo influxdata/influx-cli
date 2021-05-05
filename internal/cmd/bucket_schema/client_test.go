@@ -5,7 +5,6 @@ import (
 	"context"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -21,28 +20,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func matchLines(t *testing.T, lines []string, mockIO *mock.Stdio) {
-	if len(lines) > 0 {
-		outLines := strings.Split(mockIO.Stdout(), "\n")
-		expLines := make([]*regexp.Regexp, 0, len(lines))
-		for _, expLine := range lines {
-			expLines = append(expLines, regexp.MustCompile(expLine))
+func matchLines(t *testing.T, expectedLines []string, lines []string) {
+	var nonEmptyLines []string
+	for _, l := range lines {
+		if l != "" {
+			nonEmptyLines = append(nonEmptyLines, l)
 		}
-
-		for _, outLine := range outLines {
-			if outLine == "" {
-				continue
-			}
-			var any bool
-			for _, expLine := range expLines {
-				any = any || expLine.MatchString(outLine)
-			}
-			assert.True(t, any, "line %q was unexpected", outLine)
-		}
+	}
+	require.Equal(t, len(expectedLines), len(nonEmptyLines))
+	for i, expected := range expectedLines {
+		require.Regexp(t, expected, nonEmptyLines[i])
 	}
 }
 
 func TestClient_Create(t *testing.T) {
+	t.Parallel()
+
 	var (
 		orgID         = "dead"
 		bucketID      = "f00d"
@@ -56,7 +49,7 @@ func TestClient_Create(t *testing.T) {
 		cli     *internal.CLI
 		params  bucket_schema.CreateParams
 		cols    []api.MeasurementSchemaColumn
-		stdio   *mock.Stdio
+		stdio   *mock.MockStdIO
 	}
 
 	type optFn func(t *testing.T, a *setupArgs)
@@ -186,7 +179,6 @@ func TestClient_Create(t *testing.T) {
 			name: "bucket not found",
 			opts: opts(
 				withArgs(args{OrgName: "my-org", BucketName: "my-bucket", ColumnsFile: "columns.csv"}),
-
 				expGetBuckets(),
 			),
 			expErr: `bucket "my-bucket" not found`,
@@ -196,7 +188,6 @@ func TestClient_Create(t *testing.T) {
 			opts: opts(
 				withArgs(args{OrgName: "my-org", BucketName: "my-bucket", Name: "cpu", ColumnsFile: "columns.csv"}),
 				withCols("columns.csv"),
-
 				expGetBuckets("my-bucket"),
 				expCreate(),
 			),
@@ -210,7 +201,6 @@ func TestClient_Create(t *testing.T) {
 			opts: opts(
 				withArgs(args{OrgName: "my-org", BucketName: "my-bucket", Name: "cpu", ColumnsFile: "columns.json"}),
 				withCols("columns.csv"),
-
 				expGetBuckets("my-bucket"),
 				expCreate(),
 			),
@@ -224,7 +214,6 @@ func TestClient_Create(t *testing.T) {
 			opts: opts(
 				withArgs(args{OrgName: "my-org", BucketName: "my-bucket", Name: "cpu", ColumnsFile: "columns.ndjson"}),
 				withCols("columns.csv"),
-
 				expGetBuckets("my-bucket"),
 				expCreate(),
 			),
@@ -238,21 +227,28 @@ func TestClient_Create(t *testing.T) {
 			opts: opts(
 				withArgs(args{OrgName: "my-org", BucketName: "my-bucket", Name: "cpu", ColumnsFile: "columns.csv", ExtendedOutput: true}),
 				withCols("columns.csv"),
-
 				expGetBuckets("my-bucket"),
 				expCreate(),
 			),
 			expLines: lines(
 				`^ID\s+Measurement Name\s+Column Name\s+Column Type\s+Column Data Type\s+Bucket ID$`,
-				`^1010\s+cpu\s+\w+\s+(timestamp|tag|field)\s+(|float)\s+f00d$`,
+				`^1010\s+cpu\s+time\s+timestamp\s+f00d$`,
+				`^1010\s+cpu\s+host\s+tag\s+f00d$`,
+				`^1010\s+cpu\s+usage_user\s+field\s+float\s+f00d$`,
 			),
 		},
 	}
 
 	for _, tc := range cases {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			ctrl := gomock.NewController(t)
-			mockIO := mock.NewMockStdio(nil, true)
+			mockIO := mock.NewMockStdIO(ctrl)
+			writtenBytes := bytes.Buffer{}
+			mockIO.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
+
 			args := &setupArgs{
 				buckets: mock.NewMockBucketsApi(ctrl),
 				schemas: mock.NewMockBucketSchemasApi(ctrl),
@@ -276,13 +272,15 @@ func TestClient_Create(t *testing.T) {
 				assert.EqualError(t, err, tc.expErr)
 			} else {
 				require.NoError(t, err)
-				matchLines(t, tc.expLines, mockIO)
+				matchLines(t, tc.expLines, strings.Split(writtenBytes.String(), "\n"))
 			}
 		})
 	}
 }
 
 func TestClient_Update(t *testing.T) {
+	t.Parallel()
+
 	var (
 		orgID         = "dead"
 		bucketID      = "f00d"
@@ -297,7 +295,7 @@ func TestClient_Update(t *testing.T) {
 		cli     *internal.CLI
 		params  bucket_schema.UpdateParams
 		cols    []api.MeasurementSchemaColumn
-		stdio   *mock.Stdio
+		stdio   *mock.MockStdIO
 	}
 
 	type optFn func(t *testing.T, a *setupArgs)
@@ -485,22 +483,30 @@ func TestClient_Update(t *testing.T) {
 			opts: opts(
 				withArgs(args{OrgName: "my-org", BucketName: "my-bucket", Name: "cpu", ColumnsFile: "columns.csv", ExtendedOutput: true}),
 				withCols("columns.csv"),
-
 				expGetBuckets("my-bucket"),
 				expGetMeasurementSchema(),
 				expUpdate(),
 			),
 			expLines: lines(
 				`^ID\s+Measurement Name\s+Column Name\s+Column Type\s+Column Data Type\s+Bucket ID$`,
-				`^1010\s+cpu\s+\w+\s+(timestamp|tag|field)\s+(|float)\s+f00d$`,
+				`^1010\s+cpu\s+time\s+timestamp\s+f00d$`,
+				`^1010\s+cpu\s+host\s+tag\s+f00d$`,
+				`^1010\s+cpu\s+usage_user\s+field\s+float\s+f00d$`,
+
 			),
 		},
 	}
 
 	for _, tc := range cases {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			ctrl := gomock.NewController(t)
-			mockIO := mock.NewMockStdio(nil, true)
+			mockIO := mock.NewMockStdIO(ctrl)
+			writtenBytes := bytes.Buffer{}
+			mockIO.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
+
 			args := &setupArgs{
 				buckets: mock.NewMockBucketsApi(ctrl),
 				schemas: mock.NewMockBucketSchemasApi(ctrl),
@@ -524,13 +530,15 @@ func TestClient_Update(t *testing.T) {
 				assert.EqualError(t, err, tc.expErr)
 			} else {
 				require.NoError(t, err)
-				matchLines(t, tc.expLines, mockIO)
+				matchLines(t, tc.expLines, strings.Split(writtenBytes.String(), "\n"))
 			}
 		})
 	}
 }
 
 func TestClient_List(t *testing.T) {
+	t.Parallel()
+
 	var (
 		orgID         = "dead"
 		bucketID      = "f00d"
@@ -545,7 +553,7 @@ func TestClient_List(t *testing.T) {
 		cli     *internal.CLI
 		params  bucket_schema.ListParams
 		cols    []api.MeasurementSchemaColumn
-		stdio   *mock.Stdio
+		stdio   *mock.MockStdIO
 	}
 
 	type optFn func(t *testing.T, a *setupArgs)
@@ -676,11 +684,10 @@ func TestClient_List(t *testing.T) {
 			expErr: `bucket "my-bucket" not found`,
 		},
 		{
-			name: "update succeeds",
+			name: "list succeeds",
 			opts: opts(
 				withArgs(args{OrgName: "my-org", BucketName: "my-bucket", Name: "cpu"}),
 				withCols("columns.csv"),
-
 				expGetBuckets("my-bucket"),
 				expGetMeasurementSchemas(),
 			),
@@ -690,25 +697,32 @@ func TestClient_List(t *testing.T) {
 			),
 		},
 		{
-			name: "update succeeds extended output",
+			name: "list succeeds extended output",
 			opts: opts(
 				withArgs(args{OrgName: "my-org", BucketName: "my-bucket", Name: "cpu", ExtendedOutput: true}),
 				withCols("columns.csv"),
-
 				expGetBuckets("my-bucket"),
 				expGetMeasurementSchemas(),
 			),
 			expLines: lines(
 				`^ID\s+Measurement Name\s+Column Name\s+Column Type\s+Column Data Type\s+Bucket ID$`,
-				`^1010\s+cpu\s+\w+\s+(timestamp|tag|field)\s+(|float)\s+f00d$`,
+				`^1010\s+cpu\s+time\s+timestamp\s+f00d$`,
+				`^1010\s+cpu\s+host\s+tag\s+f00d$`,
+				`^1010\s+cpu\s+usage_user\s+field\s+float\s+f00d$`,
 			),
 		},
 	}
 
 	for _, tc := range cases {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			ctrl := gomock.NewController(t)
-			mockIO := mock.NewMockStdio(nil, true)
+			mockIO := mock.NewMockStdIO(ctrl)
+			writtenBytes := bytes.Buffer{}
+			mockIO.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
+
 			args := &setupArgs{
 				buckets: mock.NewMockBucketsApi(ctrl),
 				schemas: mock.NewMockBucketSchemasApi(ctrl),
@@ -732,7 +746,7 @@ func TestClient_List(t *testing.T) {
 				assert.EqualError(t, err, tc.expErr)
 			} else {
 				require.NoError(t, err)
-				matchLines(t, tc.expLines, mockIO)
+				matchLines(t, tc.expLines, strings.Split(writtenBytes.String(), "\n"))
 			}
 		})
 	}
