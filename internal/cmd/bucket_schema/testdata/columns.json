@@ -1,0 +1,5 @@
+[
+  { "name":  "time", "type": "timestamp" },
+  { "name": "host", "type": "tag" },
+  { "name": "usage_user", "type": "field", "dataType":  "float" }
+]

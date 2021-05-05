@@ -24,6 +24,7 @@ type Bucket struct {
 	Description *string      `json:"description,omitempty"`
 	OrgID       *string      `json:"orgID,omitempty"`
 	Rp          *string      `json:"rp,omitempty"`
+	SchemaType  *SchemaType  `json:"schemaType,omitempty"`
 	CreatedAt   *time.Time   `json:"createdAt,omitempty"`
 	UpdatedAt   *time.Time   `json:"updatedAt,omitempty"`
 	// Rules to expire or retain data.  No rules means data never expires.
@@ -270,6 +271,38 @@ func (o *Bucket) SetRp(v string) {
 	o.Rp = &v
 }
 
+// GetSchemaType returns the SchemaType field value if set, zero value otherwise.
+func (o *Bucket) GetSchemaType() SchemaType {
+	if o == nil || o.SchemaType == nil {
+		var ret SchemaType
+		return ret
+	}
+	return *o.SchemaType
+}
+
+// GetSchemaTypeOk returns a tuple with the SchemaType field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Bucket) GetSchemaTypeOk() (*SchemaType, bool) {
+	if o == nil || o.SchemaType == nil {
+		return nil, false
+	}
+	return o.SchemaType, true
+}
+
+// HasSchemaType returns a boolean if a field has been set.
+func (o *Bucket) HasSchemaType() bool {
+	if o != nil && o.SchemaType != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetSchemaType gets a reference to the given SchemaType and assigns it to the SchemaType field.
+func (o *Bucket) SetSchemaType(v SchemaType) {
+	o.SchemaType = &v
+}
+
 // GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
 func (o *Bucket) GetCreatedAt() time.Time {
 	if o == nil || o.CreatedAt == nil {
@@ -412,6 +445,9 @@ func (o Bucket) MarshalJSON() ([]byte, error) {
 	}
 	if o.Rp != nil {
 		toSerialize["rp"] = o.Rp
+	}
+	if o.SchemaType != nil {
+		toSerialize["schemaType"] = o.SchemaType
 	}
 	if o.CreatedAt != nil {
 		toSerialize["createdAt"] = o.CreatedAt

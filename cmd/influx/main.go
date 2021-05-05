@@ -198,6 +198,7 @@ var app = cli.App{
 		newWriteCmd(),
 		newBucketCmd(),
 		newCompletionCmd(),
+		newBucketSchemaCmd(),
 	},
 }
 

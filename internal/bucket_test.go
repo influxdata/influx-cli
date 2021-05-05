@@ -94,9 +94,9 @@ func TestBucketsCreate(t *testing.T) {
 		{
 			name: "retention but not shard-group duration",
 			params: internal.BucketsCreateParams{
-				OrgID:       "123",
-				Name:        "my-bucket",
-				Retention:   "24h",
+				OrgID:     "123",
+				Name:      "my-bucket",
+				Retention: "24h",
 			},
 			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
 				return func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
@@ -122,6 +122,38 @@ func TestBucketsCreate(t *testing.T) {
 					}, nil, nil
 				}
 			},
+		},
+		{
+			name: "create bucket with explicit schema",
+			params: internal.BucketsCreateParams{
+				OrgID:      "123",
+				Name:       "my-bucket",
+				Retention:  "24h",
+				SchemaType: api.SCHEMATYPE_EXPLICIT,
+			},
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
+				return func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
+					return api.Organizations{}, nil, errors.New("unexpected org lookup call")
+				}
+			},
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+					body := req.GetPostBucketRequest()
+					require.NotNil(t, body)
+					require.Equal(t, "123", body.OrgID)
+					require.NotNil(t, body.SchemaType)
+					assert.Equal(t, api.SCHEMATYPE_EXPLICIT, *body.SchemaType)
+
+					return api.Bucket{
+						Id:             api.PtrString("456"),
+						OrgID:          api.PtrString("123"),
+						Name:           "my-bucket",
+						RetentionRules: body.RetentionRules,
+						SchemaType:     api.SCHEMATYPE_EXPLICIT.Ptr(),
+					}, nil, nil
+				}
+			},
+			expectedStdoutPattern: `456\s+my-bucket\s+24h0m0s\s+n/a\s+123\s+explicit`,
 		},
 		{
 			name: "look up org by name",
@@ -404,6 +436,56 @@ func TestBucketsList(t *testing.T) {
 			},
 		},
 		{
+			name: "list multiple bucket schema types",
+			params: internal.BucketsListParams{
+				OrgName: "my-org",
+			},
+			configOrgName: "my-default-org",
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+					require.Equal(t, "my-org", *req.GetOrg())
+					require.Nil(t, req.GetId())
+					require.Nil(t, req.GetName())
+					require.Nil(t, req.GetOrgID())
+					return api.Buckets{
+						Buckets: &[]api.Bucket{
+							{
+								Id:    api.PtrString("001"),
+								Name:  "omit-schema-type",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 3600},
+								},
+							},
+							{
+								Id:    api.PtrString("002"),
+								Name:  "implicit-schema-type",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 3600},
+								},
+								SchemaType: api.SCHEMATYPE_IMPLICIT.Ptr(),
+							},
+							{
+								Id:    api.PtrString("003"),
+								Name:  "explicit-schema-type",
+								OrgID: api.PtrString("456"),
+								RetentionRules: []api.RetentionRule{
+									{EverySeconds: 3600},
+								},
+								SchemaType: api.SCHEMATYPE_EXPLICIT.Ptr(),
+							},
+						},
+					}, nil, nil
+				}
+			},
+			expectedStdoutPatterns: []string{
+				`001\s+omit-schema-type\s+1h0m0s\s+n/a\s+456\s+implicit`,
+				`002\s+implicit-schema-type\s+1h0m0s\s+n/a\s+456\s+implicit`,
+				`003\s+explicit-schema-type\s+1h0m0s\s+n/a\s+456\s+explicit`,
+			},
+		},
+		{
 			name:          "no org specified",
 			expectedInErr: "must specify org ID or org name",
 			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
@@ -631,7 +713,7 @@ func TestBucketsDelete(t *testing.T) {
 					return nil, nil
 				}
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
 		{
 			name:          "by name and org ID",
@@ -667,7 +749,7 @@ func TestBucketsDelete(t *testing.T) {
 					return nil, nil
 				}
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
 		{
 			name:          "by name and org name",
@@ -703,7 +785,7 @@ func TestBucketsDelete(t *testing.T) {
 					return nil, nil
 				}
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
 		{
 			name:          "by name in default org",
@@ -738,7 +820,7 @@ func TestBucketsDelete(t *testing.T) {
 					return nil, nil
 				}
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
 		{
 			name: "by name without org",
@@ -800,7 +882,7 @@ func TestBucketsDelete(t *testing.T) {
 			if outLines[len(outLines)-1] == "" {
 				outLines = outLines[:len(outLines)-1]
 			}
-			require.Regexp(t, "ID\\s+Name\\s+Retention\\s+Shard group duration\\s+Organization ID\\s+Deleted", outLines[0])
+			require.Regexp(t, `ID\s+Name\s+Retention\s+Shard group duration\s+Organization ID\s+Schema Type\s+Deleted`, outLines[0])
 			require.Regexp(t, tc.expectedStdoutPattern+"\\s+true", outLines[1])
 		})
 	}

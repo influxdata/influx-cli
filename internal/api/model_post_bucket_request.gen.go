@@ -22,6 +22,7 @@ type PostBucketRequest struct {
 	Rp          *string `json:"rp,omitempty"`
 	// Rules to expire or retain data.  No rules means data never expires.
 	RetentionRules []RetentionRule `json:"retentionRules"`
+	SchemaType     *SchemaType     `json:"schemaType,omitempty"`
 }
 
 // NewPostBucketRequest instantiates a new PostBucketRequest object
@@ -180,6 +181,38 @@ func (o *PostBucketRequest) SetRetentionRules(v []RetentionRule) {
 	o.RetentionRules = v
 }
 
+// GetSchemaType returns the SchemaType field value if set, zero value otherwise.
+func (o *PostBucketRequest) GetSchemaType() SchemaType {
+	if o == nil || o.SchemaType == nil {
+		var ret SchemaType
+		return ret
+	}
+	return *o.SchemaType
+}
+
+// GetSchemaTypeOk returns a tuple with the SchemaType field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PostBucketRequest) GetSchemaTypeOk() (*SchemaType, bool) {
+	if o == nil || o.SchemaType == nil {
+		return nil, false
+	}
+	return o.SchemaType, true
+}
+
+// HasSchemaType returns a boolean if a field has been set.
+func (o *PostBucketRequest) HasSchemaType() bool {
+	if o != nil && o.SchemaType != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetSchemaType gets a reference to the given SchemaType and assigns it to the SchemaType field.
+func (o *PostBucketRequest) SetSchemaType(v SchemaType) {
+	o.SchemaType = &v
+}
+
 func (o PostBucketRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
@@ -196,6 +229,9 @@ func (o PostBucketRequest) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["retentionRules"] = o.RetentionRules
+	}
+	if o.SchemaType != nil {
+		toSerialize["schemaType"] = o.SchemaType
 	}
 	return json.Marshal(toSerialize)
 }
