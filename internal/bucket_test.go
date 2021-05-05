@@ -130,13 +130,13 @@ func TestBucketsCreate(t *testing.T) {
 				Retention:  "24h",
 				SchemaType: api.SCHEMATYPE_EXPLICIT,
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-				return func(api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
-					return api.Organizations{}, nil, errors.New("unexpected org lookup call")
+			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+				return func(api.ApiGetOrgsRequest) (api.Organizations, error) {
+					return api.Organizations{}, errors.New("unexpected org lookup call")
 				}
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
+				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
 					body := req.GetPostBucketRequest()
 					require.NotNil(t, body)
 					require.Equal(t, "123", body.OrgID)
@@ -149,7 +149,7 @@ func TestBucketsCreate(t *testing.T) {
 						Name:           "my-bucket",
 						RetentionRules: body.RetentionRules,
 						SchemaType:     api.SCHEMATYPE_EXPLICIT.Ptr(),
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPattern: `456\s+my-bucket\s+24h0m0s\s+n/a\s+123\s+explicit`,
@@ -440,8 +440,8 @@ func TestBucketsList(t *testing.T) {
 				OrgName: "my-org",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
+				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
 					require.Equal(t, "my-org", *req.GetOrg())
 					require.Nil(t, req.GetId())
 					require.Nil(t, req.GetName())
@@ -475,7 +475,7 @@ func TestBucketsList(t *testing.T) {
 								SchemaType: api.SCHEMATYPE_EXPLICIT.Ptr(),
 							},
 						},
-					}, nil, nil
+					}, nil
 				}
 			},
 			expectedStdoutPatterns: []string{

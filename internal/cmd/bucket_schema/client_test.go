@@ -112,7 +112,7 @@ func TestClient_Create(t *testing.T) {
 				GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
 					return cmp.Equal(in.GetOrg(), &a.params.OrgName) && cmp.Equal(in.GetName(), &a.params.BucketName)
 				})).
-				Return(api.Buckets{Buckets: &buckets}, nil, nil)
+				Return(api.Buckets{Buckets: &buckets}, nil)
 		}
 	}
 
@@ -150,7 +150,7 @@ func TestClient_Create(t *testing.T) {
 					Columns:   a.cols,
 					CreatedAt: createdAt,
 					UpdatedAt: createdAt,
-				}, nil, nil)
+				}, nil)
 		}
 	}
 
@@ -354,7 +354,7 @@ func TestClient_Update(t *testing.T) {
 					return (in.GetOrg() != nil && *in.GetOrg() == a.params.OrgName) &&
 						(in.GetName() != nil && *in.GetName() == a.params.BucketName)
 				})).
-				Return(api.Buckets{Buckets: &buckets}, nil, nil)
+				Return(api.Buckets{Buckets: &buckets}, nil)
 		}
 	}
 
@@ -398,7 +398,7 @@ func TestClient_Update(t *testing.T) {
 							UpdatedAt: updatedAt,
 						},
 					},
-				}, nil, nil)
+				}, nil)
 		}
 	}
 
@@ -425,7 +425,7 @@ func TestClient_Update(t *testing.T) {
 					Columns:   a.cols,
 					CreatedAt: createdAt,
 					UpdatedAt: updatedAt,
-				}, nil, nil)
+				}, nil)
 		}
 	}
 
@@ -595,7 +595,7 @@ func TestClient_List(t *testing.T) {
 					return (in.GetOrg() != nil && *in.GetOrg() == a.params.OrgName) &&
 						(in.GetName() != nil && *in.GetName() == a.params.BucketName)
 				})).
-				Return(api.Buckets{Buckets: &buckets}, nil, nil)
+				Return(api.Buckets{Buckets: &buckets}, nil)
 		}
 	}
 
@@ -639,7 +639,7 @@ func TestClient_List(t *testing.T) {
 							UpdatedAt: updatedAt,
 						},
 					},
-				}, nil, nil)
+				}, nil)
 		}
 	}
 

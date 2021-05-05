@@ -11,8 +11,9 @@
 package api
 
 import (
-	"bytes"
+	_gzip "compress/gzip"
 	_context "context"
+	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -38,7 +39,7 @@ type BucketSchemasApi interface {
 	 * CreateMeasurementSchemaExecute executes the request
 	 * @return MeasurementSchema
 	 */
-	CreateMeasurementSchemaExecute(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
+	CreateMeasurementSchemaExecute(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, error)
 
 	/*
 	 * GetMeasurementSchema Fetch schema information for a measurement
@@ -53,7 +54,7 @@ type BucketSchemasApi interface {
 	 * GetMeasurementSchemaExecute executes the request
 	 * @return MeasurementSchema
 	 */
-	GetMeasurementSchemaExecute(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
+	GetMeasurementSchemaExecute(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, error)
 
 	/*
 	 * GetMeasurementSchemas Retrieve a list of measurement schemas defined for this bucket
@@ -67,7 +68,7 @@ type BucketSchemasApi interface {
 	 * GetMeasurementSchemasExecute executes the request
 	 * @return MeasurementSchemaList
 	 */
-	GetMeasurementSchemasExecute(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, *_nethttp.Response, error)
+	GetMeasurementSchemasExecute(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, error)
 
 	/*
 	 * UpdateMeasurementSchema Update existing measurement schema
@@ -82,7 +83,23 @@ type BucketSchemasApi interface {
 	 * UpdateMeasurementSchemaExecute executes the request
 	 * @return MeasurementSchema
 	 */
-	UpdateMeasurementSchemaExecute(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
+	UpdateMeasurementSchemaExecute(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, error)
+}
+
+// bucketSchemasApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
+type bucketSchemasApiGzipReadCloser struct {
+	underlying _io.ReadCloser
+	gzip       _io.ReadCloser
+}
+
+func (gzrc *bucketSchemasApiGzipReadCloser) Read(p []byte) (int, error) {
+	return gzrc.gzip.Read(p)
+}
+func (gzrc *bucketSchemasApiGzipReadCloser) Close() error {
+	if err := gzrc.gzip.Close(); err != nil {
+		return err
+	}
+	return gzrc.underlying.Close()
 }
 
 // BucketSchemasApiService BucketSchemasApi service
@@ -129,7 +146,7 @@ func (r ApiCreateMeasurementSchemaRequest) GetMeasurementSchemaCreateRequest() *
 	return r.measurementSchemaCreateRequest
 }
 
-func (r ApiCreateMeasurementSchemaRequest) Execute() (MeasurementSchema, *_nethttp.Response, error) {
+func (r ApiCreateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
 	return r.ApiService.CreateMeasurementSchemaExecute(r)
 }
 
@@ -151,7 +168,7 @@ func (a *BucketSchemasApiService) CreateMeasurementSchema(ctx _context.Context, 
  * Execute executes the request
  * @return MeasurementSchema
  */
-func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error) {
+func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -163,7 +180,7 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketSchemasApiService.CreateMeasurementSchema")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements"
@@ -200,22 +217,30 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 	localVarPostBody = r.measurementSchemaCreateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, err
+		}
+		body = &bucketSchemasApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, err
+		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
@@ -225,23 +250,28 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
+				return localVarReturnValue, newErr
 			}
 			newErr.model = &v
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, err
+	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }
 
 type ApiGetMeasurementSchemaRequest struct {
@@ -285,7 +315,7 @@ func (r ApiGetMeasurementSchemaRequest) GetOrgID() *string {
 	return r.orgID
 }
 
-func (r ApiGetMeasurementSchemaRequest) Execute() (MeasurementSchema, *_nethttp.Response, error) {
+func (r ApiGetMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
 	return r.ApiService.GetMeasurementSchemaExecute(r)
 }
 
@@ -309,7 +339,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchema(ctx _context.Context, buc
  * Execute executes the request
  * @return MeasurementSchema
  */
-func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error) {
+func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -321,7 +351,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketSchemasApiService.GetMeasurementSchema")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements/{measurementID}"
@@ -357,39 +387,52 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, err
+		}
+		body = &bucketSchemasApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, err
+		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, err
+	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }
 
 type ApiGetMeasurementSchemasRequest struct {
@@ -433,7 +476,7 @@ func (r ApiGetMeasurementSchemasRequest) GetName() *string {
 	return r.name
 }
 
-func (r ApiGetMeasurementSchemasRequest) Execute() (MeasurementSchemaList, *_nethttp.Response, error) {
+func (r ApiGetMeasurementSchemasRequest) Execute() (MeasurementSchemaList, error) {
 	return r.ApiService.GetMeasurementSchemasExecute(r)
 }
 
@@ -455,7 +498,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemas(ctx _context.Context, bu
  * Execute executes the request
  * @return MeasurementSchemaList
  */
-func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, *_nethttp.Response, error) {
+func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -467,7 +510,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketSchemasApiService.GetMeasurementSchemas")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements"
@@ -505,22 +548,30 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, err
+		}
+		body = &bucketSchemasApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, err
+		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
@@ -530,23 +581,28 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
+				return localVarReturnValue, newErr
 			}
 			newErr.model = &v
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, err
+	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }
 
 type ApiUpdateMeasurementSchemaRequest struct {
@@ -599,7 +655,7 @@ func (r ApiUpdateMeasurementSchemaRequest) GetMeasurementSchemaUpdateRequest() *
 	return r.measurementSchemaUpdateRequest
 }
 
-func (r ApiUpdateMeasurementSchemaRequest) Execute() (MeasurementSchema, *_nethttp.Response, error) {
+func (r ApiUpdateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
 	return r.ApiService.UpdateMeasurementSchemaExecute(r)
 }
 
@@ -623,7 +679,7 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchema(ctx _context.Context, 
  * Execute executes the request
  * @return MeasurementSchema
  */
-func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error) {
+func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -635,7 +691,7 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketSchemasApiService.UpdateMeasurementSchema")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements/{measurementID}"
@@ -673,22 +729,30 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 	localVarPostBody = r.measurementSchemaUpdateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarReturnValue, err
 	}
 
-	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = _ioutil.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, err
+		}
+		body = &bucketSchemasApiGzipReadCloser{underlying: body, gzip: gzr}
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, err
+		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
@@ -698,21 +762,26 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
+				return localVarReturnValue, newErr
 			}
 			newErr.model = &v
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, err
+	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: err.Error(),
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarReturnValue, newErr
 	}
 
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarReturnValue, nil
 }

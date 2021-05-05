@@ -6,7 +6,6 @@ package mock
 
 import (
 	context "context"
-	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -51,12 +50,11 @@ func (mr *MockBucketsApiMockRecorder) DeleteBucketsID(arg0, arg1 interface{}) *g
 }
 
 // DeleteBucketsIDExecute mocks base method.
-func (m *MockBucketsApi) DeleteBucketsIDExecute(arg0 api.ApiDeleteBucketsIDRequest) (*http.Response, error) {
+func (m *MockBucketsApi) DeleteBucketsIDExecute(arg0 api.ApiDeleteBucketsIDRequest) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteBucketsIDExecute", arg0)
-	ret0, _ := ret[0].(*http.Response)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // DeleteBucketsIDExecute indicates an expected call of DeleteBucketsIDExecute.
@@ -80,13 +78,12 @@ func (mr *MockBucketsApiMockRecorder) GetBuckets(arg0 interface{}) *gomock.Call 
 }
 
 // GetBucketsExecute mocks base method.
-func (m *MockBucketsApi) GetBucketsExecute(arg0 api.ApiGetBucketsRequest) (api.Buckets, *http.Response, error) {
+func (m *MockBucketsApi) GetBucketsExecute(arg0 api.ApiGetBucketsRequest) (api.Buckets, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBucketsExecute", arg0)
 	ret0, _ := ret[0].(api.Buckets)
-	ret1, _ := ret[1].(*http.Response)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetBucketsExecute indicates an expected call of GetBucketsExecute.
@@ -110,13 +107,12 @@ func (mr *MockBucketsApiMockRecorder) GetBucketsID(arg0, arg1 interface{}) *gomo
 }
 
 // GetBucketsIDExecute mocks base method.
-func (m *MockBucketsApi) GetBucketsIDExecute(arg0 api.ApiGetBucketsIDRequest) (api.Bucket, *http.Response, error) {
+func (m *MockBucketsApi) GetBucketsIDExecute(arg0 api.ApiGetBucketsIDRequest) (api.Bucket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBucketsIDExecute", arg0)
 	ret0, _ := ret[0].(api.Bucket)
-	ret1, _ := ret[1].(*http.Response)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetBucketsIDExecute indicates an expected call of GetBucketsIDExecute.
@@ -140,13 +136,12 @@ func (mr *MockBucketsApiMockRecorder) PatchBucketsID(arg0, arg1 interface{}) *go
 }
 
 // PatchBucketsIDExecute mocks base method.
-func (m *MockBucketsApi) PatchBucketsIDExecute(arg0 api.ApiPatchBucketsIDRequest) (api.Bucket, *http.Response, error) {
+func (m *MockBucketsApi) PatchBucketsIDExecute(arg0 api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PatchBucketsIDExecute", arg0)
 	ret0, _ := ret[0].(api.Bucket)
-	ret1, _ := ret[1].(*http.Response)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // PatchBucketsIDExecute indicates an expected call of PatchBucketsIDExecute.
@@ -170,13 +165,12 @@ func (mr *MockBucketsApiMockRecorder) PostBuckets(arg0 interface{}) *gomock.Call
 }
 
 // PostBucketsExecute mocks base method.
-func (m *MockBucketsApi) PostBucketsExecute(arg0 api.ApiPostBucketsRequest) (api.Bucket, *http.Response, error) {
+func (m *MockBucketsApi) PostBucketsExecute(arg0 api.ApiPostBucketsRequest) (api.Bucket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PostBucketsExecute", arg0)
 	ret0, _ := ret[0].(api.Bucket)
-	ret1, _ := ret[1].(*http.Response)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // PostBucketsExecute indicates an expected call of PostBucketsExecute.

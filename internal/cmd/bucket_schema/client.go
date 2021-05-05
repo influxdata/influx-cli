@@ -24,7 +24,7 @@ type orgBucketID struct {
 }
 
 func (c Client) resolveMeasurement(ctx context.Context, ids orgBucketID, name string) (string, error) {
-	res, _, err := c.BucketSchemasApi.
+	res, err := c.BucketSchemasApi.
 		GetMeasurementSchemas(ctx, ids.BucketID).
 		OrgID(ids.OrgID).
 		Name(name).
@@ -62,7 +62,7 @@ func (c Client) resolveOrgBucketIds(ctx context.Context, params internal.OrgBuck
 		req = req.Org(c.CLI.ActiveConfig.Org)
 	}
 
-	resp, _, err := req.Execute()
+	resp, err := req.Execute()
 	if err != nil {
 		return nil, fmt.Errorf("failed to find bucket %q: %w", params.BucketName, err)
 	}
@@ -120,7 +120,7 @@ func (c Client) Create(ctx context.Context, params CreateParams) error {
 		return err
 	}
 
-	res, _, err := c.BucketSchemasApi.
+	res, err := c.BucketSchemasApi.
 		CreateMeasurementSchema(ctx, ids.BucketID).
 		OrgID(ids.OrgID).
 		MeasurementSchemaCreateRequest(api.MeasurementSchemaCreateRequest{
@@ -169,7 +169,7 @@ func (c Client) Update(ctx context.Context, params UpdateParams) error {
 		}
 	}
 
-	res, _, err := c.BucketSchemasApi.
+	res, err := c.BucketSchemasApi.
 		UpdateMeasurementSchema(ctx, ids.BucketID, id).
 		OrgID(ids.OrgID).
 		MeasurementSchemaUpdateRequest(api.MeasurementSchemaUpdateRequest{
@@ -204,7 +204,7 @@ func (c Client) List(ctx context.Context, params ListParams) error {
 		req = req.Name(params.Name)
 	}
 
-	res, _, err := req.Execute()
+	res, err := req.Execute()
 	if err != nil {
 		return fmt.Errorf("failed to list measurement schemas: %w", err)
 	}
