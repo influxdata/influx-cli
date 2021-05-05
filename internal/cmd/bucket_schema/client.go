@@ -68,7 +68,7 @@ func (c Client) resolveOrgBucketIds(ctx context.Context, params internal.OrgBuck
 	}
 	buckets := resp.GetBuckets()
 	if len(buckets) == 0 {
-		return nil, fmt.Errorf("no %q not found", params.BucketName)
+		return nil, fmt.Errorf("bucket %q not found", params.BucketName)
 	}
 
 	return &orgBucketID{OrgID: buckets[0].GetOrgID(), BucketID: buckets[0].GetId()}, nil
