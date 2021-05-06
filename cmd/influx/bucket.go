@@ -1,34 +1,11 @@
 package main
 
 import (
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
-
-func withBucketsClient() cli.BeforeFunc {
-	return middleware.WithBeforeFns(
-		withCli(),
-		withApi(true),
-		func(ctx *cli.Context) error {
-			client := getAPI(ctx)
-			ctx.App.Metadata["bucketsClient"] = internal.BucketsClients{
-				BucketApi: client.BucketsApi,
-				OrgApi:    client.OrganizationsApi,
-			}
-			return nil
-		},
-	)
-}
-
-func getBucketsClient(ctx *cli.Context) internal.BucketsClients {
-	i, ok := ctx.App.Metadata["bucketsClient"].(internal.BucketsClients)
-	if !ok {
-		panic("missing buckets client")
-	}
-	return i
-}
 
 func newBucketCmd() *cli.Command {
 	return &cli.Command{
@@ -45,13 +22,16 @@ func newBucketCmd() *cli.Command {
 }
 
 func newBucketCreateCmd() *cli.Command {
-	params := internal.BucketsCreateParams{
+	params := bucket.BucketsCreateParams{
 		SchemaType: api.SCHEMATYPE_IMPLICIT,
 	}
 	return &cli.Command{
-		Name:   "create",
-		Usage:  "Create bucket",
-		Before: withBucketsClient(),
+		Name:  "create",
+		Usage: "Create bucket",
+		Before: middleware.WithBeforeFns(
+			withCli(),
+			withApi(true),
+		),
 		Flags: append(
 			commonFlags,
 			&cli.StringFlag{
@@ -102,14 +82,19 @@ func newBucketCreateCmd() *cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			clients := getBucketsClient(ctx)
-			return getCLI(ctx).BucketsCreate(ctx.Context, &clients, &params)
+			api := getAPI(ctx)
+			client := bucket.Client{
+				CLI:              getCLI(ctx),
+				BucketsApi:       api.BucketsApi,
+				OrganizationsApi: api.OrganizationsApi,
+			}
+			return client.Create(ctx.Context, &params)
 		},
 	}
 }
 
 func newBucketDeleteCmd() *cli.Command {
-	var params internal.BucketsDeleteParams
+	var params bucket.BucketsDeleteParams
 	return &cli.Command{
 		Name:   "delete",
 		Usage:  "Delete bucket",
@@ -143,13 +128,19 @@ func newBucketDeleteCmd() *cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			return getCLI(ctx).BucketsDelete(ctx.Context, getAPI(ctx).BucketsApi, &params)
+			api := getAPI(ctx)
+			client := bucket.Client{
+				CLI:              getCLI(ctx),
+				BucketsApi:       api.BucketsApi,
+				OrganizationsApi: api.OrganizationsApi,
+			}
+			return client.Delete(ctx.Context, &params)
 		},
 	}
 }
 
 func newBucketListCmd() *cli.Command {
-	var params internal.BucketsListParams
+	var params bucket.BucketsListParams
 	return &cli.Command{
 		Name:    "list",
 		Usage:   "List buckets",
@@ -184,13 +175,19 @@ func newBucketListCmd() *cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			return getCLI(ctx).BucketsList(ctx.Context, getAPI(ctx).BucketsApi, &params)
+			api := getAPI(ctx)
+			client := bucket.Client{
+				CLI:              getCLI(ctx),
+				BucketsApi:       api.BucketsApi,
+				OrganizationsApi: api.OrganizationsApi,
+			}
+			return client.List(ctx.Context, &params)
 		},
 	}
 }
 
 func newBucketUpdateCmd() *cli.Command {
-	var params internal.BucketsUpdateParams
+	var params bucket.BucketsUpdateParams
 	return &cli.Command{
 		Name:    "update",
 		Usage:   "Update bucket",
@@ -231,7 +228,13 @@ func newBucketUpdateCmd() *cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			return getCLI(ctx).BucketsUpdate(ctx.Context, getAPI(ctx).BucketsApi, &params)
+			api := getAPI(ctx)
+			client := bucket.Client{
+				CLI:              getCLI(ctx),
+				BucketsApi:       api.BucketsApi,
+				OrganizationsApi: api.OrganizationsApi,
+			}
+			return client.Update(ctx.Context, &params)
 		},
 	}
 }

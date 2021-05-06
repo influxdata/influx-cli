@@ -1,4 +1,4 @@
-package internal_test
+package write_test
 
 import (
 	"bytes"
@@ -9,8 +9,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/write"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/stretchr/testify/assert"
@@ -64,12 +65,11 @@ func TestWriteByIDs(t *testing.T) {
 	mockThrottler := noopThrottler{}
 	mockBatcher := lineBatcher{}
 
-	params := internal.WriteParams{
+	params := write.Params{
 		OrgID:     "12345",
 		BucketID:  "98765",
 		Precision: api.WRITEPRECISION_S,
 	}
-	cli := internal.CLI{ActiveConfig: config.Config{Org: "my-default-org"}}
 
 	ctrl := gomock.NewController(t)
 	client := mock.NewMockWriteApi(ctrl)
@@ -85,14 +85,15 @@ func TestWriteByIDs(t *testing.T) {
 		return nil
 	}).Times(len(inLines))
 
-	clients := internal.WriteClients{
-		Reader:    &mockReader,
-		Throttler: &mockThrottler,
-		Writer:    &mockBatcher,
-		Client:    client,
+	cli := write.Client{
+		CLI:         cmd.CLI{ActiveConfig: config.Config{Org: "my-default-org"}},
+		LineReader:  &mockReader,
+		RateLimiter: &mockThrottler,
+		BatchWriter: &mockBatcher,
+		WriteApi:    client,
 	}
 
-	require.NoError(t, cli.Write(context.Background(), &clients, &params))
+	require.NoError(t, cli.Write(context.Background(), &params))
 	require.Equal(t, inLines, writtenLines)
 	require.True(t, mockThrottler.used)
 }
@@ -109,12 +110,11 @@ func TestWriteByNames(t *testing.T) {
 	mockThrottler := noopThrottler{}
 	mockBatcher := lineBatcher{}
 
-	params := internal.WriteParams{
+	params := write.Params{
 		OrgName:    "my-org",
 		BucketName: "my-bucket",
 		Precision:  api.WRITEPRECISION_US,
 	}
-	cli := internal.CLI{ActiveConfig: config.Config{Org: "my-default-org"}}
 
 	ctrl := gomock.NewController(t)
 	client := mock.NewMockWriteApi(ctrl)
@@ -130,14 +130,15 @@ func TestWriteByNames(t *testing.T) {
 		return nil
 	}).Times(len(inLines))
 
-	clients := internal.WriteClients{
-		Reader:    &mockReader,
-		Throttler: &mockThrottler,
-		Writer:    &mockBatcher,
-		Client:    client,
+	cli := write.Client{
+		CLI:         cmd.CLI{ActiveConfig: config.Config{Org: "my-default-org"}},
+		LineReader:  &mockReader,
+		RateLimiter: &mockThrottler,
+		BatchWriter: &mockBatcher,
+		WriteApi:    client,
 	}
 
-	require.NoError(t, cli.Write(context.Background(), &clients, &params))
+	require.NoError(t, cli.Write(context.Background(), &params))
 	require.Equal(t, inLines, writtenLines)
 	require.True(t, mockThrottler.used)
 }
@@ -154,18 +155,18 @@ func TestWriteOrgFromConfig(t *testing.T) {
 	mockThrottler := noopThrottler{}
 	mockBatcher := lineBatcher{}
 
-	params := internal.WriteParams{
+	params := write.Params{
 		BucketName: "my-bucket",
 		Precision:  api.WRITEPRECISION_US,
 	}
-	cli := internal.CLI{ActiveConfig: config.Config{Org: "my-default-org"}}
 
+	defaultOrg := "my-default-org"
 	ctrl := gomock.NewController(t)
 	client := mock.NewMockWriteApi(ctrl)
 	var writtenLines []string
 	client.EXPECT().PostWrite(gomock.Any()).Return(api.ApiPostWriteRequest{ApiService: client}).Times(len(inLines))
 	client.EXPECT().PostWriteExecute(tmock.MatchedBy(func(in api.ApiPostWriteRequest) bool {
-		return assert.Equal(t, cli.ActiveConfig.Org, *in.GetOrg()) &&
+		return assert.Equal(t, defaultOrg, *in.GetOrg()) &&
 			assert.Equal(t, params.BucketName, *in.GetBucket()) &&
 			assert.Equal(t, params.Precision, *in.GetPrecision()) &&
 			assert.Equal(t, "gzip", *in.GetContentEncoding()) // Make sure the body is properly marked for compression.
@@ -174,37 +175,15 @@ func TestWriteOrgFromConfig(t *testing.T) {
 		return nil
 	}).Times(len(inLines))
 
-	clients := internal.WriteClients{
-		Reader:    &mockReader,
-		Throttler: &mockThrottler,
-		Writer:    &mockBatcher,
-		Client:    client,
+	cli := write.Client{
+		CLI:         cmd.CLI{ActiveConfig: config.Config{Org: defaultOrg}},
+		LineReader:  &mockReader,
+		RateLimiter: &mockThrottler,
+		BatchWriter: &mockBatcher,
+		WriteApi:    client,
 	}
 
-	require.NoError(t, cli.Write(context.Background(), &clients, &params))
+	require.NoError(t, cli.Write(context.Background(), &params))
 	require.Equal(t, inLines, writtenLines)
 	require.True(t, mockThrottler.used)
-}
-
-func TestWriteDryRun(t *testing.T) {
-	t.Parallel()
-
-	inLines := `
-fake line protocol 1
-fake line protocol 2
-fake line protocol 3
-`
-	mockReader := bufferReader{}
-	_, err := io.Copy(&mockReader.buf, strings.NewReader(inLines))
-	require.NoError(t, err)
-
-	ctrl := gomock.NewController(t)
-	stdio := mock.NewMockStdIO(ctrl)
-	bytesWritten := bytes.Buffer{}
-	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(bytesWritten.Write).AnyTimes()
-
-	cli := internal.CLI{ActiveConfig: config.Config{Org: "my-default-org"}, StdIO: stdio}
-
-	require.NoError(t, cli.WriteDryRun(context.Background(), &mockReader))
-	require.Equal(t, inLines, bytesWritten.String())
 }

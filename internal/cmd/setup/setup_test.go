@@ -1,4 +1,4 @@
-package internal_test
+package setup_test
 
 import (
 	"bytes"
@@ -10,11 +10,13 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/setup"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
+	"github.com/influxdata/influx-cli/v2/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -31,9 +33,12 @@ func Test_SetupConfigNameCollision(t *testing.T) {
 	cfg := "foo"
 	configSvc := mock.NewMockConfigService(ctrl)
 	configSvc.EXPECT().ListConfigs().Return(map[string]config.Config{cfg: {}}, nil)
-	cli := &internal.CLI{ConfigService: configSvc}
+	cli := setup.Client{
+		CLI:      cmd.CLI{ConfigService: configSvc},
+		SetupApi: client,
+	}
 
-	err := cli.Setup(context.Background(), client, &internal.SetupParams{ConfigName: cfg})
+	err := cli.Setup(context.Background(), &setup.Params{ConfigName: cfg})
 	require.Error(t, err)
 	require.Contains(t, err.Error(), cfg)
 	require.Contains(t, err.Error(), "already exists")
@@ -49,11 +54,14 @@ func Test_SetupConfigNameRequired(t *testing.T) {
 
 	configSvc := mock.NewMockConfigService(ctrl)
 	configSvc.EXPECT().ListConfigs().Return(map[string]config.Config{"foo": {}}, nil)
-	cli := &internal.CLI{ConfigService: configSvc}
+	cli := setup.Client{
+		CLI:      cmd.CLI{ConfigService: configSvc},
+		SetupApi: client,
+	}
 
-	err := cli.Setup(context.Background(), client, &internal.SetupParams{})
+	err := cli.Setup(context.Background(), &setup.Params{})
 	require.Error(t, err)
-	require.Equal(t, internal.ErrConfigNameRequired, err)
+	require.Equal(t, setup.ErrConfigNameRequired, err)
 }
 
 func Test_SetupAlreadySetup(t *testing.T) {
@@ -64,11 +72,14 @@ func Test_SetupAlreadySetup(t *testing.T) {
 	client.EXPECT().GetSetupExecute(gomock.Any()).Return(api.InlineResponse200{Allowed: api.PtrBool(false)}, nil)
 
 	configSvc := mock.NewMockConfigService(ctrl)
-	cli := &internal.CLI{ConfigService: configSvc}
+	cli := setup.Client{
+		CLI:      cmd.CLI{ConfigService: configSvc},
+		SetupApi: client,
+	}
 
-	err := cli.Setup(context.Background(), client, &internal.SetupParams{})
+	err := cli.Setup(context.Background(), &setup.Params{})
 	require.Error(t, err)
-	require.Equal(t, internal.ErrAlreadySetUp, err)
+	require.Equal(t, setup.ErrAlreadySetUp, err)
 }
 
 func Test_SetupCheckFailed(t *testing.T) {
@@ -81,9 +92,12 @@ func Test_SetupCheckFailed(t *testing.T) {
 	client.EXPECT().GetSetupExecute(gomock.Any()).Return(api.InlineResponse200{}, errors.New(e))
 
 	configSvc := mock.NewMockConfigService(ctrl)
-	cli := &internal.CLI{ConfigService: configSvc}
+	cli := setup.Client{
+		CLI:      cmd.CLI{ConfigService: configSvc},
+		SetupApi: client,
+	}
 
-	err := cli.Setup(context.Background(), client, &internal.SetupParams{})
+	err := cli.Setup(context.Background(), &setup.Params{})
 	require.Error(t, err)
 	require.Contains(t, err.Error(), e)
 }
@@ -92,7 +106,7 @@ func Test_SetupSuccessNoninteractive(t *testing.T) {
 	t.Parallel()
 
 	retentionSecs := int64(duration.Week.Seconds())
-	params := internal.SetupParams{
+	params := setup.Params{
 		Username:   "user",
 		Password:   "mysecretpassword",
 		AuthToken:  "mytoken",
@@ -140,14 +154,15 @@ func Test_SetupSuccessNoninteractive(t *testing.T) {
 	stdio := mock.NewMockStdIO(ctrl)
 	bytesWritten := bytes.Buffer{}
 	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(bytesWritten.Write).AnyTimes()
-	cli := &internal.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio}
-	require.NoError(t, cli.Setup(context.Background(), client, &params))
-
-	outLines := strings.Split(strings.TrimSpace(bytesWritten.String()), "\n")
-	require.Len(t, outLines, 2)
-	header, data := outLines[0], outLines[1]
-	require.Regexp(t, "User\\s+Organization\\s+Bucket", header)
-	require.Regexp(t, fmt.Sprintf("%s\\s+%s\\s+%s", params.Username, params.Org, params.Bucket), data)
+	cli := setup.Client{
+		CLI:      cmd.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		SetupApi: client,
+	}
+	require.NoError(t, cli.Setup(context.Background(), &params))
+	testutils.MatchLines(t, []string{
+		`User\s+Organization\s+Bucket`,
+		fmt.Sprintf(`%s\s+%s\s+%s`, params.Username, params.Org, params.Bucket),
+	}, strings.Split(bytesWritten.String(), "\n"))
 }
 
 func Test_SetupSuccessInteractive(t *testing.T) {
@@ -206,21 +221,22 @@ func Test_SetupSuccessInteractive(t *testing.T) {
 	stdio.EXPECT().GetStringInput("Please type your primary bucket name", gomock.Any()).Return(bucket, nil)
 	stdio.EXPECT().GetStringInput("Please type your retention period in hours, or 0 for infinite", gomock.Any()).Return(strconv.Itoa(retentionHrs), nil)
 	stdio.EXPECT().GetConfirm(gomock.Any()).Return(true)
-	cli := &internal.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio}
-	require.NoError(t, cli.Setup(context.Background(), client, &internal.SetupParams{}))
-
-	outLines := strings.Split(strings.TrimSpace(bytesWritten.String()), "\n")
-	require.Len(t, outLines, 2)
-	header, data := outLines[0], outLines[1]
-	require.Regexp(t, "User\\s+Organization\\s+Bucket", header)
-	require.Regexp(t, fmt.Sprintf("%s\\s+%s\\s+%s", username, org, bucket), data)
+	cli := setup.Client{
+		CLI:      cmd.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		SetupApi: client,
+	}
+	require.NoError(t, cli.Setup(context.Background(), &setup.Params{}))
+	testutils.MatchLines(t, []string{
+		`User\s+Organization\s+Bucket`,
+		fmt.Sprintf(`%s\s+%s\s+%s`, username, org, bucket),
+	}, strings.Split(bytesWritten.String(), "\n"))
 }
 
 func Test_SetupPasswordParamToShort(t *testing.T) {
 	t.Parallel()
 
 	retentionSecs := int64(duration.Week.Seconds())
-	params := internal.SetupParams{
+	params := setup.Params{
 		Username:  "user",
 		Password:  "2short",
 		AuthToken: "mytoken",
@@ -240,16 +256,19 @@ func Test_SetupPasswordParamToShort(t *testing.T) {
 	configSvc.EXPECT().ListConfigs().Return(nil, nil)
 
 	stdio := mock.NewMockStdIO(ctrl)
-	cli := &internal.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio}
-	err := cli.Setup(context.Background(), client, &params)
-	require.Equal(t, internal.ErrPasswordIsTooShort, err)
+	cli := setup.Client{
+		CLI:      cmd.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		SetupApi: client,
+	}
+	err := cli.Setup(context.Background(), &params)
+	require.Equal(t, setup.ErrPasswordIsTooShort, err)
 }
 
 func Test_SetupCancelAtConfirmation(t *testing.T) {
 	t.Parallel()
 
 	retentionSecs := int64(duration.Week.Seconds())
-	params := internal.SetupParams{
+	params := setup.Params{
 		Username:  "user",
 		Password:  "mysecretpassword",
 		AuthToken: "mytoken",
@@ -272,7 +291,10 @@ func Test_SetupCancelAtConfirmation(t *testing.T) {
 	stdio.EXPECT().Banner(gomock.Any())
 	stdio.EXPECT().GetConfirm(gomock.Any()).Return(false)
 
-	cli := &internal.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio}
-	err := cli.Setup(context.Background(), client, &params)
-	require.Equal(t, internal.ErrSetupCanceled, err)
+	cli := setup.Client{
+		CLI:      cmd.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		SetupApi: client,
+	}
+	err := cli.Setup(context.Background(), &params)
+	require.Equal(t, setup.ErrSetupCanceled, err)
 }

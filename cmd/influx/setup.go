@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/influxdata/influx-cli/v2/internal"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/setup"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
 
 func newSetupCmd() *cli.Command {
-	var params internal.SetupParams
+	var params setup.Params
 	return &cli.Command{
 		Name:   "setup",
 		Usage:  "Setup instance with initial user, org, bucket",
@@ -67,7 +67,11 @@ func newSetupCmd() *cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			return getCLI(ctx).Setup(ctx.Context, getAPINoToken(ctx).SetupApi, &params)
+			client := setup.Client{
+				CLI:      getCLI(ctx),
+				SetupApi: getAPINoToken(ctx).SetupApi,
+			}
+			return client.Setup(ctx.Context, &params)
 		},
 	}
 }

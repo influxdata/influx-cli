@@ -1,4 +1,4 @@
-package linereader_test
+package write_test
 
 import (
 	"bufio"
@@ -14,7 +14,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/influxdata/influx-cli/v2/internal/linereader"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/write"
 	"github.com/stretchr/testify/require"
 )
 
@@ -117,8 +117,8 @@ func TestLineReader(t *testing.T) {
 		args                       []string
 		files                      []string
 		urls                       []string
-		format                     linereader.InputFormat
-		compression                linereader.InputCompression
+		format                     write.InputFormat
+		compression                write.InputCompression
 		encoding                   string
 		headers                    []string
 		skipHeader                 int
@@ -148,7 +148,7 @@ func TestLineReader(t *testing.T) {
 		{
 			name:                "read compressed LP data from file",
 			files:               []string{gzipLpFileNoExt},
-			compression:         linereader.InputCompressionGZIP,
+			compression:         write.InputCompressionGZIP,
 			firstLineCorrection: 0,
 			lines: []string{
 				lpContents,
@@ -157,7 +157,7 @@ func TestLineReader(t *testing.T) {
 		{
 			name:                "read compressed data from LP file using non-UTF encoding",
 			files:               []string{gzipLpFileNoExt},
-			compression:         linereader.InputCompressionGZIP,
+			compression:         write.InputCompressionGZIP,
 			encoding:            "ISO_8859-1",
 			firstLineCorrection: 0,
 			lines: []string{
@@ -190,7 +190,7 @@ func TestLineReader(t *testing.T) {
 		},
 		{
 			name:        "read compressed LP data from stdin",
-			compression: linereader.InputCompressionGZIP,
+			compression: write.InputCompressionGZIP,
 			stdIn:       gzipStdin(stdInLpContents),
 			lines: []string{
 				stdInLpContents,
@@ -206,7 +206,7 @@ func TestLineReader(t *testing.T) {
 		},
 		{
 			name:        "read compressed LP data from stdin using '-' argument",
-			compression: linereader.InputCompressionGZIP,
+			compression: write.InputCompressionGZIP,
 			args:        []string{"-"},
 			stdIn:       gzipStdin(stdInLpContents),
 			lines: []string{
@@ -230,7 +230,7 @@ func TestLineReader(t *testing.T) {
 		{
 			name:        "read compressed LP data from URL",
 			urls:        []string{fmt.Sprintf("/a?data=%s&compress=true", url.QueryEscape(lpContents))},
-			compression: linereader.InputCompressionGZIP,
+			compression: write.InputCompressionGZIP,
 			lines: []string{
 				lpContents,
 			},
@@ -260,7 +260,7 @@ func TestLineReader(t *testing.T) {
 		{
 			name:                "read compressed CSV data from file + transform to line protocol",
 			files:               []string{gzipCsvFileNoExt},
-			compression:         linereader.InputCompressionGZIP,
+			compression:         write.InputCompressionGZIP,
 			firstLineCorrection: 0,
 			lines: []string{
 				lpContents,
@@ -296,7 +296,7 @@ func TestLineReader(t *testing.T) {
 		},
 		{
 			name:   "read CSV data from stdin + transform to line protocol",
-			format: linereader.InputFormatCSV,
+			format: write.InputFormatCSV,
 			stdIn:  strings.NewReader(stdInCsvContents),
 			lines: []string{
 				stdInLpContents,
@@ -304,8 +304,8 @@ func TestLineReader(t *testing.T) {
 		},
 		{
 			name:        "read compressed CSV data from stdin + transform to line protocol",
-			format:      linereader.InputFormatCSV,
-			compression: linereader.InputCompressionGZIP,
+			format:      write.InputFormatCSV,
+			compression: write.InputCompressionGZIP,
 			stdIn:       gzipStdin(stdInCsvContents),
 			lines: []string{
 				stdInLpContents,
@@ -313,7 +313,7 @@ func TestLineReader(t *testing.T) {
 		},
 		{
 			name:   "read CSV data from stdin using '-' argument + transform to line protocol",
-			format: linereader.InputFormatCSV,
+			format: write.InputFormatCSV,
 			args:   []string{"-"},
 			stdIn:  strings.NewReader(stdInCsvContents),
 			lines: []string{
@@ -322,8 +322,8 @@ func TestLineReader(t *testing.T) {
 		},
 		{
 			name:        "read compressed CSV data from stdin using '-' argument + transform to line protocol",
-			format:      linereader.InputFormatCSV,
-			compression: linereader.InputCompressionGZIP,
+			format:      write.InputFormatCSV,
+			compression: write.InputCompressionGZIP,
 			args:        []string{"-"},
 			stdIn:       gzipStdin(stdInCsvContents),
 			lines: []string{
@@ -332,7 +332,7 @@ func TestLineReader(t *testing.T) {
 		},
 		{
 			name:   "read CSV data from 1st argument + transform to line protocol",
-			format: linereader.InputFormatCSV,
+			format: write.InputFormatCSV,
 			args:   []string{stdInCsvContents},
 			lines: []string{
 				stdInLpContents,
@@ -348,7 +348,7 @@ func TestLineReader(t *testing.T) {
 		{
 			name:        "read compressed CSV data from URL + transform to line protocol",
 			urls:        []string{fmt.Sprintf("/a.csv?data=%s&compress=true", url.QueryEscape(csvContents))},
-			compression: linereader.InputCompressionGZIP,
+			compression: write.InputCompressionGZIP,
 			lines: []string{
 				lpContents,
 			},
@@ -394,7 +394,7 @@ func TestLineReader(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r := &linereader.MultiInputLineReader{
+			r := &write.MultiInputLineReader{
 				StdIn:                      test.stdIn,
 				HttpClient:                 &mockClient{t: t},
 				Args:                       test.args,
@@ -456,7 +456,7 @@ func TestLineReaderErrors(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r := linereader.MultiInputLineReader{
+			r := write.MultiInputLineReader{
 				HttpClient: &mockClient{t: t, fail: true},
 				Files:      test.files,
 				URLs:       test.urls,
@@ -475,10 +475,10 @@ func TestLineReaderErrorOut(t *testing.T) {
 	stdInContents := "_measurement,a|long:strict\nm,1\nm,1.1"
 	errorOut := bytes.Buffer{}
 
-	r := linereader.MultiInputLineReader{
+	r := write.MultiInputLineReader{
 		StdIn:    strings.NewReader(stdInContents),
 		ErrorOut: &errorOut,
-		Format:   linereader.InputFormatCSV,
+		Format:   write.InputFormatCSV,
 	}
 	reader, closer, err := r.Open(context.Background())
 	require.NoError(t, err)

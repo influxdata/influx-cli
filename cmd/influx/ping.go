@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/influxdata/influx-cli/v2/internal/cmd/ping"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
@@ -12,7 +13,11 @@ func newPingCmd() *cli.Command {
 		Before: middleware.WithBeforeFns(withCli(), withApi(false)),
 		Flags:  coreFlags,
 		Action: func(ctx *cli.Context) error {
-			return getCLI(ctx).Ping(ctx.Context, getAPINoToken(ctx).HealthApi)
+			client := ping.Client{
+				CLI:       getCLI(ctx),
+				HealthApi: getAPINoToken(ctx).HealthApi,
+			}
+			return client.Ping(ctx.Context)
 		},
 	}
 }

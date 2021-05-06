@@ -1,4 +1,4 @@
-package linereader
+package write
 
 import (
 	"compress/gzip"

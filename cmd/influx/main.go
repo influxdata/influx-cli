@@ -10,8 +10,8 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/stdio"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
@@ -114,26 +114,26 @@ var commonFlags = append(commonFlagsNoToken, &commonTokenFlag)
 
 // newCli builds a CLI core that reads from stdin, writes to stdout/stderr, manages a local config store,
 // and optionally tracks a trace ID specified over the CLI.
-func newCli(ctx *cli.Context) (*internal.CLI, error) {
+func newCli(ctx *cli.Context) (cmd.CLI, error) {
 	configPath := ctx.String(configPathFlag)
 	var err error
 	if configPath == "" {
 		configPath, err = config.DefaultPath()
 		if err != nil {
-			return nil, err
+			return cmd.CLI{}, err
 		}
 	}
 	configSvc := config.NewLocalConfigService(configPath)
 	var activeConfig config.Config
 	if ctx.IsSet(configNameFlag) {
 		if activeConfig, err = configSvc.SwitchActive(ctx.String(configNameFlag)); err != nil {
-			return nil, err
+			return cmd.CLI{}, err
 		}
 	} else if activeConfig, err = configSvc.Active(); err != nil {
-		return nil, err
+		return cmd.CLI{}, err
 	}
 
-	return &internal.CLI{
+	return cmd.CLI{
 		StdIO:            stdio.TerminalStdio,
 		PrintAsJSON:      ctx.Bool(printJsonFlag),
 		HideTableHeaders: ctx.Bool(hideHeadersFlag),
@@ -144,8 +144,8 @@ func newCli(ctx *cli.Context) (*internal.CLI, error) {
 
 // newApiClient returns an API client configured to communicate with a remote InfluxDB instance over HTTP.
 // Client parameters are pulled from the CLI context.
-func newApiClient(ctx *cli.Context, cli *internal.CLI, injectToken bool) (*api.APIClient, error) {
-	cfg, err := cli.ConfigService.Active()
+func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) (*api.APIClient, error) {
+	cfg, err := configSvc.Active()
 	if err != nil {
 		return nil, err
 	}
@@ -213,8 +213,8 @@ func withCli() cli.BeforeFunc {
 	}
 }
 
-func getCLI(ctx *cli.Context) *internal.CLI {
-	i, ok := ctx.App.Metadata["cli"].(*internal.CLI)
+func getCLI(ctx *cli.Context) cmd.CLI {
+	i, ok := ctx.App.Metadata["cli"].(cmd.CLI)
 	if !ok {
 		panic("missing CLI")
 	}
@@ -229,7 +229,7 @@ func withApi(injectToken bool) cli.BeforeFunc {
 
 	makeFn := func(ctx *cli.Context) error {
 		c := getCLI(ctx)
-		apiClient, err := newApiClient(ctx, c, injectToken)
+		apiClient, err := newApiClient(ctx, c.ConfigService, injectToken)
 		if err != nil {
 			return err
 		}

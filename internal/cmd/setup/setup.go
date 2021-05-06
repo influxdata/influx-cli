@@ -1,4 +1,4 @@
-package internal
+package setup
 
 import (
 	"context"
@@ -9,20 +9,11 @@ import (
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
 )
-
-type SetupParams struct {
-	Username   string
-	Password   string
-	AuthToken  string
-	Org        string
-	Bucket     string
-	Retention  string
-	Force      bool
-	ConfigName string
-}
 
 var (
 	ErrPasswordIsTooShort = errors.New("password is too short")
@@ -33,9 +24,25 @@ var (
 
 const MinPasswordLen = 8
 
-func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParams) error {
+type Client struct {
+	cmd.CLI
+	api.SetupApi
+}
+
+type Params struct {
+	Username   string
+	Password   string
+	AuthToken  string
+	Org        string
+	Bucket     string
+	Retention  string
+	Force      bool
+	ConfigName string
+}
+
+func (c Client) Setup(ctx context.Context, params *Params) error {
 	// Check if setup is even allowed.
-	checkResp, err := client.GetSetup(ctx).Execute()
+	checkResp, err := c.GetSetup(ctx).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to check if already set up: %w", err)
 	}
@@ -54,7 +61,7 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 	if err != nil {
 		return err
 	}
-	resp, err := client.PostSetup(ctx).OnboardingRequest(setupBody).Execute()
+	resp, err := c.PostSetup(ctx).OnboardingRequest(setupBody).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to setup instance: %w", err)
 	}
@@ -91,7 +98,7 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 // validateNoNameCollision checks that we will be able to write onboarding results to local config:
 //   - If a custom name was given, check that it doesn't collide with existing config
 //   - If no custom name was given, check that we don't already have configs
-func (c *CLI) validateNoNameCollision(configName string) error {
+func (c Client) validateNoNameCollision(configName string) error {
 	existingConfigs, err := c.ConfigService.ListConfigs()
 	if err != nil {
 		return fmt.Errorf("error checking existing configs: %w", err)
@@ -116,7 +123,7 @@ func (c *CLI) validateNoNameCollision(configName string) error {
 // onboardingRequest constructs a request body for the onboarding API.
 // Unless the 'force' parameter is set, the user will be prompted to enter any missing information
 // and to confirm the final request parameters.
-func (c *CLI) onboardingRequest(params *SetupParams) (req api.OnboardingRequest, err error) {
+func (c Client) onboardingRequest(params *Params) (req api.OnboardingRequest, err error) {
 	if (params.Force || params.Password != "") && len(params.Password) < MinPasswordLen {
 		return req, ErrPasswordIsTooShort
 	}
@@ -131,7 +138,7 @@ func (c *CLI) onboardingRequest(params *SetupParams) (req api.OnboardingRequest,
 	if params.AuthToken != "" {
 		req.Token = &params.AuthToken
 	}
-	rpSecs := int64(InfiniteRetention)
+	rpSecs := int64(bucket.InfiniteRetention)
 	if params.Retention != "" {
 		dur, err := duration.RawDurationToTimeDuration(params.Retention)
 		if err != nil {
@@ -192,7 +199,7 @@ func (c *CLI) onboardingRequest(params *SetupParams) (req api.OnboardingRequest,
 		}
 	}
 	if params.Retention == "" {
-		infiniteStr := strconv.Itoa(InfiniteRetention)
+		infiniteStr := strconv.Itoa(bucket.InfiniteRetention)
 		for {
 			rpStr, err := c.StdIO.GetStringInput("Please type your retention period in hours, or 0 for infinite", infiniteStr)
 			if err != nil {

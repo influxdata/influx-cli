@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/influxdata/influx-cli/v2/internal"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket_schema"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
@@ -13,12 +13,11 @@ func withBucketSchemaClient() cli.BeforeFunc {
 		withCli(),
 		withApi(true),
 		func(ctx *cli.Context) error {
-			c := getCLI(ctx)
 			client := getAPI(ctx)
 			ctx.App.Metadata["measurement_schema"] = bucket_schema.Client{
-				BucketApi:        client.BucketsApi,
+				BucketsApi:       client.BucketsApi,
 				BucketSchemasApi: client.BucketSchemasApi,
-				CLI:              c,
+				CLI:              getCLI(ctx),
 			}
 			return nil
 		})
@@ -46,7 +45,7 @@ func newBucketSchemaCmd() *cli.Command {
 
 func newBucketSchemaCreateCmd() *cli.Command {
 	var params struct {
-		internal.OrgBucketParams
+		cmd.OrgBucketParams
 		Name           string
 		ColumnsFile    string
 		ColumnsFormat  bucket_schema.ColumnsFormat
@@ -100,7 +99,7 @@ func newBucketSchemaCreateCmd() *cli.Command {
 
 func newBucketSchemaUpdateCmd() *cli.Command {
 	var params struct {
-		internal.OrgBucketParams
+		cmd.OrgBucketParams
 		ID             influxid.ID
 		Name           string
 		ColumnsFile    string

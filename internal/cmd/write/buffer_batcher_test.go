@@ -1,4 +1,4 @@
-package batcher_test
+package write_test
 
 import (
 	"bufio"
@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/influxdata/influx-cli/v2/internal/batcher"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/write"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -45,7 +45,7 @@ func TestScanLines(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			scanner := bufio.NewScanner(strings.NewReader(tt.input))
-			scanner.Split(batcher.ScanLines)
+			scanner.Split(write.ScanLines)
 			got := []string{}
 			for scanner.Scan() {
 				got = append(got, scanner.Text())
@@ -129,7 +129,7 @@ func TestBatcher_WriteTo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := &batcher.BufferBatcher{
+			b := &write.BufferBatcher{
 				MaxFlushBytes:    tt.fields.MaxFlushBytes,
 				MaxFlushInterval: tt.fields.MaxFlushInterval,
 			}
@@ -151,7 +151,7 @@ func TestBatcher_WriteTo(t *testing.T) {
 		})
 		// test the same data, but now with WriteBatches function
 		t.Run("WriteTo_"+tt.name, func(t *testing.T) {
-			b := &batcher.BufferBatcher{
+			b := &write.BufferBatcher{
 				MaxFlushBytes:    tt.fields.MaxFlushBytes,
 				MaxFlushInterval: tt.fields.MaxFlushInterval,
 			}
@@ -175,7 +175,7 @@ func TestBatcher_WriteTo(t *testing.T) {
 }
 
 func TestBatcher_WriteTimeout(t *testing.T) {
-	b := &batcher.BufferBatcher{}
+	b := &write.BufferBatcher{}
 
 	// this mimics a reader like stdin that may never return data.
 	r, _ := io.Pipe()

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/influxdata/influx-cli/v2/internal"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/urfave/cli/v2"
 )
 
-func getOrgBucketFlags(c *internal.OrgBucketParams) []cli.Flag {
+func getOrgBucketFlags(c *cmd.OrgBucketParams) []cli.Flag {
 	return []cli.Flag{
 		&cli.GenericFlag{
 			Name:    "bucket-id",
