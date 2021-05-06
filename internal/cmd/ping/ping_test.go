@@ -26,8 +26,8 @@ func Test_PingSuccess(t *testing.T) {
 	bytesWritten := bytes.Buffer{}
 	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(bytesWritten.Write).AnyTimes()
 	cli := ping.Client{
-		CLI: &internal.CLI{StdIO: stdio},
-		API: client,
+		CLI:       internal.CLI{StdIO: stdio},
+		HealthApi: client,
 	}
 
 	require.NoError(t, cli.Ping(context.Background()))
@@ -43,8 +43,7 @@ func Test_PingFailedRequest(t *testing.T) {
 	client.EXPECT().GetHealth(gomock.Any()).Return(api.ApiGetHealthRequest{ApiService: client})
 	client.EXPECT().GetHealthExecute(gomock.Any()).Return(api.HealthCheck{}, errors.New(e))
 	cli := ping.Client{
-		CLI: &internal.CLI{},
-		API: client,
+		HealthApi: client,
 	}
 
 	err := cli.Ping(context.Background())
@@ -62,8 +61,7 @@ func Test_PingFailedStatus(t *testing.T) {
 	client.EXPECT().GetHealthExecute(gomock.Any()).
 		Return(api.HealthCheck{}, &api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Message: &e})
 	cli := ping.Client{
-		CLI: &internal.CLI{},
-		API: client,
+		HealthApi: client,
 	}
 	err := cli.Ping(context.Background())
 	require.Error(t, err)
@@ -81,8 +79,7 @@ func Test_PingFailedStatusNoMessage(t *testing.T) {
 		Return(api.HealthCheck{}, &api.HealthCheck{Status: api.HEALTHCHECKSTATUS_FAIL, Name: name})
 
 	cli := ping.Client{
-		CLI: &internal.CLI{},
-		API: client,
+		HealthApi: client,
 	}
 	err := cli.Ping(context.Background())
 	require.Error(t, err)

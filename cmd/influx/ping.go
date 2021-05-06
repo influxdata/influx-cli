@@ -13,10 +13,9 @@ func newPingCmd() *cli.Command {
 		Before: middleware.WithBeforeFns(withCli(), withApi(false)),
 		Flags:  coreFlags,
 		Action: func(ctx *cli.Context) error {
-			cli := getCLI(ctx)
 			client := ping.Client{
-				CLI: &cli,
-				API: getAPINoToken(ctx).HealthApi,
+				CLI:       getCLI(ctx),
+				HealthApi: getAPINoToken(ctx).HealthApi,
 			}
 			return client.Ping(ctx.Context)
 		},
