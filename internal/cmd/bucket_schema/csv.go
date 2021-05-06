@@ -14,9 +14,12 @@ type csvColumn struct {
 	DataType *api.ColumnDataType    `csv:"data_type,omitempty"`
 }
 
+func init() {
+	gocsv.FailIfUnmatchedStructTags = true
+}
+
 func decodeCSV(r io.Reader) ([]api.MeasurementSchemaColumn, error) {
 	var cols []csvColumn
-	gocsv.FailIfUnmatchedStructTags = true
 	err := gocsv.Unmarshal(r, &cols)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode CSV: %w", err)

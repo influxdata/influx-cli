@@ -193,13 +193,14 @@ func (c *CLI) BucketsDelete(ctx context.Context, client api.BucketsApi, params *
 	}
 
 	var bucket api.Bucket
-	getReq := client.GetBuckets(ctx)
+	var getReq api.ApiGetBucketsRequest
 	if params.ID != "" {
-		getReq = getReq.Id(params.ID)
+		getReq = client.GetBuckets(ctx).Id(params.ID)
 	} else {
 		if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 			return ErrMustSpecifyOrgDeleteByName
 		}
+		getReq = client.GetBuckets(ctx)
 		getReq = getReq.Name(params.Name)
 		if params.OrgID != "" {
 			getReq = getReq.OrgID(params.OrgID)

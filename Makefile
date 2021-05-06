@@ -67,6 +67,9 @@ vet:
 	go vet ./...
 
 # Testing
+mock: ./internal/mock/gen.go
+	go generate ./internal/mock/
+
 test:
 	$(GO_TEST) $(GO_TEST_PATHS)
 
@@ -74,4 +77,4 @@ test-race:
 	$(GO_TEST) -v -race -count=1 $(GO_TEST_PATHS)
 
 ### List of all targets that don't produce a file
-.PHONY: influx openapi fmt build checkfmt checktidy staticcheck vet test test-race
+.PHONY: influx openapi fmt build checkfmt checktidy staticcheck vet mock test test-race

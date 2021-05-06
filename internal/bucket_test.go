@@ -1,16 +1,18 @@
 package internal_test
 
 import (
+	"bytes"
 	"context"
-	"errors"
 	"strings"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/stretchr/testify/assert"
+	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,13 +20,13 @@ func TestBucketsCreate(t *testing.T) {
 	t.Parallel()
 
 	var testCases = []struct {
-		name                  string
-		configOrgName         string
-		params                internal.BucketsCreateParams
-		buildOrgLookupFn      func(*testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error)
-		buildBucketCreateFn   func(*testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error)
-		expectedStdoutPattern string
-		expectedInErr         string
+		name                       string
+		configOrgName              string
+		params                     internal.BucketsCreateParams
+		registerOrgExpectations    func(*testing.T, *mock.MockOrganizationsApi)
+		registerBucketExpectations func(*testing.T, *mock.MockBucketsApi)
+		expectedStdoutPattern      string
+		expectedInErr              string
 	}{
 		{
 			name: "minimal",
@@ -32,26 +34,23 @@ func TestBucketsCreate(t *testing.T) {
 				OrgID: "123",
 				Name:  "my-bucket",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-				return func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-					return api.Organizations{}, errors.New("unexpected org lookup call")
-				}
-			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
-					body := req.GetPostBucketRequest()
-					require.NotNil(t, body)
-					require.Equal(t, "123", body.OrgID)
-					require.Equal(t, "my-bucket", body.Name)
-					require.Empty(t, body.RetentionRules)
-
-					return api.Bucket{
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PostBuckets(gomock.Any()).Return(api.ApiPostBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().
+					PostBucketsExecute(tmock.MatchedBy(func(in api.ApiPostBucketsRequest) bool {
+						body := in.GetPostBucketRequest()
+						return assert.NotNil(t, body) &&
+							assert.Equal(t, "123", body.OrgID) &&
+							assert.Equal(t, "my-bucket", body.Name) &&
+							assert.Nil(t, body.Description) &&
+							assert.Empty(t, body.RetentionRules)
+					})).
+					Return(api.Bucket{
 						Id:             api.PtrString("456"),
 						OrgID:          api.PtrString("123"),
 						Name:           "my-bucket",
 						RetentionRules: nil,
-					}, nil
-				}
+					}, nil)
 			},
 			expectedStdoutPattern: "456\\s+my-bucket\\s+infinite\\s+n/a\\s+123",
 		},
@@ -64,29 +63,27 @@ func TestBucketsCreate(t *testing.T) {
 				Retention:          "24h",
 				ShardGroupDuration: "1h",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-				return func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-					return api.Organizations{}, errors.New("unexpected org lookup call")
-				}
-			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
-					body := req.GetPostBucketRequest()
-					require.NotNil(t, body)
-					require.Equal(t, "123", body.OrgID)
-					require.Equal(t, "my-bucket", body.Name)
-					require.Equal(t, "my cool bucket", *body.Description)
-					require.Equal(t, 1, len(body.RetentionRules))
-					require.Equal(t, int64(86400), body.RetentionRules[0].EverySeconds)
-					require.Equal(t, int64(3600), *body.RetentionRules[0].ShardGroupDurationSeconds)
-
-					return api.Bucket{
-						Id:             api.PtrString("456"),
-						OrgID:          api.PtrString("123"),
-						Name:           "my-bucket",
-						RetentionRules: body.RetentionRules,
-					}, nil
-				}
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PostBuckets(gomock.Any()).Return(api.ApiPostBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().
+					PostBucketsExecute(tmock.MatchedBy(func(in api.ApiPostBucketsRequest) bool {
+						body := in.GetPostBucketRequest()
+						return assert.NotNil(t, body) &&
+							assert.Equal(t, "123", body.OrgID) &&
+							assert.Equal(t, "my-bucket", body.Name) &&
+							assert.Equal(t, "my cool bucket", *body.Description) &&
+							assert.Len(t, body.RetentionRules, 1) &&
+							assert.Equal(t, int64(86400), body.RetentionRules[0].EverySeconds) &&
+							assert.Equal(t, int64(3600), *body.RetentionRules[0].ShardGroupDurationSeconds)
+					})).
+					Return(api.Bucket{
+						Id:    api.PtrString("456"),
+						OrgID: api.PtrString("123"),
+						Name:  "my-bucket",
+						RetentionRules: []api.RetentionRule{
+							{EverySeconds: 86400, ShardGroupDurationSeconds: api.PtrInt64(3600)},
+						},
+					}, nil)
 			},
 			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
 		},
@@ -97,29 +94,25 @@ func TestBucketsCreate(t *testing.T) {
 				Name:      "my-bucket",
 				Retention: "24h",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-				return func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-					return api.Organizations{}, errors.New("unexpected org lookup call")
-				}
-			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
-					body := req.GetPostBucketRequest()
-					require.NotNil(t, body)
-					require.Equal(t, "123", body.OrgID)
-					require.Equal(t, "my-bucket", body.Name)
-					require.Nil(t, body.Description)
-					require.Equal(t, 1, len(body.RetentionRules))
-					require.Equal(t, int64(86400), body.RetentionRules[0].EverySeconds)
-					require.Nil(t, body.RetentionRules[0].ShardGroupDurationSeconds)
-
-					return api.Bucket{
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PostBuckets(gomock.Any()).Return(api.ApiPostBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().
+					PostBucketsExecute(tmock.MatchedBy(func(in api.ApiPostBucketsRequest) bool {
+						body := in.GetPostBucketRequest()
+						return assert.NotNil(t, body) &&
+							assert.Equal(t, "123", body.OrgID) &&
+							assert.Equal(t, "my-bucket", body.Name) &&
+							assert.Nil(t, body.Description) &&
+							assert.Len(t, body.RetentionRules, 1) &&
+							assert.Equal(t, int64(86400), body.RetentionRules[0].EverySeconds) &&
+							assert.Nil(t, body.RetentionRules[0].ShardGroupDurationSeconds)
+					})).
+					Return(api.Bucket{
 						Id:             api.PtrString("456"),
 						OrgID:          api.PtrString("123"),
 						Name:           "my-bucket",
-						RetentionRules: body.RetentionRules,
-					}, nil
-				}
+						RetentionRules: []api.RetentionRule{{EverySeconds: 86400}},
+					}, nil)
 			},
 		},
 		{
@@ -127,32 +120,28 @@ func TestBucketsCreate(t *testing.T) {
 			params: internal.BucketsCreateParams{
 				OrgID:      "123",
 				Name:       "my-bucket",
-				Retention:  "24h",
 				SchemaType: api.SCHEMATYPE_EXPLICIT,
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-				return func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-					return api.Organizations{}, errors.New("unexpected org lookup call")
-				}
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PostBuckets(gomock.Any()).Return(api.ApiPostBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().
+					PostBucketsExecute(tmock.MatchedBy(func(in api.ApiPostBucketsRequest) bool {
+						body := in.GetPostBucketRequest()
+						return assert.NotNil(t, body) &&
+							assert.Equal(t, "123", body.OrgID) &&
+							assert.Equal(t, "my-bucket", body.Name) &&
+							assert.Nil(t, body.Description) &&
+							assert.Empty(t, body.RetentionRules) &&
+							assert.Equal(t, api.SCHEMATYPE_EXPLICIT, *body.SchemaType)
+					})).
+					Return(api.Bucket{
+						Id:         api.PtrString("456"),
+						OrgID:      api.PtrString("123"),
+						Name:       "my-bucket",
+						SchemaType: api.SCHEMATYPE_EXPLICIT.Ptr(),
+					}, nil)
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
-					body := req.GetPostBucketRequest()
-					require.NotNil(t, body)
-					require.Equal(t, "123", body.OrgID)
-					require.NotNil(t, body.SchemaType)
-					assert.Equal(t, api.SCHEMATYPE_EXPLICIT, *body.SchemaType)
-
-					return api.Bucket{
-						Id:             api.PtrString("456"),
-						OrgID:          api.PtrString("123"),
-						Name:           "my-bucket",
-						RetentionRules: body.RetentionRules,
-						SchemaType:     api.SCHEMATYPE_EXPLICIT.Ptr(),
-					}, nil
-				}
-			},
-			expectedStdoutPattern: `456\s+my-bucket\s+24h0m0s\s+n/a\s+123\s+explicit`,
+			expectedStdoutPattern: `456\s+my-bucket\s+infinite\s+n/a\s+123\s+explicit`,
 		},
 		{
 			name: "look up org by name",
@@ -163,32 +152,36 @@ func TestBucketsCreate(t *testing.T) {
 				Retention:          "24h",
 				ShardGroupDuration: "1h",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-				return func(req api.ApiGetOrgsRequest) (api.Organizations, error) {
-					require.Equal(t, "my-org", *req.GetOrg())
-					return api.Organizations{
+			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
+				orgApi.EXPECT().GetOrgs(gomock.Any()).Return(api.ApiGetOrgsRequest{ApiService: orgApi})
+				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
+					return assert.Equal(t, "my-org", *in.GetOrg())
+				})).
+					Return(api.Organizations{
 						Orgs: &[]api.Organization{{Id: api.PtrString("123")}},
-					}, nil
-				}
+					}, nil)
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
-					body := req.GetPostBucketRequest()
-					require.NotNil(t, body)
-					require.Equal(t, "123", body.OrgID)
-					require.Equal(t, "my-bucket", body.Name)
-					require.Equal(t, "my cool bucket", *body.Description)
-					require.Equal(t, 1, len(body.RetentionRules))
-					require.Equal(t, int64(86400), body.RetentionRules[0].EverySeconds)
-					require.Equal(t, int64(3600), *body.RetentionRules[0].ShardGroupDurationSeconds)
-
-					return api.Bucket{
-						Id:             api.PtrString("456"),
-						OrgID:          api.PtrString("123"),
-						Name:           "my-bucket",
-						RetentionRules: body.RetentionRules,
-					}, nil
-				}
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PostBuckets(gomock.Any()).Return(api.ApiPostBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().
+					PostBucketsExecute(tmock.MatchedBy(func(in api.ApiPostBucketsRequest) bool {
+						body := in.GetPostBucketRequest()
+						return assert.NotNil(t, body) &&
+							assert.Equal(t, "123", body.OrgID) &&
+							assert.Equal(t, "my-bucket", body.Name) &&
+							assert.Equal(t, "my cool bucket", *body.Description) &&
+							assert.Len(t, body.RetentionRules, 1) &&
+							assert.Equal(t, int64(86400), body.RetentionRules[0].EverySeconds) &&
+							assert.Equal(t, int64(3600), *body.RetentionRules[0].ShardGroupDurationSeconds)
+					})).
+					Return(api.Bucket{
+						Id:    api.PtrString("456"),
+						OrgID: api.PtrString("123"),
+						Name:  "my-bucket",
+						RetentionRules: []api.RetentionRule{
+							{EverySeconds: 86400, ShardGroupDurationSeconds: api.PtrInt64(3600)},
+						},
+					}, nil)
 			},
 			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
 		},
@@ -201,32 +194,36 @@ func TestBucketsCreate(t *testing.T) {
 				ShardGroupDuration: "1h",
 			},
 			configOrgName: "my-org",
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-				return func(req api.ApiGetOrgsRequest) (api.Organizations, error) {
-					require.Equal(t, "my-org", *req.GetOrg())
-					return api.Organizations{
+			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
+				orgApi.EXPECT().GetOrgs(gomock.Any()).Return(api.ApiGetOrgsRequest{ApiService: orgApi})
+				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
+					return assert.Equal(t, "my-org", *in.GetOrg())
+				})).
+					Return(api.Organizations{
 						Orgs: &[]api.Organization{{Id: api.PtrString("123")}},
-					}, nil
-				}
+					}, nil)
 			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
-					body := req.GetPostBucketRequest()
-					require.NotNil(t, body)
-					require.Equal(t, "123", body.OrgID)
-					require.Equal(t, "my-bucket", body.Name)
-					require.Equal(t, "my cool bucket", *body.Description)
-					require.Equal(t, 1, len(body.RetentionRules))
-					require.Equal(t, int64(86400), body.RetentionRules[0].EverySeconds)
-					require.Equal(t, int64(3600), *body.RetentionRules[0].ShardGroupDurationSeconds)
-
-					return api.Bucket{
-						Id:             api.PtrString("456"),
-						OrgID:          api.PtrString("123"),
-						Name:           "my-bucket",
-						RetentionRules: body.RetentionRules,
-					}, nil
-				}
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PostBuckets(gomock.Any()).Return(api.ApiPostBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().
+					PostBucketsExecute(tmock.MatchedBy(func(in api.ApiPostBucketsRequest) bool {
+						body := in.GetPostBucketRequest()
+						return assert.NotNil(t, body) &&
+							assert.Equal(t, "123", body.OrgID) &&
+							assert.Equal(t, "my-bucket", body.Name) &&
+							assert.Equal(t, "my cool bucket", *body.Description) &&
+							assert.Len(t, body.RetentionRules, 1) &&
+							assert.Equal(t, int64(86400), body.RetentionRules[0].EverySeconds) &&
+							assert.Equal(t, int64(3600), *body.RetentionRules[0].ShardGroupDurationSeconds)
+					})).
+					Return(api.Bucket{
+						Id:    api.PtrString("456"),
+						OrgID: api.PtrString("123"),
+						Name:  "my-bucket",
+						RetentionRules: []api.RetentionRule{
+							{EverySeconds: 86400, ShardGroupDurationSeconds: api.PtrInt64(3600)},
+						},
+					}, nil)
 			},
 			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
 		},
@@ -237,16 +234,6 @@ func TestBucketsCreate(t *testing.T) {
 				Description:        "my cool bucket",
 				Retention:          "24h",
 				ShardGroupDuration: "1h",
-			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-				return func(req api.ApiGetOrgsRequest) (api.Organizations, error) {
-					return api.Organizations{}, errors.New("shouldn't be called")
-				}
-			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
-					return api.Bucket{}, errors.New("shouldn't be called")
-				}
 			},
 			expectedInErr: "must specify org ID or org name",
 		},
@@ -259,15 +246,9 @@ func TestBucketsCreate(t *testing.T) {
 				Retention:          "24h",
 				ShardGroupDuration: "1h",
 			},
-			buildOrgLookupFn: func(t *testing.T) func(api.ApiGetOrgsRequest) (api.Organizations, error) {
-				return func(req api.ApiGetOrgsRequest) (api.Organizations, error) {
-					return api.Organizations{}, nil
-				}
-			},
-			buildBucketCreateFn: func(t *testing.T) func(api.ApiPostBucketsRequest) (api.Bucket, error) {
-				return func(req api.ApiPostBucketsRequest) (api.Bucket, error) {
-					return api.Bucket{}, errors.New("shouldn't be called")
-				}
+			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
+				orgApi.EXPECT().GetOrgs(gomock.Any()).Return(api.ApiGetOrgsRequest{ApiService: orgApi})
+				orgApi.EXPECT().GetOrgsExecute(gomock.Any()).Return(api.Organizations{}, nil)
 			},
 			expectedInErr: "no organization found",
 		},
@@ -278,26 +259,34 @@ func TestBucketsCreate(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			stdio := mock.NewMockStdio(nil, false)
+			ctrl := gomock.NewController(t)
+			stdio := mock.NewMockStdIO(ctrl)
+			writtenBytes := bytes.Buffer{}
+			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
+
+			orgApi := mock.NewMockOrganizationsApi(ctrl)
+			if tc.registerOrgExpectations != nil {
+				tc.registerOrgExpectations(t, orgApi)
+			}
+			bucketApi := mock.NewMockBucketsApi(ctrl)
+			if tc.registerBucketExpectations != nil {
+				tc.registerBucketExpectations(t, bucketApi)
+			}
 			cli := internal.CLI{ActiveConfig: config.Config{Org: tc.configOrgName}, StdIO: stdio}
 			clients := internal.BucketsClients{
-				OrgApi: &mock.OrganizationsApi{
-					GetOrgsExecuteFn: tc.buildOrgLookupFn(t),
-				},
-				BucketApi: &mock.BucketsApi{
-					PostBucketsExecuteFn: tc.buildBucketCreateFn(t),
-				},
+				OrgApi:    orgApi,
+				BucketApi: bucketApi,
 			}
 
 			err := cli.BucketsCreate(context.Background(), &clients, &tc.params)
 			if tc.expectedInErr != "" {
 				require.Error(t, err)
 				require.Contains(t, err.Error(), tc.expectedInErr)
-				require.Empty(t, stdio.Stdout())
+				require.Empty(t, writtenBytes.String())
 				return
 			}
 			require.NoError(t, err)
-			outLines := strings.Split(stdio.Stdout(), "\n")
+			outLines := strings.Split(writtenBytes.String(), "\n")
 			if outLines[len(outLines)-1] == "" {
 				outLines = outLines[:len(outLines)-1]
 			}
@@ -312,12 +301,12 @@ func TestBucketsList(t *testing.T) {
 	t.Parallel()
 
 	var testCases = []struct {
-		name                   string
-		configOrgName          string
-		params                 internal.BucketsListParams
-		buildBucketLookupFn    func(*testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error)
-		expectedStdoutPatterns []string
-		expectedInErr          string
+		name                       string
+		configOrgName              string
+		params                     internal.BucketsListParams
+		registerBucketExpectations func(*testing.T, *mock.MockBucketsApi)
+		expectedStdoutPatterns     []string
+		expectedInErr              string
 	}{
 		{
 			name: "by ID",
@@ -325,25 +314,25 @@ func TestBucketsList(t *testing.T) {
 				ID: "123",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
-					require.Equal(t, "123", *req.GetId())
-					require.Equal(t, "my-default-org", *req.GetOrg())
-					require.Nil(t, req.GetName())
-					require.Nil(t, req.GetOrgID())
-					return api.Buckets{
-						Buckets: &[]api.Bucket{
-							{
-								Id:    api.PtrString("123"),
-								Name:  "my-bucket",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 3600},
-								},
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
+					return assert.Equal(t, "123", *in.GetId()) &&
+						assert.Equal(t, "my-default-org", *in.GetOrg()) &&
+						assert.Nil(t, in.GetName()) &&
+						assert.Nil(t, in.GetOrgID())
+				})).Return(api.Buckets{
+					Buckets: &[]api.Bucket{
+						{
+							Id:    api.PtrString("123"),
+							Name:  "my-bucket",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 3600},
 							},
 						},
-					}, nil
-				}
+					},
+				}, nil)
 			},
 			expectedStdoutPatterns: []string{
 				"123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
@@ -355,25 +344,25 @@ func TestBucketsList(t *testing.T) {
 				Name: "my-bucket",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
-					require.Equal(t, "my-bucket", *req.GetName())
-					require.Equal(t, "my-default-org", *req.GetOrg())
-					require.Nil(t, req.GetId())
-					require.Nil(t, req.GetOrgID())
-					return api.Buckets{
-						Buckets: &[]api.Bucket{
-							{
-								Id:    api.PtrString("123"),
-								Name:  "my-bucket",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 3600},
-								},
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
+					return assert.Equal(t, "my-bucket", *in.GetName()) &&
+						assert.Equal(t, "my-default-org", *in.GetOrg()) &&
+						assert.Nil(t, in.GetId()) &&
+						assert.Nil(t, in.GetOrgID())
+				})).Return(api.Buckets{
+					Buckets: &[]api.Bucket{
+						{
+							Id:    api.PtrString("123"),
+							Name:  "my-bucket",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 3600},
 							},
 						},
-					}, nil
-				}
+					},
+				}, nil)
 			},
 			expectedStdoutPatterns: []string{
 				"123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
@@ -385,14 +374,14 @@ func TestBucketsList(t *testing.T) {
 				OrgID: "456",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
-					require.Equal(t, "456", *req.GetOrgID())
-					require.Nil(t, req.GetId())
-					require.Nil(t, req.GetOrg())
-					require.Nil(t, req.GetOrg())
-					return api.Buckets{}, nil
-				}
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
+					return assert.Equal(t, "456", *in.GetOrgID()) &&
+						assert.Nil(t, in.GetId()) &&
+						assert.Nil(t, in.GetOrg()) &&
+						assert.Nil(t, in.GetName())
+				})).Return(api.Buckets{}, nil)
 			},
 		},
 		{
@@ -401,33 +390,33 @@ func TestBucketsList(t *testing.T) {
 				OrgName: "my-org",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
-					require.Equal(t, "my-org", *req.GetOrg())
-					require.Nil(t, req.GetId())
-					require.Nil(t, req.GetName())
-					require.Nil(t, req.GetOrgID())
-					return api.Buckets{
-						Buckets: &[]api.Bucket{
-							{
-								Id:    api.PtrString("123"),
-								Name:  "my-bucket",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 3600},
-								},
-							},
-							{
-								Id:    api.PtrString("999"),
-								Name:  "bucket2",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 0, ShardGroupDurationSeconds: api.PtrInt64(60)},
-								},
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
+					return assert.Equal(t, "my-org", *in.GetOrg()) &&
+						assert.Nil(t, in.GetId()) &&
+						assert.Nil(t, in.GetName()) &&
+						assert.Nil(t, in.GetOrgID())
+				})).Return(api.Buckets{
+					Buckets: &[]api.Bucket{
+						{
+							Id:    api.PtrString("123"),
+							Name:  "my-bucket",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 3600},
 							},
 						},
-					}, nil
-				}
+						{
+							Id:    api.PtrString("999"),
+							Name:  "bucket2",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 0, ShardGroupDurationSeconds: api.PtrInt64(60)},
+							},
+						},
+					},
+				}, nil)
 			},
 			expectedStdoutPatterns: []string{
 				"123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
@@ -440,43 +429,43 @@ func TestBucketsList(t *testing.T) {
 				OrgName: "my-org",
 			},
 			configOrgName: "my-default-org",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
-					require.Equal(t, "my-org", *req.GetOrg())
-					require.Nil(t, req.GetId())
-					require.Nil(t, req.GetName())
-					require.Nil(t, req.GetOrgID())
-					return api.Buckets{
-						Buckets: &[]api.Bucket{
-							{
-								Id:    api.PtrString("001"),
-								Name:  "omit-schema-type",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 3600},
-								},
-							},
-							{
-								Id:    api.PtrString("002"),
-								Name:  "implicit-schema-type",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 3600},
-								},
-								SchemaType: api.SCHEMATYPE_IMPLICIT.Ptr(),
-							},
-							{
-								Id:    api.PtrString("003"),
-								Name:  "explicit-schema-type",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 3600},
-								},
-								SchemaType: api.SCHEMATYPE_EXPLICIT.Ptr(),
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
+					return assert.Equal(t, "my-org", *in.GetOrg()) &&
+						assert.Nil(t, in.GetId()) &&
+						assert.Nil(t, in.GetName()) &&
+						assert.Nil(t, in.GetOrgID())
+				})).Return(api.Buckets{
+					Buckets: &[]api.Bucket{
+						{
+							Id:    api.PtrString("001"),
+							Name:  "omit-schema-type",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 3600},
 							},
 						},
-					}, nil
-				}
+						{
+							Id:    api.PtrString("002"),
+							Name:  "implicit-schema-type",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 3600},
+							},
+							SchemaType: api.SCHEMATYPE_IMPLICIT.Ptr(),
+						},
+						{
+							Id:    api.PtrString("003"),
+							Name:  "explicit-schema-type",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 3600},
+							},
+							SchemaType: api.SCHEMATYPE_EXPLICIT.Ptr(),
+						},
+					},
+				}, nil)
 			},
 			expectedStdoutPatterns: []string{
 				`001\s+omit-schema-type\s+1h0m0s\s+n/a\s+456\s+implicit`,
@@ -487,11 +476,6 @@ func TestBucketsList(t *testing.T) {
 		{
 			name:          "no org specified",
 			expectedInErr: "must specify org ID or org name",
-			buildBucketLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-					return api.Buckets{}, errors.New("shouldn't be called")
-				}
-			},
 		},
 	}
 
@@ -500,21 +484,26 @@ func TestBucketsList(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			stdio := mock.NewMockStdio(nil, false)
+			ctrl := gomock.NewController(t)
+			stdio := mock.NewMockStdIO(ctrl)
+			bytesWritten := bytes.Buffer{}
+			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(bytesWritten.Write).AnyTimes()
 			cli := internal.CLI{ActiveConfig: config.Config{Org: tc.configOrgName}, StdIO: stdio}
-			client := mock.BucketsApi{
-				GetBucketsExecuteFn: tc.buildBucketLookupFn(t),
+
+			client := mock.NewMockBucketsApi(ctrl)
+			if tc.registerBucketExpectations != nil {
+				tc.registerBucketExpectations(t, client)
 			}
 
-			err := cli.BucketsList(context.Background(), &client, &tc.params)
+			err := cli.BucketsList(context.Background(), client, &tc.params)
 			if tc.expectedInErr != "" {
 				require.Error(t, err)
 				require.Contains(t, err.Error(), tc.expectedInErr)
-				require.Empty(t, stdio.Stdout())
+				require.Empty(t, bytesWritten.String())
 				return
 			}
 			require.NoError(t, err)
-			outLines := strings.Split(stdio.Stdout(), "\n")
+			outLines := strings.Split(bytesWritten.String(), "\n")
 			if outLines[len(outLines)-1] == "" {
 				outLines = outLines[:len(outLines)-1]
 			}
@@ -531,10 +520,10 @@ func TestBucketsUpdate(t *testing.T) {
 	t.Parallel()
 
 	var testCases = []struct {
-		name                  string
-		params                internal.BucketsUpdateParams
-		buildBucketUpdateFn   func(*testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, error)
-		expectedStdoutPattern string
+		name                       string
+		params                     internal.BucketsUpdateParams
+		registerBucketExpectations func(*testing.T, *mock.MockBucketsApi)
+		expectedStdoutPattern      string
 	}{
 		{
 			name: "name",
@@ -542,20 +531,21 @@ func TestBucketsUpdate(t *testing.T) {
 				ID:   "123",
 				Name: "cold-storage",
 			},
-			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
-				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
-					require.Equal(t, "123", req.GetBucketID())
-					body := req.GetPatchBucketRequest()
-					require.Equal(t, "cold-storage", body.GetName())
-					require.Empty(t, body.GetDescription())
-					require.Empty(t, body.GetRetentionRules())
-
-					return api.Bucket{
-						Id:    api.PtrString("123"),
-						Name:  "cold-storage",
-						OrgID: api.PtrString("456"),
-					}, nil
-				}
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PatchBucketsID(gomock.Any(), gomock.Eq("123")).
+					Return(api.ApiPatchBucketsIDRequest{ApiService: bucketsApi}.BucketID("123"))
+				bucketsApi.EXPECT().PatchBucketsIDExecute(tmock.MatchedBy(func(in api.ApiPatchBucketsIDRequest) bool {
+					body := in.GetPatchBucketRequest()
+					return assert.Equal(t, "123", in.GetBucketID()) &&
+						assert.NotNil(t, body) &&
+						assert.Equal(t, "cold-storage", body.GetName()) &&
+						assert.Nil(t, body.Description) &&
+						assert.Empty(t, body.GetRetentionRules())
+				})).Return(api.Bucket{
+					Id:    api.PtrString("123"),
+					Name:  "cold-storage",
+					OrgID: api.PtrString("456"),
+				}, nil)
 			},
 			expectedStdoutPattern: "123\\s+cold-storage\\s+infinite\\s+n/a\\s+456",
 		},
@@ -565,21 +555,22 @@ func TestBucketsUpdate(t *testing.T) {
 				ID:          "123",
 				Description: "a very useful description",
 			},
-			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
-				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
-					require.Equal(t, "123", req.GetBucketID())
-					body := req.GetPatchBucketRequest()
-					require.Equal(t, "a very useful description", body.GetDescription())
-					require.Empty(t, body.GetName())
-					require.Empty(t, body.GetRetentionRules())
-
-					return api.Bucket{
-						Id:          api.PtrString("123"),
-						Name:        "my-bucket",
-						Description: api.PtrString("a very useful description"),
-						OrgID:       api.PtrString("456"),
-					}, nil
-				}
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PatchBucketsID(gomock.Any(), gomock.Eq("123")).
+					Return(api.ApiPatchBucketsIDRequest{ApiService: bucketsApi}.BucketID("123"))
+				bucketsApi.EXPECT().PatchBucketsIDExecute(tmock.MatchedBy(func(in api.ApiPatchBucketsIDRequest) bool {
+					body := in.GetPatchBucketRequest()
+					return assert.Equal(t, "123", in.GetBucketID()) &&
+						assert.NotNil(t, body) &&
+						assert.Equal(t, "a very useful description", body.GetDescription()) &&
+						assert.Nil(t, body.Name) &&
+						assert.Empty(t, body.GetRetentionRules())
+				})).Return(api.Bucket{
+					Id:          api.PtrString("123"),
+					Name:        "my-bucket",
+					Description: api.PtrString("a very useful description"),
+					OrgID:       api.PtrString("456"),
+				}, nil)
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+infinite\\s+n/a\\s+456",
 		},
@@ -589,26 +580,26 @@ func TestBucketsUpdate(t *testing.T) {
 				ID:        "123",
 				Retention: "3w",
 			},
-			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
-				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
-					require.Equal(t, "123", req.GetBucketID())
-					body := req.GetPatchBucketRequest()
-					require.Len(t, body.GetRetentionRules(), 1)
-					rule := body.GetRetentionRules()[0]
-					require.Nil(t, rule.ShardGroupDurationSeconds)
-					require.Equal(t, int64(3*7*24*3600), rule.GetEverySeconds())
-					require.Nil(t, body.Name)
-					require.Nil(t, body.Description)
-
-					return api.Bucket{
-						Id:    api.PtrString("123"),
-						Name:  "my-bucket",
-						OrgID: api.PtrString("456"),
-						RetentionRules: []api.RetentionRule{
-							{EverySeconds: rule.GetEverySeconds()},
-						},
-					}, nil
-				}
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PatchBucketsID(gomock.Any(), gomock.Eq("123")).
+					Return(api.ApiPatchBucketsIDRequest{ApiService: bucketsApi}.BucketID("123"))
+				bucketsApi.EXPECT().PatchBucketsIDExecute(tmock.MatchedBy(func(in api.ApiPatchBucketsIDRequest) bool {
+					body := in.GetPatchBucketRequest()
+					return assert.Equal(t, "123", in.GetBucketID()) &&
+						assert.NotNil(t, body) &&
+						assert.Nil(t, body.Name) &&
+						assert.Nil(t, body.Description) &&
+						assert.Len(t, body.GetRetentionRules(), 1) &&
+						assert.Nil(t, body.GetRetentionRules()[0].ShardGroupDurationSeconds) &&
+						assert.Equal(t, int64(3*7*24*3600), *body.GetRetentionRules()[0].EverySeconds)
+				})).Return(api.Bucket{
+					Id:    api.PtrString("123"),
+					Name:  "my-bucket",
+					OrgID: api.PtrString("456"),
+					RetentionRules: []api.RetentionRule{
+						{EverySeconds: int64(3 * 7 * 24 * 3600)},
+					},
+				}, nil)
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+504h0m0s\\s+n/a\\s+456",
 		},
@@ -618,26 +609,26 @@ func TestBucketsUpdate(t *testing.T) {
 				ID:                 "123",
 				ShardGroupDuration: "10h30m",
 			},
-			buildBucketUpdateFn: func(t *testing.T) func(api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
-				return func(req api.ApiPatchBucketsIDRequest) (api.Bucket, error) {
-					require.Equal(t, "123", req.GetBucketID())
-					body := req.GetPatchBucketRequest()
-					require.Len(t, body.GetRetentionRules(), 1)
-					rule := body.GetRetentionRules()[0]
-					require.Nil(t, rule.EverySeconds)
-					require.Equal(t, int64(10*3600+30*60), rule.GetShardGroupDurationSeconds())
-					require.Nil(t, body.Name)
-					require.Nil(t, body.Description)
-
-					return api.Bucket{
-						Id:    api.PtrString("123"),
-						Name:  "my-bucket",
-						OrgID: api.PtrString("456"),
-						RetentionRules: []api.RetentionRule{
-							{ShardGroupDurationSeconds: rule.ShardGroupDurationSeconds},
-						},
-					}, nil
-				}
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PatchBucketsID(gomock.Any(), gomock.Eq("123")).
+					Return(api.ApiPatchBucketsIDRequest{ApiService: bucketsApi}.BucketID("123"))
+				bucketsApi.EXPECT().PatchBucketsIDExecute(tmock.MatchedBy(func(in api.ApiPatchBucketsIDRequest) bool {
+					body := in.GetPatchBucketRequest()
+					return assert.Equal(t, "123", in.GetBucketID()) &&
+						assert.NotNil(t, body) &&
+						assert.Nil(t, body.Name) &&
+						assert.Nil(t, body.Description) &&
+						assert.Len(t, body.GetRetentionRules(), 1) &&
+						assert.Nil(t, body.GetRetentionRules()[0].EverySeconds) &&
+						assert.Equal(t, int64(10*3600+30*60), *body.GetRetentionRules()[0].ShardGroupDurationSeconds)
+				})).Return(api.Bucket{
+					Id:    api.PtrString("123"),
+					Name:  "my-bucket",
+					OrgID: api.PtrString("456"),
+					RetentionRules: []api.RetentionRule{
+						{ShardGroupDurationSeconds: api.PtrInt64(10*3600 + 30*60)},
+					},
+				}, nil)
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+infinite\\s+10h30m0s\\s+456",
 		},
@@ -648,15 +639,19 @@ func TestBucketsUpdate(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			stdio := mock.NewMockStdio(nil, false)
+			ctrl := gomock.NewController(t)
+			stdio := mock.NewMockStdIO(ctrl)
+			writtenBytes := bytes.Buffer{}
+			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
 			cli := internal.CLI{StdIO: stdio}
-			client := mock.BucketsApi{
-				PatchBucketsIDExecuteFn: tc.buildBucketUpdateFn(t),
+			client := mock.NewMockBucketsApi(ctrl)
+			if tc.registerBucketExpectations != nil {
+				tc.registerBucketExpectations(t, client)
 			}
 
-			err := cli.BucketsUpdate(context.Background(), &client, &tc.params)
+			err := cli.BucketsUpdate(context.Background(), client, &tc.params)
 			require.NoError(t, err)
-			outLines := strings.Split(stdio.Stdout(), "\n")
+			outLines := strings.Split(writtenBytes.String(), "\n")
 			if outLines[len(outLines)-1] == "" {
 				outLines = outLines[:len(outLines)-1]
 			}
@@ -671,13 +666,12 @@ func TestBucketsDelete(t *testing.T) {
 	t.Parallel()
 
 	var testCases = []struct {
-		name                  string
-		configOrgName         string
-		params                internal.BucketsDeleteParams
-		buildBucketsLookupFn  func(*testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error)
-		buildBucketDeleteFn   func(*testing.T) func(api.ApiDeleteBucketsIDRequest) error
-		expectedStdoutPattern string
-		expectedInErr         string
+		name                       string
+		configOrgName              string
+		params                     internal.BucketsDeleteParams
+		registerBucketExpectations func(*testing.T, *mock.MockBucketsApi)
+		expectedStdoutPattern      string
+		expectedInErr              string
 	}{
 		{
 			name:          "by ID",
@@ -685,32 +679,31 @@ func TestBucketsDelete(t *testing.T) {
 			params: internal.BucketsDeleteParams{
 				ID: "123",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
-					require.Equal(t, "123", *req.GetId())
-					require.Nil(t, req.GetName())
-					require.Nil(t, req.GetOrgID())
-					require.Nil(t, req.GetOrg())
-
-					return api.Buckets{
-						Buckets: &[]api.Bucket{
-							{
-								Id:    api.PtrString("123"),
-								Name:  "my-bucket",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 3600},
-								},
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
+					return assert.Equal(t, "123", *in.GetId()) &&
+						assert.Nil(t, in.GetName()) &&
+						assert.Nil(t, in.GetOrgID()) &&
+						assert.Nil(t, in.GetOrg())
+				})).Return(api.Buckets{
+					Buckets: &[]api.Bucket{
+						{
+							Id:    api.PtrString("123"),
+							Name:  "my-bucket",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 3600},
 							},
 						},
-					}, nil
-				}
-			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
-				return func(req api.ApiDeleteBucketsIDRequest) error {
-					assert.Equal(t, "123", req.GetBucketID())
-					return nil
-				}
+					},
+				}, nil)
+
+				bucketsApi.EXPECT().DeleteBucketsID(gomock.Any(), gomock.Eq("123")).
+					Return(api.ApiDeleteBucketsIDRequest{ApiService: bucketsApi}.BucketID("123"))
+				bucketsApi.EXPECT().DeleteBucketsIDExecute(tmock.MatchedBy(func(in api.ApiDeleteBucketsIDRequest) bool {
+					return assert.Equal(t, "123", in.GetBucketID())
+				})).Return(nil)
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
@@ -721,32 +714,31 @@ func TestBucketsDelete(t *testing.T) {
 				Name:  "my-bucket",
 				OrgID: "456",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
-					require.Equal(t, "my-bucket", *req.GetName())
-					require.Equal(t, "456", *req.GetOrgID())
-					require.Nil(t, req.GetId())
-					require.Nil(t, req.GetOrg())
-
-					return api.Buckets{
-						Buckets: &[]api.Bucket{
-							{
-								Id:    api.PtrString("123"),
-								Name:  "my-bucket",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 3600},
-								},
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
+					return assert.Nil(t, in.GetId()) &&
+						assert.Equal(t, "my-bucket", *in.GetName()) &&
+						assert.Equal(t, "456", *in.GetOrgID()) &&
+						assert.Nil(t, in.GetOrg())
+				})).Return(api.Buckets{
+					Buckets: &[]api.Bucket{
+						{
+							Id:    api.PtrString("123"),
+							Name:  "my-bucket",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 3600},
 							},
 						},
-					}, nil
-				}
-			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
-				return func(req api.ApiDeleteBucketsIDRequest) error {
-					assert.Equal(t, "123", req.GetBucketID())
-					return nil
-				}
+					},
+				}, nil)
+
+				bucketsApi.EXPECT().DeleteBucketsID(gomock.Any(), gomock.Eq("123")).
+					Return(api.ApiDeleteBucketsIDRequest{ApiService: bucketsApi}.BucketID("123"))
+				bucketsApi.EXPECT().DeleteBucketsIDExecute(tmock.MatchedBy(func(in api.ApiDeleteBucketsIDRequest) bool {
+					return assert.Equal(t, "123", in.GetBucketID())
+				})).Return(nil)
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
@@ -757,32 +749,31 @@ func TestBucketsDelete(t *testing.T) {
 				Name:    "my-bucket",
 				OrgName: "my-org",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
-					require.Equal(t, "my-bucket", *req.GetName())
-					require.Equal(t, "my-org", *req.GetOrg())
-					require.Nil(t, req.GetId())
-					require.Nil(t, req.GetOrgID())
-
-					return api.Buckets{
-						Buckets: &[]api.Bucket{
-							{
-								Id:    api.PtrString("123"),
-								Name:  "my-bucket",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 3600},
-								},
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
+					return assert.Nil(t, in.GetId()) &&
+						assert.Equal(t, "my-bucket", *in.GetName()) &&
+						assert.Nil(t, in.GetOrgID()) &&
+						assert.Equal(t, "my-org", *in.GetOrg())
+				})).Return(api.Buckets{
+					Buckets: &[]api.Bucket{
+						{
+							Id:    api.PtrString("123"),
+							Name:  "my-bucket",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 3600},
 							},
 						},
-					}, nil
-				}
-			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
-				return func(req api.ApiDeleteBucketsIDRequest) error {
-					assert.Equal(t, "123", req.GetBucketID())
-					return nil
-				}
+					},
+				}, nil)
+
+				bucketsApi.EXPECT().DeleteBucketsID(gomock.Any(), gomock.Eq("123")).
+					Return(api.ApiDeleteBucketsIDRequest{ApiService: bucketsApi}.BucketID("123"))
+				bucketsApi.EXPECT().DeleteBucketsIDExecute(tmock.MatchedBy(func(in api.ApiDeleteBucketsIDRequest) bool {
+					return assert.Equal(t, "123", in.GetBucketID())
+				})).Return(nil)
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
@@ -792,32 +783,31 @@ func TestBucketsDelete(t *testing.T) {
 			params: internal.BucketsDeleteParams{
 				Name: "my-bucket",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(req api.ApiGetBucketsRequest) (api.Buckets, error) {
-					require.Equal(t, "my-bucket", *req.GetName())
-					require.Equal(t, "my-default-org", *req.GetOrg())
-					require.Nil(t, req.GetId())
-					require.Nil(t, req.GetOrgID())
-
-					return api.Buckets{
-						Buckets: &[]api.Bucket{
-							{
-								Id:    api.PtrString("123"),
-								Name:  "my-bucket",
-								OrgID: api.PtrString("456"),
-								RetentionRules: []api.RetentionRule{
-									{EverySeconds: 3600},
-								},
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
+					return assert.Nil(t, in.GetId()) &&
+						assert.Equal(t, "my-bucket", *in.GetName()) &&
+						assert.Nil(t, in.GetOrgID()) &&
+						assert.Equal(t, "my-default-org", *in.GetOrg())
+				})).Return(api.Buckets{
+					Buckets: &[]api.Bucket{
+						{
+							Id:    api.PtrString("123"),
+							Name:  "my-bucket",
+							OrgID: api.PtrString("456"),
+							RetentionRules: []api.RetentionRule{
+								{EverySeconds: 3600},
 							},
 						},
-					}, nil
-				}
-			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
-				return func(req api.ApiDeleteBucketsIDRequest) error {
-					assert.Equal(t, "123", req.GetBucketID())
-					return nil
-				}
+					},
+				}, nil)
+
+				bucketsApi.EXPECT().DeleteBucketsID(gomock.Any(), gomock.Eq("123")).
+					Return(api.ApiDeleteBucketsIDRequest{ApiService: bucketsApi}.BucketID("123"))
+				bucketsApi.EXPECT().DeleteBucketsIDExecute(tmock.MatchedBy(func(in api.ApiDeleteBucketsIDRequest) bool {
+					return assert.Equal(t, "123", in.GetBucketID())
+				})).Return(nil)
 			},
 			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
 		},
@@ -826,16 +816,6 @@ func TestBucketsDelete(t *testing.T) {
 			params: internal.BucketsDeleteParams{
 				Name: "my-bucket",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-					return api.Buckets{}, errors.New("shouldn't be called")
-				}
-			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
-				return func(api.ApiDeleteBucketsIDRequest) error {
-					return errors.New("shouldn't be called")
-				}
-			},
 			expectedInErr: "must specify org ID or org name",
 		},
 		{
@@ -843,15 +823,9 @@ func TestBucketsDelete(t *testing.T) {
 			params: internal.BucketsDeleteParams{
 				ID: "123",
 			},
-			buildBucketsLookupFn: func(t *testing.T) func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-				return func(api.ApiGetBucketsRequest) (api.Buckets, error) {
-					return api.Buckets{}, nil
-				}
-			},
-			buildBucketDeleteFn: func(t *testing.T) func(api.ApiDeleteBucketsIDRequest) error {
-				return func(api.ApiDeleteBucketsIDRequest) error {
-					return errors.New("shouldn't be called")
-				}
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().GetBucketsExecute(gomock.Any()).Return(api.Buckets{}, nil)
 			},
 			expectedInErr: "not found",
 		},
@@ -862,22 +836,25 @@ func TestBucketsDelete(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			stdio := mock.NewMockStdio(nil, false)
+			ctrl := gomock.NewController(t)
+			stdio := mock.NewMockStdIO(ctrl)
+			writtenBytes := bytes.Buffer{}
+			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
 			cli := internal.CLI{ActiveConfig: config.Config{Org: tc.configOrgName}, StdIO: stdio}
-			client := mock.BucketsApi{
-				GetBucketsExecuteFn:      tc.buildBucketsLookupFn(t),
-				DeleteBucketsIDExecuteFn: tc.buildBucketDeleteFn(t),
+			client := mock.NewMockBucketsApi(ctrl)
+			if tc.registerBucketExpectations != nil {
+				tc.registerBucketExpectations(t, client)
 			}
 
-			err := cli.BucketsDelete(context.Background(), &client, &tc.params)
+			err := cli.BucketsDelete(context.Background(), client, &tc.params)
 			if tc.expectedInErr != "" {
 				require.Error(t, err)
 				require.Contains(t, err.Error(), tc.expectedInErr)
-				require.Empty(t, stdio.Stdout())
+				require.Empty(t, writtenBytes.String())
 				return
 			}
 			require.NoError(t, err)
-			outLines := strings.Split(stdio.Stdout(), "\n")
+			outLines := strings.Split(writtenBytes.String(), "\n")
 			if outLines[len(outLines)-1] == "" {
 				outLines = outLines[:len(outLines)-1]
 			}
