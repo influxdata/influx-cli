@@ -10,6 +10,7 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
 )
@@ -137,7 +138,7 @@ func (c Client) onboardingRequest(params *Params) (req api.OnboardingRequest, er
 	if params.AuthToken != "" {
 		req.Token = &params.AuthToken
 	}
-	rpSecs := int64(internal.InfiniteRetention)
+	rpSecs := int64(bucket.InfiniteRetention)
 	if params.Retention != "" {
 		dur, err := duration.RawDurationToTimeDuration(params.Retention)
 		if err != nil {
@@ -198,7 +199,7 @@ func (c Client) onboardingRequest(params *Params) (req api.OnboardingRequest, er
 		}
 	}
 	if params.Retention == "" {
-		infiniteStr := strconv.Itoa(internal.InfiniteRetention)
+		infiniteStr := strconv.Itoa(bucket.InfiniteRetention)
 		for {
 			rpStr, err := c.CLI.StdIO.GetStringInput("Please type your retention period in hours, or 0 for infinite", infiniteStr)
 			if err != nil {

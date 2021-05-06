@@ -212,7 +212,8 @@ func newWriteCmd() *cli.Command {
 				},
 			}
 
-			return getCLI(ctx).Write(ctx.Context, writeClients, &params.WriteParams)
+			cli := getCLI(ctx)
+			return cli.Write(ctx.Context, writeClients, &params.WriteParams)
 		},
 		Subcommands: []*cli.Command{
 			newWriteDryRun(),
@@ -240,7 +241,8 @@ func newWriteDryRun() *cli.Command {
 			}
 			defer func() { _ = errorFile.Close() }()
 
-			return getCLI(ctx).WriteDryRun(ctx.Context, params.makeLineReader(ctx.Args().Slice(), errorFile))
+			cli := getCLI(ctx)
+			return cli.WriteDryRun(ctx.Context, params.makeLineReader(ctx.Args().Slice(), errorFile))
 		},
 	}
 }
