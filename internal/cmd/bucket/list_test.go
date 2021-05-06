@@ -226,10 +226,6 @@ func TestBucketsList(t *testing.T) {
 				return
 			}
 			require.NoError(t, err)
-			outLines := strings.Split(bytesWritten.String(), "\n")
-			if outLines[len(outLines)-1] == "" {
-				outLines = outLines[:len(outLines)-1]
-			}
 			testutils.MatchLines(t, append(
 				[]string{`ID\s+Name\s+Retention\s+Shard group duration\s+Organization ID\s+Schema Type`},
 				tc.expectedStdoutPatterns...,
