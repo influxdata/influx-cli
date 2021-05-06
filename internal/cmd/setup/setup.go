@@ -1,4 +1,4 @@
-package internal
+package setup
 
 import (
 	"context"
@@ -8,12 +8,13 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
 )
 
-type SetupParams struct {
+type Params struct {
 	Username   string
 	Password   string
 	AuthToken  string
@@ -33,9 +34,14 @@ var (
 
 const MinPasswordLen = 8
 
-func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParams) error {
+type Client struct {
+	CLI *internal.CLI
+	API api.SetupApi
+}
+
+func (c Client) Setup(ctx context.Context, params *Params) error {
 	// Check if setup is even allowed.
-	checkResp, err := client.GetSetup(ctx).Execute()
+	checkResp, err := c.API.GetSetup(ctx).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to check if already set up: %w", err)
 	}
@@ -54,14 +60,14 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 	if err != nil {
 		return err
 	}
-	resp, err := client.PostSetup(ctx).OnboardingRequest(setupBody).Execute()
+	resp, err := c.API.PostSetup(ctx).OnboardingRequest(setupBody).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to setup instance: %w", err)
 	}
 
 	cfg := config.Config{
 		Name:  config.DefaultConfig.Name,
-		Host:  c.ActiveConfig.Host,
+		Host:  c.CLI.ActiveConfig.Host,
 		Token: *resp.Auth.Token,
 		Org:   resp.Org.Name,
 	}
@@ -69,19 +75,19 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 		cfg.Name = params.ConfigName
 	}
 
-	if _, err := c.ConfigService.CreateConfig(cfg); err != nil {
+	if _, err := c.CLI.ConfigService.CreateConfig(cfg); err != nil {
 		return fmt.Errorf("setup succeeded, but failed to write new config to local path: %w", err)
 	}
 
-	if c.PrintAsJSON {
-		return c.PrintJSON(map[string]interface{}{
+	if c.CLI.PrintAsJSON {
+		return c.CLI.PrintJSON(map[string]interface{}{
 			"user":         resp.User.Name,
 			"organization": resp.Org.Name,
 			"bucket":       resp.Bucket.Name,
 		})
 	}
 
-	return c.PrintTable([]string{"User", "Organization", "Bucket"}, map[string]interface{}{
+	return c.CLI.PrintTable([]string{"User", "Organization", "Bucket"}, map[string]interface{}{
 		"User":         resp.User.Name,
 		"Organization": resp.Org.Name,
 		"Bucket":       resp.Bucket.Name,
@@ -91,8 +97,8 @@ func (c *CLI) Setup(ctx context.Context, client api.SetupApi, params *SetupParam
 // validateNoNameCollision checks that we will be able to write onboarding results to local config:
 //   - If a custom name was given, check that it doesn't collide with existing config
 //   - If no custom name was given, check that we don't already have configs
-func (c *CLI) validateNoNameCollision(configName string) error {
-	existingConfigs, err := c.ConfigService.ListConfigs()
+func (c Client) validateNoNameCollision(configName string) error {
+	existingConfigs, err := c.CLI.ConfigService.ListConfigs()
 	if err != nil {
 		return fmt.Errorf("error checking existing configs: %w", err)
 	}
@@ -116,7 +122,7 @@ func (c *CLI) validateNoNameCollision(configName string) error {
 // onboardingRequest constructs a request body for the onboarding API.
 // Unless the 'force' parameter is set, the user will be prompted to enter any missing information
 // and to confirm the final request parameters.
-func (c *CLI) onboardingRequest(params *SetupParams) (req api.OnboardingRequest, err error) {
+func (c Client) onboardingRequest(params *Params) (req api.OnboardingRequest, err error) {
 	if (params.Force || params.Password != "") && len(params.Password) < MinPasswordLen {
 		return req, ErrPasswordIsTooShort
 	}
@@ -131,7 +137,7 @@ func (c *CLI) onboardingRequest(params *SetupParams) (req api.OnboardingRequest,
 	if params.AuthToken != "" {
 		req.Token = &params.AuthToken
 	}
-	rpSecs := int64(InfiniteRetention)
+	rpSecs := int64(internal.InfiniteRetention)
 	if params.Retention != "" {
 		dur, err := duration.RawDurationToTimeDuration(params.Retention)
 		if err != nil {
@@ -150,23 +156,23 @@ func (c *CLI) onboardingRequest(params *SetupParams) (req api.OnboardingRequest,
 	}
 
 	// Ask the user for any missing information.
-	if err := c.StdIO.Banner("Welcome to InfluxDB 2.0!"); err != nil {
+	if err := c.CLI.StdIO.Banner("Welcome to InfluxDB 2.0!"); err != nil {
 		return req, err
 	}
 	if params.Username == "" {
-		req.Username, err = c.StdIO.GetStringInput("Please type your primary username", "")
+		req.Username, err = c.CLI.StdIO.GetStringInput("Please type your primary username", "")
 		if err != nil {
 			return req, err
 		}
 	}
 	if params.Password == "" {
 		for {
-			pass1, err := c.StdIO.GetPassword("Please type your password", MinPasswordLen)
+			pass1, err := c.CLI.StdIO.GetPassword("Please type your password", MinPasswordLen)
 			if err != nil {
 				return req, err
 			}
 			// Don't bother with the length check the 2nd time, since we check equality to pass1.
-			pass2, err := c.StdIO.GetPassword("Please type your password again", 0)
+			pass2, err := c.CLI.StdIO.GetPassword("Please type your password again", 0)
 			if err != nil {
 				return req, err
 			}
@@ -174,27 +180,27 @@ func (c *CLI) onboardingRequest(params *SetupParams) (req api.OnboardingRequest,
 				req.Password = &pass1
 				break
 			}
-			if err := c.StdIO.Error("Passwords do not match"); err != nil {
+			if err := c.CLI.StdIO.Error("Passwords do not match"); err != nil {
 				return req, err
 			}
 		}
 	}
 	if params.Org == "" {
-		req.Org, err = c.StdIO.GetStringInput("Please type your primary organization name", "")
+		req.Org, err = c.CLI.StdIO.GetStringInput("Please type your primary organization name", "")
 		if err != nil {
 			return req, err
 		}
 	}
 	if params.Bucket == "" {
-		req.Bucket, err = c.StdIO.GetStringInput("Please type your primary bucket name", "")
+		req.Bucket, err = c.CLI.StdIO.GetStringInput("Please type your primary bucket name", "")
 		if err != nil {
 			return req, err
 		}
 	}
 	if params.Retention == "" {
-		infiniteStr := strconv.Itoa(InfiniteRetention)
+		infiniteStr := strconv.Itoa(internal.InfiniteRetention)
 		for {
-			rpStr, err := c.StdIO.GetStringInput("Please type your retention period in hours, or 0 for infinite", infiniteStr)
+			rpStr, err := c.CLI.StdIO.GetStringInput("Please type your retention period in hours, or 0 for infinite", infiniteStr)
 			if err != nil {
 				return req, err
 			}
@@ -206,13 +212,13 @@ func (c *CLI) onboardingRequest(params *SetupParams) (req api.OnboardingRequest,
 				rpSeconds := int64((time.Duration(rp) * time.Hour).Seconds())
 				req.RetentionPeriodSeconds = &rpSeconds
 				break
-			} else if err := c.StdIO.Error("Retention period cannot be negative"); err != nil {
+			} else if err := c.CLI.StdIO.Error("Retention period cannot be negative"); err != nil {
 				return req, err
 			}
 		}
 	}
 
-	if confirmed := c.StdIO.GetConfirm(func() string {
+	if confirmed := c.CLI.StdIO.GetConfirm(func() string {
 		rp := "infinite"
 		if req.RetentionPeriodSeconds != nil && *req.RetentionPeriodSeconds > 0 {
 			rp = (time.Duration(*req.RetentionPeriodSeconds) * time.Second).String()
