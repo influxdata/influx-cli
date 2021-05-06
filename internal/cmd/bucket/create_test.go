@@ -12,6 +12,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
+	"github.com/influxdata/influx-cli/v2/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -53,7 +54,7 @@ func TestBucketsCreate(t *testing.T) {
 						RetentionRules: nil,
 					}, nil)
 			},
-			expectedStdoutPattern: "456\\s+my-bucket\\s+infinite\\s+n/a\\s+123",
+			expectedStdoutPattern: `456\s+my-bucket\s+infinite\s+n/a\s+123`,
 		},
 		{
 			name: "fully specified",
@@ -86,7 +87,7 @@ func TestBucketsCreate(t *testing.T) {
 						},
 					}, nil)
 			},
-			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
+			expectedStdoutPattern: `456\s+my-bucket\s+24h0m0s\s+1h0m0s\s+123`,
 		},
 		{
 			name: "retention but not shard-group duration",
@@ -184,7 +185,7 @@ func TestBucketsCreate(t *testing.T) {
 						},
 					}, nil)
 			},
-			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
+			expectedStdoutPattern: `456\s+my-bucket\s+24h0m0s\s+1h0m0s\s+123`,
 		},
 		{
 			name: "look up org by name from config",
@@ -226,7 +227,7 @@ func TestBucketsCreate(t *testing.T) {
 						},
 					}, nil)
 			},
-			expectedStdoutPattern: "456\\s+my-bucket\\s+24h0m0s\\s+1h0m0s\\s+123",
+			expectedStdoutPattern: `456\s+my-bucket\s+24h0m0s\s+1h0m0s\s+123`,
 		},
 		{
 			name: "no org specified",
@@ -287,13 +288,10 @@ func TestBucketsCreate(t *testing.T) {
 				return
 			}
 			require.NoError(t, err)
-			outLines := strings.Split(writtenBytes.String(), "\n")
-			if outLines[len(outLines)-1] == "" {
-				outLines = outLines[:len(outLines)-1]
-			}
-			require.Equal(t, 2, len(outLines))
-			require.Regexp(t, "ID\\s+Name\\s+Retention\\s+Shard group duration\\s+Organization ID", outLines[0])
-			require.Regexp(t, tc.expectedStdoutPattern, outLines[1])
+			testutils.MatchLines(t, []string{
+				`ID\s+Name\s+Retention\s+Shard group duration\s+Organization ID\s+Schema Type`,
+				tc.expectedStdoutPattern,
+			}, strings.Split(writtenBytes.String(), "\n"))
 		})
 	}
 }

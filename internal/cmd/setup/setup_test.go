@@ -16,6 +16,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
+	"github.com/influxdata/influx-cli/v2/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -158,12 +159,10 @@ func Test_SetupSuccessNoninteractive(t *testing.T) {
 		SetupApi: client,
 	}
 	require.NoError(t, cli.Setup(context.Background(), &params))
-
-	outLines := strings.Split(strings.TrimSpace(bytesWritten.String()), "\n")
-	require.Len(t, outLines, 2)
-	header, data := outLines[0], outLines[1]
-	require.Regexp(t, "User\\s+Organization\\s+Bucket", header)
-	require.Regexp(t, fmt.Sprintf("%s\\s+%s\\s+%s", params.Username, params.Org, params.Bucket), data)
+	testutils.MatchLines(t, []string{
+		`User\s+Organization\s+Bucket`,
+		fmt.Sprintf(`%s\s+%s\s+%s`, params.Username, params.Org, params.Bucket),
+	}, strings.Split(bytesWritten.String(), "\n"))
 }
 
 func Test_SetupSuccessInteractive(t *testing.T) {
@@ -227,12 +226,10 @@ func Test_SetupSuccessInteractive(t *testing.T) {
 		SetupApi: client,
 	}
 	require.NoError(t, cli.Setup(context.Background(), &setup.Params{}))
-
-	outLines := strings.Split(strings.TrimSpace(bytesWritten.String()), "\n")
-	require.Len(t, outLines, 2)
-	header, data := outLines[0], outLines[1]
-	require.Regexp(t, "User\\s+Organization\\s+Bucket", header)
-	require.Regexp(t, fmt.Sprintf("%s\\s+%s\\s+%s", username, org, bucket), data)
+	testutils.MatchLines(t, []string{
+		`User\s+Organization\s+Bucket`,
+		fmt.Sprintf(`%s\s+%s\s+%s`, username, org, bucket),
+	}, strings.Split(bytesWritten.String(), "\n"))
 }
 
 func Test_SetupPasswordParamToShort(t *testing.T) {

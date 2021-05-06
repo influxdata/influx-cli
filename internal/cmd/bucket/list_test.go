@@ -12,6 +12,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
+	"github.com/influxdata/influx-cli/v2/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -55,7 +56,7 @@ func TestBucketsList(t *testing.T) {
 				}, nil)
 			},
 			expectedStdoutPatterns: []string{
-				"123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+				`123\s+my-bucket\s+1h0m0s\s+n/a\s+456`,
 			},
 		},
 		{
@@ -85,7 +86,7 @@ func TestBucketsList(t *testing.T) {
 				}, nil)
 			},
 			expectedStdoutPatterns: []string{
-				"123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
+				`123\s+my-bucket\s+1h0m0s\s+n/a\s+456`,
 			},
 		},
 		{
@@ -139,8 +140,8 @@ func TestBucketsList(t *testing.T) {
 				}, nil)
 			},
 			expectedStdoutPatterns: []string{
-				"123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456",
-				"999\\s+bucket2\\s+infinite\\s+1m0s\\s+456",
+				`123\s+my-bucket\s+1h0m0s\s+n/a\s+456`,
+				`999\s+bucket2\s+infinite\s+1m0s\s+456`,
 			},
 		},
 		{
@@ -229,11 +230,10 @@ func TestBucketsList(t *testing.T) {
 			if outLines[len(outLines)-1] == "" {
 				outLines = outLines[:len(outLines)-1]
 			}
-			require.Equal(t, len(tc.expectedStdoutPatterns)+1, len(outLines))
-			require.Regexp(t, "ID\\s+Name\\s+Retention\\s+Shard group duration\\s+Organization ID", outLines[0])
-			for i, pattern := range tc.expectedStdoutPatterns {
-				require.Regexp(t, pattern, outLines[i+1])
-			}
+			testutils.MatchLines(t, append(
+				[]string{`ID\s+Name\s+Retention\s+Shard group duration\s+Organization ID\s+Schema Type`},
+				tc.expectedStdoutPatterns...,
+			), strings.Split(bytesWritten.String(), "\n"))
 		})
 	}
 }

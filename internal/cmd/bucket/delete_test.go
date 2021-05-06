@@ -12,6 +12,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
+	"github.com/influxdata/influx-cli/v2/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -60,7 +61,7 @@ func TestBucketsDelete(t *testing.T) {
 					return assert.Equal(t, "123", in.GetBucketID())
 				})).Return(nil)
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
+			expectedStdoutPattern: `123\s+my-bucket\s+1h0m0s\s+n/a\s+456\s+implicit`,
 		},
 		{
 			name:          "by name and org ID",
@@ -95,7 +96,7 @@ func TestBucketsDelete(t *testing.T) {
 					return assert.Equal(t, "123", in.GetBucketID())
 				})).Return(nil)
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
+			expectedStdoutPattern: `123\s+my-bucket\s+1h0m0s\s+n/a\s+456\s+implicit`,
 		},
 		{
 			name:          "by name and org name",
@@ -130,7 +131,7 @@ func TestBucketsDelete(t *testing.T) {
 					return assert.Equal(t, "123", in.GetBucketID())
 				})).Return(nil)
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
+			expectedStdoutPattern: `123\s+my-bucket\s+1h0m0s\s+n/a\s+456\s+implicit`,
 		},
 		{
 			name:          "by name in default org",
@@ -164,7 +165,7 @@ func TestBucketsDelete(t *testing.T) {
 					return assert.Equal(t, "123", in.GetBucketID())
 				})).Return(nil)
 			},
-			expectedStdoutPattern: "123\\s+my-bucket\\s+1h0m0s\\s+n/a\\s+456\\s+implicit",
+			expectedStdoutPattern: `123\s+my-bucket\s+1h0m0s\s+n/a\s+456\s+implicit`,
 		},
 		{
 			name: "by name without org",
@@ -212,12 +213,10 @@ func TestBucketsDelete(t *testing.T) {
 				return
 			}
 			require.NoError(t, err)
-			outLines := strings.Split(writtenBytes.String(), "\n")
-			if outLines[len(outLines)-1] == "" {
-				outLines = outLines[:len(outLines)-1]
-			}
-			require.Regexp(t, `ID\s+Name\s+Retention\s+Shard group duration\s+Organization ID\s+Schema Type\s+Deleted`, outLines[0])
-			require.Regexp(t, tc.expectedStdoutPattern+"\\s+true", outLines[1])
+			testutils.MatchLines(t, []string{
+				`ID\s+Name\s+Retention\s+Shard group duration\s+Organization ID\s+Schema Type\s+Deleted`,
+				tc.expectedStdoutPattern+`\s+true`,
+			}, strings.Split(writtenBytes.String(), "\n"))
 		})
 	}
 }
