@@ -1,4 +1,4 @@
-package throttler_test
+package write_test
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/influxdata/influx-cli/v2/internal/throttler"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/write"
 	"github.com/stretchr/testify/require"
 )
 
@@ -14,9 +14,9 @@ func TestThrottlerPassthrough(t *testing.T) {
 	// Hard to test that rate-limiting actually works, so we just check
 	// that no data is lost.
 	in := "Hello world!"
-	bps, err := throttler.ToBytesPerSecond("1B/s")
+	bps, err := write.ToBytesPerSecond("1B/s")
 	require.NoError(t, err)
-	throttler := throttler.NewThrottler(bps)
+	throttler := write.NewThrottler(bps)
 	r := throttler.Throttle(context.Background(), strings.NewReader(in))
 
 	out := bytes.Buffer{}
@@ -71,7 +71,7 @@ func TestToBytesPerSecond(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.in, func(t *testing.T) {
-			bytesPerSec, err := throttler.ToBytesPerSecond(test.in)
+			bytesPerSec, err := write.ToBytesPerSecond(test.in)
 			if len(test.error) == 0 {
 				require.Equal(t, test.out, float64(bytesPerSec))
 				require.Nil(t, err)

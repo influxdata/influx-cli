@@ -1,4 +1,4 @@
-package internal
+package write
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
 )
 
@@ -13,22 +14,23 @@ type LineReader interface {
 	Open(ctx context.Context) (io.Reader, io.Closer, error)
 }
 
-type Throttler interface {
+type RateLimiter interface {
 	Throttle(ctx context.Context, in io.Reader) io.Reader
 }
 
-type Batcher interface {
+type BatchWriter interface {
 	WriteBatches(ctx context.Context, r io.Reader, writeFn func(batch []byte) error) error
 }
 
-type WriteClients struct {
-	Reader    LineReader
-	Throttler Throttler
-	Writer    Batcher
-	Client    api.WriteApi
+type Client struct {
+	internal.CLI
+	api.WriteApi
+	LineReader
+	RateLimiter
+	BatchWriter
 }
 
-type WriteParams struct {
+type Params struct {
 	BucketID   string
 	BucketName string
 	OrgID      string
@@ -38,7 +40,7 @@ type WriteParams struct {
 
 var ErrWriteCanceled = errors.New("write canceled")
 
-func (c *CLI) Write(ctx context.Context, clients *WriteClients, params *WriteParams) error {
+func (c Client) Write(ctx context.Context, params *Params) error {
 	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return errors.New("must specify org ID or org name")
 	}
@@ -46,7 +48,7 @@ func (c *CLI) Write(ctx context.Context, clients *WriteClients, params *WritePar
 		return errors.New("must specify bucket ID or bucket name")
 	}
 
-	r, closer, err := clients.Reader.Open(ctx)
+	r, closer, err := c.LineReader.Open(ctx)
 	if closer != nil {
 		defer closer.Close()
 	}
@@ -55,7 +57,7 @@ func (c *CLI) Write(ctx context.Context, clients *WriteClients, params *WritePar
 	}
 
 	writeBatch := func(batch []byte) error {
-		req := clients.Client.PostWrite(ctx).Body(batch).ContentEncoding("gzip").Precision(params.Precision)
+		req := c.PostWrite(ctx).Body(batch).ContentEncoding("gzip").Precision(params.Precision)
 		if params.BucketID != "" {
 			req = req.Bucket(params.BucketID)
 		} else {
@@ -76,26 +78,10 @@ func (c *CLI) Write(ctx context.Context, clients *WriteClients, params *WritePar
 		return nil
 	}
 
-	if err := clients.Writer.WriteBatches(ctx, clients.Throttler.Throttle(ctx, r), writeBatch); err == context.Canceled {
+	if err := c.BatchWriter.WriteBatches(ctx, c.RateLimiter.Throttle(ctx, r), writeBatch); err == context.Canceled {
 		return ErrWriteCanceled
 	} else if err != nil {
 		return fmt.Errorf("failed to write data: %w", err)
-	}
-
-	return nil
-}
-
-func (c *CLI) WriteDryRun(ctx context.Context, reader LineReader) error {
-	r, closer, err := reader.Open(ctx)
-	if closer != nil {
-		defer closer.Close()
-	}
-	if err != nil {
-		return err
-	}
-
-	if _, err := io.Copy(c.StdIO, r); err != nil {
-		return err
 	}
 
 	return nil

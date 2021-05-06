@@ -6,11 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
-	"github.com/influxdata/influx-cli/v2/internal/batcher"
-	"github.com/influxdata/influx-cli/v2/internal/linereader"
-	"github.com/influxdata/influx-cli/v2/internal/throttler"
+	"github.com/influxdata/influx-cli/v2/internal/cmd/write"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
@@ -18,8 +15,8 @@ import (
 type writeParams struct {
 	Files       cli.StringSlice
 	URLs        cli.StringSlice
-	Format      linereader.InputFormat
-	Compression linereader.InputCompression
+	Format      write.InputFormat
+	Compression write.InputCompression
 	Encoding    string
 
 	// CSV-specific options.
@@ -31,13 +28,13 @@ type writeParams struct {
 
 	ErrorsFile    string
 	MaxLineLength int
-	RateLimit     throttler.BytesPerSec
+	RateLimit     write.BytesPerSec
 
-	internal.WriteParams
+	write.Params
 }
 
-func (p *writeParams) makeLineReader(args []string, errorOut io.Writer) *linereader.MultiInputLineReader {
-	return &linereader.MultiInputLineReader{
+func (p *writeParams) makeLineReader(args []string, errorOut io.Writer) *write.MultiInputLineReader {
+	return &write.MultiInputLineReader{
 		StdIn:                      os.Stdin,
 		HttpClient:                 http.DefaultClient,
 		ErrorOut:                   errorOut,
@@ -183,7 +180,7 @@ func (p *writeParams) Flags() []cli.Flag {
 
 func newWriteCmd() *cli.Command {
 	params := writeParams{
-		WriteParams: internal.WriteParams{
+		Params: write.Params{
 			Precision: api.WRITEPRECISION_NS,
 		},
 	}
@@ -200,20 +197,19 @@ func newWriteCmd() *cli.Command {
 			}
 			defer func() { _ = errorFile.Close() }()
 
-			client := getAPI(ctx)
-			writeClients := &internal.WriteClients{
-				Client:    client.WriteApi,
-				Reader:    params.makeLineReader(ctx.Args().Slice(), errorFile),
-				Throttler: throttler.NewThrottler(params.RateLimit),
-				Writer: &batcher.BufferBatcher{
-					MaxFlushBytes:    batcher.DefaultMaxBytes,
-					MaxFlushInterval: batcher.DefaultInterval,
+			client := &write.Client{
+				CLI:         getCLI(ctx),
+				WriteApi:    getAPI(ctx).WriteApi,
+				LineReader:  params.makeLineReader(ctx.Args().Slice(), errorFile),
+				RateLimiter: write.NewThrottler(params.RateLimit),
+				BatchWriter: &write.BufferBatcher{
+					MaxFlushBytes:    write.DefaultMaxBytes,
+					MaxFlushInterval: write.DefaultInterval,
 					MaxLineLength:    params.MaxLineLength,
 				},
 			}
 
-			cli := getCLI(ctx)
-			return cli.Write(ctx.Context, writeClients, &params.WriteParams)
+			return client.Write(ctx.Context, &params.Params)
 		},
 		Subcommands: []*cli.Command{
 			newWriteDryRun(),
@@ -223,7 +219,7 @@ func newWriteCmd() *cli.Command {
 
 func newWriteDryRun() *cli.Command {
 	params := writeParams{
-		WriteParams: internal.WriteParams{
+		Params: write.Params{
 			Precision: api.WRITEPRECISION_NS,
 		},
 	}
@@ -241,8 +237,11 @@ func newWriteDryRun() *cli.Command {
 			}
 			defer func() { _ = errorFile.Close() }()
 
-			cli := getCLI(ctx)
-			return cli.WriteDryRun(ctx.Context, params.makeLineReader(ctx.Args().Slice(), errorFile))
+			client := write.DryRunClient{
+				CLI:        getCLI(ctx),
+				LineReader: params.makeLineReader(ctx.Args().Slice(), errorFile),
+			}
+			return client.WriteDryRun(ctx.Context)
 		},
 	}
 }
