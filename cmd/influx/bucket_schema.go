@@ -13,12 +13,11 @@ func withBucketSchemaClient() cli.BeforeFunc {
 		withCli(),
 		withApi(true),
 		func(ctx *cli.Context) error {
-			c := getCLI(ctx)
 			client := getAPI(ctx)
 			ctx.App.Metadata["measurement_schema"] = bucket_schema.Client{
-				BucketApi:        client.BucketsApi,
+				BucketsApi:       client.BucketsApi,
 				BucketSchemasApi: client.BucketSchemasApi,
-				CLI:              &c,
+				CLI:              getCLI(ctx),
 			}
 			return nil
 		})

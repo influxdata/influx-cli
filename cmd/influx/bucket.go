@@ -177,8 +177,8 @@ func newBucketListCmd() *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := bucket.Client{
-				CLI: getCLI(ctx),
-				BucketsApi: api.BucketsApi,
+				CLI:              getCLI(ctx),
+				BucketsApi:       api.BucketsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.List(ctx.Context, &params)
@@ -230,8 +230,8 @@ func newBucketUpdateCmd() *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := bucket.Client{
-				CLI: getCLI(ctx),
-				BucketsApi: api.BucketsApi,
+				CLI:              getCLI(ctx),
+				BucketsApi:       api.BucketsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.Update(ctx.Context, &params)

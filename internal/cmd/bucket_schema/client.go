@@ -13,9 +13,9 @@ import (
 )
 
 type Client struct {
-	BucketApi        api.BucketsApi
-	BucketSchemasApi api.BucketSchemasApi
-	CLI              *internal.CLI
+	api.BucketsApi
+	api.BucketSchemasApi
+	internal.CLI
 }
 
 type orgBucketID struct {
@@ -24,8 +24,7 @@ type orgBucketID struct {
 }
 
 func (c Client) resolveMeasurement(ctx context.Context, ids orgBucketID, name string) (string, error) {
-	res, err := c.BucketSchemasApi.
-		GetMeasurementSchemas(ctx, ids.BucketID).
+	res, err := c.GetMeasurementSchemas(ctx, ids.BucketID).
 		OrgID(ids.OrgID).
 		Name(name).
 		Execute()
@@ -49,17 +48,17 @@ func (c Client) resolveOrgBucketIds(ctx context.Context, params internal.OrgBuck
 		return nil, errors.New("bucket missing: specify bucket ID or bucket name")
 	}
 
-	if !params.OrgID.Valid() && params.OrgName == "" && c.CLI.ActiveConfig.Org == "" {
+	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return nil, errors.New("org missing: specify org ID or org name")
 	}
 
-	req := c.BucketApi.GetBuckets(ctx).Name(params.BucketName)
+	req := c.GetBuckets(ctx).Name(params.BucketName)
 	if params.OrgID.Valid() {
 		req = req.OrgID(params.OrgID.String())
 	} else if params.OrgName != "" {
 		req = req.Org(params.OrgName)
 	} else {
-		req = req.Org(c.CLI.ActiveConfig.Org)
+		req = req.Org(c.ActiveConfig.Org)
 	}
 
 	resp, err := req.Execute()
@@ -100,117 +99,6 @@ func (c Client) readColumns(stdin io.Reader, f ColumnsFormat, path string) ([]ap
 	return reader(r)
 }
 
-type CreateParams struct {
-	internal.OrgBucketParams
-	Name           string
-	Stdin          io.Reader
-	ColumnsFile    string
-	ColumnsFormat  ColumnsFormat
-	ExtendedOutput bool
-}
-
-func (c Client) Create(ctx context.Context, params CreateParams) error {
-	cols, err := c.readColumns(params.Stdin, params.ColumnsFormat, params.ColumnsFile)
-	if err != nil {
-		return err
-	}
-
-	ids, err := c.resolveOrgBucketIds(ctx, params.OrgBucketParams)
-	if err != nil {
-		return err
-	}
-
-	res, err := c.BucketSchemasApi.
-		CreateMeasurementSchema(ctx, ids.BucketID).
-		OrgID(ids.OrgID).
-		MeasurementSchemaCreateRequest(api.MeasurementSchemaCreateRequest{
-			Name:    params.Name,
-			Columns: cols,
-		}).
-		Execute()
-
-	if err != nil {
-		return fmt.Errorf("failed to create measurement: %w", err)
-	}
-
-	return c.printMeasurements(ids.BucketID, []api.MeasurementSchema{res}, params.ExtendedOutput)
-}
-
-type UpdateParams struct {
-	internal.OrgBucketParams
-	Name           string
-	ID             string
-	Stdin          io.Reader
-	ColumnsFile    string
-	ColumnsFormat  ColumnsFormat
-	ExtendedOutput bool
-}
-
-func (c Client) Update(ctx context.Context, params UpdateParams) error {
-	cols, err := c.readColumns(params.Stdin, params.ColumnsFormat, params.ColumnsFile)
-	if err != nil {
-		return err
-	}
-
-	ids, err := c.resolveOrgBucketIds(ctx, params.OrgBucketParams)
-	if err != nil {
-		return err
-	}
-
-	var id string
-	if params.ID == "" && params.Name == "" {
-		return errors.New("measurement id or name required")
-	} else if params.ID != "" {
-		id = params.ID
-	} else {
-		id, err = c.resolveMeasurement(ctx, *ids, params.Name)
-		if err != nil {
-			return err
-		}
-	}
-
-	res, err := c.BucketSchemasApi.
-		UpdateMeasurementSchema(ctx, ids.BucketID, id).
-		OrgID(ids.OrgID).
-		MeasurementSchemaUpdateRequest(api.MeasurementSchemaUpdateRequest{
-			Columns: cols,
-		}).
-		Execute()
-
-	if err != nil {
-		return fmt.Errorf("failed to update measurement schema: %w", err)
-	}
-
-	return c.printMeasurements(ids.BucketID, []api.MeasurementSchema{res}, params.ExtendedOutput)
-}
-
-type ListParams struct {
-	internal.OrgBucketParams
-	Name           string
-	ExtendedOutput bool
-}
-
-func (c Client) List(ctx context.Context, params ListParams) error {
-	ids, err := c.resolveOrgBucketIds(ctx, params.OrgBucketParams)
-	if err != nil {
-		return err
-	}
-
-	req := c.BucketSchemasApi.
-		GetMeasurementSchemas(ctx, ids.BucketID).
-		OrgID(ids.OrgID)
-
-	if params.Name != "" {
-		req = req.Name(params.Name)
-	}
-
-	res, err := req.Execute()
-	if err != nil {
-		return fmt.Errorf("failed to list measurement schemas: %w", err)
-	}
-	return c.printMeasurements(ids.BucketID, res.MeasurementSchemas, params.ExtendedOutput)
-}
-
 // Constants for table column headers
 const (
 	IDHdr              = "ID"
@@ -226,8 +114,8 @@ func (c Client) printMeasurements(bucketID string, m []api.MeasurementSchema, ex
 		return nil
 	}
 
-	if c.CLI.PrintAsJSON {
-		return c.CLI.PrintJSON(m)
+	if c.PrintAsJSON {
+		return c.PrintJSON(m)
 	}
 
 	var headers []string
@@ -261,7 +149,7 @@ func (c Client) printMeasurements(bucketID string, m []api.MeasurementSchema, ex
 		rows = append(rows, makeRow(bucketID, &m[i])...)
 	}
 
-	return c.CLI.PrintTable(headers, rows...)
+	return c.PrintTable(headers, rows...)
 }
 
 type measurementRowFn func(bucketID string, m *api.MeasurementSchema) []map[string]interface{}
