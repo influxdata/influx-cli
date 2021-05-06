@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
@@ -200,7 +200,7 @@ func TestBucketsDelete(t *testing.T) {
 				tc.registerBucketExpectations(t, client)
 			}
 			cli := bucket.Client{
-				CLI:        internal.CLI{ActiveConfig: config.Config{Org: tc.configOrgName}, StdIO: stdio},
+				CLI:        cmd.CLI{ActiveConfig: config.Config{Org: tc.configOrgName}, StdIO: stdio},
 				BucketsApi: client,
 			}
 

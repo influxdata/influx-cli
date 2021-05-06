@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
@@ -25,7 +25,7 @@ var (
 const MinPasswordLen = 8
 
 type Client struct {
-	internal.CLI
+	cmd.CLI
 	api.SetupApi
 }
 

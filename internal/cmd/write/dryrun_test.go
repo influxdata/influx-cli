@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influx-cli/v2/internal"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/internal/cmd/write"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
@@ -33,7 +33,7 @@ fake line protocol 3
 	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(bytesWritten.Write).AnyTimes()
 
 	cli := write.DryRunClient{
-		CLI:        internal.CLI{ActiveConfig: config.Config{Org: "my-default-org"}, StdIO: stdio},
+		CLI:        cmd.CLI{ActiveConfig: config.Config{Org: "my-default-org"}, StdIO: stdio},
 		LineReader: &mockReader,
 	}
 

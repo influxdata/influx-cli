@@ -3,12 +3,12 @@ package ping
 import (
 	"context"
 
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 )
 
 type Client struct {
-	internal.CLI
+	cmd.CLI
 	api.HealthApi
 }
 

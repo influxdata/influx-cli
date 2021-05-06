@@ -4,11 +4,11 @@ import (
 	"context"
 	"io"
 
-	"github.com/influxdata/influx-cli/v2/internal"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 )
 
 type DryRunClient struct {
-	internal.CLI
+	cmd.CLI
 	LineReader
 }
 

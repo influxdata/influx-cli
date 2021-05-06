@@ -10,8 +10,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/internal/cmd/setup"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
@@ -33,7 +33,7 @@ func Test_SetupConfigNameCollision(t *testing.T) {
 	configSvc := mock.NewMockConfigService(ctrl)
 	configSvc.EXPECT().ListConfigs().Return(map[string]config.Config{cfg: {}}, nil)
 	cli := setup.Client{
-		CLI:      internal.CLI{ConfigService: configSvc},
+		CLI:      cmd.CLI{ConfigService: configSvc},
 		SetupApi: client,
 	}
 
@@ -54,7 +54,7 @@ func Test_SetupConfigNameRequired(t *testing.T) {
 	configSvc := mock.NewMockConfigService(ctrl)
 	configSvc.EXPECT().ListConfigs().Return(map[string]config.Config{"foo": {}}, nil)
 	cli := setup.Client{
-		CLI:      internal.CLI{ConfigService: configSvc},
+		CLI:      cmd.CLI{ConfigService: configSvc},
 		SetupApi: client,
 	}
 
@@ -72,7 +72,7 @@ func Test_SetupAlreadySetup(t *testing.T) {
 
 	configSvc := mock.NewMockConfigService(ctrl)
 	cli := setup.Client{
-		CLI:      internal.CLI{ConfigService: configSvc},
+		CLI:      cmd.CLI{ConfigService: configSvc},
 		SetupApi: client,
 	}
 
@@ -92,7 +92,7 @@ func Test_SetupCheckFailed(t *testing.T) {
 
 	configSvc := mock.NewMockConfigService(ctrl)
 	cli := setup.Client{
-		CLI:      internal.CLI{ConfigService: configSvc},
+		CLI:      cmd.CLI{ConfigService: configSvc},
 		SetupApi: client,
 	}
 
@@ -154,7 +154,7 @@ func Test_SetupSuccessNoninteractive(t *testing.T) {
 	bytesWritten := bytes.Buffer{}
 	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(bytesWritten.Write).AnyTimes()
 	cli := setup.Client{
-		CLI:      internal.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		CLI:      cmd.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
 		SetupApi: client,
 	}
 	require.NoError(t, cli.Setup(context.Background(), &params))
@@ -223,7 +223,7 @@ func Test_SetupSuccessInteractive(t *testing.T) {
 	stdio.EXPECT().GetStringInput("Please type your retention period in hours, or 0 for infinite", gomock.Any()).Return(strconv.Itoa(retentionHrs), nil)
 	stdio.EXPECT().GetConfirm(gomock.Any()).Return(true)
 	cli := setup.Client{
-		CLI:      internal.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		CLI:      cmd.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
 		SetupApi: client,
 	}
 	require.NoError(t, cli.Setup(context.Background(), &setup.Params{}))
@@ -260,7 +260,7 @@ func Test_SetupPasswordParamToShort(t *testing.T) {
 
 	stdio := mock.NewMockStdIO(ctrl)
 	cli := setup.Client{
-		CLI:      internal.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		CLI:      cmd.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
 		SetupApi: client,
 	}
 	err := cli.Setup(context.Background(), &params)
@@ -295,7 +295,7 @@ func Test_SetupCancelAtConfirmation(t *testing.T) {
 	stdio.EXPECT().GetConfirm(gomock.Any()).Return(false)
 
 	cli := setup.Client{
-		CLI:      internal.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		CLI:      cmd.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
 		SetupApi: client,
 	}
 	err := cli.Setup(context.Background(), &params)

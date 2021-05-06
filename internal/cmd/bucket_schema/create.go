@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 )
 
 type CreateParams struct {
-	internal.OrgBucketParams
+	cmd.OrgBucketParams
 	Name           string
 	Stdin          io.Reader
 	ColumnsFile    string

@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket_schema"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
@@ -34,7 +34,7 @@ func TestClient_List(t *testing.T) {
 	type setupArgs struct {
 		buckets *mock.MockBucketsApi
 		schemas *mock.MockBucketSchemasApi
-		cli     internal.CLI
+		cli     cmd.CLI
 		params  bucket_schema.ListParams
 		cols    []api.MeasurementSchemaColumn
 		stdio   *mock.MockStdIO
@@ -53,9 +53,9 @@ func TestClient_List(t *testing.T) {
 		return func(t *testing.T, a *setupArgs) {
 			t.Helper()
 			a.params = bucket_schema.ListParams{
-				OrgBucketParams: internal.OrgBucketParams{
-					OrgParams:    internal.OrgParams{OrgName: args.OrgName},
-					BucketParams: internal.BucketParams{BucketName: args.BucketName},
+				OrgBucketParams: cmd.OrgBucketParams{
+					OrgParams:    cmd.OrgParams{OrgName: args.OrgName},
+					BucketParams: cmd.BucketParams{BucketName: args.BucketName},
 				},
 				Name:           args.Name,
 				ExtendedOutput: args.ExtendedOutput,
@@ -211,7 +211,7 @@ func TestClient_List(t *testing.T) {
 				buckets: mock.NewMockBucketsApi(ctrl),
 				schemas: mock.NewMockBucketSchemasApi(ctrl),
 				stdio:   mockIO,
-				cli:     internal.CLI{StdIO: mockIO},
+				cli:     cmd.CLI{StdIO: mockIO},
 			}
 
 			for _, opt := range tc.opts {

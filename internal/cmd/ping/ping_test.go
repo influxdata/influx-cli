@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/internal/cmd/ping"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/stretchr/testify/require"
@@ -26,7 +26,7 @@ func Test_PingSuccess(t *testing.T) {
 	bytesWritten := bytes.Buffer{}
 	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(bytesWritten.Write).AnyTimes()
 	cli := ping.Client{
-		CLI:       internal.CLI{StdIO: stdio},
+		CLI:       cmd.CLI{StdIO: stdio},
 		HealthApi: client,
 	}
 

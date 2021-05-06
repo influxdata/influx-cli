@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 )
 
 const InfiniteRetention = 0
@@ -17,7 +17,7 @@ var (
 )
 
 type Client struct {
-	internal.CLI
+	cmd.CLI
 	api.OrganizationsApi
 	api.BucketsApi
 }

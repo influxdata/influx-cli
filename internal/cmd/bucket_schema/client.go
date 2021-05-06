@@ -8,14 +8,14 @@ import (
 	"io"
 	"os"
 
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 )
 
 type Client struct {
 	api.BucketsApi
 	api.BucketSchemasApi
-	internal.CLI
+	cmd.CLI
 }
 
 type orgBucketID struct {
@@ -39,7 +39,7 @@ func (c Client) resolveMeasurement(ctx context.Context, ids orgBucketID, name st
 	return res.MeasurementSchemas[0].Id, nil
 }
 
-func (c Client) resolveOrgBucketIds(ctx context.Context, params internal.OrgBucketParams) (*orgBucketID, error) {
+func (c Client) resolveOrgBucketIds(ctx context.Context, params cmd.OrgBucketParams) (*orgBucketID, error) {
 	if params.OrgID.Valid() && params.BucketID.Valid() {
 		return &orgBucketID{OrgID: params.OrgID.String(), BucketID: params.BucketID.String()}, nil
 	}

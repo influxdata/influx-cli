@@ -1,4 +1,4 @@
-package internal
+package cmd
 
 import (
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"

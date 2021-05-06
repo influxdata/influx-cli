@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/influxdata/influx-cli/v2/internal"
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 )
 
 type LineReader interface {
@@ -23,7 +23,7 @@ type BatchWriter interface {
 }
 
 type Client struct {
-	internal.CLI
+	cmd.CLI
 	api.WriteApi
 	LineReader
 	RateLimiter

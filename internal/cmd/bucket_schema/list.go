@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/influxdata/influx-cli/v2/internal"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 )
 
 type ListParams struct {
-	internal.OrgBucketParams
+	cmd.OrgBucketParams
 	Name           string
 	ExtendedOutput bool
 }
