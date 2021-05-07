@@ -14,31 +14,37 @@ import (
 	"encoding/json"
 )
 
-// PipeLiteral Represents a specialized literal value, indicating the left hand value of a pipe expression
-type PipeLiteral struct {
-	// Type of AST node
-	Type *string `json:"type,omitempty"`
+// Extern Free-form Flux AST to prepend to query requests
+type Extern struct {
+	Type                 *string `json:"type,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
-// NewPipeLiteral instantiates a new PipeLiteral object
+type _Extern Extern
+
+// NewExtern instantiates a new Extern object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPipeLiteral() *PipeLiteral {
-	this := PipeLiteral{}
+func NewExtern() *Extern {
+	this := Extern{}
+	var type_ string = "File"
+	this.Type = &type_
 	return &this
 }
 
-// NewPipeLiteralWithDefaults instantiates a new PipeLiteral object
+// NewExternWithDefaults instantiates a new Extern object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewPipeLiteralWithDefaults() *PipeLiteral {
-	this := PipeLiteral{}
+func NewExternWithDefaults() *Extern {
+	this := Extern{}
+	var type_ string = "File"
+	this.Type = &type_
 	return &this
 }
 
 // GetType returns the Type field value if set, zero value otherwise.
-func (o *PipeLiteral) GetType() string {
+func (o *Extern) GetType() string {
 	if o == nil || o.Type == nil {
 		var ret string
 		return ret
@@ -48,7 +54,7 @@ func (o *PipeLiteral) GetType() string {
 
 // GetTypeOk returns a tuple with the Type field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *PipeLiteral) GetTypeOk() (*string, bool) {
+func (o *Extern) GetTypeOk() (*string, bool) {
 	if o == nil || o.Type == nil {
 		return nil, false
 	}
@@ -56,7 +62,7 @@ func (o *PipeLiteral) GetTypeOk() (*string, bool) {
 }
 
 // HasType returns a boolean if a field has been set.
-func (o *PipeLiteral) HasType() bool {
+func (o *Extern) HasType() bool {
 	if o != nil && o.Type != nil {
 		return true
 	}
@@ -65,50 +71,72 @@ func (o *PipeLiteral) HasType() bool {
 }
 
 // SetType gets a reference to the given string and assigns it to the Type field.
-func (o *PipeLiteral) SetType(v string) {
+func (o *Extern) SetType(v string) {
 	o.Type = &v
 }
 
-func (o PipeLiteral) MarshalJSON() ([]byte, error) {
+func (o Extern) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Type != nil {
 		toSerialize["type"] = o.Type
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return json.Marshal(toSerialize)
 }
 
-type NullablePipeLiteral struct {
-	value *PipeLiteral
+func (o *Extern) UnmarshalJSON(bytes []byte) (err error) {
+	varExtern := _Extern{}
+
+	if err = json.Unmarshal(bytes, &varExtern); err == nil {
+		*o = Extern(varExtern)
+	}
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(bytes, &additionalProperties); err == nil {
+		delete(additionalProperties, "type")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
+}
+
+type NullableExtern struct {
+	value *Extern
 	isSet bool
 }
 
-func (v NullablePipeLiteral) Get() *PipeLiteral {
+func (v NullableExtern) Get() *Extern {
 	return v.value
 }
 
-func (v *NullablePipeLiteral) Set(val *PipeLiteral) {
+func (v *NullableExtern) Set(val *Extern) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullablePipeLiteral) IsSet() bool {
+func (v NullableExtern) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullablePipeLiteral) Unset() {
+func (v *NullableExtern) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullablePipeLiteral(val *PipeLiteral) *NullablePipeLiteral {
-	return &NullablePipeLiteral{value: val, isSet: true}
+func NewNullableExtern(val *Extern) *NullableExtern {
+	return &NullableExtern{value: val, isSet: true}
 }
 
-func (v NullablePipeLiteral) MarshalJSON() ([]byte, error) {
+func (v NullableExtern) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullablePipeLiteral) UnmarshalJSON(src []byte) error {
+func (v *NullableExtern) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
