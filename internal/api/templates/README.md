@@ -30,6 +30,3 @@ multiple locations.
 `configuration.mustache`
 * Deleted `ContextOAuth2` key to match modification in client
 * Fixed error strings to be idiomatic according to staticcheck (lowercase, no punctuation)
-
-`model_oneof.mustache`
-* Fixed error strings to be idiomatic according to staticcheck (lowercase, no punctuation)

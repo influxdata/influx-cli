@@ -17,7 +17,7 @@ import (
 
 // Query Query influx using the Flux language
 type Query struct {
-	Extern *File `json:"extern,omitempty"`
+	Extern *Extern `json:"extern,omitempty"`
 	// Query script to execute.
 	Query string `json:"query"`
 	// The type of query. Must be \"flux\".
@@ -34,6 +34,8 @@ type Query struct {
 func NewQuery(query string) *Query {
 	this := Query{}
 	this.Query = query
+	var type_ string = "flux"
+	this.Type = &type_
 	return &this
 }
 
@@ -42,13 +44,15 @@ func NewQuery(query string) *Query {
 // but it doesn't guarantee that properties required by API are set
 func NewQueryWithDefaults() *Query {
 	this := Query{}
+	var type_ string = "flux"
+	this.Type = &type_
 	return &this
 }
 
 // GetExtern returns the Extern field value if set, zero value otherwise.
-func (o *Query) GetExtern() File {
+func (o *Query) GetExtern() Extern {
 	if o == nil || o.Extern == nil {
-		var ret File
+		var ret Extern
 		return ret
 	}
 	return *o.Extern
@@ -56,7 +60,7 @@ func (o *Query) GetExtern() File {
 
 // GetExternOk returns a tuple with the Extern field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *Query) GetExternOk() (*File, bool) {
+func (o *Query) GetExternOk() (*Extern, bool) {
 	if o == nil || o.Extern == nil {
 		return nil, false
 	}
@@ -72,8 +76,8 @@ func (o *Query) HasExtern() bool {
 	return false
 }
 
-// SetExtern gets a reference to the given File and assigns it to the Extern field.
-func (o *Query) SetExtern(v File) {
+// SetExtern gets a reference to the given Extern and assigns it to the Extern field.
+func (o *Query) SetExtern(v Extern) {
 	o.Extern = &v
 }
 
