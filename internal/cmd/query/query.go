@@ -64,7 +64,7 @@ func BuildExternAST(profilers []string) *api.Extern {
 	// that have all (so far) broken the codegen for the UI.
 	//
 	// We assume that this logic will be changed infrequently enough that
-	// the lack of type-safety won't be frequent pain point.
+	// the lack of type-safety won't be a frequent pain point.
 
 	// import "profiler"
 	profilersImport := map[string]interface{}{
