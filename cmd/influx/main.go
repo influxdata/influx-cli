@@ -199,6 +199,7 @@ var app = cli.App{
 		newBucketCmd(),
 		newCompletionCmd(),
 		newBucketSchemaCmd(),
+		newQueryCmd(),
 	},
 }
 
