@@ -20,10 +20,9 @@ type formattingPrinter struct {
 	// fmtBuf is used to format values
 	fmtBuf [64]byte
 
-	cols []fluxcsv.FluxColumn
+	cols       []fluxcsv.FluxColumn
 	lastColIdx int
 }
-
 
 func NewFormattingPrinter() *formattingPrinter {
 	return &formattingPrinter{}
