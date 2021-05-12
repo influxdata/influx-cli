@@ -67,9 +67,7 @@ func newQueryCmd() *cli.Command {
 			rawProfilers := ctx.StringSlice("profilers")
 			var profilers []string
 			for _, p := range rawProfilers {
-				for _, p := range strings.Split(p, ",") {
-					profilers = append(profilers, p)
-				}
+				profilers = append(profilers, strings.Split(p, ",")...)
 			}
 
 			params := query.Params{
