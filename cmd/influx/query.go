@@ -76,9 +76,11 @@ func newQueryCmd() *cli.Command {
 				Profilers: profilers,
 			}
 
-			printer := query.RawResultPrinter
-			if !ctx.Bool("raw") {
-				return errors.New("--raw or -r must be specified for now")
+			var printer query.ResultPrinter
+			if ctx.Bool("raw") {
+				printer = query.RawResultPrinter
+			} else {
+				printer = query.NewFormattingPrinter()
 			}
 
 			client := query.Client{
