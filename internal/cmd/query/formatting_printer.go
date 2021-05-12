@@ -21,6 +21,7 @@ type formattingPrinter struct {
 	fmtBuf [64]byte
 
 	cols []fluxcsv.FluxColumn
+	lastColIdx int
 }
 
 
@@ -72,6 +73,7 @@ func (f *formattingPrinter) write(res *fluxcsv.QueryTableResult, out io.Writer) 
 		if res.AnnotationsChanged() {
 			// Reset and sort cols
 			f.cols = res.Metadata().Columns()
+			f.lastColIdx = len(f.cols) - 1
 			groupKeys := make(map[string]int, len(res.Metadata().GroupKeyCols()))
 			for i, k := range res.Metadata().GroupKeyCols() {
 				groupKeys[k] = i
@@ -112,7 +114,7 @@ func (f *formattingPrinter) write(res *fluxcsv.QueryTableResult, out io.Writer) 
 			w.write(eol)
 		}
 		if res.TableIdChanged() || res.AnnotationsChanged() {
-			w.write([]byte("TableId: keys: ["))
+			w.write([]byte("Table: keys: ["))
 			labels := make([]string, len(res.Metadata().GroupKeyCols()))
 			for i, c := range res.Metadata().GroupKeyCols() {
 				labels[i] = c
@@ -158,7 +160,9 @@ func (f *formattingPrinter) write(res *fluxcsv.QueryTableResult, out io.Writer) 
 				w.write(buf[:f.widths[i]-3])
 				w.write([]byte{'.', '.', '.'})
 			}
-			w.write(f.pad[:2])
+			if i != f.lastColIdx {
+				w.write(f.pad[:2])
+			}
 			if l > f.newWidths[i] {
 				f.newWidths[i] = l
 			}
@@ -192,7 +196,9 @@ func (f *formattingPrinter) writeHeader(w *writeHelper) {
 		buf := append(append([]byte(c.Name()), ':'), []byte(display(c.DataType()))...)
 		w.write(f.pad[:f.widths[i]-len(buf)])
 		w.write(buf)
-		w.write(f.pad[:2])
+		if i != f.lastColIdx {
+			w.write(f.pad[:2])
+		}
 	}
 	w.write(eol)
 }
@@ -200,7 +206,9 @@ func (f *formattingPrinter) writeHeader(w *writeHelper) {
 func (f *formattingPrinter) writeHeaderSeparator(w *writeHelper) {
 	for i := range f.cols {
 		w.write(f.dash[:f.widths[i]])
-		w.write(f.pad[:2])
+		if i != f.lastColIdx {
+			w.write(f.pad[:2])
+		}
 	}
 	w.write(eol)
 }
@@ -231,6 +239,9 @@ func display(t fluxcsv.ColType) string {
 
 func (f *formattingPrinter) valueBuf(typ fluxcsv.ColType, v interface{}) []byte {
 	var buf []byte
+	if v == nil {
+		return buf
+	}
 	switch typ {
 	case fluxcsv.StringDatatype:
 		buf = []byte(v.(string))
