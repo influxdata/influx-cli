@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/influxdata/influx-cli/v2/internal/duration"
 )
 
 type ColType int
@@ -275,7 +277,7 @@ func toValue(s string, t ColType, name string) (interface{}, error) {
 	case TimeDatatypeRFCNano:
 		return time.Parse(time.RFC3339Nano, s)
 	case DurationDatatype:
-		return time.ParseDuration(s)
+		return duration.RawDurationToTimeDuration(s)
 	case DoubleDatatype:
 		return strconv.ParseFloat(s, 64)
 	case BoolDatatype:

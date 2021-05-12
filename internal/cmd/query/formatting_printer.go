@@ -1,6 +1,7 @@
 package query
 
 import (
+	"encoding/base64"
 	"io"
 	"sort"
 	"strconv"
@@ -52,13 +53,15 @@ func (w *writeHelper) write(data []byte) {
 }
 
 var minWidthsByType = map[fluxcsv.ColType]int{
-	fluxcsv.BoolDatatype:        12,
-	fluxcsv.LongDatatype:        26,
-	fluxcsv.ULongDatatype:       27,
-	fluxcsv.DoubleDatatype:      28,
-	fluxcsv.StringDatatype:      22,
-	fluxcsv.TimeDatatypeRFC:     len(fixedWidthTimeFmt),
-	fluxcsv.TimeDatatypeRFCNano: len(fixedWidthTimeFmt),
+	fluxcsv.BoolDatatype:         12,
+	fluxcsv.LongDatatype:         26,
+	fluxcsv.ULongDatatype:        27,
+	fluxcsv.DoubleDatatype:       28,
+	fluxcsv.StringDatatype:       22,
+	fluxcsv.TimeDatatypeRFC:      len(fixedWidthTimeFmt),
+	fluxcsv.TimeDatatypeRFCNano:  len(fixedWidthTimeFmt),
+	fluxcsv.Base64BinaryDataType: 22,
+	fluxcsv.DurationDatatype:     22,
 }
 
 // write writes the formatted table data to w.
@@ -222,15 +225,16 @@ func display(t fluxcsv.ColType) string {
 		return "boolean"
 	case fluxcsv.LongDatatype:
 		return "int"
-	case fluxcsv.Base64BinaryDataType:
-		return "base64Binary"
+	case fluxcsv.ULongDatatype:
+		return "uint"
 	case fluxcsv.TimeDatatypeRFC:
-		fallthrough
+		return "time"
 	case fluxcsv.TimeDatatypeRFCNano:
 		return "time"
-	// TODO: These weren't implemented in the influxdb CLI.
-	//case fluxcsv.ULongDatatype:
-	//case fluxcsv.DurationDatatype:
+	case fluxcsv.DurationDatatype:
+		return "duration"
+	case fluxcsv.Base64BinaryDataType:
+		return "bytes"
 	default:
 		panic("shouldn't happen")
 	}
@@ -256,9 +260,10 @@ func (f *formattingPrinter) valueBuf(typ fluxcsv.ColType, v interface{}) []byte 
 		fallthrough
 	case fluxcsv.TimeDatatypeRFCNano:
 		buf = []byte(v.(time.Time).Format(fixedWidthTimeFmt))
-		// TODO: These weren't implemented in the influxdb CLI.
-		//case fluxcsv.DurationDatatype:
-		//case fluxcsv.Base64BinaryDataType:
+	case fluxcsv.DurationDatatype:
+		buf = []byte(v.(time.Duration).String())
+	case fluxcsv.Base64BinaryDataType:
+		base64.StdEncoding.Encode(buf, v.([]byte))
 	}
 	return buf
 }
