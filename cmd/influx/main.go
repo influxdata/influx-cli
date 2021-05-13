@@ -35,15 +35,15 @@ func init() {
 }
 
 var (
-	tokenFlag       = "token"
-	hostFlag        = "host"
-	skipVerifyFlag  = "skip-verify"
-	traceIdFlag     = "trace-debug-id"
-	configPathFlag  = "configs-path"
-	configNameFlag  = "active-config"
-	httpDebugFlag   = "http-debug"
-	printJsonFlag   = "json"
-	hideHeadersFlag = "hide-headers"
+	tokenFlagName       = "token"
+	hostFlagName        = "host"
+	skipVerifyFlagName  = "skip-verify"
+	traceIdFlagName     = "trace-debug-id"
+	configPathFlagName  = "configs-path"
+	configNameFlagName  = "active-config"
+	httpDebugFlagName   = "http-debug"
+	printJsonFlagName   = "json"
+	hideHeadersFlagName = "hide-headers"
 )
 
 // NOTE: urfave/cli has dedicated support for global flags, but it only parses those flags
@@ -53,35 +53,37 @@ var (
 //
 // We replicate the pattern from the old CLI so existing scripts and docs stay valid.
 
-// Flags used by all CLI commands.
+var configPathFlag = cli.PathFlag{
+	Name:    configPathFlagName,
+	Usage:   "Path to the influx CLI configurations",
+	EnvVars: []string{"INFLUX_CLI_CONFIGS_PATH"},
+}
+
+// Flags used by all CLI commands that make HTTP requests.
 var coreFlags = []cli.Flag{
 	&cli.StringFlag{
-		Name:    hostFlag,
+		Name:    hostFlagName,
 		Usage:   "HTTP address of InfluxDB",
 		EnvVars: []string{"INFLUX_HOST"},
 	},
 	&cli.BoolFlag{
-		Name:  skipVerifyFlag,
+		Name:  skipVerifyFlagName,
 		Usage: "Skip TLS certificate chain and host name verification",
 	},
-	&cli.PathFlag{
-		Name:    configPathFlag,
-		Usage:   "Path to the influx CLI configurations",
-		EnvVars: []string{"INFLUX_CLI_CONFIGS_PATH"},
-	},
+	&configPathFlag,
 	&cli.StringFlag{
-		Name:    configNameFlag,
+		Name:    configNameFlagName,
 		Usage:   "Config name to use for command",
 		Aliases: []string{"c"},
 		EnvVars: []string{"INFLUX_ACTIVE_CONFIG"},
 	},
 	&cli.StringFlag{
-		Name:    traceIdFlag,
+		Name:    traceIdFlagName,
 		Hidden:  true,
 		EnvVars: []string{"INFLUX_TRACE_DEBUG_ID"},
 	},
 	&cli.BoolFlag{
-		Name:   httpDebugFlag,
+		Name:   httpDebugFlagName,
 		Hidden: true,
 	},
 }
@@ -89,12 +91,12 @@ var coreFlags = []cli.Flag{
 // Flags used by commands that display API resources to the user.
 var printFlags = []cli.Flag{
 	&cli.BoolFlag{
-		Name:    printJsonFlag,
+		Name:    printJsonFlagName,
 		Usage:   "Output data as JSON",
 		EnvVars: []string{"INFLUX_OUTPUT_JSON"},
 	},
 	&cli.BoolFlag{
-		Name:    hideHeadersFlag,
+		Name:    hideHeadersFlagName,
 		Usage:   "Hide the table headers in output data",
 		EnvVars: []string{"INFLUX_HIDE_HEADERS"},
 	},
@@ -102,7 +104,7 @@ var printFlags = []cli.Flag{
 
 // Flag used by commands that hit an authenticated API.
 var commonTokenFlag = cli.StringFlag{
-	Name:    tokenFlag,
+	Name:    tokenFlagName,
 	Usage:   "Authentication token",
 	Aliases: []string{"t"},
 	EnvVars: []string{"INFLUX_TOKEN"},
@@ -115,7 +117,7 @@ var commonFlags = append(commonFlagsNoToken, &commonTokenFlag)
 // newCli builds a CLI core that reads from stdin, writes to stdout/stderr, manages a local config store,
 // and optionally tracks a trace ID specified over the CLI.
 func newCli(ctx *cli.Context) (cmd.CLI, error) {
-	configPath := ctx.String(configPathFlag)
+	configPath := ctx.String(configPathFlagName)
 	var err error
 	if configPath == "" {
 		configPath, err = config.DefaultPath()
@@ -125,8 +127,8 @@ func newCli(ctx *cli.Context) (cmd.CLI, error) {
 	}
 	configSvc := config.NewLocalConfigService(configPath)
 	var activeConfig config.Config
-	if ctx.IsSet(configNameFlag) {
-		if activeConfig, err = configSvc.SwitchActive(ctx.String(configNameFlag)); err != nil {
+	if ctx.IsSet(configNameFlagName) {
+		if activeConfig, err = configSvc.SwitchActive(ctx.String(configNameFlagName)); err != nil {
 			return cmd.CLI{}, err
 		}
 	} else if activeConfig, err = configSvc.Active(); err != nil {
@@ -135,8 +137,8 @@ func newCli(ctx *cli.Context) (cmd.CLI, error) {
 
 	return cmd.CLI{
 		StdIO:            stdio.TerminalStdio,
-		PrintAsJSON:      ctx.Bool(printJsonFlag),
-		HideTableHeaders: ctx.Bool(hideHeadersFlag),
+		PrintAsJSON:      ctx.Bool(printJsonFlagName),
+		HideTableHeaders: ctx.Bool(hideHeadersFlagName),
 		ActiveConfig:     activeConfig,
 		ConfigService:    configSvc,
 	}, nil
@@ -149,11 +151,11 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 	if err != nil {
 		return nil, err
 	}
-	if ctx.IsSet(tokenFlag) {
-		cfg.Token = ctx.String(tokenFlag)
+	if ctx.IsSet(tokenFlagName) {
+		cfg.Token = ctx.String(tokenFlagName)
 	}
-	if ctx.IsSet(hostFlag) {
-		cfg.Host = ctx.String(hostFlag)
+	if ctx.IsSet(hostFlagName) {
+		cfg.Host = ctx.String(hostFlagName)
 	}
 
 	parsedHost, err := url.Parse(cfg.Host)
@@ -162,7 +164,7 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 	}
 
 	clientTransport := http.DefaultTransport.(*http.Transport)
-	clientTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: ctx.Bool(skipVerifyFlag)}
+	clientTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: ctx.Bool(skipVerifyFlagName)}
 
 	apiConfig := api.NewConfiguration()
 	apiConfig.Host = parsedHost.Host
@@ -172,16 +174,16 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 	if injectToken {
 		apiConfig.DefaultHeader["Authorization"] = fmt.Sprintf("Token %s", cfg.Token)
 	}
-	if ctx.IsSet(traceIdFlag) {
+	if ctx.IsSet(traceIdFlagName) {
 		// NOTE: This is circumventing our codegen. If the header we use for tracing ever changes,
 		// we'll need to manually update the string here to match.
 		//
 		// The alternative is to pass the trace ID to the business logic for every CLI command, and
 		// use codegen'd logic to set the header on every HTTP request. Early versions of the CLI
 		// used that technique, and we found it to be error-prone and easy to forget during testing.
-		apiConfig.DefaultHeader["Zap-Trace-Span"] = ctx.String(traceIdFlag)
+		apiConfig.DefaultHeader["Zap-Trace-Span"] = ctx.String(traceIdFlagName)
 	}
-	apiConfig.Debug = ctx.Bool(httpDebugFlag)
+	apiConfig.Debug = ctx.Bool(httpDebugFlagName)
 
 	return api.NewAPIClient(apiConfig), nil
 }
@@ -200,6 +202,7 @@ var app = cli.App{
 		newCompletionCmd(),
 		newBucketSchemaCmd(),
 		newQueryCmd(),
+		newConfigCmd(),
 	},
 }
 
