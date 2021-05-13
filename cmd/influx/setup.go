@@ -27,7 +27,7 @@ func newSetupCmd() *cli.Command {
 				Destination: &params.Password,
 			},
 			&cli.StringFlag{
-				Name:        tokenFlag,
+				Name:        tokenFlagName,
 				Usage:       "Auth token to set on the initial user",
 				Aliases:     []string{"t"},
 				EnvVars:     []string{"INFLUX_TOKEN"},
