@@ -13,7 +13,7 @@ func newSetupCmd() *cli.Command {
 		Usage:  "Setup instance with initial user, org, bucket",
 		Before: middleware.WithBeforeFns(withCli(), withApi(false)),
 		Flags: append(
-			commonFlagsNoToken,
+			commonFlagsNoToken(),
 			&cli.StringFlag{
 				Name:        "username",
 				Usage:       "Name of initial user to create",

@@ -11,7 +11,7 @@ func newPingCmd() *cli.Command {
 		Name:   "ping",
 		Usage:  "Check the InfluxDB /health endpoint",
 		Before: middleware.WithBeforeFns(withCli(), withApi(false)),
-		Flags:  coreFlags,
+		Flags:  coreFlags(),
 		Action: func(ctx *cli.Context) error {
 			client := ping.Client{
 				CLI:       getCLI(ctx),

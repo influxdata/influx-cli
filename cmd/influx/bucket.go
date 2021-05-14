@@ -18,7 +18,6 @@ func newBucketCmd() *cli.Command {
 			newBucketUpdateCmd(),
 		},
 	}
-
 }
 
 func newBucketCreateCmd() *cli.Command {
@@ -33,7 +32,7 @@ func newBucketCreateCmd() *cli.Command {
 			withApi(true),
 		),
 		Flags: append(
-			commonFlags,
+			commonFlags(),
 			&cli.StringFlag{
 				Name:        "name",
 				Usage:       "New bucket name",
@@ -100,7 +99,7 @@ func newBucketDeleteCmd() *cli.Command {
 		Usage:  "Delete bucket",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
-			commonFlags,
+			commonFlags(),
 			&cli.StringFlag{
 				Name:        "id",
 				Usage:       "The bucket ID, required if name isn't provided",
@@ -147,7 +146,7 @@ func newBucketListCmd() *cli.Command {
 		Aliases: []string{"find", "ls"},
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
-			commonFlags,
+			commonFlags(),
 			&cli.StringFlag{
 				Name:        "id",
 				Usage:       "The bucket ID, required if name isn't provided",
@@ -194,7 +193,7 @@ func newBucketUpdateCmd() *cli.Command {
 		Aliases: []string{"find", "ls"},
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
-			commonFlags,
+			commonFlags(),
 			&cli.StringFlag{
 				Name:        "name",
 				Usage:       "New name to set on the bucket",

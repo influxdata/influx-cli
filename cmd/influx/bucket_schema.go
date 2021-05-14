@@ -56,7 +56,7 @@ func newBucketSchemaCreateCmd() *cli.Command {
 		Usage:  "Create a measurement schema for a bucket",
 		Before: withBucketSchemaClient(),
 		Flags: append(
-			commonFlags,
+			commonFlags(),
 			append(
 				getOrgBucketFlags(&params.OrgBucketParams),
 				&cli.StringFlag{
@@ -111,7 +111,7 @@ func newBucketSchemaUpdateCmd() *cli.Command {
 		Usage:  "Update a measurement schema for a bucket",
 		Before: withBucketSchemaClient(),
 		Flags: append(
-			commonFlags,
+			commonFlags(),
 			append(
 				getOrgBucketFlags(&params.OrgBucketParams),
 				&cli.GenericFlag{
@@ -165,7 +165,7 @@ func newBucketSchemaListCmd() *cli.Command {
 		Usage:  "List schemas for a bucket",
 		Before: withBucketSchemaClient(),
 		Flags: append(
-			commonFlags,
+			commonFlags(),
 			append(
 				getOrgBucketFlags(&params.OrgBucketParams),
 				&cli.StringFlag{
