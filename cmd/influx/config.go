@@ -10,7 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var configPathAndPrintFlags = append([]cli.Flag{&configPathFlag}, printFlags...)
+var configPathAndPrintFlags = append([]cli.Flag{configPathFlag()}, printFlags()...)
 
 func newConfigCmd() *cli.Command {
 	return &cli.Command{
@@ -151,7 +151,7 @@ and
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/rm/
 `,
 		Before: withCli(),
-		Flags:  append([]cli.Flag{&configPathFlag}, printFlags...),
+		Flags:  append([]cli.Flag{configPathFlag()}, printFlags()...),
 		Action: func(ctx *cli.Context) error {
 			client := config.Client{CLI: getCLI(ctx)}
 			return client.Delete(ctx.Args().Slice())

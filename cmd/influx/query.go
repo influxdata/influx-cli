@@ -22,7 +22,7 @@ func newQueryCmd() *cli.Command {
 		ArgsUsage:   "[query literal or '-' for stdin]",
 		Before:      middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
-			commonFlagsNoPrint,
+			commonFlagsNoPrint(),
 			&cli.GenericFlag{
 				Name:    "org-id",
 				Usage:   "The ID of the organization",

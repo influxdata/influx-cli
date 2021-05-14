@@ -189,7 +189,7 @@ func newWriteCmd() *cli.Command {
 		Usage:       "Write points to InfluxDB",
 		Description: "Write data to InfluxDB via stdin, or add an entire file specified with the -f flag",
 		Before:      middleware.WithBeforeFns(withCli(), withApi(true)),
-		Flags:       append(commonFlagsNoPrint, params.Flags()...),
+		Flags:       append(commonFlagsNoPrint(), params.Flags()...),
 		Action: func(ctx *cli.Context) error {
 			errorFile, err := params.makeErrorFile()
 			if err != nil {
@@ -229,7 +229,7 @@ func newWriteDryRun() *cli.Command {
 		Usage:       "Write to stdout instead of InfluxDB",
 		Description: "Write protocol lines to stdout instead of InfluxDB. Troubleshoot conversion from CSV to line protocol",
 		Before:      middleware.WithBeforeFns(withCli(), withApi(true)),
-		Flags:       append(commonFlagsNoPrint, params.Flags()...),
+		Flags:       append(commonFlagsNoPrint(), params.Flags()...),
 		Action: func(ctx *cli.Context) error {
 			errorFile, err := params.makeErrorFile()
 			if err != nil {
