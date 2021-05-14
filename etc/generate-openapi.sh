@@ -6,7 +6,7 @@ declare -r API_DIR="${ROOT_DIR}/internal/api"
 
 declare -r GENERATED_PATTERN='^// Code generated .* DO NOT EDIT\.$'
 declare -r GENERATOR_DOCKER_IMG=openapitools/openapi-generator-cli:v5.1.0
-declare -r OPENAPI_COMMIT=a30052843e20aa24a0603bfcbd7972167bb20321
+declare -r OPENAPI_COMMIT=dd675843404dbb3881f4d245581b916df319091f
 
 # Clean up all the generated files in the target directory.
 rm $(grep -Elr "${GENERATED_PATTERN}" "${API_DIR}")
@@ -14,17 +14,17 @@ rm $(grep -Elr "${GENERATED_PATTERN}" "${API_DIR}")
 # Download our target API spec.
 # NOTE: openapi-generator supports HTTP references to API docs, but using that feature
 # causes the host of the URL to be injected into the base paths of generated code.
-curl -o ${ROOT_DIR}/internal/api/cli.yml https://raw.githubusercontent.com/influxdata/openapi/${OPENAPI_COMMIT}/contracts/cli.yml
+curl -o "${API_DIR}/cli.yml" https://raw.githubusercontent.com/influxdata/openapi/${OPENAPI_COMMIT}/contracts/cli.yml
 
 # Run the generator - This produces many more files than we want to track in git.
 docker run --rm -it -u "$(id -u):$(id -g)" \
-  -v "${ROOT_DIR}":/influx \
+  -v "${API_DIR}":/api \
   ${GENERATOR_DOCKER_IMG} \
   generate \
   -g go \
-  -i /influx/internal/api/cli.yml \
-  -o /influx/internal/api \
-  -t /influx/internal/api/templates \
+  -i /api/cli.yml \
+  -o /api \
+  -t /api/templates \
   --additional-properties packageName=api,enumClassPrefix=true,generateInterfaces=true
 
 # Edit the generated files.
