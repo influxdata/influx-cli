@@ -10,7 +10,7 @@ declare -r MERGE_DOCKER_IMG=quay.io/influxdb/swagger-cli
 declare -r GENERATOR_DOCKER_IMG=openapitools/openapi-generator-cli:v5.1.0
 
 # Clean up all the generated files in the target directory.
-rm $(grep -Elr "${GENERATED_PATTERN}" "${API_DIR}")
+rm -f $(grep -Elr "${GENERATED_PATTERN}" "${API_DIR}")
 
 # Merge all API contracts into a single file to drive codegen.
 docker run --rm -it -u "$(id -u):$(id -g)" \

@@ -40,6 +40,7 @@ var app = cli.App{
 		newBucketSchemaCmd(),
 		newQueryCmd(),
 		newConfigCmd(),
+		newOrgCmd(),
 	},
 }
 
