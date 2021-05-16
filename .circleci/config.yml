@@ -27,6 +27,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Init openapi submodule
+          command: git submodule update --init --recursive
+      - run:
           name: Upgrade Go
           command: |
             wget https://golang.org/dl/go1.16.3.linux-amd64.tar.gz
