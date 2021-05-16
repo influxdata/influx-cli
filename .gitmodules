@@ -1,0 +1,3 @@
+[submodule "openapi"]
+	path = api-contract/openapi
+	url = ../openapi

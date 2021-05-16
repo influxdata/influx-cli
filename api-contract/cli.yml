@@ -1,0 +1,132 @@
+openapi: "3.0.0"
+info:
+  title: Subset of Influx API covered by Influx CLI
+  version: 2.0.0
+servers:
+  - url: /api/v2
+paths:
+  /health:
+    servers:
+      - url: ''
+    $ref: "./openapi/src/oss/paths/health.yml"
+  /setup:
+    $ref: "./openapi/src/common/paths/setup.yml"
+  /write:
+    $ref: "./openapi/src/common/paths/write.yml"
+  /buckets:
+    $ref: "./openapi/src/common/paths/buckets.yml"
+  /buckets/{bucketID}:
+    $ref: "./openapi/src/common/paths/buckets_bucketID.yml"
+  /orgs:
+    $ref: "./openapi/src/common/paths/orgs.yml"
+  /orgs/{orgID}:
+    $ref: "./openapi/src/common/paths/orgs_orgID.yml"
+  /orgs/{orgID}/members:
+    $ref: "./openapi/src/common/paths/orgs_orgID_members.yml"
+  /orgs/{orgID}/members/{userID}:
+    $ref: "./openapi/src/common/paths/orgs_orgID_members_userID.yml"
+  /buckets/{bucketID}/schema/measurements:
+    $ref: "./openapi/src/cloud/paths/measurements.yml"
+  /buckets/{bucketID}/schema/measurements/{measurementID}:
+    $ref: "./openapi/src/cloud/paths/measurements_measurementID.yml"
+  /query:
+    $ref: "./cli/paths/query.yml"
+components:
+  parameters:
+    TraceSpan:
+      $ref: "./openapi/src/common/parameters/TraceSpan.yml"
+    Offset:
+      $ref: "./openapi/src/common/parameters/Offset.yml"
+    Limit:
+      $ref: "./openapi/src/common/parameters/Limit.yml"
+    After:
+      $ref: "./openapi/src/common/parameters/After.yml"
+    Descending:
+      $ref: "./openapi/src/common/parameters/Descending.yml"
+  schemas:
+    Error:
+      $ref: "./openapi/src/common/schemas/Error.yml"
+    ErrorCode:
+      $ref: "./openapi/src/common/schemas/ErrorCode.yml"
+    HealthCheck:
+      $ref: "./openapi/src/common/schemas/HealthCheck.yml"
+    HealthCheckStatus:
+      $ref: "./openapi/src/common/schemas/HealthCheckStatus.yml"
+    OnboardingRequest:
+      $ref: "./openapi/src/common/schemas/OnboardingRequest.yml"
+    OnboardingResponse:
+      $ref: "./openapi/src/common/schemas/OnboardingResponse.yml"
+    UserResponse:
+      $ref: "./openapi/src/common/schemas/UserResponse.yml"
+    Links:
+      $ref: "./openapi/src/common/schemas/Links.yml"
+    Link:
+      $ref: "./openapi/src/common/schemas/Link.yml"
+    Organizations:
+      $ref: "./openapi/src/common/schemas/Organizations.yml"
+    Organization:
+      $ref: "./openapi/src/common/schemas/Organization.yml"
+    PostOrganizationRequest:
+      $ref: "./openapi/src/common/schemas/PostOrganizationRequest.yml"
+    PatchOrganizationRequest:
+      $ref: "./openapi/src/common/schemas/PatchOrganizationRequest.yml"
+    Buckets:
+      $ref: "./openapi/src/common/schemas/Buckets.yml"
+    Bucket:
+      $ref: "./openapi/src/common/schemas/Bucket.yml"
+    PostBucketRequest:
+      $ref: "./openapi/src/common/schemas/PostBucketRequest.yml"
+    RetentionRules:
+      $ref: "./openapi/src/common/schemas/RetentionRules.yml"
+    RetentionRule:
+      $ref: "./openapi/src/common/schemas/RetentionRule.yml"
+    PatchBucketRequest:
+      $ref: "./openapi/src/common/schemas/PatchBucketRequest.yml"
+    PatchRetentionRules:
+      $ref: "./openapi/src/common/schemas/PatchRetentionRules.yml"
+    PatchRetentionRule:
+      $ref: "./openapi/src/common/schemas/PatchRetentionRule.yml"
+    Labels:
+      $ref: "./openapi/src/common/schemas/Labels.yml"
+    Label:
+      $ref: "./openapi/src/common/schemas/Label.yml"
+    Authorization:
+      $ref: "./openapi/src/common/schemas/Authorization.yml"
+    AuthorizationUpdateRequest:
+      $ref: "./openapi/src/common/schemas/AuthorizationUpdateRequest.yml"
+    Permission:
+      $ref: "./openapi/src/common/schemas/Permission.yml"
+    ResourceMembers:
+      $ref: "./openapi/src/common/schemas/ResourceMembers.yml"
+    ResourceMember:
+      $ref: "./openapi/src/common/schemas/ResourceMember.yml"
+    AddResourceMemberRequestBody:
+      $ref: "./openapi/src/common/schemas/AddResourceMemberRequestBody.yml"
+    WritePrecision:
+      $ref: "./openapi/src/common/schemas/WritePrecision.yml"
+    LineProtocolError:
+      $ref: "./openapi/src/common/schemas/LineProtocolError.yml"
+    LineProtocolLengthError:
+      $ref: "./openapi/src/common/schemas/LineProtocolLengthError.yml"
+    SchemaType:
+      $ref: "./openapi/src/common/schemas/SchemaType.yml"
+    ColumnDataType:
+      $ref: "./openapi/src/cloud/schemas/ColumnDataType.yml"
+    ColumnSemanticType:
+      $ref: "./openapi/src/cloud/schemas/ColumnSemanticType.yml"
+    MeasurementSchema:
+      $ref: "./openapi/src/cloud/schemas/MeasurementSchema.yml"
+    MeasurementSchemaColumn:
+      $ref: "./openapi/src/cloud/schemas/MeasurementSchemaColumn.yml"
+    MeasurementSchemaCreateRequest:
+      $ref: "./openapi/src/cloud/schemas/MeasurementSchemaCreateRequest.yml"
+    MeasurementSchemaList:
+      $ref: "./openapi/src/cloud/schemas/MeasurementSchemaList.yml"
+    MeasurementSchemaUpdateRequest:
+      $ref: "./openapi/src/cloud/schemas/MeasurementSchemaUpdateRequest.yml"
+    Query:
+      $ref: "./cli/schemas/Query.yml"
+    Dialect:
+      $ref: "./openapi/src/common/schemas/Dialect.yml"
+    Extern:
+      $ref: "./cli/schemas/Extern.yml"
