@@ -30,7 +30,7 @@ paths:
   /buckets/{bucketID}/schema/measurements/{measurementID}:
     $ref: "./openapi/src/cloud/paths/measurements_measurementID.yml"
   /query:
-    $ref: "./cli/paths/query.yml"
+    $ref: "./overrides/paths/query.yml"
 components:
   parameters:
     TraceSpan:
@@ -125,8 +125,8 @@ components:
     MeasurementSchemaUpdateRequest:
       $ref: "./openapi/src/cloud/schemas/MeasurementSchemaUpdateRequest.yml"
     Query:
-      $ref: "./cli/schemas/Query.yml"
+      $ref: "./overrides/schemas/Query.yml"
     Dialect:
       $ref: "./openapi/src/common/schemas/Dialect.yml"
     Extern:
-      $ref: "./cli/schemas/Extern.yml"
+      $ref: "./overrides/schemas/Extern.yml"
