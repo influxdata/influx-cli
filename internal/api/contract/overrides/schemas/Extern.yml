@@ -5,7 +5,7 @@ properties:
     type: string
     enum: [File]
     default: File
-# NOTE: Purposefully type-less here because the boilerplate produced
+# NOTE: Intentionally type-less here because the boilerplate produced
 # by codegen off the Flux AST spec is unmangeable. The CLI only needs
 # to use a small subset of the AST and rarely changes what it sends,
 # so we can live with a generic map in the codegen request body.
