@@ -28,7 +28,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 func (c Client) Delete(ctx context.Context, id influxid.ID) error {
 	org, err := c.GetOrgsID(ctx, id.String()).Execute()
 	if err != nil {
-		return fmt.Errorf("org %q not found", id)
+		return fmt.Errorf("org %q not found: %w", id, err)
 
 	}
 	if err := c.DeleteOrgsID(ctx, id.String()).Execute(); err != nil {
