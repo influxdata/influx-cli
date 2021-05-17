@@ -114,7 +114,7 @@ func TestClient_Delete(t *testing.T) {
 				svc.EXPECT().DeleteConfig(gomock.Eq("foo")).
 					Return(iconfig.Config{Name: "foo", Host: "bar", Org: "baz"}, nil)
 			},
-			out: []string{`^\s+foo\s+bar\s+baz\s+true`},
+			out: []string{`\s+foo\s+bar\s+baz\s+true`},
 		},
 		{
 			name: "many",
@@ -128,7 +128,7 @@ func TestClient_Delete(t *testing.T) {
 					Return(iconfig.Config{Name: "wibble", Host: "bar", Active: true}, nil)
 			},
 			out: []string{
-				`^\s+foo\s+bar\s+baz\s+true`,
+				`\s+foo\s+bar\s+baz\s+true`,
 				`\*\s+wibble\s+bar\s+true`,
 			},
 		},
@@ -151,9 +151,13 @@ func TestClient_Delete(t *testing.T) {
 
 			cli := config.Client{CLI: cmd.CLI{ConfigService: svc, StdIO: stdio}}
 			require.NoError(t, cli.Delete(tc.in))
-			testutils.MatchLines(t,
-				append([]string{`Active\s+Name\s+URL\s+Org\s+Deleted`}, tc.out...),
-				strings.Split(writtenBytes.String(), "\n"))
+
+			// Can't use our usual 'MatchLines' because list output depends on map iteration,
+			// so the order isn't well-defined.
+			out := writtenBytes.String()
+			for _, l := range append([]string{`Active\s+Name\s+URL\s+Org\s+Deleted`}, tc.out...) {
+				require.Regexp(t, l, out)
+			}
 		})
 	}
 }

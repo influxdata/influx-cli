@@ -1,20 +1,24 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 declare -r ETC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 declare -r ROOT_DIR="$(dirname ${ETC_DIR})"
 declare -r API_DIR="${ROOT_DIR}/internal/api"
 
 declare -r GENERATED_PATTERN='^// Code generated .* DO NOT EDIT\.$'
+declare -r MERGE_DOCKER_IMG=quay.io/influxdb/swagger-cli
 declare -r GENERATOR_DOCKER_IMG=openapitools/openapi-generator-cli:v5.1.0
-declare -r OPENAPI_COMMIT=dd675843404dbb3881f4d245581b916df319091f
 
 # Clean up all the generated files in the target directory.
 rm $(grep -Elr "${GENERATED_PATTERN}" "${API_DIR}")
 
-# Download our target API spec.
-# NOTE: openapi-generator supports HTTP references to API docs, but using that feature
-# causes the host of the URL to be injected into the base paths of generated code.
-curl -o "${API_DIR}/cli.yml" https://raw.githubusercontent.com/influxdata/openapi/${OPENAPI_COMMIT}/contracts/cli.yml
+# Merge all API contracts into a single file to drive codegen.
+docker run --rm -it -u "$(id -u):$(id -g)" \
+  -v "${API_DIR}":/api \
+  ${MERGE_DOCKER_IMG} \
+  swagger-cli bundle /api/contract/cli.yml \
+  --outfile /api/cli.yml \
+  --type yaml
 
 # Run the generator - This produces many more files than we want to track in git.
 docker run --rm -it -u "$(id -u):$(id -g)" \
