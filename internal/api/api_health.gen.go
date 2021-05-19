@@ -174,13 +174,6 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 			newErr.model = &v
 			return localVarReturnValue, newErr
 		}
-		var v Error
-		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-		if err != nil {
-			newErr.error = err.Error()
-			return localVarReturnValue, newErr
-		}
-		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
 

@@ -41,6 +41,7 @@ var app = cli.App{
 		newQueryCmd(),
 		newConfigCmd(),
 		newOrgCmd(),
+		newDeleteCmd(),
 	},
 }
 
