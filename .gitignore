@@ -15,5 +15,6 @@ bin/
 # Dependency directories
 vendor/
 
-# Docs copied from our openapi repo
+# Docs generated from our openapi repo
 internal/api/cli.yml
+internal/api/cli.gen.yml
