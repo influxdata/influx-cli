@@ -16,6 +16,7 @@ func newOrgCmd() *cli.Command {
 			newOrgCreateCmd(),
 			newOrgDeleteCmd(),
 			newOrgListCmd(),
+			newOrgMembersCmd(),
 			newOrgUpdateCmd(),
 		},
 	}

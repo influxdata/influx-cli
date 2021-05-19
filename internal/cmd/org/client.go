@@ -8,6 +8,7 @@ import (
 type Client struct {
 	cmd.CLI
 	api.OrganizationsApi
+	api.UsersApi
 }
 
 type printOrgOpts struct {

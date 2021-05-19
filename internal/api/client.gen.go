@@ -59,6 +59,8 @@ type APIClient struct {
 
 	SetupApi SetupApi
 
+	UsersApi UsersApi
+
 	WriteApi WriteApi
 }
 
@@ -84,6 +86,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.OrganizationsApi = (*OrganizationsApiService)(&c.common)
 	c.QueryApi = (*QueryApiService)(&c.common)
 	c.SetupApi = (*SetupApiService)(&c.common)
+	c.UsersApi = (*UsersApiService)(&c.common)
 	c.WriteApi = (*WriteApiService)(&c.common)
 
 	return c
