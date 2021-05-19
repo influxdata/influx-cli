@@ -47,6 +47,9 @@ components:
       $ref: "./openapi/src/common/parameters/After.yml"
     Descending:
       $ref: "./openapi/src/common/parameters/Descending.yml"
+  responses:
+    ServerError:
+      $ref: "./openapi/src/common/responses/ServerError.yml"
   schemas:
     Error:
       $ref: "./openapi/src/common/schemas/Error.yml"
