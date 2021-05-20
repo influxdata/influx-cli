@@ -330,6 +330,62 @@ func TestClient_Create(t *testing.T) {
 
 func TestClient_Delete(t *testing.T) {
 	t.Parallel()
+
+	testCases := []struct {
+		name     string
+		notFound bool
+	}{
+		{
+			name: "delete existing",
+		},
+		{
+			name:     "delete non-existing",
+			notFound: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			userApi := mock.NewMockUsersApi(ctrl)
+
+			stdout := bytes.Buffer{}
+			stdio := mock.NewMockStdIO(ctrl)
+			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(stdout.Write).AnyTimes()
+
+			cli := user.Client{CLI: cmd.CLI{StdIO: stdio}, UsersApi: userApi}
+
+			getReq := api.ApiGetUsersIDRequest{ApiService: userApi}.UserID(id2.String())
+			userApi.EXPECT().GetUsersID(gomock.Any(), gomock.Eq(id2.String())).Return(getReq)
+			userApi.EXPECT().GetUsersIDExecute(gomock.Eq(getReq)).
+				DoAndReturn(func(api.ApiGetUsersIDRequest) (api.UserResponse, error) {
+					if tc.notFound {
+						return api.UserResponse{}, &api.Error{Code: api.ERRORCODE_NOT_FOUND}
+					}
+					return api.UserResponse{Id: api.PtrString(id2.String()), Name: "my-user"}, nil
+				})
+
+			if tc.notFound {
+				require.Error(t, cli.Delete(context.Background(), id2))
+				require.Empty(t, stdout.String())
+				return
+			}
+
+			delReq := api.ApiDeleteUsersIDRequest{ApiService: userApi}.UserID(id2.String())
+			userApi.EXPECT().DeleteUsersID(gomock.Any(), gomock.Eq(id2.String())).Return(delReq)
+			userApi.EXPECT().DeleteUsersIDExecute(delReq).Return(nil)
+
+			err := cli.Delete(context.Background(), id2)
+			require.NoError(t, err)
+			testutils.MatchLines(t, []string{
+				`ID\s+Name\s+Deleted`,
+				`2222222222222222\s+my-user\s+true`,
+			}, strings.Split(stdout.String(), "\n"))
+		})
+	}
 }
 
 func TestClient_List(t *testing.T) {
