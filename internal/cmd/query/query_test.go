@@ -164,7 +164,7 @@ func TestQuery(t *testing.T) {
 				OrgParams: cmd.OrgParams{},
 				Query:     fakeQuery.Query,
 			},
-			expectInErr: query.ErrMustSpecifyOrg.Error(),
+			expectInErr: cmd.ErrMustSpecifyOrg.Error(),
 		},
 		{
 			name: "with profilers",

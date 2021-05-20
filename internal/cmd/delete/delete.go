@@ -22,14 +22,11 @@ type Params struct {
 	Stop      string
 }
 
-var (
-	ErrMustSpecifyOrg    = errors.New("must specify org ID or org name")
-	ErrMustSpecifyBucket = errors.New("must specify bucket ID or bucket name")
-)
+var ErrMustSpecifyBucket = errors.New("must specify bucket ID or bucket name")
 
 func (c Client) Delete(ctx context.Context, params *Params) error {
 	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return ErrMustSpecifyOrg
+		return cmd.ErrMustSpecifyOrg
 	}
 	if !params.BucketID.Valid() && params.BucketName == "" {
 		return ErrMustSpecifyBucket

@@ -28,6 +28,11 @@ func (t *terminalStdio) Write(p []byte) (int, error) {
 	return t.Stdout.Write(p)
 }
 
+// WriteErr prints some bytes to stderr.
+func (t *terminalStdio) WriteErr(p []byte) (int, error) {
+	return t.Stderr.Write(p)
+}
+
 type bannerTemplateData struct {
 	Message string
 }

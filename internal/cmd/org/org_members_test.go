@@ -121,7 +121,7 @@ func TestClient_AddMember(t *testing.T) {
 		},
 		{
 			name:        "missing org",
-			expectedErr: org.ErrMustSpecifyOrg.Error(),
+			expectedErr: cmd.ErrMustSpecifyOrg.Error(),
 		},
 	}
 
@@ -290,7 +290,7 @@ func TestClient_ListMembers(t *testing.T) {
 		},
 		{
 			name:        "missing org",
-			expectedErr: org.ErrMustSpecifyOrg.Error(),
+			expectedErr: cmd.ErrMustSpecifyOrg.Error(),
 		},
 	}
 
@@ -416,7 +416,7 @@ func TestClient_RemoveMembers(t *testing.T) {
 		},
 		{
 			name:        "missing org",
-			expectedErr: org.ErrMustSpecifyOrg.Error(),
+			expectedErr: cmd.ErrMustSpecifyOrg.Error(),
 		},
 	}
 

@@ -155,7 +155,7 @@ func TestClient_Delete(t *testing.T) {
 		},
 		{
 			name:        "no org",
-			expectedErr: delete.ErrMustSpecifyOrg.Error(),
+			expectedErr: cmd.ErrMustSpecifyOrg.Error(),
 		},
 		{
 			name:           "no bucket",

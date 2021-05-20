@@ -14,30 +14,30 @@ import (
 	"encoding/json"
 )
 
-// ResourceMembersLinks struct for ResourceMembersLinks
-type ResourceMembersLinks struct {
+// UsersLinks struct for UsersLinks
+type UsersLinks struct {
 	Self *string `json:"self,omitempty"`
 }
 
-// NewResourceMembersLinks instantiates a new ResourceMembersLinks object
+// NewUsersLinks instantiates a new UsersLinks object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewResourceMembersLinks() *ResourceMembersLinks {
-	this := ResourceMembersLinks{}
+func NewUsersLinks() *UsersLinks {
+	this := UsersLinks{}
 	return &this
 }
 
-// NewResourceMembersLinksWithDefaults instantiates a new ResourceMembersLinks object
+// NewUsersLinksWithDefaults instantiates a new UsersLinks object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewResourceMembersLinksWithDefaults() *ResourceMembersLinks {
-	this := ResourceMembersLinks{}
+func NewUsersLinksWithDefaults() *UsersLinks {
+	this := UsersLinks{}
 	return &this
 }
 
 // GetSelf returns the Self field value if set, zero value otherwise.
-func (o *ResourceMembersLinks) GetSelf() string {
+func (o *UsersLinks) GetSelf() string {
 	if o == nil || o.Self == nil {
 		var ret string
 		return ret
@@ -47,7 +47,7 @@ func (o *ResourceMembersLinks) GetSelf() string {
 
 // GetSelfOk returns a tuple with the Self field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ResourceMembersLinks) GetSelfOk() (*string, bool) {
+func (o *UsersLinks) GetSelfOk() (*string, bool) {
 	if o == nil || o.Self == nil {
 		return nil, false
 	}
@@ -55,7 +55,7 @@ func (o *ResourceMembersLinks) GetSelfOk() (*string, bool) {
 }
 
 // HasSelf returns a boolean if a field has been set.
-func (o *ResourceMembersLinks) HasSelf() bool {
+func (o *UsersLinks) HasSelf() bool {
 	if o != nil && o.Self != nil {
 		return true
 	}
@@ -64,11 +64,11 @@ func (o *ResourceMembersLinks) HasSelf() bool {
 }
 
 // SetSelf gets a reference to the given string and assigns it to the Self field.
-func (o *ResourceMembersLinks) SetSelf(v string) {
+func (o *UsersLinks) SetSelf(v string) {
 	o.Self = &v
 }
 
-func (o ResourceMembersLinks) MarshalJSON() ([]byte, error) {
+func (o UsersLinks) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Self != nil {
 		toSerialize["self"] = o.Self
@@ -76,38 +76,38 @@ func (o ResourceMembersLinks) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-type NullableResourceMembersLinks struct {
-	value *ResourceMembersLinks
+type NullableUsersLinks struct {
+	value *UsersLinks
 	isSet bool
 }
 
-func (v NullableResourceMembersLinks) Get() *ResourceMembersLinks {
+func (v NullableUsersLinks) Get() *UsersLinks {
 	return v.value
 }
 
-func (v *NullableResourceMembersLinks) Set(val *ResourceMembersLinks) {
+func (v *NullableUsersLinks) Set(val *UsersLinks) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableResourceMembersLinks) IsSet() bool {
+func (v NullableUsersLinks) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableResourceMembersLinks) Unset() {
+func (v *NullableUsersLinks) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableResourceMembersLinks(val *ResourceMembersLinks) *NullableResourceMembersLinks {
-	return &NullableResourceMembersLinks{value: val, isSet: true}
+func NewNullableUsersLinks(val *UsersLinks) *NullableUsersLinks {
+	return &NullableUsersLinks{value: val, isSet: true}
 }
 
-func (v NullableResourceMembersLinks) MarshalJSON() ([]byte, error) {
+func (v NullableUsersLinks) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableResourceMembersLinks) UnmarshalJSON(src []byte) error {
+func (v *NullableUsersLinks) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

@@ -3,6 +3,8 @@ package bucket
 import (
 	"context"
 	"fmt"
+
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 )
 
 type BucketsListParams struct {
@@ -14,7 +16,7 @@ type BucketsListParams struct {
 
 func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return ErrMustSpecifyOrg
+		return cmd.ErrMustSpecifyOrg
 	}
 
 	req := c.GetBuckets(ctx)

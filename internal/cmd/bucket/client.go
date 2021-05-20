@@ -1,7 +1,7 @@
 package bucket
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/internal/api"
@@ -10,11 +10,7 @@ import (
 
 const InfiniteRetention = 0
 
-var (
-	ErrMustSpecifyOrg             = errors.New("must specify org ID or org name")
-	ErrMustSpecifyOrgDeleteByName = errors.New("must specify org ID or org name when deleting bucket by name")
-	ErrMustSpecifyBucket          = errors.New("must specify bucket ID or bucket name")
-)
+var ErrMustSpecifyOrgDeleteByName = fmt.Errorf("%s when deleting a bucket by name", cmd.ErrMustSpecifyOrg)
 
 type Client struct {
 	cmd.CLI

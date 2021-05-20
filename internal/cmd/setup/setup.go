@@ -16,13 +16,10 @@ import (
 )
 
 var (
-	ErrPasswordIsTooShort = errors.New("password is too short")
 	ErrAlreadySetUp       = errors.New("instance has already been set up")
 	ErrConfigNameRequired = errors.New("config name is required if you already have existing configs")
 	ErrSetupCanceled      = errors.New("setup was canceled")
 )
-
-const MinPasswordLen = 8
 
 type Client struct {
 	cmd.CLI
@@ -124,8 +121,8 @@ func (c Client) validateNoNameCollision(configName string) error {
 // Unless the 'force' parameter is set, the user will be prompted to enter any missing information
 // and to confirm the final request parameters.
 func (c Client) onboardingRequest(params *Params) (req api.OnboardingRequest, err error) {
-	if (params.Force || params.Password != "") && len(params.Password) < MinPasswordLen {
-		return req, ErrPasswordIsTooShort
+	if (params.Force || params.Password != "") && len(params.Password) < cmd.MinPasswordLen {
+		return req, cmd.ErrPasswordIsTooShort
 	}
 
 	// Populate the request with CLI args.
@@ -168,7 +165,7 @@ func (c Client) onboardingRequest(params *Params) (req api.OnboardingRequest, er
 	}
 	if params.Password == "" {
 		for {
-			pass1, err := c.StdIO.GetPassword("Please type your password", MinPasswordLen)
+			pass1, err := c.StdIO.GetPassword("Please type your password", cmd.MinPasswordLen)
 			if err != nil {
 				return req, err
 			}

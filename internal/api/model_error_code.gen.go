@@ -20,18 +20,19 @@ type ErrorCode string
 
 // List of ErrorCode
 const (
-	ERRORCODE_INTERNAL_ERROR       ErrorCode = "internal error"
-	ERRORCODE_NOT_FOUND            ErrorCode = "not found"
-	ERRORCODE_CONFLICT             ErrorCode = "conflict"
-	ERRORCODE_INVALID              ErrorCode = "invalid"
-	ERRORCODE_UNPROCESSABLE_ENTITY ErrorCode = "unprocessable entity"
-	ERRORCODE_EMPTY_VALUE          ErrorCode = "empty value"
-	ERRORCODE_UNAVAILABLE          ErrorCode = "unavailable"
-	ERRORCODE_FORBIDDEN            ErrorCode = "forbidden"
-	ERRORCODE_TOO_MANY_REQUESTS    ErrorCode = "too many requests"
-	ERRORCODE_UNAUTHORIZED         ErrorCode = "unauthorized"
-	ERRORCODE_METHOD_NOT_ALLOWED   ErrorCode = "method not allowed"
-	ERRORCODE_REQUEST_TOO_LARGE    ErrorCode = "request too large"
+	ERRORCODE_INTERNAL_ERROR         ErrorCode = "internal error"
+	ERRORCODE_NOT_FOUND              ErrorCode = "not found"
+	ERRORCODE_CONFLICT               ErrorCode = "conflict"
+	ERRORCODE_INVALID                ErrorCode = "invalid"
+	ERRORCODE_UNPROCESSABLE_ENTITY   ErrorCode = "unprocessable entity"
+	ERRORCODE_EMPTY_VALUE            ErrorCode = "empty value"
+	ERRORCODE_UNAVAILABLE            ErrorCode = "unavailable"
+	ERRORCODE_FORBIDDEN              ErrorCode = "forbidden"
+	ERRORCODE_TOO_MANY_REQUESTS      ErrorCode = "too many requests"
+	ERRORCODE_UNAUTHORIZED           ErrorCode = "unauthorized"
+	ERRORCODE_METHOD_NOT_ALLOWED     ErrorCode = "method not allowed"
+	ERRORCODE_REQUEST_TOO_LARGE      ErrorCode = "request too large"
+	ERRORCODE_UNSUPPORTED_MEDIA_TYPE ErrorCode = "unsupported media type"
 )
 
 func (v *ErrorCode) UnmarshalJSON(src []byte) error {
@@ -41,7 +42,7 @@ func (v *ErrorCode) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := ErrorCode(value)
-	for _, existing := range []ErrorCode{"internal error", "not found", "conflict", "invalid", "unprocessable entity", "empty value", "unavailable", "forbidden", "too many requests", "unauthorized", "method not allowed", "request too large"} {
+	for _, existing := range []ErrorCode{"internal error", "not found", "conflict", "invalid", "unprocessable entity", "empty value", "unavailable", "forbidden", "too many requests", "unauthorized", "method not allowed", "request too large", "unsupported media type"} {
 		if existing == enumTypeValue {
 			*v = enumTypeValue
 			return nil
