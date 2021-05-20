@@ -33,6 +33,8 @@ paths:
     $ref: "./overrides/paths/query.yml"
   /users/{userID}:
     $ref: "./openapi/src/common/paths/users_userID.yml"
+  /delete:
+    $ref: "./openapi/src/common/paths/delete.yml"
 components:
   parameters:
     TraceSpan:
@@ -45,6 +47,9 @@ components:
       $ref: "./openapi/src/common/parameters/After.yml"
     Descending:
       $ref: "./openapi/src/common/parameters/Descending.yml"
+  responses:
+    ServerError:
+      $ref: "./openapi/src/common/responses/ServerError.yml"
   schemas:
     Error:
       $ref: "./openapi/src/common/schemas/Error.yml"
@@ -134,3 +139,5 @@ components:
       $ref: "./openapi/src/common/schemas/Dialect.yml"
     Extern:
       $ref: "./overrides/schemas/Extern.yml"
+    DeletePredicateRequest:
+      $ref: "./openapi/src/common/schemas/DeletePredicateRequest.yml"

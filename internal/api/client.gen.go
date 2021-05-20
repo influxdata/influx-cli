@@ -51,6 +51,8 @@ type APIClient struct {
 
 	BucketsApi BucketsApi
 
+	DeleteApi DeleteApi
+
 	HealthApi HealthApi
 
 	OrganizationsApi OrganizationsApi
@@ -82,6 +84,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	// API Services
 	c.BucketSchemasApi = (*BucketSchemasApiService)(&c.common)
 	c.BucketsApi = (*BucketsApiService)(&c.common)
+	c.DeleteApi = (*DeleteApiService)(&c.common)
 	c.HealthApi = (*HealthApiService)(&c.common)
 	c.OrganizationsApi = (*OrganizationsApiService)(&c.common)
 	c.QueryApi = (*QueryApiService)(&c.common)

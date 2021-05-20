@@ -17,7 +17,7 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   -v "${API_DIR}":/api \
   ${MERGE_DOCKER_IMG} \
   swagger-cli bundle /api/contract/cli.yml \
-  --outfile /api/cli.yml \
+  --outfile /api/cli.gen.yml \
   --type yaml
 
 # Run the generator - This produces many more files than we want to track in git.
@@ -26,7 +26,7 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   ${GENERATOR_DOCKER_IMG} \
   generate \
   -g go \
-  -i /api/cli.yml \
+  -i /api/cli.gen.yml \
   -o /api \
   -t /api/templates \
   --additional-properties packageName=api,enumClassPrefix=true,generateInterfaces=true
