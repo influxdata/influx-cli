@@ -390,6 +390,84 @@ func TestClient_Delete(t *testing.T) {
 
 func TestClient_List(t *testing.T) {
 	t.Parallel()
+
+	testCases := []struct {
+		name                 string
+		params               user.ListParams
+		registerExpectations func(*testing.T, *mock.MockUsersApi)
+		outLines             []string
+	}{
+		{
+			name: "no results",
+			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
+				usersApi.EXPECT().GetUsers(gomock.Any()).Return(api.ApiGetUsersRequest{ApiService: usersApi})
+				usersApi.EXPECT().GetUsersExecute(gomock.Any()).Return(api.Users{}, nil)
+			},
+		},
+		{
+			name: "many results",
+			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
+				usersApi.EXPECT().GetUsers(gomock.Any()).Return(api.ApiGetUsersRequest{ApiService: usersApi})
+				usersApi.EXPECT().GetUsersExecute(gomock.Any()).Return(api.Users{
+					Users: &[]api.UserResponse{
+						{Id: api.PtrString("123"), Name: "user1"},
+						{Id: api.PtrString("456"), Name: "user2"},
+					},
+				}, nil)
+			},
+			outLines: []string{`123\s+user1`, `456\s+user2`},
+		},
+		{
+			name: "by name",
+			params: user.ListParams{Name: "user1"},
+			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
+				usersApi.EXPECT().GetUsers(gomock.Any()).Return(api.ApiGetUsersRequest{ApiService: usersApi})
+				usersApi.EXPECT().GetUsersExecute(tmock.MatchedBy(func(in api.ApiGetUsersRequest) bool {
+					return assert.Equal(t, "user1", *in.GetName()) && assert.Nil(t, in.GetId())
+				})).Return(api.Users{
+					Users: &[]api.UserResponse{
+						{Id: api.PtrString("123"), Name: "user1"},
+					},
+				}, nil)
+			},
+			outLines: []string{`123\s+user1`},
+		},
+		{
+			name: "by ID",
+			params: user.ListParams{Id: id2},
+			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
+				usersApi.EXPECT().GetUsers(gomock.Any()).Return(api.ApiGetUsersRequest{ApiService: usersApi})
+				usersApi.EXPECT().GetUsersExecute(tmock.MatchedBy(func(in api.ApiGetUsersRequest) bool {
+					return assert.Equal(t, id2.String(), *in.GetId()) && assert.Nil(t, in.GetName())
+				})).Return(api.Users{
+					Users: &[]api.UserResponse{
+						{Id: api.PtrString(id2.String()), Name: "user11"},
+					},
+				}, nil)
+			},
+			outLines: []string{`2222222222222222\s+user11`},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			userApi := mock.NewMockUsersApi(ctrl)
+			if tc.registerExpectations != nil {
+				tc.registerExpectations(t, userApi)
+			}
+			stdout := bytes.Buffer{}
+			stdio := mock.NewMockStdIO(ctrl)
+			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(stdout.Write).AnyTimes()
+
+			cli := user.Client{CLI: cmd.CLI{StdIO: stdio}, UsersApi: userApi}
+			require.NoError(t, cli.List(context.Background(), &tc.params))
+			testutils.MatchLines(t, append([]string{`ID\s+Name`}, tc.outLines...), strings.Split(stdout.String(), "\n"))
+		})
+	}
 }
 
 func TestClient_Update(t *testing.T) {
