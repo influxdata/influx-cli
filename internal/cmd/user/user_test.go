@@ -497,4 +497,95 @@ func TestClient_Update(t *testing.T) {
 
 func TestClient_SetPassword(t *testing.T) {
 	t.Parallel()
+
+	testCases := []struct {
+		name                 string
+		params               user.SetPasswordParams
+		registerExpectations func(*testing.T, *mock.MockUsersApi)
+		noExpectAsk          bool
+		expectedErr          string
+	}{
+		{
+			name: "by ID",
+			params: user.SetPasswordParams{
+				Id: id2,
+			},
+			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
+				usersApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
+					Return(api.ApiPostUsersIDPasswordRequest{ApiService: usersApi}.UserID(id2.String()))
+				usersApi.EXPECT().PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
+					body := in.GetPasswordResetBody()
+					return assert.NotNil(t, body) &&
+						assert.Equal(t, id2.String(), in.GetUserID()) &&
+						assert.Equal(t, "mypassword", body.GetPassword())
+				})).Return(nil)
+			},
+		},
+		{
+			name: "by name",
+			params: user.SetPasswordParams{
+				Name: "my-user",
+			},
+			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
+				usersApi.EXPECT().GetUsers(gomock.Any()).Return(api.ApiGetUsersRequest{ApiService: usersApi})
+				usersApi.EXPECT().GetUsersExecute(tmock.MatchedBy(func(in api.ApiGetUsersRequest) bool {
+					return assert.Equal(t, "my-user", *in.GetName())
+				})).Return(api.Users{Users: &[]api.UserResponse{{Id: api.PtrString(id2.String())}}}, nil)
+
+				usersApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
+					Return(api.ApiPostUsersIDPasswordRequest{ApiService: usersApi}.UserID(id2.String()))
+				usersApi.EXPECT().PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
+					body := in.GetPasswordResetBody()
+					return assert.NotNil(t, body) &&
+						assert.Equal(t, id2.String(), in.GetUserID()) &&
+						assert.Equal(t, "mypassword", body.GetPassword())
+				})).Return(nil)
+			},
+		},
+		{
+			name: "user not found",
+			params: user.SetPasswordParams{
+				Name: "my-user",
+			},
+			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
+				usersApi.EXPECT().GetUsers(gomock.Any()).Return(api.ApiGetUsersRequest{ApiService: usersApi})
+				usersApi.EXPECT().GetUsersExecute(tmock.MatchedBy(func(in api.ApiGetUsersRequest) bool {
+					return assert.Equal(t, "my-user", *in.GetName())
+				})).Return(api.Users{}, nil)
+			},
+			noExpectAsk: true,
+			expectedErr: "no user found",
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctrl := gomock.NewController(t)
+			userApi := mock.NewMockUsersApi(ctrl)
+			if tc.registerExpectations != nil {
+				tc.registerExpectations(t, userApi)
+			}
+
+			stdout := bytes.Buffer{}
+			stdio := mock.NewMockStdIO(ctrl)
+			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(stdout.Write).AnyTimes()
+			if !tc.noExpectAsk {
+				stdio.EXPECT().GetPassword(gomock.Any(), gomock.Any()).Return("mypassword", nil).Times(2)
+			}
+
+			cli := user.Client{CLI: cmd.CLI{StdIO: stdio}, UsersApi: userApi}
+			err := cli.SetPassword(context.Background(), &tc.params)
+
+			if tc.expectedErr != "" {
+				require.Error(t, err)
+				require.Contains(t, err.Error(), tc.expectedErr)
+				return
+			}
+			require.NoError(t, err)
+			require.Contains(t, stdout.String(), "Successfully updated password")
+		})
+	}
 }
