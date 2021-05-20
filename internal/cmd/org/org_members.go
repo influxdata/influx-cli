@@ -2,14 +2,12 @@ package org
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 )
-
-var ErrMustSpecifyOrg = errors.New("must specify org ID or org name")
 
 type AddMemberParams struct {
 	MemberId influxid.ID
@@ -19,7 +17,7 @@ type AddMemberParams struct {
 
 func (c Client) AddMember(ctx context.Context, params *AddMemberParams) (err error) {
 	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return ErrMustSpecifyOrg
+		return cmd.ErrMustSpecifyOrg
 	}
 
 	orgID := params.OrgID.String()
@@ -49,7 +47,7 @@ const maxConcurrentGetUserRequests = 10
 
 func (c Client) ListMembers(ctx context.Context, params *ListMemberParams) (err error) {
 	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return ErrMustSpecifyOrg
+		return cmd.ErrMustSpecifyOrg
 	}
 
 	orgID := params.OrgID.String()
@@ -128,7 +126,7 @@ type RemoveMemberParams struct {
 
 func (c Client) RemoveMember(ctx context.Context, params *RemoveMemberParams) (err error) {
 	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return ErrMustSpecifyOrg
+		return cmd.ErrMustSpecifyOrg
 	}
 
 	orgID := params.OrgID.String()

@@ -22,14 +22,11 @@ type CreateParams struct {
 	Password string
 }
 
-var (
-	ErrMustSpecifyOrg  = errors.New("must specify org ID or org name")
-	ErrMustSpecifyUser = errors.New("must specify user ID or user name")
-)
+var ErrMustSpecifyUser = errors.New("must specify user ID or user name")
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return ErrMustSpecifyOrg
+		return cmd.ErrMustSpecifyOrg
 	}
 	if params.Password != "" && len(params.Password) < cmd.MinPasswordLen {
 		return cmd.ErrPasswordIsTooShort

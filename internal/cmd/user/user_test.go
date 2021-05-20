@@ -196,7 +196,7 @@ func TestClient_Create(t *testing.T) {
 				Name:     "my-user",
 				Password: "my-password",
 			},
-			expectedErr: user.ErrMustSpecifyOrg.Error(),
+			expectedErr: cmd.ErrMustSpecifyOrg.Error(),
 		},
 		{
 			name: "org not found",

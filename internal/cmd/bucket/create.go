@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
 )
 
@@ -21,7 +22,7 @@ type BucketsCreateParams struct {
 
 func (c Client) Create(ctx context.Context, params *BucketsCreateParams) error {
 	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return ErrMustSpecifyOrg
+		return cmd.ErrMustSpecifyOrg
 	}
 
 	rp, err := duration.RawDurationToTimeDuration(params.Retention)

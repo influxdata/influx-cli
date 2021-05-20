@@ -2,15 +2,12 @@ package query
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/cmd"
 )
-
-var ErrMustSpecifyOrg = errors.New("must specify org ID or org name")
 
 type ResultPrinter interface {
 	PrintQueryResults(resultStream io.ReadCloser, out io.Writer) error
@@ -124,7 +121,7 @@ func BuildExternAST(profilers []string) *api.Extern {
 
 func (c Client) Query(ctx context.Context, params *Params) error {
 	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return ErrMustSpecifyOrg
+		return cmd.ErrMustSpecifyOrg
 	}
 
 	query := BuildDefaultAST(params.Query)

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"errors"
 
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/stdio"
@@ -10,8 +9,6 @@ import (
 )
 
 const MinPasswordLen = 8
-
-var ErrPasswordIsTooShort = errors.New("password is too short")
 
 // CLI is a container for common functionality used to execute commands.
 type CLI struct {

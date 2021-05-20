@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/internal/cmd"
 )
 
 type BucketsDeleteParams struct {
@@ -16,7 +17,7 @@ type BucketsDeleteParams struct {
 
 func (c Client) Delete(ctx context.Context, params *BucketsDeleteParams) error {
 	if params.ID == "" && params.Name == "" {
-		return ErrMustSpecifyBucket
+		return cmd.ErrMustSpecifyBucket
 	}
 
 	var bucket api.Bucket
