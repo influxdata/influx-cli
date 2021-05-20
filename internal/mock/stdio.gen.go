@@ -119,3 +119,18 @@ func (mr *MockStdIOMockRecorder) Write(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Write", reflect.TypeOf((*MockStdIO)(nil).Write), arg0)
 }
+
+// WriteErr mocks base method.
+func (m *MockStdIO) WriteErr(arg0 []byte) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WriteErr", arg0)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// WriteErr indicates an expected call of WriteErr.
+func (mr *MockStdIOMockRecorder) WriteErr(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WriteErr", reflect.TypeOf((*MockStdIO)(nil).WriteErr), arg0)
+}

@@ -31,8 +31,12 @@ paths:
     $ref: "./openapi/src/cloud/paths/measurements_measurementID.yml"
   /query:
     $ref: "./overrides/paths/query.yml"
+  /users:
+    $ref: "./openapi/src/common/paths/users.yml"
   /users/{userID}:
     $ref: "./openapi/src/common/paths/users_userID.yml"
+  "/users/{userID}/password":
+    $ref: "./openapi/src/common/paths/users_userID_password.yml"
   /delete:
     $ref: "./openapi/src/common/paths/delete.yml"
 components:
@@ -63,10 +67,14 @@ components:
       $ref: "./openapi/src/common/schemas/OnboardingRequest.yml"
     OnboardingResponse:
       $ref: "./openapi/src/common/schemas/OnboardingResponse.yml"
+    Users:
+      $ref: "./openapi/src/common/schemas/Users.yml"
     User:
       $ref: "./openapi/src/common/schemas/User.yml"
     UserResponse:
       $ref: "./openapi/src/common/schemas/UserResponse.yml"
+    PasswordResetBody:
+      $ref: "./openapi/src/common/schemas/PasswordResetBody.yml"
     Links:
       $ref: "./openapi/src/common/schemas/Links.yml"
     Link:

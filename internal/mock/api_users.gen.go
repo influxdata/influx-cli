@@ -63,6 +63,35 @@ func (mr *MockUsersApiMockRecorder) DeleteUsersIDExecute(arg0 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUsersIDExecute", reflect.TypeOf((*MockUsersApi)(nil).DeleteUsersIDExecute), arg0)
 }
 
+// GetUsers mocks base method.
+func (m *MockUsersApi) GetUsers(arg0 context.Context) api.ApiGetUsersRequest {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUsers", arg0)
+	ret0, _ := ret[0].(api.ApiGetUsersRequest)
+	return ret0
+}
+
+// GetUsers indicates an expected call of GetUsers.
+func (mr *MockUsersApiMockRecorder) GetUsers(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockUsersApi)(nil).GetUsers), arg0)
+}
+
+// GetUsersExecute mocks base method.
+func (m *MockUsersApi) GetUsersExecute(arg0 api.ApiGetUsersRequest) (api.Users, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUsersExecute", arg0)
+	ret0, _ := ret[0].(api.Users)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUsersExecute indicates an expected call of GetUsersExecute.
+func (mr *MockUsersApiMockRecorder) GetUsersExecute(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsersExecute", reflect.TypeOf((*MockUsersApi)(nil).GetUsersExecute), arg0)
+}
+
 // GetUsersID mocks base method.
 func (m *MockUsersApi) GetUsersID(arg0 context.Context, arg1 string) api.ApiGetUsersIDRequest {
 	m.ctrl.T.Helper()
@@ -119,4 +148,61 @@ func (m *MockUsersApi) PatchUsersIDExecute(arg0 api.ApiPatchUsersIDRequest) (api
 func (mr *MockUsersApiMockRecorder) PatchUsersIDExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchUsersIDExecute", reflect.TypeOf((*MockUsersApi)(nil).PatchUsersIDExecute), arg0)
+}
+
+// PostUsers mocks base method.
+func (m *MockUsersApi) PostUsers(arg0 context.Context) api.ApiPostUsersRequest {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostUsers", arg0)
+	ret0, _ := ret[0].(api.ApiPostUsersRequest)
+	return ret0
+}
+
+// PostUsers indicates an expected call of PostUsers.
+func (mr *MockUsersApiMockRecorder) PostUsers(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostUsers", reflect.TypeOf((*MockUsersApi)(nil).PostUsers), arg0)
+}
+
+// PostUsersExecute mocks base method.
+func (m *MockUsersApi) PostUsersExecute(arg0 api.ApiPostUsersRequest) (api.UserResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostUsersExecute", arg0)
+	ret0, _ := ret[0].(api.UserResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PostUsersExecute indicates an expected call of PostUsersExecute.
+func (mr *MockUsersApiMockRecorder) PostUsersExecute(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostUsersExecute", reflect.TypeOf((*MockUsersApi)(nil).PostUsersExecute), arg0)
+}
+
+// PostUsersIDPassword mocks base method.
+func (m *MockUsersApi) PostUsersIDPassword(arg0 context.Context, arg1 string) api.ApiPostUsersIDPasswordRequest {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostUsersIDPassword", arg0, arg1)
+	ret0, _ := ret[0].(api.ApiPostUsersIDPasswordRequest)
+	return ret0
+}
+
+// PostUsersIDPassword indicates an expected call of PostUsersIDPassword.
+func (mr *MockUsersApiMockRecorder) PostUsersIDPassword(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostUsersIDPassword", reflect.TypeOf((*MockUsersApi)(nil).PostUsersIDPassword), arg0, arg1)
+}
+
+// PostUsersIDPasswordExecute mocks base method.
+func (m *MockUsersApi) PostUsersIDPasswordExecute(arg0 api.ApiPostUsersIDPasswordRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostUsersIDPasswordExecute", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PostUsersIDPasswordExecute indicates an expected call of PostUsersIDPasswordExecute.
+func (mr *MockUsersApiMockRecorder) PostUsersIDPasswordExecute(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostUsersIDPasswordExecute", reflect.TypeOf((*MockUsersApi)(nil).PostUsersIDPasswordExecute), arg0)
 }

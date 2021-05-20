@@ -41,6 +41,19 @@ type UsersApi interface {
 	DeleteUsersIDExecute(r ApiDeleteUsersIDRequest) error
 
 	/*
+	 * GetUsers List all users
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @return ApiGetUsersRequest
+	 */
+	GetUsers(ctx _context.Context) ApiGetUsersRequest
+
+	/*
+	 * GetUsersExecute executes the request
+	 * @return Users
+	 */
+	GetUsersExecute(r ApiGetUsersRequest) (Users, error)
+
+	/*
 	 * GetUsersID Retrieve a user
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param userID The user ID.
@@ -67,6 +80,32 @@ type UsersApi interface {
 	 * @return UserResponse
 	 */
 	PatchUsersIDExecute(r ApiPatchUsersIDRequest) (UserResponse, error)
+
+	/*
+	 * PostUsers Create a user
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @return ApiPostUsersRequest
+	 */
+	PostUsers(ctx _context.Context) ApiPostUsersRequest
+
+	/*
+	 * PostUsersExecute executes the request
+	 * @return UserResponse
+	 */
+	PostUsersExecute(r ApiPostUsersRequest) (UserResponse, error)
+
+	/*
+	 * PostUsersIDPassword Update a password
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param userID The user ID.
+	 * @return ApiPostUsersIDPasswordRequest
+	 */
+	PostUsersIDPassword(ctx _context.Context, userID string) ApiPostUsersIDPasswordRequest
+
+	/*
+	 * PostUsersIDPasswordExecute executes the request
+	 */
+	PostUsersIDPasswordExecute(r ApiPostUsersIDPasswordRequest) error
 }
 
 // usersApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
@@ -214,6 +253,198 @@ func (a *UsersApiService) DeleteUsersIDExecute(r ApiDeleteUsersIDRequest) error 
 	}
 
 	return nil
+}
+
+type ApiGetUsersRequest struct {
+	ctx          _context.Context
+	ApiService   UsersApi
+	zapTraceSpan *string
+	offset       *int32
+	limit        *int32
+	after        *string
+	name         *string
+	id           *string
+}
+
+func (r ApiGetUsersRequest) ZapTraceSpan(zapTraceSpan string) ApiGetUsersRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiGetUsersRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiGetUsersRequest) Offset(offset int32) ApiGetUsersRequest {
+	r.offset = &offset
+	return r
+}
+func (r ApiGetUsersRequest) GetOffset() *int32 {
+	return r.offset
+}
+
+func (r ApiGetUsersRequest) Limit(limit int32) ApiGetUsersRequest {
+	r.limit = &limit
+	return r
+}
+func (r ApiGetUsersRequest) GetLimit() *int32 {
+	return r.limit
+}
+
+func (r ApiGetUsersRequest) After(after string) ApiGetUsersRequest {
+	r.after = &after
+	return r
+}
+func (r ApiGetUsersRequest) GetAfter() *string {
+	return r.after
+}
+
+func (r ApiGetUsersRequest) Name(name string) ApiGetUsersRequest {
+	r.name = &name
+	return r
+}
+func (r ApiGetUsersRequest) GetName() *string {
+	return r.name
+}
+
+func (r ApiGetUsersRequest) Id(id string) ApiGetUsersRequest {
+	r.id = &id
+	return r
+}
+func (r ApiGetUsersRequest) GetId() *string {
+	return r.id
+}
+
+func (r ApiGetUsersRequest) Execute() (Users, error) {
+	return r.ApiService.GetUsersExecute(r)
+}
+
+/*
+ * GetUsers List all users
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiGetUsersRequest
+ */
+func (a *UsersApiService) GetUsers(ctx _context.Context) ApiGetUsersRequest {
+	return ApiGetUsersRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return Users
+ */
+func (a *UsersApiService) GetUsersExecute(r ApiGetUsersRequest) (Users, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  Users
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UsersApiService.GetUsers")
+	if err != nil {
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/users"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	if r.offset != nil {
+		localVarQueryParams.Add("offset", parameterToString(*r.offset, ""))
+	}
+	if r.limit != nil {
+		localVarQueryParams.Add("limit", parameterToString(*r.limit, ""))
+	}
+	if r.after != nil {
+		localVarQueryParams.Add("after", parameterToString(*r.after, ""))
+	}
+	if r.name != nil {
+		localVarQueryParams.Add("name", parameterToString(*r.name, ""))
+	}
+	if r.id != nil {
+		localVarQueryParams.Add("id", parameterToString(*r.id, ""))
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, err
+	}
+
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, err
+		}
+		body = &usersApiGzipReadCloser{underlying: body, gzip: gzr}
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, err
+		}
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarReturnValue, newErr
+		}
+		newErr.model = &v
+		return localVarReturnValue, newErr
+	}
+
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, err
+	}
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, newErr
+	}
+
+	return localVarReturnValue, nil
 }
 
 type ApiGetUsersIDRequest struct {
@@ -516,4 +747,292 @@ func (a *UsersApiService) PatchUsersIDExecute(r ApiPatchUsersIDRequest) (UserRes
 	}
 
 	return localVarReturnValue, nil
+}
+
+type ApiPostUsersRequest struct {
+	ctx          _context.Context
+	ApiService   UsersApi
+	user         *User
+	zapTraceSpan *string
+}
+
+func (r ApiPostUsersRequest) User(user User) ApiPostUsersRequest {
+	r.user = &user
+	return r
+}
+func (r ApiPostUsersRequest) GetUser() *User {
+	return r.user
+}
+
+func (r ApiPostUsersRequest) ZapTraceSpan(zapTraceSpan string) ApiPostUsersRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiPostUsersRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiPostUsersRequest) Execute() (UserResponse, error) {
+	return r.ApiService.PostUsersExecute(r)
+}
+
+/*
+ * PostUsers Create a user
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiPostUsersRequest
+ */
+func (a *UsersApiService) PostUsers(ctx _context.Context) ApiPostUsersRequest {
+	return ApiPostUsersRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return UserResponse
+ */
+func (a *UsersApiService) PostUsersExecute(r ApiPostUsersRequest) (UserResponse, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodPost
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  UserResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UsersApiService.PostUsers")
+	if err != nil {
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/users"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+	if r.user == nil {
+		return localVarReturnValue, reportError("user is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	// body params
+	localVarPostBody = r.user
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, err
+	}
+
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, err
+		}
+		body = &usersApiGzipReadCloser{underlying: body, gzip: gzr}
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, err
+		}
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarReturnValue, newErr
+		}
+		newErr.model = &v
+		return localVarReturnValue, newErr
+	}
+
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, err
+	}
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, newErr
+	}
+
+	return localVarReturnValue, nil
+}
+
+type ApiPostUsersIDPasswordRequest struct {
+	ctx               _context.Context
+	ApiService        UsersApi
+	userID            string
+	passwordResetBody *PasswordResetBody
+	zapTraceSpan      *string
+}
+
+func (r ApiPostUsersIDPasswordRequest) UserID(userID string) ApiPostUsersIDPasswordRequest {
+	r.userID = userID
+	return r
+}
+func (r ApiPostUsersIDPasswordRequest) GetUserID() string {
+	return r.userID
+}
+
+func (r ApiPostUsersIDPasswordRequest) PasswordResetBody(passwordResetBody PasswordResetBody) ApiPostUsersIDPasswordRequest {
+	r.passwordResetBody = &passwordResetBody
+	return r
+}
+func (r ApiPostUsersIDPasswordRequest) GetPasswordResetBody() *PasswordResetBody {
+	return r.passwordResetBody
+}
+
+func (r ApiPostUsersIDPasswordRequest) ZapTraceSpan(zapTraceSpan string) ApiPostUsersIDPasswordRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiPostUsersIDPasswordRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiPostUsersIDPasswordRequest) Execute() error {
+	return r.ApiService.PostUsersIDPasswordExecute(r)
+}
+
+/*
+ * PostUsersIDPassword Update a password
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param userID The user ID.
+ * @return ApiPostUsersIDPasswordRequest
+ */
+func (a *UsersApiService) PostUsersIDPassword(ctx _context.Context, userID string) ApiPostUsersIDPasswordRequest {
+	return ApiPostUsersIDPasswordRequest{
+		ApiService: a,
+		ctx:        ctx,
+		userID:     userID,
+	}
+}
+
+/*
+ * Execute executes the request
+ */
+func (a *UsersApiService) PostUsersIDPasswordExecute(r ApiPostUsersIDPasswordRequest) error {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodPost
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UsersApiService.PostUsersIDPassword")
+	if err != nil {
+		return GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/users/{userID}/password"
+	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+	if r.passwordResetBody == nil {
+		return reportError("passwordResetBody is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	// body params
+	localVarPostBody = r.passwordResetBody
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return err
+	}
+
+	var body _io.ReadCloser = localVarHTTPResponse.Body
+	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
+		gzr, err := _gzip.NewReader(body)
+		if err != nil {
+			body.Close()
+			return err
+		}
+		body = &usersApiGzipReadCloser{underlying: body, gzip: gzr}
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return err
+		}
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = err.Error()
+			return newErr
+		}
+		newErr.model = &v
+		return newErr
+	}
+
+	return nil
 }

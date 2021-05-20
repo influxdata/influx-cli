@@ -261,7 +261,7 @@ func Test_SetupPasswordParamToShort(t *testing.T) {
 		SetupApi: client,
 	}
 	err := cli.Setup(context.Background(), &params)
-	require.Equal(t, setup.ErrPasswordIsTooShort, err)
+	require.Equal(t, cmd.ErrPasswordIsTooShort, err)
 }
 
 func Test_SetupCancelAtConfirmation(t *testing.T) {
