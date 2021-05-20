@@ -418,7 +418,7 @@ func TestClient_List(t *testing.T) {
 			outLines: []string{`123\s+user1`, `456\s+user2`},
 		},
 		{
-			name: "by name",
+			name:   "by name",
 			params: user.ListParams{Name: "user1"},
 			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
 				usersApi.EXPECT().GetUsers(gomock.Any()).Return(api.ApiGetUsersRequest{ApiService: usersApi})
@@ -433,7 +433,7 @@ func TestClient_List(t *testing.T) {
 			outLines: []string{`123\s+user1`},
 		},
 		{
-			name: "by ID",
+			name:   "by ID",
 			params: user.ListParams{Id: id2},
 			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
 				usersApi.EXPECT().GetUsers(gomock.Any()).Return(api.ApiGetUsersRequest{ApiService: usersApi})
@@ -472,6 +472,27 @@ func TestClient_List(t *testing.T) {
 
 func TestClient_Update(t *testing.T) {
 	t.Parallel()
+
+	newName := "my-new-name"
+
+	ctrl := gomock.NewController(t)
+	userApi := mock.NewMockUsersApi(ctrl)
+	userApi.EXPECT().PatchUsersID(gomock.Any(), gomock.Eq(id2.String())).
+		Return(api.ApiPatchUsersIDRequest{ApiService: userApi}.UserID(id2.String()))
+	userApi.EXPECT().PatchUsersIDExecute(tmock.MatchedBy(func(in api.ApiPatchUsersIDRequest) bool {
+		body := in.GetUser()
+		return assert.NotNil(t, body) &&
+			assert.Equal(t, id2.String(), in.GetUserID()) &&
+			assert.Equal(t, newName, body.GetName())
+	})).Return(api.UserResponse{Id: api.PtrString(id2.String()), Name: newName}, nil)
+
+	stdout := bytes.Buffer{}
+	stdio := mock.NewMockStdIO(ctrl)
+	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(stdout.Write).AnyTimes()
+
+	cli := user.Client{CLI: cmd.CLI{StdIO: stdio}, UsersApi: userApi}
+	require.NoError(t, cli.Update(context.Background(), &user.UpdateParmas{Id: id2, Name: newName}))
+	testutils.MatchLines(t, []string{`ID\s+Name`, `2222222222222222\s+my-new-name`}, strings.Split(stdout.String(), "\n"))
 }
 
 func TestClient_SetPassword(t *testing.T) {
