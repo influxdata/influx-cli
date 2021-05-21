@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/task"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
@@ -44,7 +45,7 @@ func newTaskCreateCmd() *cli.Command {
 				TasksApi: api.TasksApi,
 			}
 			var err error
-			params.FluxQuery, err = readQuery(ctx)
+			params.FluxQuery, err = clients.ReadQuery(ctx)
 			if err != nil {
 				return err
 			}

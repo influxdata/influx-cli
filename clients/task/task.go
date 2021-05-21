@@ -41,9 +41,8 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		return err
 	}
 	task, err := c.PostTasks(ctx).TaskCreateRequest(api.TaskCreateRequest{
-		Org:         &org,
-		Flux:        params.FluxQuery,
-		Description: nil,
+		Org:  &org,
+		Flux: params.FluxQuery,
 	}).Execute()
 	if err != nil {
 		return err

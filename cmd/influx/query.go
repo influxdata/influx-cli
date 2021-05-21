@@ -50,7 +50,7 @@ func newQueryCmd() *cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			queryString, err := readQuery(ctx)
+			queryString, err := clients.ReadQuery(ctx)
 			if err != nil {
 				return err
 			}
