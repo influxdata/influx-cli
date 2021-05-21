@@ -97,4 +97,4 @@ test-race:
 	$(GO_TEST) -v -race -count=1 $(GO_TEST_PATHS)
 
 ### List of all targets that don't produce a file
-.PHONY: influx openapi fmt build goreleaser checkfmt checktidy staticcheck vet mock test test-race
+.PHONY: influx openapi fmt build crossbuild goreleaser checkfmt checktidy staticcheck vet mock test test-race
