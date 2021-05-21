@@ -40,10 +40,7 @@ jobs:
   build:
     docker:
       - image: cimg/go:1.16.3
-    resource_class: large
     working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
-    environment:
-      TMPDIR: /mnt/ramdisk
     steps:
       - checkout
       - run: make crossbuild
