@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/influxdata/influx-cli/v2/clients/write"
 	"github.com/influxdata/influx-cli/v2/internal/api"
-	"github.com/influxdata/influx-cli/v2/internal/cmd/write"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )

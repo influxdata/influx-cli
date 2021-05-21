@@ -11,8 +11,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/internal/api"
-	"github.com/influxdata/influx-cli/v2/internal/cmd"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/stdio"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
@@ -33,26 +33,26 @@ const (
 
 // newCli builds a CLI core that reads from stdin, writes to stdout/stderr, manages a local config store,
 // and optionally tracks a trace ID specified over the CLI.
-func newCli(ctx *cli.Context) (cmd.CLI, error) {
+func newCli(ctx *cli.Context) (clients.CLI, error) {
 	configPath := ctx.String(configPathFlagName)
 	var err error
 	if configPath == "" {
 		configPath, err = config.DefaultPath()
 		if err != nil {
-			return cmd.CLI{}, err
+			return clients.CLI{}, err
 		}
 	}
 	configSvc := config.NewLocalConfigService(configPath)
 	var activeConfig config.Config
 	if ctx.IsSet(configNameFlagName) {
 		if activeConfig, err = configSvc.SwitchActive(ctx.String(configNameFlagName)); err != nil {
-			return cmd.CLI{}, err
+			return clients.CLI{}, err
 		}
 	} else if activeConfig, err = configSvc.Active(); err != nil {
-		return cmd.CLI{}, err
+		return clients.CLI{}, err
 	}
 
-	return cmd.CLI{
+	return clients.CLI{
 		StdIO:            stdio.TerminalStdio,
 		PrintAsJSON:      ctx.Bool(printJsonFlagName),
 		HideTableHeaders: ctx.Bool(hideHeadersFlagName),
@@ -61,7 +61,7 @@ func newCli(ctx *cli.Context) (cmd.CLI, error) {
 	}, nil
 }
 
-// newApiClient returns an API client configured to communicate with a remote InfluxDB instance over HTTP.
+// newApiClient returns an API clients configured to communicate with a remote InfluxDB instance over HTTP.
 // Client parameters are pulled from the CLI context.
 func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) (*api.APIClient, error) {
 	cfg, err := configSvc.Active()
@@ -116,8 +116,8 @@ func withCli() cli.BeforeFunc {
 	}
 }
 
-func getCLI(ctx *cli.Context) cmd.CLI {
-	i, ok := ctx.App.Metadata["cli"].(cmd.CLI)
+func getCLI(ctx *cli.Context) clients.CLI {
+	i, ok := ctx.App.Metadata["cli"].(clients.CLI)
 	if !ok {
 		panic("missing CLI")
 	}
@@ -248,7 +248,7 @@ func commonFlags() []cli.Flag {
 
 // getOrgFlags returns flags used by commands that are scoped to a single org, binding
 // the flags to the given params container.
-func getOrgFlags(params *cmd.OrgParams) []cli.Flag {
+func getOrgFlags(params *clients.OrgParams) []cli.Flag {
 	return []cli.Flag{
 		&cli.GenericFlag{
 			Name:    "org-id",
@@ -268,7 +268,7 @@ func getOrgFlags(params *cmd.OrgParams) []cli.Flag {
 
 // getBucketFlags returns flags used by commands that are scoped to a single bucket, binding
 // the flags to the given params container.
-func getBucketFlags(params *cmd.BucketParams) []cli.Flag {
+func getBucketFlags(params *clients.BucketParams) []cli.Flag {
 	return []cli.Flag{
 		&cli.GenericFlag{
 			Name:    "bucket-id",
@@ -287,7 +287,7 @@ func getBucketFlags(params *cmd.BucketParams) []cli.Flag {
 
 // getOrgBucketFlags returns flags used by commands that are scoped to a single org/bucket, binding
 // the flags to the given params container.
-func getOrgBucketFlags(c *cmd.OrgBucketParams) []cli.Flag {
+func getOrgBucketFlags(c *clients.OrgBucketParams) []cli.Flag {
 	return append(getBucketFlags(&c.BucketParams), getOrgFlags(&c.OrgParams)...)
 }
 

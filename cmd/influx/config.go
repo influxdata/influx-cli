@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/influxdata/influx-cli/v2/internal/cmd/config"
+	"github.com/influxdata/influx-cli/v2/clients/config"
 	iconfig "github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/urfave/cli/v2"
 )

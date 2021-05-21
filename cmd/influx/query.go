@@ -4,14 +4,14 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/influxdata/influx-cli/v2/internal/cmd"
-	"github.com/influxdata/influx-cli/v2/internal/cmd/query"
+	"github.com/influxdata/influx-cli/v2/clients"
+	"github.com/influxdata/influx-cli/v2/clients/query"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
 
 func newQueryCmd() *cli.Command {
-	var orgParams cmd.OrgParams
+	var orgParams clients.OrgParams
 	return &cli.Command{
 		Name:        "query",
 		Usage:       "Execute a Flux query",

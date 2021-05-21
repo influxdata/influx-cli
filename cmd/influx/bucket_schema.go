@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/influxdata/influx-cli/v2/internal/cmd"
-	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket_schema"
+	"github.com/influxdata/influx-cli/v2/clients"
+	"github.com/influxdata/influx-cli/v2/clients/bucket_schema"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/urfave/cli/v2"
@@ -26,7 +26,7 @@ func withBucketSchemaClient() cli.BeforeFunc {
 func getBucketSchemaClient(ctx *cli.Context) bucket_schema.Client {
 	i, ok := ctx.App.Metadata["measurement_schema"].(bucket_schema.Client)
 	if !ok {
-		panic("missing measurement schema client")
+		panic("missing measurement schema clients")
 	}
 	return i
 }
@@ -45,7 +45,7 @@ func newBucketSchemaCmd() *cli.Command {
 
 func newBucketSchemaCreateCmd() *cli.Command {
 	var params struct {
-		cmd.OrgBucketParams
+		clients.OrgBucketParams
 		Name           string
 		ColumnsFile    string
 		ColumnsFormat  bucket_schema.ColumnsFormat
@@ -99,7 +99,7 @@ func newBucketSchemaCreateCmd() *cli.Command {
 
 func newBucketSchemaUpdateCmd() *cli.Command {
 	var params struct {
-		cmd.OrgBucketParams
+		clients.OrgBucketParams
 		ID             influxid.ID
 		Name           string
 		ColumnsFile    string

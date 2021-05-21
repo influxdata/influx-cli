@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/influxdata/influx-cli/v2/internal/cmd/user"
+	"github.com/influxdata/influx-cli/v2/clients/user"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/urfave/cli/v2"
