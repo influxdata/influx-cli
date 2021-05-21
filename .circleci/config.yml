@@ -44,8 +44,8 @@ jobs:
     steps:
       - checkout
       - run: make crossbuild
-    store_artifacts:
-      path: dist/influx*
+      - store_artifacts:
+          path: dist/influx*
 
   test:
     docker:
