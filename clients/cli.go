@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	"github.com/influxdata/influx-cli/v2/internal/config"
-	"github.com/influxdata/influx-cli/v2/internal/stdio"
 	"github.com/influxdata/influx-cli/v2/internal/tabwriter"
+	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 )
 
 const MinPasswordLen = 8

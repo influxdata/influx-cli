@@ -14,8 +14,8 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
-	"github.com/influxdata/influx-cli/v2/internal/stdio"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
+	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 	"github.com/urfave/cli/v2"
 )
 
