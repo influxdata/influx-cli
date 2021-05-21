@@ -24,17 +24,13 @@ type CreateParams struct {
 
 var ErrMustSpecifyUser = errors.New("must specify user ID or user name")
 
-func (c Client) Create(ctx context.Context, params *CreateParams) error {
+func getOrgID(ctx context.Context, params *cmd.OrgParams, c cmd.CLI, orgApi api.OrganizationsApi) (string, error) {
 	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return cmd.ErrMustSpecifyOrg
+		return "", cmd.ErrMustSpecifyOrg
 	}
-	if params.Password != "" && len(params.Password) < cmd.MinPasswordLen {
-		return cmd.ErrPasswordIsTooShort
-	}
-
-	orgId := params.OrgID.String()
+	orgID := params.OrgID.String()
 	if !params.OrgID.Valid() {
-		req := c.GetOrgs(ctx)
+		req := orgApi.GetOrgs(ctx)
 		if params.OrgName != "" {
 			req = req.Org(params.OrgName)
 		} else {
@@ -42,12 +38,24 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		}
 		orgs, err := req.Execute()
 		if err != nil {
-			return fmt.Errorf("failed to find org %q: %w", params.OrgName, err)
+			return "", fmt.Errorf("failed to find org %q: %w", params.OrgName, err)
 		}
 		if orgs.Orgs == nil || len(*orgs.Orgs) == 0 {
-			return fmt.Errorf("no org found with name %q", params.OrgName)
+			return "", fmt.Errorf("no org found with name %q", params.OrgName)
 		}
-		orgId = (*orgs.Orgs)[0].GetId()
+		orgID = (*orgs.Orgs)[0].GetId()
+	}
+	return orgID, nil
+}
+
+func (c Client) Create(ctx context.Context, params *CreateParams) error {
+	if params.Password != "" && len(params.Password) < cmd.MinPasswordLen {
+		return cmd.ErrPasswordIsTooShort
+	}
+
+	orgID, err := getOrgID(ctx, &params.OrgParams, c.CLI, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	user, err := c.PostUsers(ctx).User(api.User{Name: params.Name}).Execute()
@@ -59,7 +67,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	}
 
 	memberBody := api.AddResourceMemberRequestBody{Id: *user.Id}
-	if _, err := c.PostOrgsIDMembers(ctx, orgId).AddResourceMemberRequestBody(memberBody).Execute(); err != nil {
+	if _, err := c.PostOrgsIDMembers(ctx, orgID).AddResourceMemberRequestBody(memberBody).Execute(); err != nil {
 		_, _ = c.StdIO.WriteErr([]byte("WARN: initial password not set for user, use `influx user password` to set it\n"))
 		return fmt.Errorf("failed setting org membership for user %q, use `influx org members add` to retry: %w", user.Name, err)
 	}
