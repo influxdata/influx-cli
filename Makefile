@@ -38,13 +38,33 @@ fmt: $(SOURCES_NO_VENDOR)
 	go run github.com/daixiang0/gci -w $^
 
 bin/$(GOOS)/influx: $(SOURCES)
-	$(GO_BUILD) -o $@ ./cmd/$(shell basename "$@")
+	CGO_ENABLED=0 $(GO_BUILD) -o $@ ./cmd/$(shell basename "$@")
 
 .DEFAULT_GOAL := influx
 influx: bin/$(GOOS)/influx
 
 vendor: go.mod go.sum
 	go mod vendor
+
+GORELEASER_VERSION := v0.165.0
+bin/goreleaser-$(GORELEASER_VERSION):
+	./etc/download-goreleaser.sh $(GORELEASER_VERSION)
+
+goreleaser: bin/goreleaser-$(GORELEASER_VERSION)
+
+build: bin/goreleaser-$(GORELEASER_VERSION)
+ifdef VERSION
+	GORELEASER_CURRENT_TAG=$(VERSION) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist --single-target
+else
+	bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist --single-target --snapshot
+endif
+
+crossbuild: bin/goreleaser-$(GORELEASER_VERSION)
+ifdef VERSION
+	GORELEASER_CURRENT_TAG=$(VERSION) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist
+else
+	bin/goreleaser-$(GORELEASER_VERSION) build --snapshot --rm-dist
+endif
 
 clean:
 	$(RM) -r bin
@@ -77,4 +97,4 @@ test-race:
 	$(GO_TEST) -v -race -count=1 $(GO_TEST_PATHS)
 
 ### List of all targets that don't produce a file
-.PHONY: influx openapi fmt build checkfmt checktidy staticcheck vet mock test test-race
+.PHONY: influx openapi fmt build goreleaser checkfmt checktidy staticcheck vet mock test test-race
