@@ -43,7 +43,7 @@ jobs:
     working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
     steps:
       - checkout
-      - run: make influx
+      - run: make crossbuild
 
   test:
     docker:
