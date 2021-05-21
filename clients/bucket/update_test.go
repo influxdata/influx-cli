@@ -3,6 +3,7 @@ package bucket_test
 import (
 	"bytes"
 	"context"
+	"github.com/influxdata/influx-cli/v2/clients"
 	"strings"
 	"testing"
 
@@ -148,7 +149,7 @@ func TestBucketsUpdate(t *testing.T) {
 				tc.registerBucketExpectations(t, client)
 			}
 			cli := bucket.Client{
-				CLI:        client.CLI{StdIO: stdio},
+				CLI:        clients.CLI{StdIO: stdio},
 				BucketsApi: client,
 			}
 

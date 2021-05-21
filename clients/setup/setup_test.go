@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/influxdata/influx-cli/v2/clients"
 	"strconv"
 	"strings"
 	"testing"
@@ -33,7 +34,7 @@ func Test_SetupConfigNameCollision(t *testing.T) {
 	configSvc := mock.NewMockConfigService(ctrl)
 	configSvc.EXPECT().ListConfigs().Return(map[string]config.Config{cfg: {}}, nil)
 	cli := setup.Client{
-		CLI:      client.CLI{ConfigService: configSvc},
+		CLI:      clients.CLI{ConfigService: configSvc},
 		SetupApi: client,
 	}
 
@@ -54,7 +55,7 @@ func Test_SetupConfigNameRequired(t *testing.T) {
 	configSvc := mock.NewMockConfigService(ctrl)
 	configSvc.EXPECT().ListConfigs().Return(map[string]config.Config{"foo": {}}, nil)
 	cli := setup.Client{
-		CLI:      client.CLI{ConfigService: configSvc},
+		CLI:      clients.CLI{ConfigService: configSvc},
 		SetupApi: client,
 	}
 
@@ -72,7 +73,7 @@ func Test_SetupAlreadySetup(t *testing.T) {
 
 	configSvc := mock.NewMockConfigService(ctrl)
 	cli := setup.Client{
-		CLI:      client.CLI{ConfigService: configSvc},
+		CLI:      clients.CLI{ConfigService: configSvc},
 		SetupApi: client,
 	}
 
@@ -92,7 +93,7 @@ func Test_SetupCheckFailed(t *testing.T) {
 
 	configSvc := mock.NewMockConfigService(ctrl)
 	cli := setup.Client{
-		CLI:      client.CLI{ConfigService: configSvc},
+		CLI:      clients.CLI{ConfigService: configSvc},
 		SetupApi: client,
 	}
 
@@ -154,7 +155,7 @@ func Test_SetupSuccessNoninteractive(t *testing.T) {
 	bytesWritten := bytes.Buffer{}
 	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(bytesWritten.Write).AnyTimes()
 	cli := setup.Client{
-		CLI:      client.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		CLI:      clients.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
 		SetupApi: client,
 	}
 	require.NoError(t, cli.Setup(context.Background(), &params))
@@ -221,7 +222,7 @@ func Test_SetupSuccessInteractive(t *testing.T) {
 	stdio.EXPECT().GetStringInput("Please type your retention period in hours, or 0 for infinite", gomock.Any()).Return(strconv.Itoa(retentionHrs), nil)
 	stdio.EXPECT().GetConfirm(gomock.Any()).Return(true)
 	cli := setup.Client{
-		CLI:      client.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		CLI:      clients.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
 		SetupApi: client,
 	}
 	require.NoError(t, cli.Setup(context.Background(), &setup.Params{}))
@@ -256,11 +257,11 @@ func Test_SetupPasswordParamToShort(t *testing.T) {
 
 	stdio := mock.NewMockStdIO(ctrl)
 	cli := setup.Client{
-		CLI:      client.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		CLI:      clients.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
 		SetupApi: client,
 	}
 	err := cli.Setup(context.Background(), &params)
-	require.Equal(t, client.ErrPasswordIsTooShort, err)
+	require.Equal(t, clients.ErrPasswordIsTooShort, err)
 }
 
 func Test_SetupCancelAtConfirmation(t *testing.T) {
@@ -291,7 +292,7 @@ func Test_SetupCancelAtConfirmation(t *testing.T) {
 	stdio.EXPECT().GetConfirm(gomock.Any()).Return(false)
 
 	cli := setup.Client{
-		CLI:      client.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
+		CLI:      clients.CLI{ConfigService: configSvc, ActiveConfig: config.Config{Host: host}, StdIO: stdio},
 		SetupApi: client,
 	}
 	err := cli.Setup(context.Background(), &params)

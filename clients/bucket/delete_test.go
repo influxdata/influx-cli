@@ -3,6 +3,7 @@ package bucket_test
 import (
 	"bytes"
 	"context"
+	"github.com/influxdata/influx-cli/v2/clients"
 	"strings"
 	"testing"
 
@@ -200,7 +201,7 @@ func TestBucketsDelete(t *testing.T) {
 				tc.registerBucketExpectations(t, client)
 			}
 			cli := bucket.Client{
-				CLI:        client.CLI{ActiveConfig: config.Config{Org: tc.configOrgName}, StdIO: stdio},
+				CLI:        clients.CLI{ActiveConfig: config.Config{Org: tc.configOrgName}, StdIO: stdio},
 				BucketsApi: client,
 			}
 

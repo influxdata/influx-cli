@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"github.com/influxdata/influx-cli/v2/clients"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -25,7 +26,7 @@ func Test_PingSuccess(t *testing.T) {
 	bytesWritten := bytes.Buffer{}
 	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(bytesWritten.Write).AnyTimes()
 	cli := ping.Client{
-		CLI:       client.CLI{StdIO: stdio},
+		CLI:       clients.CLI{StdIO: stdio},
 		HealthApi: client,
 	}
 

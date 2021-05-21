@@ -3,6 +3,7 @@ package write_test
 import (
 	"bytes"
 	"context"
+	"github.com/influxdata/influx-cli/v2/clients"
 	"io"
 	"io/ioutil"
 	"strings"
@@ -85,7 +86,7 @@ func TestWriteByIDs(t *testing.T) {
 	}).Times(len(inLines))
 
 	cli := write.Client{
-		CLI:         client.CLI{ActiveConfig: config.Config{Org: "my-default-org"}},
+		CLI:         clients.CLI{ActiveConfig: config.Config{Org: "my-default-org"}},
 		LineReader:  &mockReader,
 		RateLimiter: &mockThrottler,
 		BatchWriter: &mockBatcher,
@@ -130,7 +131,7 @@ func TestWriteByNames(t *testing.T) {
 	}).Times(len(inLines))
 
 	cli := write.Client{
-		CLI:         client.CLI{ActiveConfig: config.Config{Org: "my-default-org"}},
+		CLI:         clients.CLI{ActiveConfig: config.Config{Org: "my-default-org"}},
 		LineReader:  &mockReader,
 		RateLimiter: &mockThrottler,
 		BatchWriter: &mockBatcher,
@@ -175,7 +176,7 @@ func TestWriteOrgFromConfig(t *testing.T) {
 	}).Times(len(inLines))
 
 	cli := write.Client{
-		CLI:         client.CLI{ActiveConfig: config.Config{Org: defaultOrg}},
+		CLI:         clients.CLI{ActiveConfig: config.Config{Org: defaultOrg}},
 		LineReader:  &mockReader,
 		RateLimiter: &mockThrottler,
 		BatchWriter: &mockBatcher,
