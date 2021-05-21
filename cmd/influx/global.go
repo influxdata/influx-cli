@@ -11,8 +11,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/stdio"

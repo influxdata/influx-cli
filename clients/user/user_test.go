@@ -10,7 +10,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/user"
-	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"

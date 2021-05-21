@@ -3,7 +3,7 @@ set -euo pipefail
 
 declare -r ETC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 declare -r ROOT_DIR="$(dirname ${ETC_DIR})"
-declare -r API_DIR="${ROOT_DIR}/internal/api"
+declare -r API_DIR="${ROOT_DIR}/api"
 
 declare -r GENERATED_PATTERN='^// Code generated .* DO NOT EDIT\.$'
 declare -r MERGE_DOCKER_IMG=quay.io/influxdb/swagger-cli

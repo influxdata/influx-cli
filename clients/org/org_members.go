@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 )
 

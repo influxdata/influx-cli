@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/influxdata/influx-cli/v2/internal/api"
 )
 
 type Client struct {

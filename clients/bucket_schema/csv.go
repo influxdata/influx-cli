@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/gocarina/gocsv"
-	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/api"
 )
 
 type csvColumn struct {

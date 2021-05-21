@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/bucket"
-	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
 )

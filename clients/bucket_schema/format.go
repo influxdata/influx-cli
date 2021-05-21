@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/api"
 )
 
 // ColumnsFormat is a type which defines the supported formats

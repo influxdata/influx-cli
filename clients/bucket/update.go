@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
 )
 

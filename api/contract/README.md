@@ -1,6 +1,6 @@
 # API Contract
 
-This directory contains the source YMLs used to drive code generation of HTTP clients in [`internal/api`](../).
+This directory contains the source YMLs used to drive code generation of HTTP clients in [`api`](../).
 
 ## YML Structure
 
@@ -25,29 +25,29 @@ git checkout <new-branch-name>
 Next, decide if any modifications are needed in the source-of-truth `openapi` repo. If so, create a branch in the
 submodule to track changes there:
 ```shell
-cd internal/api/contract/openapi && git checkout -b <new-branch-name>
+cd api/contract/openapi && git checkout -b <new-branch-name>
 ```
 
 Edit/add to the files under `api-contract/` to describe the new API contract. Run the following from the project
 root test your changes and see the outputs in Go code:
 ```shell
 make openapi
-# Use `git status` to see new/modified files under `internal/api`
+# Use `git status` to see new/modified files under `api`
 ```
 
 Once you're happy with the new API contract, submit your changes for review & merge.
 If you added/edited files within `openapi`, you'll first need to:
 1. Push your submodule branch to GitHub
    ```shell
-   cd internal/api/contract/openapi && git push <your-branch-name>
+   cd api/contract/openapi && git push <your-branch-name>
    ```
 2. Create a PR in `openapi`, eventually merge to `master` there
 3. Update your submodule to point at the merge result:
    ```shell
-   cd internal/api/contract/openapi && git fetch && git checkout master && git pull origin master
+   cd api/contract/openapi && git fetch && git checkout master && git pull origin master
    ```
 4. Update the submodule reference from the main repo:
    ```shell
-   git add internal/api/contract/openapi
+   git add api/contract/openapi
    git commit
    ```

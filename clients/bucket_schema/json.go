@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/influxdata/influx-cli/v2/internal/api"
+	"github.com/influxdata/influx-cli/v2/api"
 )
 
 func decodeJson(r io.Reader) ([]api.MeasurementSchemaColumn, error) {
