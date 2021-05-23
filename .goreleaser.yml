@@ -1,0 +1,25 @@
+project_name: influx-cli
+builds:
+  - id: influx
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: darwin
+        goarch: arm64
+      - goos: windows
+        goarch: arm64
+    main: ./cmd/influx
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X main.version={{if .IsSnapshot}}dev{{else}}{{.Version}}{{end}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}
+    binary: influx
+
+# Do not make github release
+release:
+  disable: true

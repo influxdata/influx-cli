@@ -12,12 +12,19 @@ Our goals are to:
 
 ## Building
 
-Run `make` to build the CLI. The output binary will be written to `bin/$(GOOS)/influx`.
+### Development build
+Run `make` or `make influx` to build the CLI. The output binary will be written to `bin/$(GOOS)/influx`.
+
+### Release build
+We use [`goreleaser`](https://goreleaser.com/) to manage cross-building the CLI for release. Run `make build`
+to build the CLI with release settings for your current `GOOS` and `GOARCH`. Run `make crossbuild` to build
+the CLI for all `GOOS`/`GOARCH` pairs supported by the CLI. The output binary/binaries will be written under
+`dist/influx_${GOOS}_${GOARCH}/`.
 
 ### Regenerating OpenAPI client
 
 We use [`OpenAPITools/openapi-generator`](https://github.com/OpenAPITools/openapi-generator) to generate
-the underlying HTTP client used by the CLI. Run `make openapi` to re-generate the code. You'll  need Docker
+the underlying HTTP client used by the CLI. Run `make openapi` to re-generate the code. You'll need Docker
 running locally for the script to work.
 
 ## Running
