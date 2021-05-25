@@ -86,7 +86,7 @@ func TestBatcher_WriteTo(t *testing.T) {
 		MaxFlushInterval time.Duration
 	}
 	type args struct {
-		r          func() io.Reader
+		r func() io.Reader
 	}
 	tests := []struct {
 		name        string

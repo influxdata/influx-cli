@@ -11,9 +11,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/google/go-cmp/cmp"
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/bucket_schema"
-	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
 	"github.com/stretchr/testify/assert"
@@ -235,7 +235,6 @@ func TestClient_Update(t *testing.T) {
 				`^1010\s+cpu\s+time\s+timestamp\s+f00d$`,
 				`^1010\s+cpu\s+host\s+tag\s+f00d$`,
 				`^1010\s+cpu\s+usage_user\s+field\s+float\s+f00d$`,
-
 			),
 		},
 	}

@@ -3,13 +3,13 @@ package bucket_test
 import (
 	"bytes"
 	"context"
-	"github.com/influxdata/influx-cli/v2/clients"
 	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influx-cli/v2/clients/bucket"
 	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/clients"
+	"github.com/influxdata/influx-cli/v2/clients/bucket"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
 	"github.com/stretchr/testify/assert"

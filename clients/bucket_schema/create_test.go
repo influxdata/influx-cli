@@ -11,9 +11,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/google/go-cmp/cmp"
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/bucket_schema"
-	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
 	"github.com/stretchr/testify/assert"

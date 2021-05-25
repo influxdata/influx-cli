@@ -3,13 +3,13 @@ package bucket_test
 import (
 	"bytes"
 	"context"
-	"github.com/influxdata/influx-cli/v2/clients"
 	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influx-cli/v2/clients/bucket"
 	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/clients"
+	"github.com/influxdata/influx-cli/v2/clients/bucket"
 	"github.com/influxdata/influx-cli/v2/internal/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
@@ -215,7 +215,7 @@ func TestBucketsDelete(t *testing.T) {
 			require.NoError(t, err)
 			testutils.MatchLines(t, []string{
 				`ID\s+Name\s+Retention\s+Shard group duration\s+Organization ID\s+Schema Type\s+Deleted`,
-				tc.expectedStdoutPattern+`\s+true`,
+				tc.expectedStdoutPattern + `\s+true`,
 			}, strings.Split(writtenBytes.String(), "\n"))
 		})
 	}
