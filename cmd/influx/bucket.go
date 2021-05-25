@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/influxdata/influx-cli/v2/internal/api"
-	"github.com/influxdata/influx-cli/v2/internal/cmd/bucket"
+	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/clients/bucket"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )

@@ -17,5 +17,5 @@ dist/
 vendor/
 
 # Docs generated from our openapi repo
-internal/api/cli.yml
-internal/api/cli.gen.yml
+api/cli.yml
+api/cli.gen.yml

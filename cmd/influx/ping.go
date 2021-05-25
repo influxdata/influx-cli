@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/influxdata/influx-cli/v2/internal/cmd/ping"
+	"github.com/influxdata/influx-cli/v2/clients/ping"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
