@@ -3,6 +3,7 @@ package task
 import (
 	"context"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/api"
@@ -21,20 +22,49 @@ type CreateParams struct {
 	FluxQuery string
 }
 
-func (c Client) getOrg(params *clients.OrgParams) (string, error) {
+type NameOrID struct {
+	Name string
+	ID   string
+}
+
+func (n NameOrID) NameOrNil() *string {
+	if n.Name == "" {
+		return nil
+	}
+	return &n.Name
+}
+
+func (n NameOrID) IDOrNil() *string {
+	if n.ID == "" {
+		return nil
+	}
+	return &n.ID
+}
+
+func addOrg(n NameOrID, g api.ApiGetTasksRequest) api.ApiGetTasksRequest {
+	if n.ID != "" {
+		return g.OrgID(n.ID)
+	}
+	if n.Name != "" {
+		return g.Org(n.Name)
+	}
+	return g
+}
+
+func (c Client) getOrg(params *clients.OrgParams) (NameOrID, error) {
 	if params.OrgID.Valid() {
-		return params.OrgID.String(), nil
+		return NameOrID{ID: params.OrgID.String()}, nil
 	}
 	if params.OrgName != "" {
-		return params.OrgName, nil
+		return NameOrID{Name: params.OrgName}, nil
 	}
 	if c.ActiveConfig.Org != "" {
-		return c.ActiveConfig.Org, nil
+		return NameOrID{Name: c.ActiveConfig.Org}, nil
 	}
 	if c.AllowEmptyOrg {
-		return "", nil
+		return NameOrID{}, nil
 	}
-	return "", clients.ErrMustSpecifyOrg
+	return NameOrID{}, clients.ErrMustSpecifyOrg
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
@@ -42,10 +72,12 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	if err != nil {
 		return err
 	}
-	task, err := c.PostTasks(ctx).TaskCreateRequest(api.TaskCreateRequest{
-		Org:  &org,
-		Flux: params.FluxQuery,
-	}).Execute()
+	createRequest := api.TaskCreateRequest{
+		Flux:  params.FluxQuery,
+		OrgID: org.IDOrNil(),
+		Org:   org.NameOrNil(),
+	}
+	task, err := c.PostTasks(ctx).TaskCreateRequest(createRequest).Execute()
 	if err != nil {
 		return err
 	}
@@ -62,10 +94,6 @@ type FindParams struct {
 }
 
 func (c Client) Find(ctx context.Context, params *FindParams) error {
-	org, err := c.getOrg(&params.OrgParams)
-	if err != nil {
-		return err
-	}
 	if params.Limit < 1 {
 		return fmt.Errorf("must specify a positive limit, not %d", params.Limit)
 	}
@@ -79,12 +107,20 @@ func (c Client) Find(ctx context.Context, params *FindParams) error {
 		}
 		tasks = append(tasks, task)
 	} else {
-		// filter on all tasks
-		taskGet := c.GetTasks(ctx).Org(org).Limit(int32(params.Limit))
-		if params.UserID != "" {
-			taskGet = taskGet.User(params.UserID)
+		org, err := c.getOrg(&params.OrgParams)
+		if err != nil {
+			return err
 		}
-		tasksResult, err := taskGet.Execute()
+		// filter on all tasks
+		if params.Limit > math.MaxInt32 {
+			return fmt.Errorf("limit too large %d > %d", params.Limit, math.MaxInt32)
+		}
+		getTask := c.GetTasks(ctx).Limit(int32(params.Limit))
+		getTask = addOrg(org, getTask)
+		if params.UserID != "" {
+			getTask = getTask.User(params.UserID)
+		}
+		tasksResult, err := getTask.Execute()
 		if err != nil {
 			return err
 		}
@@ -98,6 +134,9 @@ func (c Client) Find(ctx context.Context, params *FindParams) error {
 func (c Client) appendRuns(ctx context.Context, prev []api.Run, taskID string, filter RunFilter) ([]api.Run, error) {
 	if filter.Limit < 1 {
 		return nil, fmt.Errorf("must specify a positive run limit, not %d", filter.Limit)
+	}
+	if filter.Limit > math.MaxInt32 {
+		return nil, fmt.Errorf("limit too large %d > %d", filter.Limit, math.MaxInt32)
 	}
 	getRuns := c.GetTasksIDRuns(ctx, taskID).Limit(int32(filter.Limit))
 	if filter.After != "" {
@@ -178,7 +217,13 @@ func (c Client) RetryFailed(ctx context.Context, params *RetryFailedParams) erro
 		if err != nil {
 			return err
 		}
-		tasks, err := c.GetTasks(ctx).Limit(int32(params.TaskLimit)).Org(org).Execute()
+
+		if params.TaskLimit > math.MaxInt32 {
+			return fmt.Errorf("limit too large %d > %d", params.TaskLimit, math.MaxInt32)
+		}
+		getTask := c.GetTasks(ctx).Limit(int32(params.TaskLimit))
+		getTask = addOrg(org, getTask)
+		tasks, err := getTask.Execute()
 		if err != nil {
 			return err
 		}
@@ -226,7 +271,7 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	var status *api.TaskStatusType
 	if params.Status != "" {
 		var s api.TaskStatusType
-		err := s.UnmarshalJSON([]byte(params.Status))
+		err := s.UnmarshalJSON([]byte(fmt.Sprintf("%q", params.Status)))
 		if err != nil {
 			return err
 		}
@@ -267,6 +312,13 @@ type taskPrintOpts struct {
 	tasks []api.Task
 }
 
+func derefOrEmpty(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
 func (c Client) printTasks(printOpts taskPrintOpts) error {
 	if c.PrintAsJSON {
 		var v interface{} = printOpts.tasks
@@ -296,10 +348,10 @@ func (c Client) printTasks(printOpts taskPrintOpts) error {
 			"ID":              t.Id,
 			"Name":            t.Name,
 			"Organization ID": t.OrgID,
-			"Organization":    t.Org,
-			"Status":          t.Status,
-			"Every":           t.Every,
-			"Cron":            t.Cron,
+			"Organization":    derefOrEmpty(t.Org),
+			"Status":          derefOrEmpty((*string)(t.Status)),
+			"Every":           derefOrEmpty(t.Every),
+			"Cron":            derefOrEmpty(t.Cron),
 		}
 		rows = append(rows, row)
 	}
@@ -346,9 +398,9 @@ func (c Client) printLogs(logs []api.LogEvent) error {
 	var rows []map[string]interface{}
 	for _, l := range logs {
 		row := map[string]interface{}{
-			"RunID":   l.RunID,
+			"RunID":   derefOrEmpty(l.RunID),
 			"Time":    l.Time,
-			"Message": l.Message,
+			"Message": derefOrEmpty(l.Message),
 		}
 		rows = append(rows, row)
 	}
@@ -401,16 +453,23 @@ func (c Client) printRuns(runs []api.Run) error {
 		"RequestedAt",
 	}
 
+	derefAndFormat := func(t *time.Time, layout string) string {
+		if t == nil {
+			return ""
+		}
+		return t.Format(layout)
+	}
+
 	var rows []map[string]interface{}
 	for _, r := range runs {
 		row := map[string]interface{}{
-			"ID":           r.Id,
-			"TaskID":       r.TaskID,
-			"Status":       r.Status,
-			"ScheduledFor": r.ScheduledFor.Format(time.RFC3339),
-			"StartedAt":    r.StartedAt.Format(time.RFC3339Nano),
-			"FinishedAt":   r.FinishedAt.Format(time.RFC3339Nano),
-			"RequestedAt":  r.RequestedAt.Format(time.RFC3339Nano),
+			"ID":           derefOrEmpty(r.Id),
+			"TaskID":       derefOrEmpty(r.TaskID),
+			"Status":       derefOrEmpty(r.Status),
+			"ScheduledFor": derefAndFormat(r.ScheduledFor, time.RFC3339),
+			"StartedAt":    derefAndFormat(r.StartedAt, time.RFC3339Nano),
+			"FinishedAt":   derefAndFormat(r.FinishedAt, time.RFC3339Nano),
+			"RequestedAt":  derefAndFormat(r.RequestedAt, time.RFC3339Nano),
 		}
 		rows = append(rows, row)
 	}

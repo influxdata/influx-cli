@@ -58,7 +58,6 @@ func newTaskCreateCmd() *cli.Command {
 
 func newTaskFindCmd() *cli.Command {
 	var params task.FindParams
-	params.Limit = TaskMaxPageSize
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
@@ -77,6 +76,7 @@ func newTaskFindCmd() *cli.Command {
 			Name:        "limit",
 			Usage:       "the number of tasks to find",
 			Destination: &params.Limit,
+			Value:       TaskMaxPageSize,
 		},
 	}...)
 	return &cli.Command{
@@ -98,8 +98,6 @@ func newTaskFindCmd() *cli.Command {
 
 func newTaskRetryFailedCmd() *cli.Command {
 	var params task.RetryFailedParams
-	params.RunFilter.Limit = 100
-	params.TaskLimit = 100
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
@@ -127,13 +125,13 @@ func newTaskRetryFailedCmd() *cli.Command {
 			Name:        "task-limit",
 			Usage:       "max number of tasks to retry failed runs for",
 			Destination: &params.TaskLimit,
-			DefaultText: "100",
+			Value:       100,
 		},
 		&cli.IntFlag{
 			Name:        "run-limit",
 			Usage:       "max number of failed runs to retry per task",
 			Destination: &params.RunFilter.Limit,
-			DefaultText: "100",
+			Value:       100,
 		},
 	}...)
 	return &cli.Command{
@@ -189,9 +187,11 @@ func newTaskUpdateCmd() *cli.Command {
 				TasksApi: api.TasksApi,
 			}
 			var err error
-			params.FluxQuery, err = clients.ReadQuery(ctx)
-			if err != nil {
-				return err
+			if ctx.String("file") != "" || ctx.NArg() != 0 {
+				params.FluxQuery, err = clients.ReadQuery(ctx)
+				if err != nil {
+					return err
+				}
 			}
 			return client.Update(ctx.Context, &params)
 		},
@@ -282,7 +282,6 @@ func newTaskRunCmd() *cli.Command {
 
 func newTaskRunFindCmd() *cli.Command {
 	var params task.RunFindParams
-	params.Filter.Limit = 100
 	flags := commonFlags()
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
@@ -295,7 +294,6 @@ func newTaskRunFindCmd() *cli.Command {
 			Name:        "run-id",
 			Usage:       "run id",
 			Destination: &params.RunID,
-			Required:    true,
 		},
 		&cli.StringFlag{
 			Name:        "before",
@@ -309,8 +307,9 @@ func newTaskRunFindCmd() *cli.Command {
 		},
 		&cli.IntFlag{
 			Name:        "limit",
-			Usage:       "limit the results; default is 100",
+			Usage:       "limit the results",
 			Destination: &params.Filter.Limit,
+			Value:       100,
 		},
 	}...)
 	return &cli.Command{
