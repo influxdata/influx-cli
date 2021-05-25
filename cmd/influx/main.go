@@ -43,6 +43,7 @@ var app = cli.App{
 		newOrgCmd(),
 		newDeleteCmd(),
 		newUserCmd(),
+		newTaskCommand(),
 	},
 }
 

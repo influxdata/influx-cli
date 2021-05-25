@@ -2,10 +2,14 @@ package main
 
 import (
 	"crypto/tls"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"runtime"
+	"strings"
 
 	"github.com/influxdata/influx-cli/v2/internal/api"
 	"github.com/influxdata/influx-cli/v2/internal/cmd"
@@ -242,34 +246,93 @@ func commonFlags() []cli.Flag {
 	return append(commonFlagsNoToken(), commonTokenFlag())
 }
 
-// getOrgBucketFlags returns flags used by commands that are scoped to a single org/bucket, binding
+// getOrgFlags returns flags used by commands that are scoped to a single org, binding
 // the flags to the given params container.
-func getOrgBucketFlags(c *cmd.OrgBucketParams) []cli.Flag {
+func getOrgFlags(params *cmd.OrgParams) []cli.Flag {
 	return []cli.Flag{
-		&cli.GenericFlag{
-			Name:    "bucket-id",
-			Usage:   "The bucket ID, required if name isn't provided",
-			Aliases: []string{"i"},
-			Value:   &c.BucketID,
-		},
-		&cli.StringFlag{
-			Name:        "bucket",
-			Usage:       "The bucket name, org or org-id will be required by choosing this",
-			Aliases:     []string{"n"},
-			Destination: &c.BucketName,
-		},
 		&cli.GenericFlag{
 			Name:    "org-id",
 			Usage:   "The ID of the organization",
 			EnvVars: []string{"INFLUX_ORG_ID"},
-			Value:   &c.OrgID,
+			Value:   &params.OrgID,
 		},
 		&cli.StringFlag{
 			Name:        "org",
 			Usage:       "The name of the organization",
 			Aliases:     []string{"o"},
 			EnvVars:     []string{"INFLUX_ORG"},
-			Destination: &c.OrgName,
+			Destination: &params.OrgName,
 		},
+	}
+}
+
+// getBucketFlags returns flags used by commands that are scoped to a single bucket, binding
+// the flags to the given params container.
+func getBucketFlags(params *cmd.BucketParams) []cli.Flag {
+	return []cli.Flag{
+		&cli.GenericFlag{
+			Name:    "bucket-id",
+			Usage:   "The bucket ID, required if name isn't provided",
+			Aliases: []string{"i"},
+			Value:   &params.BucketID,
+		},
+		&cli.StringFlag{
+			Name:        "bucket",
+			Usage:       "The bucket name, org or org-id will be required by choosing this",
+			Aliases:     []string{"n"},
+			Destination: &params.BucketName,
+		},
+	}
+}
+
+// getOrgBucketFlags returns flags used by commands that are scoped to a single org/bucket, binding
+// the flags to the given params container.
+func getOrgBucketFlags(c *cmd.OrgBucketParams) []cli.Flag {
+	return append(getBucketFlags(&c.BucketParams), getOrgFlags(&c.OrgParams)...)
+}
+
+// readQuery reads a Flux query into memory from a file, args, or stdin based on CLI parameters.
+func readQuery(ctx *cli.Context) (string, error) {
+	nargs := ctx.NArg()
+	file := ctx.String("file")
+
+	if nargs > 1 {
+		return "", fmt.Errorf("at most 1 query string can be specified over the CLI, got %d", ctx.NArg())
+	}
+	if nargs == 1 && file != "" {
+		return "", errors.New("query can be specified via --file or over the CLI, not both")
+	}
+
+	readFile := func(path string) (string, error) {
+		queryBytes, err := ioutil.ReadFile(path)
+		if err != nil {
+			return "", fmt.Errorf("failed to read query from %q: %w", path, err)
+		}
+		return string(queryBytes), nil
+	}
+
+	readStdin := func() (string, error) {
+		queryBytes, err := ioutil.ReadAll(os.Stdin)
+		if err != nil {
+			return "", fmt.Errorf("failed to read query from stdin: %w", err)
+		}
+		return string(queryBytes), err
+	}
+
+	if file != "" {
+		return readFile(file)
+	}
+	if nargs == 0 {
+		return readStdin()
+	}
+
+	arg := ctx.Args().Get(0)
+	// Backwards compatibility.
+	if strings.HasPrefix(arg, "@") {
+		return readFile(arg[1:])
+	} else if arg == "-" {
+		return readStdin()
+	} else {
+		return arg, nil
 	}
 }

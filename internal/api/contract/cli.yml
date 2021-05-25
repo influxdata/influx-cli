@@ -39,6 +39,20 @@ paths:
     $ref: "./openapi/src/common/paths/users_userID_password.yml"
   /delete:
     $ref: "./openapi/src/common/paths/delete.yml"
+  /tasks:
+    $ref: "./openapi/src/common/paths/tasks.yml"
+  /tasks/{taskID}:
+    $ref: "./openapi/src/common/paths/tasks_taskID.yml"
+  /tasks/{taskID}/runs:
+    $ref: "./openapi/src/common/paths/tasks_taskID_runs.yml"
+  /tasks/{taskID}/runs/{runID}:
+    $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID.yml"
+  /tasks/{taskID}/runs/{runID}/retry:
+    $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID_retry.yml"
+  /tasks/{taskID}/logs:
+    $ref: "./openapi/src/common/paths/tasks_taskID_logs.yml"
+  /tasks/{taskID}/runs/{runID}/logs:
+    $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID_logs.yml"
 components:
   parameters:
     TraceSpan:
@@ -149,3 +163,23 @@ components:
       $ref: "./overrides/schemas/Extern.yml"
     DeletePredicateRequest:
       $ref: "./openapi/src/common/schemas/DeletePredicateRequest.yml"
+    Tasks:
+      $ref: "./openapi/src/common/schemas/Tasks.yml"
+    Task:
+      $ref: "./openapi/src/common/schemas/Task.yml"
+    TaskCreateRequest:
+      $ref: "./openapi/src/common/schemas/TaskCreateRequest.yml"
+    TaskStatusType:
+      $ref: "./openapi/src/common/schemas/TaskStatusType.yml"
+    TaskUpdateRequest:
+      $ref: "./openapi/src/common/schemas/TaskUpdateRequest.yml"
+    Runs:
+      $ref: "./openapi/src/common/schemas/Runs.yml"
+    Run:
+      $ref: "./openapi/src/common/schemas/Run.yml"
+    RunManually:
+      $ref: "./openapi/src/common/schemas/RunManually.yml"
+    Logs:
+      $ref: "./openapi/src/common/schemas/Logs.yml"
+    LogEvent:
+      $ref: "./openapi/src/common/schemas/LogEvent.yml"
