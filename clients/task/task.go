@@ -296,11 +296,11 @@ type DeleteParams struct {
 func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
 	task, err := c.GetTasksID(ctx, params.TaskID).Execute()
 	if err != nil {
-		return err
+		return fmt.Errorf("while finding task: %w", err)
 	}
 	err = c.DeleteTasksID(ctx, params.TaskID).Execute()
 	if err != nil {
-		return err
+		return fmt.Errorf("while deleting: %w", err)
 	}
 	return c.printTasks(taskPrintOpts{
 		task: &task,
@@ -379,8 +379,10 @@ func (c Client) FindLogs(ctx context.Context, params *LogFindParams) error {
 			return err
 		}
 	}
+	if logs.Events == nil {
+		return c.printLogs(nil)
+	}
 	return c.printLogs(*logs.Events)
-
 }
 
 func (c Client) printLogs(logs []api.LogEvent) error {
