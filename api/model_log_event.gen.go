@@ -21,6 +21,8 @@ type LogEvent struct {
 	Time *time.Time `json:"time,omitempty"`
 	// A description of the event that occurred.
 	Message *string `json:"message,omitempty"`
+	// the ID of the task that logged
+	RunID *string `json:"runID,omitempty"`
 }
 
 // NewLogEvent instantiates a new LogEvent object
@@ -104,6 +106,38 @@ func (o *LogEvent) SetMessage(v string) {
 	o.Message = &v
 }
 
+// GetRunID returns the RunID field value if set, zero value otherwise.
+func (o *LogEvent) GetRunID() string {
+	if o == nil || o.RunID == nil {
+		var ret string
+		return ret
+	}
+	return *o.RunID
+}
+
+// GetRunIDOk returns a tuple with the RunID field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LogEvent) GetRunIDOk() (*string, bool) {
+	if o == nil || o.RunID == nil {
+		return nil, false
+	}
+	return o.RunID, true
+}
+
+// HasRunID returns a boolean if a field has been set.
+func (o *LogEvent) HasRunID() bool {
+	if o != nil && o.RunID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetRunID gets a reference to the given string and assigns it to the RunID field.
+func (o *LogEvent) SetRunID(v string) {
+	o.RunID = &v
+}
+
 func (o LogEvent) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Time != nil {
@@ -111,6 +145,9 @@ func (o LogEvent) MarshalJSON() ([]byte, error) {
 	}
 	if o.Message != nil {
 		toSerialize["message"] = o.Message
+	}
+	if o.RunID != nil {
+		toSerialize["runID"] = o.RunID
 	}
 	return json.Marshal(toSerialize)
 }

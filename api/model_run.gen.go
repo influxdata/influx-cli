@@ -23,7 +23,7 @@ type Run struct {
 	// Time used for run's \"now\" option, RFC3339.
 	ScheduledFor *time.Time `json:"scheduledFor,omitempty"`
 	// An array of logs associated with the run.
-	Log *[]RunLog `json:"log,omitempty"`
+	Log *[]LogEvent `json:"log,omitempty"`
 	// Time run started executing, RFC3339Nano.
 	StartedAt *time.Time `json:"startedAt,omitempty"`
 	// Time run finished executing, RFC3339Nano.
@@ -179,9 +179,9 @@ func (o *Run) SetScheduledFor(v time.Time) {
 }
 
 // GetLog returns the Log field value if set, zero value otherwise.
-func (o *Run) GetLog() []RunLog {
+func (o *Run) GetLog() []LogEvent {
 	if o == nil || o.Log == nil {
-		var ret []RunLog
+		var ret []LogEvent
 		return ret
 	}
 	return *o.Log
@@ -189,7 +189,7 @@ func (o *Run) GetLog() []RunLog {
 
 // GetLogOk returns a tuple with the Log field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *Run) GetLogOk() (*[]RunLog, bool) {
+func (o *Run) GetLogOk() (*[]LogEvent, bool) {
 	if o == nil || o.Log == nil {
 		return nil, false
 	}
@@ -205,8 +205,8 @@ func (o *Run) HasLog() bool {
 	return false
 }
 
-// SetLog gets a reference to the given []RunLog and assigns it to the Log field.
-func (o *Run) SetLog(v []RunLog) {
+// SetLog gets a reference to the given []LogEvent and assigns it to the Log field.
+func (o *Run) SetLog(v []LogEvent) {
 	o.Log = &v
 }
 

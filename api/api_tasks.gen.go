@@ -1961,6 +1961,7 @@ type ApiPostTasksIDRunsIDRetryRequest struct {
 	taskID       string
 	runID        string
 	zapTraceSpan *string
+	body         *map[string]interface{}
 }
 
 func (r ApiPostTasksIDRunsIDRetryRequest) TaskID(taskID string) ApiPostTasksIDRunsIDRetryRequest {
@@ -1985,6 +1986,14 @@ func (r ApiPostTasksIDRunsIDRetryRequest) ZapTraceSpan(zapTraceSpan string) ApiP
 }
 func (r ApiPostTasksIDRunsIDRetryRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
+}
+
+func (r ApiPostTasksIDRunsIDRetryRequest) Body(body map[string]interface{}) ApiPostTasksIDRunsIDRetryRequest {
+	r.body = &body
+	return r
+}
+func (r ApiPostTasksIDRunsIDRetryRequest) GetBody() *map[string]interface{} {
+	return r.body
 }
 
 func (r ApiPostTasksIDRunsIDRetryRequest) Execute() (Run, error) {
@@ -2035,7 +2044,7 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 	localVarFormParams := _neturl.Values{}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
+	localVarHTTPContentTypes := []string{"application/json; charset=utf-8"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -2054,6 +2063,8 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 	if r.zapTraceSpan != nil {
 		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
+	// body params
+	localVarPostBody = r.body
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, err
