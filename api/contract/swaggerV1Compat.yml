@@ -1,0 +1,198 @@
+# this is a manually maintained file for these old routes until oats#15 is resolved
+openapi: "3.0.0"
+info:
+  title: Influx API Service (V1 compatible endpoints)
+  version: 0.1.0
+servers:
+  - url: /
+    description: V1 compatible api endpoints.
+paths:
+  /query:
+    get: # technically this functions with other methods as well
+      operationId: GetQueryV1
+      tags:
+        - Query
+      summary: Query InfluxDB in a V1 compatible format
+      parameters:
+        - $ref: "#/components/parameters/TraceSpan"
+        - $ref: "#/components/parameters/AuthUserV1"
+        - $ref: "#/components/parameters/AuthPassV1"
+        - $ref: "#/components/parameters/Database"
+        - in: header
+          name: Accept
+          schema:
+            $ref: "#/components/schemas/InfluxQLContentType"
+            description: Specifies how query results should be encoded in the response. **Note:** With `application/csv`, query results include epoch timestamps instead of RFC3339 timestamps.
+            default: application/json
+        - in: header
+          name: Accept-Encoding
+          description: The Accept-Encoding request HTTP header advertises which content encoding, usually a compression algorithm, the client is able to understand.
+          schema:
+            type: string
+            description: Specifies that the query response in the body should be encoded with gzip or not encoded with identity.
+            default: identity
+            enum:
+              - gzip
+              - identity
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            enum:
+              - application/vnd.influxql
+        - in: query
+          name: q
+          description: Defines the influxql query to run.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Query results
+          headers:
+            Content-Encoding:
+              description: The Content-Encoding entity header is used to compress the media-type.  When present, its value indicates which encodings were applied to the entity-body
+              schema:
+                type: string
+                description: Specifies that the response in the body is encoded with gzip or not encoded with identity.
+                default: identity
+                enum:
+                  - gzip
+                  - identity
+            Trace-Id:
+              description: The Trace-Id header reports the request's trace ID, if one was generated.
+              schema:
+                type: string
+                description: Specifies the request's trace ID.
+          content:
+            application/csv:
+              schema:
+                $ref: "#/components/schemas/InfluxQLCSVResponse"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/InfluxQLCSVResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InfluxQLResponse"
+            application/x-msgpack:
+              schema:
+                type: string
+                format: binary
+        "429":
+          description: Token is temporarily over quota. The Retry-After header describes when to try the read again.
+          headers:
+            Retry-After:
+              description: A non-negative decimal integer indicating the seconds to delay after the response is received.
+              schema:
+                type: integer
+                format: int32
+        default:
+          description: Error processing query
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  parameters:
+    TraceSpan:
+      in: header
+      name: Zap-Trace-Span
+      description: OpenTracing span context
+      example:
+        trace_id: "1"
+        span_id: "1"
+        baggage:
+          key: value
+      required: false
+      schema:
+        type: string
+    AuthUserV1:
+      in: query
+      name: u
+      required: false
+      schema:
+        type: string
+      description: Username.
+    AuthPassV1:
+      in: query
+      name: p
+      required: false
+      schema:
+        type: string
+      description: User token.
+    Database:
+      in: query
+      name: db
+      schema:
+        type: string
+      description: Database name
+  schemas:
+    InfluxQLContentType:
+      type: string
+      enum: [ "text/csv", "application/json" ]
+    InfluxQLResponse:
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              statement_id:
+                type: integer
+              series:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    columns:
+                      type: array
+                      items:
+                        type: integer
+                    values:
+                      type: array
+                      items:
+                        type: array
+                        items: {}
+    InfluxQLCSVResponse:
+      type: string
+      example: >
+        name,tags,time,test_field,test_tag
+        test_measurement,,1603740794286107366,1,tag_value
+        test_measurement,,1603740870053205649,2,tag_value
+        test_measurement,,1603741221085428881,3,tag_value
+    Error:
+      properties:
+        code:
+          description: code is the machine-readable error code.
+          readOnly: true
+          type: string
+          enum:
+            - internal error
+            - not found
+            - conflict
+            - invalid
+            - unprocessable entity
+            - empty value
+            - unavailable
+            - forbidden
+            - too many requests
+            - unauthorized
+            - method not allowed
+            - request too large
+            - unsupported media type
+        message:
+          readOnly: true
+          description: message is a human-readable message.
+          type: string
+        op:
+          readOnly: true
+          description: op describes the logical code operation during error. Useful for debugging.
+          type: string
+        err:
+          readOnly: true
+          description: err is a stack of errors that occurred during processing of the request. Useful for debugging.
+          type: string
+      required:
+        - code
+        - message

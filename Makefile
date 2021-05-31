@@ -27,7 +27,7 @@ GO_TEST_PATHS=./...
 
 ### Build / dependency management
 openapi:
-	./etc/generate-openapi.sh
+	./etc/generate-openapi.sh && ./etc/generate-v1-openapi.sh
 
 fmt: $(SOURCES_NO_VENDOR)
 	# Format everything, but the import-format doesn't match our desired pattern.
