@@ -47,6 +47,8 @@ type APIClient struct {
 
 	// API Services
 
+	BackupApi BackupApi
+
 	BucketSchemasApi BucketSchemasApi
 
 	BucketsApi BucketsApi
@@ -58,6 +60,8 @@ type APIClient struct {
 	OrganizationsApi OrganizationsApi
 
 	QueryApi QueryApi
+
+	RestoreApi RestoreApi
 
 	SetupApi SetupApi
 
@@ -84,12 +88,14 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.common.client = c
 
 	// API Services
+	c.BackupApi = (*BackupApiService)(&c.common)
 	c.BucketSchemasApi = (*BucketSchemasApiService)(&c.common)
 	c.BucketsApi = (*BucketsApiService)(&c.common)
 	c.DeleteApi = (*DeleteApiService)(&c.common)
 	c.HealthApi = (*HealthApiService)(&c.common)
 	c.OrganizationsApi = (*OrganizationsApiService)(&c.common)
 	c.QueryApi = (*QueryApiService)(&c.common)
+	c.RestoreApi = (*RestoreApiService)(&c.common)
 	c.SetupApi = (*SetupApiService)(&c.common)
 	c.TasksApi = (*TasksApiService)(&c.common)
 	c.UsersApi = (*UsersApiService)(&c.common)

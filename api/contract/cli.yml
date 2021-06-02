@@ -53,6 +53,18 @@ paths:
     $ref: "./openapi/src/common/paths/tasks_taskID_logs.yml"
   /tasks/{taskID}/runs/{runID}/logs:
     $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID_logs.yml"
+  /backup/metadata:
+    $ref: "./openapi/src/oss/paths/backup_metadata.yml"
+  /backup/shards/{shardID}:
+    $ref: "./openapi/src/oss/paths/backup_shards_shardID.yml"
+  /restore/kv:
+    $ref: "./openapi/src/oss/paths/restore_kv.yml"
+  /restore/sql:
+    $ref: "./openapi/src/oss/paths/restore_sql.yml"
+  /restore/bucket-metadata/{bucketID}:
+    $ref: "./openapi/src/oss/paths/restore_bucket-metadata_bucketID.yml"
+  /restore/shards/{shardID}:
+    $ref: "./openapi/src/oss/paths/restore_shards_shardID.yml"
 components:
   parameters:
     TraceSpan:
@@ -183,3 +195,33 @@ components:
       $ref: "./openapi/src/common/schemas/Logs.yml"
     LogEvent:
       $ref: "./openapi/src/common/schemas/LogEvent.yml"
+    MetadataBackup:
+      $ref: "./openapi/src/oss/schemas/MetadataBackup.yml"
+    BucketMetadataManifests:
+      $ref: "./openapi/src/oss/schemas/BucketMetadataManifests.yml"
+    BucketMetadataManifest:
+      $ref: "./openapi/src/oss/schemas/BucketMetadataManifest.yml"
+    RetentionPolicyManifests:
+      $ref: "./openapi/src/oss/schemas/RetentionPolicyManifests.yml"
+    RetentionPolicyManifest:
+      $ref: "./openapi/src/oss/schemas/RetentionPolicyManifest.yml"
+    ShardGroupManifests:
+      $ref: "./openapi/src/oss/schemas/ShardGroupManifests.yml"
+    ShardGroupManifest:
+      $ref: "./openapi/src/oss/schemas/ShardGroupManifest.yml"
+    ShardManifests:
+      $ref: "./openapi/src/oss/schemas/ShardManifests.yml"
+    ShardManifest:
+      $ref: "./openapi/src/oss/schemas/ShardManifest.yml"
+    ShardOwners:
+      $ref: "./openapi/src/oss/schemas/ShardOwners.yml"
+    ShardOwner:
+      $ref: "./openapi/src/oss/schemas/ShardOwner.yml"
+    SubscriptionManifests:
+      $ref: "./openapi/src/oss/schemas/SubscriptionManifests.yml"
+    SubscriptionManifest:
+      $ref: "./openapi/src/oss/schemas/SubscriptionManifest.yml"
+    BucketShardMappings:
+      $ref: "./openapi/src/oss/schemas/BucketShardMappings.yml"
+    BucketShardMapping:
+      $ref: "./openapi/src/oss/schemas/BucketShardMapping.yml"
