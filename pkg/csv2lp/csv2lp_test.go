@@ -424,3 +424,33 @@ cpu;3a
 	// 8 lines were read
 	require.Equal(t, 8, reader.LineNumber)
 }
+
+// Test_CsvToLineProtocol_LineEndingWarning checks correct logging of exotic line ending
+func Test_CsvToLineProtocol_LineEndingWarning(t *testing.T) {
+	var buf bytes.Buffer
+	log.SetOutput(&buf)
+	oldFlags := log.Flags()
+	log.SetFlags(0)
+	oldPrefix := log.Prefix()
+	prefix := "::PREFIX::"
+	log.SetPrefix(prefix)
+	defer func() {
+		log.SetOutput(os.Stderr)
+		log.SetFlags(oldFlags)
+		log.SetPrefix(oldPrefix)
+	}()
+
+	csv := "#datatype dateTime:number,string,tag,double,measurement\r" +
+		"time,sensor_id,parent,average,m\r" +
+		"1549240000000000000,xx:xx:xx:xx:xx:xx,2nd Floor Open Plan DS,0,test"
+
+	reader := CsvToLineProtocol(strings.NewReader(csv))
+	bytes, _ := ioutil.ReadAll(reader)
+
+	out := buf.String()
+	messages := strings.Count(out, prefix)
+	require.Equal(t, messages, 1)
+	require.Contains(t, out, "line 1")
+	require.Contains(t, out, "standalone CR character found. Neither CRLF nor LF line endings?")
+	require.Empty(t, bytes)
+}
