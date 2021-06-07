@@ -149,7 +149,7 @@ func (state *CsvToLineReader) Read(p []byte) (n int, err error) {
 			for _, col := range row {
 				if idx := strings.Index(col, "\r"); idx >= 0 && idx+1 < len(col) && col[idx+1] != '\n' {
 					log.Println(
-						fmt.Sprintf("WARNING: %v. Neither CRLF nor LF line endings?",
+						fmt.Sprintf("WARNING: %v. Only CRLF and LF line endings are supported.",
 							CsvLineError{state.LineNumber, errors.New("standalone CR character found")},
 						),
 					)
