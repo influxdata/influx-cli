@@ -451,7 +451,7 @@ func Test_CsvToLineProtocol_LineEndingWarning(t *testing.T) {
 	messages := strings.Count(out, prefix)
 	require.Equal(t, messages, 1)
 	require.Contains(t, out, "line 1")
-	require.Contains(t, out, "standalone CR character found. Neither CRLF nor LF line endings?")
+	require.Contains(t, out, "standalone CR character found. Only CRLF and LF line endings are supported.")
 	require.Empty(t, bytes)
 }
 
