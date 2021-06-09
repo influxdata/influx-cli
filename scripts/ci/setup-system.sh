@@ -7,7 +7,12 @@ function setup_linux () {
 }
 
 function setup_mac () {
-    HOMEBREW_NO_AUTO_UPDATE=1 brew install wget
+    brew update
+    # Python and TCL both come pre-installed on Circle's mac executors, and both depend on wget in some way.
+    # Homebrew will auto-upgrade both of them when wget is installed/upgraded, triggering a chain of upgrades.
+    # Uninstall them both before adding wget to avoid burning time in CI for things we don't need.
+    brew remove --force python@3.9 tcl-tk
+    brew install wget
 }
 
 function setup_windows () {
