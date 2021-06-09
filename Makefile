@@ -94,7 +94,8 @@ test:
 	CGO_ENABLED=0 $(GO_TEST) $(GO_TEST_PATHS)
 
 test-race:
-	CGO_ENABLED=0 $(GO_TEST) -v -race -count=1 $(GO_TEST_PATHS)
+	# Race-checking requires CGO.
+	$(GO_TEST) -v -race -count=1 $(GO_TEST_PATHS)
 
 ### List of all targets that don't produce a file
 .PHONY: influx openapi fmt build crossbuild goreleaser checkfmt checktidy staticcheck vet mock test test-race

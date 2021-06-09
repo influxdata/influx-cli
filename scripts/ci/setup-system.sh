@@ -12,7 +12,7 @@ function setup_mac () {
 }
 
 function setup_windows () {
-    choco install make wget
+    choco install make mingw wget
 }
 
 function main () {
