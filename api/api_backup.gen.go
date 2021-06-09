@@ -11,7 +11,6 @@
 package api
 
 import (
-	_gzip "compress/gzip"
 	_context "context"
 	_io "io"
 	_ioutil "io/ioutil"
@@ -37,9 +36,9 @@ type BackupApi interface {
 
 	/*
 	 * GetBackupMetadataExecute executes the request
-	 * @return MetadataBackup
+	 * @return *os.File
 	 */
-	GetBackupMetadataExecute(r ApiGetBackupMetadataRequest) (MetadataBackup, error)
+	GetBackupMetadataExecute(r ApiGetBackupMetadataRequest) (*_nethttp.Response, error)
 
 	/*
 	 * GetBackupShardId Download snapshot of all TSM data in a shard
@@ -53,7 +52,7 @@ type BackupApi interface {
 	 * GetBackupShardIdExecute executes the request
 	 * @return *os.File
 	 */
-	GetBackupShardIdExecute(r ApiGetBackupShardIdRequest) (_io.ReadCloser, error)
+	GetBackupShardIdExecute(r ApiGetBackupShardIdRequest) (*_nethttp.Response, error)
 }
 
 // backupApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
@@ -98,7 +97,7 @@ func (r ApiGetBackupMetadataRequest) GetAcceptEncoding() *string {
 	return r.acceptEncoding
 }
 
-func (r ApiGetBackupMetadataRequest) Execute() (MetadataBackup, error) {
+func (r ApiGetBackupMetadataRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.GetBackupMetadataExecute(r)
 }
 
@@ -116,16 +115,16 @@ func (a *BackupApiService) GetBackupMetadata(ctx _context.Context) ApiGetBackupM
 
 /*
  * Execute executes the request
- * @return MetadataBackup
+ * @return *os.File
  */
-func (a *BackupApiService) GetBackupMetadataExecute(r ApiGetBackupMetadataRequest) (MetadataBackup, error) {
+func (a *BackupApiService) GetBackupMetadataExecute(r ApiGetBackupMetadataRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  MetadataBackup
+		localVarReturnValue  *_nethttp.Response
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BackupApiService.GetBackupMetadata")
@@ -172,17 +171,12 @@ func (a *BackupApiService) GetBackupMetadataExecute(r ApiGetBackupMetadataReques
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &backupApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -202,19 +196,7 @@ func (a *BackupApiService) GetBackupMetadataExecute(r ApiGetBackupMetadataReques
 		return localVarReturnValue, newErr
 	}
 
-	localVarBody, err := _ioutil.ReadAll(body)
-	body.Close()
-	if err != nil {
-		return localVarReturnValue, err
-	}
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, newErr
-	}
+	localVarReturnValue = localVarHTTPResponse
 
 	return localVarReturnValue, nil
 }
@@ -260,7 +242,7 @@ func (r ApiGetBackupShardIdRequest) GetSince() *time.Time {
 	return r.since
 }
 
-func (r ApiGetBackupShardIdRequest) Execute() (_io.ReadCloser, error) {
+func (r ApiGetBackupShardIdRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.GetBackupShardIdExecute(r)
 }
 
@@ -282,14 +264,14 @@ func (a *BackupApiService) GetBackupShardId(ctx _context.Context, shardID int64)
  * Execute executes the request
  * @return *os.File
  */
-func (a *BackupApiService) GetBackupShardIdExecute(r ApiGetBackupShardIdRequest) (_io.ReadCloser, error) {
+func (a *BackupApiService) GetBackupShardIdExecute(r ApiGetBackupShardIdRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  _io.ReadCloser
+		localVarReturnValue  *_nethttp.Response
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BackupApiService.GetBackupShardId")
@@ -340,17 +322,12 @@ func (a *BackupApiService) GetBackupShardIdExecute(r ApiGetBackupShardIdRequest)
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &backupApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -359,6 +336,16 @@ func (a *BackupApiService) GetBackupShardIdExecute(r ApiGetBackupShardIdRequest)
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, newErr
+			}
+			newErr.model = &v
+			return localVarReturnValue, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -370,7 +357,7 @@ func (a *BackupApiService) GetBackupShardIdExecute(r ApiGetBackupShardIdRequest)
 		return localVarReturnValue, newErr
 	}
 
-	localVarReturnValue = body
+	localVarReturnValue = localVarHTTPResponse
 
 	return localVarReturnValue, nil
 }

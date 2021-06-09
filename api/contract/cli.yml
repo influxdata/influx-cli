@@ -54,7 +54,7 @@ paths:
   /tasks/{taskID}/runs/{runID}/logs:
     $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID_logs.yml"
   /backup/metadata:
-    $ref: "./openapi/src/oss/paths/backup_metadata.yml"
+    $ref: "./overrides/paths/backup_metadata.yml"
   /backup/shards/{shardID}:
     $ref: "./openapi/src/oss/paths/backup_shards_shardID.yml"
   /restore/kv:

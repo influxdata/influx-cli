@@ -11,7 +11,6 @@
 package api
 
 import (
-	_gzip "compress/gzip"
 	_context "context"
 	_io "io"
 	_ioutil "io/ioutil"
@@ -28,9 +27,9 @@ var (
 type BucketSchemasApi interface {
 
 	/*
-	 * CreateMeasurementSchema Create a new measurement schema for this bucket
+	 * CreateMeasurementSchema Create a measurement schema for a bucket
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The ID of the bucket
+	 * @param bucketID The identifier of the bucket.
 	 * @return ApiCreateMeasurementSchemaRequest
 	 */
 	CreateMeasurementSchema(ctx _context.Context, bucketID string) ApiCreateMeasurementSchemaRequest
@@ -42,10 +41,10 @@ type BucketSchemasApi interface {
 	CreateMeasurementSchemaExecute(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, error)
 
 	/*
-	 * GetMeasurementSchema Fetch schema information for a measurement
+	 * GetMeasurementSchema Retrieve measurement schema information
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The ID of the bucket
-	 * @param measurementID The ID of the measurement
+	 * @param bucketID The identifier of the bucket.
+	 * @param measurementID The identifier of the measurement.
 	 * @return ApiGetMeasurementSchemaRequest
 	 */
 	GetMeasurementSchema(ctx _context.Context, bucketID string, measurementID string) ApiGetMeasurementSchemaRequest
@@ -57,9 +56,9 @@ type BucketSchemasApi interface {
 	GetMeasurementSchemaExecute(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, error)
 
 	/*
-	 * GetMeasurementSchemas Retrieve a list of measurement schemas defined for this bucket
+	 * GetMeasurementSchemas List all measurement schemas of a bucket
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The ID of the bucket
+	 * @param bucketID The identifier of the bucket.
 	 * @return ApiGetMeasurementSchemasRequest
 	 */
 	GetMeasurementSchemas(ctx _context.Context, bucketID string) ApiGetMeasurementSchemasRequest
@@ -71,10 +70,10 @@ type BucketSchemasApi interface {
 	GetMeasurementSchemasExecute(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, error)
 
 	/*
-	 * UpdateMeasurementSchema Update existing measurement schema
+	 * UpdateMeasurementSchema Update a measurement schema
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The ID of the bucket
-	 * @param measurementID The ID of the measurement
+	 * @param bucketID The identifier of the bucket.
+	 * @param measurementID The identifier of the measurement.
 	 * @return ApiUpdateMeasurementSchemaRequest
 	 */
 	UpdateMeasurementSchema(ctx _context.Context, bucketID string, measurementID string) ApiUpdateMeasurementSchemaRequest
@@ -151,9 +150,9 @@ func (r ApiCreateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) 
 }
 
 /*
- * CreateMeasurementSchema Create a new measurement schema for this bucket
+ * CreateMeasurementSchema Create a measurement schema for a bucket
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The ID of the bucket
+ * @param bucketID The identifier of the bucket.
  * @return ApiCreateMeasurementSchemaRequest
  */
 func (a *BucketSchemasApiService) CreateMeasurementSchema(ctx _context.Context, bucketID string) ApiCreateMeasurementSchemaRequest {
@@ -225,17 +224,12 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &bucketSchemasApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -257,6 +251,11 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 		return localVarReturnValue, newErr
 	}
 
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, err
+	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
@@ -320,10 +319,10 @@ func (r ApiGetMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
 }
 
 /*
- * GetMeasurementSchema Fetch schema information for a measurement
+ * GetMeasurementSchema Retrieve measurement schema information
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The ID of the bucket
- * @param measurementID The ID of the measurement
+ * @param bucketID The identifier of the bucket.
+ * @param measurementID The identifier of the measurement.
  * @return ApiGetMeasurementSchemaRequest
  */
 func (a *BucketSchemasApiService) GetMeasurementSchema(ctx _context.Context, bucketID string, measurementID string) ApiGetMeasurementSchemaRequest {
@@ -395,17 +394,12 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &bucketSchemasApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -418,6 +412,11 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 		return localVarReturnValue, newErr
 	}
 
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, err
+	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
@@ -481,9 +480,9 @@ func (r ApiGetMeasurementSchemasRequest) Execute() (MeasurementSchemaList, error
 }
 
 /*
- * GetMeasurementSchemas Retrieve a list of measurement schemas defined for this bucket
+ * GetMeasurementSchemas List all measurement schemas of a bucket
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The ID of the bucket
+ * @param bucketID The identifier of the bucket.
  * @return ApiGetMeasurementSchemasRequest
  */
 func (a *BucketSchemasApiService) GetMeasurementSchemas(ctx _context.Context, bucketID string) ApiGetMeasurementSchemasRequest {
@@ -556,17 +555,12 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &bucketSchemasApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -588,6 +582,11 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 		return localVarReturnValue, newErr
 	}
 
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, err
+	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
@@ -660,10 +659,10 @@ func (r ApiUpdateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) 
 }
 
 /*
- * UpdateMeasurementSchema Update existing measurement schema
+ * UpdateMeasurementSchema Update a measurement schema
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The ID of the bucket
- * @param measurementID The ID of the measurement
+ * @param bucketID The identifier of the bucket.
+ * @param measurementID The identifier of the measurement.
  * @return ApiUpdateMeasurementSchemaRequest
  */
 func (a *BucketSchemasApiService) UpdateMeasurementSchema(ctx _context.Context, bucketID string, measurementID string) ApiUpdateMeasurementSchemaRequest {
@@ -737,17 +736,12 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &bucketSchemasApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -769,6 +763,11 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 		return localVarReturnValue, newErr
 	}
 
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, err
+	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {

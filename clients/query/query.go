@@ -142,7 +142,11 @@ func (c Client) Query(ctx context.Context, params *Params) error {
 	if err != nil {
 		return fmt.Errorf("failed to execute query: %w", err)
 	}
-	defer resp.Close()
+	respBody, err := api.GunzipIfNeeded(resp)
+	if err != nil {
+		return fmt.Errorf("failed to decode query response: %w", err)
+	}
+	defer respBody.Close()
 
-	return c.PrintQueryResults(resp, c.StdIO)
+	return c.PrintQueryResults(respBody, c.StdIO)
 }

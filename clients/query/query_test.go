@@ -2,8 +2,11 @@ package query_test
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
+	"io"
 	"io/ioutil"
+	"net/http"
 	"strings"
 	"testing"
 
@@ -117,7 +120,7 @@ func TestQuery(t *testing.T) {
 						assert.Equal(t, fakeQuery, *body) &&
 						assert.Equal(t, orgID.String(), *in.GetOrgID()) &&
 						assert.Nil(t, in.GetOrg())
-				})).Return(ioutil.NopCloser(strings.NewReader(fakeResults)), nil)
+				})).Return(&http.Response{Body: ioutil.NopCloser(strings.NewReader(fakeResults))}, nil)
 			},
 		},
 		{
@@ -137,7 +140,7 @@ func TestQuery(t *testing.T) {
 						assert.Equal(t, fakeQuery, *body) &&
 						assert.Equal(t, "my-org", *in.GetOrg()) &&
 						assert.Nil(t, in.GetOrgID())
-				})).Return(ioutil.NopCloser(strings.NewReader(fakeResults)), nil)
+				})).Return(&http.Response{Body: ioutil.NopCloser(strings.NewReader(fakeResults))}, nil)
 			},
 		},
 		{
@@ -155,7 +158,7 @@ func TestQuery(t *testing.T) {
 						assert.Equal(t, fakeQuery, *body) &&
 						assert.Equal(t, "default-org", *in.GetOrg()) &&
 						assert.Nil(t, in.GetOrgID())
-				})).Return(ioutil.NopCloser(strings.NewReader(fakeResults)), nil)
+				})).Return(&http.Response{Body: ioutil.NopCloser(strings.NewReader(fakeResults))}, nil)
 			},
 		},
 		{
@@ -186,7 +189,40 @@ func TestQuery(t *testing.T) {
 						assert.Equal(t, expectedBody, *body) &&
 						assert.Equal(t, "default-org", *in.GetOrg()) &&
 						assert.Nil(t, in.GetOrgID())
-				})).Return(ioutil.NopCloser(strings.NewReader(fakeResults)), nil)
+				})).Return(&http.Response{Body: ioutil.NopCloser(strings.NewReader(fakeResults))}, nil)
+			},
+		},
+		{
+			name: "gzipped response",
+			params: query.Params{
+				OrgParams: clients.OrgParams{
+					OrgID: orgID,
+				},
+				Query: fakeQuery.Query,
+			},
+			configOrgName: "default-org",
+			registerExpectations: func(t *testing.T, queryApi *mock.MockQueryApi) {
+				queryApi.EXPECT().PostQuery(gomock.Any()).Return(api.ApiPostQueryRequest{ApiService: queryApi})
+				queryApi.EXPECT().PostQueryExecute(tmock.MatchedBy(func(in api.ApiPostQueryRequest) bool {
+					body := in.GetQuery()
+					return assert.NotNil(t, body) &&
+						assert.Equal(t, fakeQuery, *body) &&
+						assert.Equal(t, orgID.String(), *in.GetOrgID()) &&
+						assert.Nil(t, in.GetOrg())
+				})).DoAndReturn(func(api.ApiPostQueryRequest) (*http.Response, error) {
+					pr, pw := io.Pipe()
+					gw := gzip.NewWriter(pw)
+
+					go func() {
+						_, err := gw.Write([]byte(fakeResults))
+						gw.Close()
+						pw.Close()
+						require.NoError(t, err)
+					}()
+
+					resp := http.Response{Body: pr, Header: http.Header{"Content-Encoding": []string{"gzip"}}}
+					return &resp, nil
+				})
 			},
 		},
 	}
