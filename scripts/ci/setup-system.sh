@@ -7,10 +7,7 @@ function setup_linux () {
 }
 
 function setup_mac () {
-    brew update
-    # Avoid a cascade of upgrades when we install wget by removing everything that comes pre-installed.
-    brew remove --force $(brew list)
-    brew install wget
+    HOMEBREW_NO_AUTO_UPDATE=1 brew install wget
 }
 
 function setup_windows () {
