@@ -8,6 +8,8 @@ function setup_linux () {
 
 function setup_mac () {
     brew update
+    # Avoid a cascade of upgrades when we install wget by removing everything that comes pre-installed.
+    brew remove --force $(brew list)
     brew install wget
 }
 
