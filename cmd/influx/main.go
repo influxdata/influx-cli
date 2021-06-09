@@ -44,6 +44,7 @@ var app = cli.App{
 		newDeleteCmd(),
 		newUserCmd(),
 		newTaskCommand(),
+		newBackupCmd(),
 	},
 }
 
