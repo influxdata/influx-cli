@@ -7,8 +7,8 @@ function setup_linux () {
 }
 
 function setup_mac () {
-    # Placeholder in case we ever need to `brew install` something
-    return
+    brew update
+    brew install wget
 }
 
 function setup_windows () {
