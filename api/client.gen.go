@@ -558,7 +558,11 @@ func strlen(s string) int {
 type GenericOpenAPIError struct {
 	body  []byte
 	error string
-	model error
+	model ApiError
+}
+
+func (e GenericOpenAPIError) Body() []byte {
+	return e.body
 }
 
 // Error returns non-empty string if there was an error.
@@ -569,12 +573,7 @@ func (e GenericOpenAPIError) Error() string {
 	return e.error
 }
 
-// Body returns the raw bytes of the response
-func (e GenericOpenAPIError) Body() []byte {
-	return e.body
-}
-
 // Model returns the unpacked model of the error
-func (e GenericOpenAPIError) Model() interface{} {
+func (e GenericOpenAPIError) Model() ApiError {
 	return e.model
 }

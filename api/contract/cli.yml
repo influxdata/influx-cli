@@ -149,8 +149,12 @@ components:
       $ref: "./openapi/src/common/schemas/WritePrecision.yml"
     LineProtocolError:
       $ref: "./openapi/src/common/schemas/LineProtocolError.yml"
+    LineProtocolErrorCode:
+      $ref: "./openapi/src/common/schemas/LineProtocolErrorCode.yml"
     LineProtocolLengthError:
       $ref: "./openapi/src/common/schemas/LineProtocolLengthError.yml"
+    LineProtocolLengthErrorCode:
+      $ref: "./openapi/src/common/schemas/LineProtocolLengthErrorCode.yml"
     SchemaType:
       $ref: "./openapi/src/common/schemas/SchemaType.yml"
     ColumnDataType:

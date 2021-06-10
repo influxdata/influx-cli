@@ -58,7 +58,7 @@ func (p *Params) Matches(bkt api.BucketMetadataManifest) bool {
 
 const backupFilenamePattern = "20060102T150405Z"
 
-func (c *Client) Backup(ctx context.Context, params *Params) error {
+func (c Client) Backup(ctx context.Context, params *Params) error {
 	if err := os.MkdirAll(params.Path, 0777); err != nil {
 		return err
 	}
@@ -165,7 +165,7 @@ func (c *Client) Backup(ctx context.Context, params *Params) error {
 			res, err := c.GetBackupShardId(ctx, shardId).AcceptEncoding("gzip").Execute()
 			if err != nil {
 				if oapiErr, ok := err.(*api.GenericOpenAPIError); ok {
-					if coreErr, ok := oapiErr.Model().(*api.Error); ok && coreErr.Code == api.ERRORCODE_NOT_FOUND {
+					if oapiErr.Model() != nil && oapiErr.Model().ErrorCode() == api.ERRORCODE_NOT_FOUND {
 						log.Printf("WARN: Shard %d removed during backup", shardId)
 						return nil, nil
 					}
