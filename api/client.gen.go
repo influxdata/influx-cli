@@ -577,3 +577,10 @@ func (e GenericOpenAPIError) Error() string {
 func (e GenericOpenAPIError) Model() ApiError {
 	return e.model
 }
+
+func (e GenericOpenAPIError) ErrorCode() ErrorCode {
+	if e.model == nil {
+		return ERRORCODE_INTERNAL_ERROR
+	}
+	return e.model.ErrorCode()
+}

@@ -191,67 +191,7 @@ func (c *Client) downloadBucketData(ctx context.Context, params *Params) error {
 			continue
 		}
 		bktManifest, err := ConvertBucketManifest(b, func(shardId int64) (*ManifestFileEntry, error) {
-			log.Printf("INFO: Backing up TSM for shard %d", shardId)
-			res, err := c.GetBackupShardId(ctx, shardId).AcceptEncoding("gzip").Execute()
-			if err != nil {
-				if oapiErr, ok := err.(*api.GenericOpenAPIError); ok {
-					if oapiErr.Model() != nil && oapiErr.Model().ErrorCode() == api.ERRORCODE_NOT_FOUND {
-						log.Printf("WARN: Shard %d removed during backup", shardId)
-						return nil, nil
-					}
-				}
-				return nil, err
-			}
-			defer res.Body.Close()
-
-			fileName := fmt.Sprintf("%s.%d.tar", c.baseName, shardId)
-			if params.Compression == GzipCompression {
-				fileName = fileName + ".gz"
-			}
-			path := filepath.Join(params.Path, fileName)
-
-			// Closure here so we can clean up file resources via `defer` without
-			// returning from the whole function.
-			if err := func() error {
-				f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-				if err != nil {
-					return err
-				}
-				defer f.Close()
-
-				var inR io.Reader = res.Body
-				var outW io.Writer = f
-
-				// Make sure the locally-written data is compressed according to the user's request.
-				if params.Compression == GzipCompression && res.Header.Get("Content-Encoding") != "gzip" {
-					gzw := gzip.NewWriter(outW)
-					defer gzw.Close()
-					outW = gzw
-				}
-				if params.Compression == NoCompression && res.Header.Get("Content-Encoding") == "gzip" {
-					gzr, err := gzip.NewReader(inR)
-					if err != nil {
-						return err
-					}
-					defer gzr.Close()
-					inR = gzr
-				}
-
-				_, err = io.Copy(outW, inR)
-				return err
-			}(); err != nil {
-				return nil, err
-			}
-
-			fi, err := os.Stat(path)
-			if err != nil {
-				return nil, err
-			}
-			return &ManifestFileEntry{
-				FileName:    fi.Name(),
-				Size:        fi.Size(),
-				Compression: params.Compression,
-			}, nil
+			return c.downloadShardData(ctx, params, shardId)
 		})
 		if err != nil {
 			return err
@@ -259,6 +199,72 @@ func (c *Client) downloadBucketData(ctx context.Context, params *Params) error {
 		c.manifest.Buckets = append(c.manifest.Buckets, bktManifest)
 	}
 	return nil
+}
+
+// downloadShardData downloads the TSM snapshot for a single shard. The snapshot is written
+// to a local file, and its metadata is returned for aggregation.
+func (c Client) downloadShardData(ctx context.Context, params *Params, shardId int64) (*ManifestFileEntry, error) {
+	log.Printf("INFO: Backing up TSM for shard %d", shardId)
+	res, err := c.GetBackupShardId(ctx, shardId).AcceptEncoding("gzip").Execute()
+	if err != nil {
+		if apiError, ok := err.(api.ApiError); ok {
+			if apiError.ErrorCode() == api.ERRORCODE_NOT_FOUND {
+				log.Printf("WARN: Shard %d removed during backup", shardId)
+				return nil, nil
+			}
+		}
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	fileName := fmt.Sprintf("%s.%d.tar", c.baseName, shardId)
+	if params.Compression == GzipCompression {
+		fileName = fileName + ".gz"
+	}
+	path := filepath.Join(params.Path, fileName)
+
+	// Closure here so we can clean up file resources via `defer` without
+	// returning from the whole function.
+	if err := func() error {
+		f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		var inR io.Reader = res.Body
+		var outW io.Writer = f
+
+		// Make sure the locally-written data is compressed according to the user's request.
+		if params.Compression == GzipCompression && res.Header.Get("Content-Encoding") != "gzip" {
+			gzw := gzip.NewWriter(outW)
+			defer gzw.Close()
+			outW = gzw
+		}
+		if params.Compression == NoCompression && res.Header.Get("Content-Encoding") == "gzip" {
+			gzr, err := gzip.NewReader(inR)
+			if err != nil {
+				return err
+			}
+			defer gzr.Close()
+			inR = gzr
+		}
+
+		_, err = io.Copy(outW, inR)
+		return err
+	}(); err != nil {
+		return nil, err
+	}
+
+	fi, err := os.Stat(path)
+	if err != nil {
+		return nil, err
+	}
+	return &ManifestFileEntry{
+		FileName:    fi.Name(),
+		Size:        fi.Size(),
+		Compression: params.Compression,
+	}, nil
 }
 
 // writeManifest writes a description of all files downloaded as part of the backup process

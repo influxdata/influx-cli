@@ -10,6 +10,7 @@ package mock
 //go:generate go run github.com/golang/mock/mockgen -package mock -destination api_query.gen.go github.com/influxdata/influx-cli/v2/api QueryApi
 //go:generate go run github.com/golang/mock/mockgen -package mock -destination api_users.gen.go github.com/influxdata/influx-cli/v2/api UsersApi
 //go:generate go run github.com/golang/mock/mockgen -package mock -destination api_delete.gen.go github.com/influxdata/influx-cli/v2/api DeleteApi
+//go:generate go run github.com/golang/mock/mockgen -package mock -destination api_backup.gen.go github.com/influxdata/influx-cli/v2/api BackupApi
 
 // Other mocks
 //go:generate go run github.com/golang/mock/mockgen -package mock -destination config.gen.go -mock_names Service=MockConfigService github.com/influxdata/influx-cli/v2/internal/config Service
