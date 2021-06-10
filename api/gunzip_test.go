@@ -68,6 +68,7 @@ func TestGunzipIfNeeded(t *testing.T) {
 			require.NoError(t, err)
 			defer raw.Close()
 			body, err := ioutil.ReadAll(raw)
+			require.NoError(t, err)
 			require.Equal(t, exampleResponse, string(body))
 		})
 	}
