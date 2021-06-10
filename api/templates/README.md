@@ -15,9 +15,9 @@ multiple locations.
 * Add `GetX()` methods for each request parameter `X`, for use in unit tests
 * Add checks for `isByteArray` to generate `[]byte` request fields instead of `*string`
 * Update creation of `GenericOpenAPIError` to track sub-error models by reference
-* Add checks for `isResponseBinary` to directly return the response-body-reader, instead of
+* Add checks for `isResponseBinary` to directly return the raw `*http.Response`, instead of
   pulling the entire body into memory and transforming it into an `*os.File`
-* GUnzip response bodies when `Content-Encoding: gzip` is set
+* GUnzip response bodies before unmarshalling when `Content-Encoding: gzip` is set
 * Remove `*http.Response`s from the return values of generated operations
 
 `client.mustache`
