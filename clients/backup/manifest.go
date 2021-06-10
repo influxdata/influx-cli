@@ -2,7 +2,6 @@ package backup
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/api"
@@ -50,7 +49,7 @@ type ManifestFileEntry struct {
 	Compression FileCompression `json:"compression"`
 }
 
-func ConvertBucketManifest(manifest api.BucketMetadataManifest, getShard func(shardId int64) (os.FileInfo, error)) (ManifestBucketEntry, error) {
+func ConvertBucketManifest(manifest api.BucketMetadataManifest, getShard func(shardId int64) (*ManifestFileEntry, error)) (ManifestBucketEntry, error) {
 	m := ManifestBucketEntry{
 		OrganizationID:         manifest.OrganizationID,
 		OrganizationName:       manifest.OrganizationName,
@@ -71,7 +70,7 @@ func ConvertBucketManifest(manifest api.BucketMetadataManifest, getShard func(sh
 	return m, nil
 }
 
-func ConvertRetentionPolicy(manifest api.RetentionPolicyManifest, getShard func(shardId int64) (os.FileInfo, error)) (ManifestRetentionPolicy, error) {
+func ConvertRetentionPolicy(manifest api.RetentionPolicyManifest, getShard func(shardId int64) (*ManifestFileEntry, error)) (ManifestRetentionPolicy, error) {
 	m := ManifestRetentionPolicy{
 		Name:               manifest.Name,
 		ReplicaN:           manifest.ReplicaN,
@@ -100,40 +99,44 @@ func ConvertRetentionPolicy(manifest api.RetentionPolicyManifest, getShard func(
 	return m, nil
 }
 
-func ConvertShardGroup(manifest api.ShardGroupManifest, getShard func(shardId int64) (os.FileInfo, error)) (ManifestShardGroup, error) {
+func ConvertShardGroup(manifest api.ShardGroupManifest, getShard func(shardId int64) (*ManifestFileEntry, error)) (ManifestShardGroup, error) {
 	m := ManifestShardGroup{
 		ID:          manifest.Id,
 		StartTime:   manifest.StartTime,
 		EndTime:     manifest.EndTime,
 		DeletedAt:   manifest.DeletedAt,
 		TruncatedAt: manifest.TruncatedAt,
-		Shards:      make([]ManifestShardEntry, len(manifest.Shards)),
+		Shards:      make([]ManifestShardEntry, 0, len(manifest.Shards)),
 	}
 
-	for i, sh := range manifest.Shards {
-		var err error
-		m.Shards[i], err = ConvertShard(sh, getShard)
+	for _, sh := range manifest.Shards {
+		maybeShard, err := ConvertShard(sh, getShard)
 		if err != nil {
 			return ManifestShardGroup{}, err
 		}
+		// Shard deleted mid-backup.
+		if maybeShard == nil {
+			continue
+		}
+		m.Shards = append(m.Shards, *maybeShard)
 	}
 
 	return m, nil
 }
 
-func ConvertShard(manifest api.ShardManifest, getShard func(shardId int64) (os.FileInfo, error)) (ManifestShardEntry, error) {
+func ConvertShard(manifest api.ShardManifest, getShard func(shardId int64) (*ManifestFileEntry, error)) (*ManifestShardEntry, error) {
 	shardFileInfo, err := getShard(manifest.Id)
 	if err != nil {
-		return ManifestShardEntry{}, fmt.Errorf("failed to download snapshot of shard %d: %w", manifest.Id, err)
+		return nil, fmt.Errorf("failed to download snapshot of shard %d: %w", manifest.Id, err)
+	}
+	if shardFileInfo == nil {
+		return nil, nil
 	}
 
 	m := ManifestShardEntry{
-		ID:          manifest.Id,
-		ShardOwners: make([]ShardOwner, len(manifest.ShardOwners)),
-		ManifestFileEntry: ManifestFileEntry{
-			FileName: shardFileInfo.Name(),
-			Size:     shardFileInfo.Size(),
-		},
+		ID:                manifest.Id,
+		ShardOwners:       make([]ShardOwner, len(manifest.ShardOwners)),
+		ManifestFileEntry: *shardFileInfo,
 	}
 
 	for i, o := range manifest.ShardOwners {
@@ -142,7 +145,7 @@ func ConvertShard(manifest api.ShardManifest, getShard func(shardId int64) (os.F
 		}
 	}
 
-	return m, nil
+	return &m, nil
 }
 
 type ManifestBucketEntry struct {
