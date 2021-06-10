@@ -11,7 +11,6 @@
 package api
 
 import (
-	_gzip "compress/gzip"
 	_context "context"
 	_io "io"
 	_ioutil "io/ioutil"
@@ -209,17 +208,12 @@ func (a *BucketsApiService) DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) 
 		return err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return err
 		}
-		body = &bucketsApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -421,17 +415,12 @@ func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, 
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &bucketsApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -451,6 +440,11 @@ func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, 
 		return localVarReturnValue, newErr
 	}
 
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, err
+	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
@@ -565,17 +559,12 @@ func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucke
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &bucketsApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -595,6 +584,11 @@ func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucke
 		return localVarReturnValue, newErr
 	}
 
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, err
+	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
@@ -723,17 +717,12 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &bucketsApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -753,6 +742,11 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 		return localVarReturnValue, newErr
 	}
 
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, err
+	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
@@ -869,17 +863,12 @@ func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket,
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &bucketsApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -909,6 +898,11 @@ func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket,
 		return localVarReturnValue, newErr
 	}
 
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, err
+	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {

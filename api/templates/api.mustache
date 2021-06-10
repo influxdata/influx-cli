@@ -4,7 +4,6 @@ package {{packageName}}
 {{#operations}}
 import (
 	"bytes"
-	_gzip "compress/gzip"
 	_context "context"
 	_io "io"
 	_ioutil "io/ioutil"
@@ -38,7 +37,7 @@ type {{classname}} interface {
 	 * {{nickname}}Execute executes the request{{#returnType}}
 	 * @return {{{.}}}{{/returnType}}
 	 */
-	{{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}_io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error)
+	{{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error)
 	{{/operation}}
 }
 {{/generateInterfaces}}
@@ -83,7 +82,7 @@ func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Reques
 
 {{/allParams}}
 
-func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) Execute() ({{#returnType}}{{#isResponseBinary}}_io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error) {
+func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) Execute() ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error) {
 	return r.ApiService.{{nickname}}Execute(r)
 }
 
@@ -110,7 +109,7 @@ func (a *{{{classname}}}Service) {{{nickname}}}(ctx _context.Context{{#pathParam
  * Execute executes the request{{#returnType}}
  * @return {{{.}}}{{/returnType}}
  */
-func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}_io.ReadCloser{{/isResponseBinary}}{{^isResponseBinary}}{{{.}}}{{/isResponseBinary}}, {{/returnType}}error) {
+func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{.}}}{{/isResponseBinary}}, {{/returnType}}error) {
 	var (
 		localVarHTTPMethod   = _nethttp.Method{{httpMethod}}
 		localVarPostBody     interface{}
@@ -119,7 +118,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 		localVarFileBytes    []byte
 		{{#returnType}}
 		{{#isResponseBinary}}
-		localVarReturnValue  _io.ReadCloser
+		localVarReturnValue  *_nethttp.Response
 		{{/isResponseBinary}}
 		{{^isResponseBinary}}
 		localVarReturnValue  {{{returnType}}}
@@ -350,17 +349,12 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 		return {{#returnType}}localVarReturnValue, {{/returnType}}err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
-		if err != nil {
-			body.Close()
-			return {{#returnType}}localVarReturnValue, {{/returnType}}err
-		}
-		body = &{{#lambda.camelcase}}{{classname}}{{/lambda.camelcase}}GzipReadCloser{underlying: body, gzip: gzr}
-	}
-
 	if localVarHTTPResponse.StatusCode >= 300 {
+        body, err := GunzipIfNeeded(localVarHTTPResponse)
+        if err != nil {
+            body.Close()
+            return {{#returnType}}localVarReturnValue, {{/returnType}}err
+        }
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -399,9 +393,14 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 
 	{{#returnType}}
 	{{#isResponseBinary}}
-	localVarReturnValue = body
+	localVarReturnValue = localVarHTTPResponse
 	{{/isResponseBinary}}
 	{{^isResponseBinary}}
+    body, err := GunzipIfNeeded(localVarHTTPResponse)
+    if err != nil {
+        body.Close()
+        return {{#returnType}}localVarReturnValue, {{/returnType}}err
+    }
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {

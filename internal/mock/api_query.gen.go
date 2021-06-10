@@ -6,7 +6,7 @@ package mock
 
 import (
 	context "context"
-	io "io"
+	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -51,10 +51,10 @@ func (mr *MockQueryApiMockRecorder) PostQuery(arg0 interface{}) *gomock.Call {
 }
 
 // PostQueryExecute mocks base method.
-func (m *MockQueryApi) PostQueryExecute(arg0 api.ApiPostQueryRequest) (io.ReadCloser, error) {
+func (m *MockQueryApi) PostQueryExecute(arg0 api.ApiPostQueryRequest) (*http.Response, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PostQueryExecute", arg0)
-	ret0, _ := ret[0].(io.ReadCloser)
+	ret0, _ := ret[0].(*http.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

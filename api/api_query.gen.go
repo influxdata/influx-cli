@@ -11,7 +11,6 @@
 package api
 
 import (
-	_gzip "compress/gzip"
 	_context "context"
 	_io "io"
 	_ioutil "io/ioutil"
@@ -37,7 +36,7 @@ type QueryApi interface {
 	 * PostQueryExecute executes the request
 	 * @return *os.File
 	 */
-	PostQueryExecute(r ApiPostQueryRequest) (_io.ReadCloser, error)
+	PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Response, error)
 }
 
 // queryApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
@@ -118,7 +117,7 @@ func (r ApiPostQueryRequest) GetQuery() *Query {
 	return r.query
 }
 
-func (r ApiPostQueryRequest) Execute() (_io.ReadCloser, error) {
+func (r ApiPostQueryRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.PostQueryExecute(r)
 }
 
@@ -138,14 +137,14 @@ func (a *QueryApiService) PostQuery(ctx _context.Context) ApiPostQueryRequest {
  * Execute executes the request
  * @return *os.File
  */
-func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (_io.ReadCloser, error) {
+func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  _io.ReadCloser
+		localVarReturnValue  *_nethttp.Response
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "QueryApiService.PostQuery")
@@ -203,17 +202,12 @@ func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (_io.ReadClose
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &queryApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -233,7 +227,7 @@ func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (_io.ReadClose
 		return localVarReturnValue, newErr
 	}
 
-	localVarReturnValue = body
+	localVarReturnValue = localVarHTTPResponse
 
 	return localVarReturnValue, nil
 }

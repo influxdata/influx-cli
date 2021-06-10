@@ -1,0 +1,40 @@
+get:
+  operationId: GetBackupMetadata
+  tags:
+    - Backup
+  summary: Download snapshot of all metadata in the server
+  parameters:
+    - $ref: "../../openapi/src/common/parameters/TraceSpan.yml"
+    - in: header
+      name: Accept-Encoding
+      description: The Accept-Encoding request HTTP header advertises which content encoding, usually a compression algorithm, the client is able to understand.
+      schema:
+        type: string
+        description: Specifies that the query response in the body should be encoded with gzip or not encoded with identity.
+        default: identity
+        enum:
+          - gzip
+          - identity
+  responses:
+    "200":
+      description: Snapshot of metadata
+      headers:
+        Content-Encoding:
+          description: The Content-Encoding entity header is used to compress the media-type.  When present, its value indicates which encodings were applied to the entity-body
+          schema:
+            type: string
+            description: Specifies that the response in the body is encoded with gzip or not encoded with identity.
+            default: identity
+            enum:
+              - gzip
+              - identity
+      content:
+        multipart/mixed:
+          schema:
+            # NOTE: This has a proper schema in the `openapi` repo, but our codegen isn't smart enough to handle
+            # multipart responses. Pretend it's a binary string here so we can decode the body ourselves.
+            type: string
+            format: binary
+    default:
+      description: Unexpected error
+      $ref: '../../openapi/src/common/responses/ServerError.yml'

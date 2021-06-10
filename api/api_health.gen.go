@@ -11,7 +11,6 @@
 package api
 
 import (
-	_gzip "compress/gzip"
 	_context "context"
 	_io "io"
 	_ioutil "io/ioutil"
@@ -144,17 +143,12 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 		return localVarReturnValue, err
 	}
 
-	var body _io.ReadCloser = localVarHTTPResponse.Body
-	if localVarHTTPResponse.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := _gzip.NewReader(body)
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
 			return localVarReturnValue, err
 		}
-		body = &healthApiGzipReadCloser{underlying: body, gzip: gzr}
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -184,6 +178,11 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 		return localVarReturnValue, newErr
 	}
 
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, err
+	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
