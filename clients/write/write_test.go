@@ -2,6 +2,7 @@ package write_test
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
 	"io"
 	"io/ioutil"
@@ -79,9 +80,16 @@ func TestWriteByIDs(t *testing.T) {
 		return assert.Equal(t, params.OrgID, *in.GetOrg()) &&
 			assert.Equal(t, params.BucketID, *in.GetBucket()) &&
 			assert.Equal(t, params.Precision, *in.GetPrecision()) &&
-			assert.Equal(t, "gzip", *in.GetContentEncoding()) // Make sure the body is properly marked for compression.
+			assert.Equal(t, "gzip", *in.GetContentEncoding())
 	})).DoAndReturn(func(in api.ApiPostWriteRequest) error {
-		writtenLines = append(writtenLines, string(in.GetBody()))
+		bodyBytes := bytes.NewReader(in.GetBody())
+		gzr, err := gzip.NewReader(bodyBytes)
+		require.NoError(t, err)
+		defer gzr.Close()
+		buf := bytes.Buffer{}
+		_, err = buf.ReadFrom(gzr)
+		require.NoError(t, err)
+		writtenLines = append(writtenLines, buf.String())
 		return nil
 	}).Times(len(inLines))
 
@@ -124,9 +132,16 @@ func TestWriteByNames(t *testing.T) {
 		return assert.Equal(t, params.OrgName, *in.GetOrg()) &&
 			assert.Equal(t, params.BucketName, *in.GetBucket()) &&
 			assert.Equal(t, params.Precision, *in.GetPrecision()) &&
-			assert.Equal(t, "gzip", *in.GetContentEncoding()) // Make sure the body is properly marked for compression.
+			assert.Equal(t, "gzip", *in.GetContentEncoding())
 	})).DoAndReturn(func(in api.ApiPostWriteRequest) error {
-		writtenLines = append(writtenLines, string(in.GetBody()))
+		bodyBytes := bytes.NewReader(in.GetBody())
+		gzr, err := gzip.NewReader(bodyBytes)
+		require.NoError(t, err)
+		defer gzr.Close()
+		buf := bytes.Buffer{}
+		_, err = buf.ReadFrom(gzr)
+		require.NoError(t, err)
+		writtenLines = append(writtenLines, buf.String())
 		return nil
 	}).Times(len(inLines))
 
@@ -171,7 +186,14 @@ func TestWriteOrgFromConfig(t *testing.T) {
 			assert.Equal(t, params.Precision, *in.GetPrecision()) &&
 			assert.Equal(t, "gzip", *in.GetContentEncoding()) // Make sure the body is properly marked for compression.
 	})).DoAndReturn(func(in api.ApiPostWriteRequest) error {
-		writtenLines = append(writtenLines, string(in.GetBody()))
+		bodyBytes := bytes.NewReader(in.GetBody())
+		gzr, err := gzip.NewReader(bodyBytes)
+		require.NoError(t, err)
+		defer gzr.Close()
+		buf := bytes.Buffer{}
+		_, err = buf.ReadFrom(gzr)
+		require.NoError(t, err)
+		writtenLines = append(writtenLines, buf.String())
 		return nil
 	}).Times(len(inLines))
 
