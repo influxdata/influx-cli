@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -151,13 +150,8 @@ func TestBackup_DownloadMetadata(t *testing.T) {
 					return &res, nil
 				})
 
-			stdio := mock.NewMockStdIO(ctrl)
-			writtenBytes := bytes.Buffer{}
-			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
-			log.SetOutput(stdio)
-
 			cli := Client{
-				CLI:       clients.CLI{StdIO: stdio},
+				CLI:       clients.CLI{},
 				BackupApi: backupApi,
 				baseName:  "test",
 			}
@@ -268,13 +262,8 @@ func TestBackup_DownloadShardData(t *testing.T) {
 					return &res, nil
 				})
 
-			stdio := mock.NewMockStdIO(ctrl)
-			writtenBytes := bytes.Buffer{}
-			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
-			log.SetOutput(stdio)
-
 			cli := Client{
-				CLI:       clients.CLI{StdIO: stdio},
+				CLI:       clients.CLI{},
 				BackupApi: backupApi,
 				baseName:  "test",
 			}
@@ -318,13 +307,8 @@ func TestBackup_DownloadShardData(t *testing.T) {
 		backupApi.EXPECT().GetBackupShardId(gomock.Any(), gomock.Eq(req.GetShardID())).Return(req)
 		backupApi.EXPECT().GetBackupShardIdExecute(gomock.Any()).Return(nil, &notFoundErr{})
 
-		stdio := mock.NewMockStdIO(ctrl)
-		writtenBytes := bytes.Buffer{}
-		stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
-		log.SetOutput(stdio)
-
 		cli := Client{
-			CLI:       clients.CLI{StdIO: stdio},
+			CLI:       clients.CLI{},
 			BackupApi: backupApi,
 			baseName:  "test",
 		}
@@ -340,7 +324,6 @@ func TestBackup_DownloadShardData(t *testing.T) {
 		metadata, err := cli.downloadShardData(context.Background(), &params, req.GetShardID())
 		require.NoError(t, err)
 		require.Nil(t, metadata)
-		require.Contains(t, writtenBytes.String(), fmt.Sprintf("WARN: Shard %d removed during backup", req.GetShardID()))
 	})
 }
 
