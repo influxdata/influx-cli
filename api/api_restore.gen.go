@@ -16,7 +16,6 @@ import (
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
-	"os"
 	"strings"
 )
 
@@ -77,22 +76,6 @@ type RestoreApi interface {
 	 * PostRestoreShardIdExecute executes the request
 	 */
 	PostRestoreShardIdExecute(r ApiPostRestoreShardIdRequest) error
-}
-
-// restoreApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
-type restoreApiGzipReadCloser struct {
-	underlying _io.ReadCloser
-	gzip       _io.ReadCloser
-}
-
-func (gzrc *restoreApiGzipReadCloser) Read(p []byte) (int, error) {
-	return gzrc.gzip.Read(p)
-}
-func (gzrc *restoreApiGzipReadCloser) Close() error {
-	if err := gzrc.gzip.Close(); err != nil {
-		return err
-	}
-	return gzrc.underlying.Close()
 }
 
 // RestoreApiService RestoreApi service
@@ -259,16 +242,16 @@ func (a *RestoreApiService) PostRestoreBucketMetadataIdExecute(r ApiPostRestoreB
 type ApiPostRestoreKVRequest struct {
 	ctx             _context.Context
 	ApiService      RestoreApi
-	body            **os.File
+	body            _io.ReadCloser
 	zapTraceSpan    *string
 	contentEncoding *string
 }
 
-func (r ApiPostRestoreKVRequest) Body(body *os.File) ApiPostRestoreKVRequest {
-	r.body = &body
+func (r ApiPostRestoreKVRequest) Body(body _io.ReadCloser) ApiPostRestoreKVRequest {
+	r.body = body
 	return r
 }
-func (r ApiPostRestoreKVRequest) GetBody() **os.File {
+func (r ApiPostRestoreKVRequest) GetBody() _io.ReadCloser {
 	return r.body
 }
 
@@ -396,16 +379,16 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 type ApiPostRestoreSQLRequest struct {
 	ctx             _context.Context
 	ApiService      RestoreApi
-	body            **os.File
+	body            _io.ReadCloser
 	zapTraceSpan    *string
 	contentEncoding *string
 }
 
-func (r ApiPostRestoreSQLRequest) Body(body *os.File) ApiPostRestoreSQLRequest {
-	r.body = &body
+func (r ApiPostRestoreSQLRequest) Body(body _io.ReadCloser) ApiPostRestoreSQLRequest {
+	r.body = body
 	return r
 }
-func (r ApiPostRestoreSQLRequest) GetBody() **os.File {
+func (r ApiPostRestoreSQLRequest) GetBody() _io.ReadCloser {
 	return r.body
 }
 
@@ -534,7 +517,7 @@ type ApiPostRestoreShardIdRequest struct {
 	ctx             _context.Context
 	ApiService      RestoreApi
 	shardID         string
-	body            **os.File
+	body            _io.ReadCloser
 	zapTraceSpan    *string
 	contentEncoding *string
 }
@@ -547,11 +530,11 @@ func (r ApiPostRestoreShardIdRequest) GetShardID() string {
 	return r.shardID
 }
 
-func (r ApiPostRestoreShardIdRequest) Body(body *os.File) ApiPostRestoreShardIdRequest {
-	r.body = &body
+func (r ApiPostRestoreShardIdRequest) Body(body _io.ReadCloser) ApiPostRestoreShardIdRequest {
+	r.body = body
 	return r
 }
-func (r ApiPostRestoreShardIdRequest) GetBody() **os.File {
+func (r ApiPostRestoreShardIdRequest) GetBody() _io.ReadCloser {
 	return r.body
 }
 

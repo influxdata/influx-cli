@@ -12,7 +12,6 @@ package api
 
 import (
 	_context "context"
-	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -105,22 +104,6 @@ type UsersApi interface {
 	 * PostUsersIDPasswordExecute executes the request
 	 */
 	PostUsersIDPasswordExecute(r ApiPostUsersIDPasswordRequest) error
-}
-
-// usersApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
-type usersApiGzipReadCloser struct {
-	underlying _io.ReadCloser
-	gzip       _io.ReadCloser
-}
-
-func (gzrc *usersApiGzipReadCloser) Read(p []byte) (int, error) {
-	return gzrc.gzip.Read(p)
-}
-func (gzrc *usersApiGzipReadCloser) Close() error {
-	if err := gzrc.gzip.Close(); err != nil {
-		return err
-	}
-	return gzrc.underlying.Close()
 }
 
 // UsersApiService UsersApi service

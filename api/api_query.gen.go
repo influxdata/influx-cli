@@ -12,7 +12,6 @@ package api
 
 import (
 	_context "context"
-	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -37,22 +36,6 @@ type QueryApi interface {
 	 * @return *os.File
 	 */
 	PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Response, error)
-}
-
-// queryApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
-type queryApiGzipReadCloser struct {
-	underlying _io.ReadCloser
-	gzip       _io.ReadCloser
-}
-
-func (gzrc *queryApiGzipReadCloser) Read(p []byte) (int, error) {
-	return gzrc.gzip.Read(p)
-}
-func (gzrc *queryApiGzipReadCloser) Close() error {
-	if err := gzrc.gzip.Close(); err != nil {
-		return err
-	}
-	return gzrc.underlying.Close()
 }
 
 // QueryApiService QueryApi service
