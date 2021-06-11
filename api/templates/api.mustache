@@ -53,7 +53,7 @@ type {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request s
 	ApiService *{{classname}}Service
 {{/generateInterfaces}}
 {{#allParams}}
-    {{paramName}} {{#isByteArray}}[]byte{{/isByteArray}}{{#isBinary}}_io.ReadCloser{{/isBinary}}{{^isByteArray}}{{^isBinary}}{{^isPathParam}}*{{/isPathParam}}{{{dataType}}}{{/isBinary}}{{/isByteArray}}
+	{{paramName}} {{#isByteArray}}[]byte{{/isByteArray}}{{#isBinary}}_io.ReadCloser{{/isBinary}}{{^isByteArray}}{{^isBinary}}{{^isPathParam}}*{{/isPathParam}}{{{dataType}}}{{/isBinary}}{{/isByteArray}}
 {{/allParams}}
 }
 {{#allParams}}
@@ -335,11 +335,11 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
-        body, err := GunzipIfNeeded(localVarHTTPResponse)
-        if err != nil {
-            body.Close()
-            return {{#returnType}}localVarReturnValue, {{/returnType}}err
-        }
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			return {{#returnType}}localVarReturnValue, {{/returnType}}err
+		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
@@ -381,11 +381,11 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	localVarReturnValue = localVarHTTPResponse
 	{{/isResponseBinary}}
 	{{^isResponseBinary}}
-    body, err := GunzipIfNeeded(localVarHTTPResponse)
-    if err != nil {
-        body.Close()
-        return {{#returnType}}localVarReturnValue, {{/returnType}}err
-    }
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return {{#returnType}}localVarReturnValue, {{/returnType}}err
+	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
