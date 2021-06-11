@@ -24,8 +24,8 @@ multiple locations.
 * Removed use of `golang.org/x/oauth2` to avoid its heavy dependencies
 * Fixed error strings to be idiomatic according to staticcheck (lowercase, no punctuation)
 * Use `strings.EqualFold` instead of comparing two `strings.ToLower` calls
-* GZip request bodies when `Content-Encoding: gzip` is set
 * Update the `GenericOpenAPIError` type to enforce that error response models implement the `error` interface
+* Update `setBody` to avoid buffering data in memory when the request body is already an `io.ReadCloser`
 
 `configuration.mustache`
 * Deleted `ContextOAuth2` key to match modification in client

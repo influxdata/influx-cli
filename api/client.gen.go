@@ -12,13 +12,13 @@ package api
 
 import (
 	"bytes"
-	"compress/gzip"
 	"context"
 	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -232,7 +232,7 @@ func (c *APIClient) prepareRequest(
 	fileName string,
 	fileBytes []byte) (localVarRequest *http.Request, err error) {
 
-	var body *bytes.Buffer
+	var body io.ReadCloser
 
 	// Detect postBody type and post.
 	if postBody != nil {
@@ -253,8 +253,8 @@ func (c *APIClient) prepareRequest(
 		if body != nil {
 			return nil, errors.New("cannot specify postBody and multipart form at the same time")
 		}
-		body = &bytes.Buffer{}
-		w := multipart.NewWriter(body)
+		buf := &bytes.Buffer{}
+		w := multipart.NewWriter(buf)
 
 		for k, v := range formParams {
 			for _, iv := range v {
@@ -285,18 +285,20 @@ func (c *APIClient) prepareRequest(
 		headerParams["Content-Type"] = w.FormDataContentType()
 
 		// Set Content-Length
-		headerParams["Content-Length"] = fmt.Sprintf("%d", body.Len())
+		headerParams["Content-Length"] = fmt.Sprintf("%d", buf.Len())
 		w.Close()
+		body = ioutil.NopCloser(buf)
 	}
 
 	if strings.HasPrefix(headerParams["Content-Type"], "application/x-www-form-urlencoded") && len(formParams) > 0 {
 		if body != nil {
 			return nil, errors.New("cannot specify postBody and x-www-form-urlencoded form at the same time")
 		}
-		body = &bytes.Buffer{}
-		body.WriteString(formParams.Encode())
+		buf := &bytes.Buffer{}
+		buf.WriteString(formParams.Encode())
+		body = ioutil.NopCloser(buf)
 		// Set Content-Length
-		headerParams["Content-Length"] = fmt.Sprintf("%d", body.Len())
+		headerParams["Content-Length"] = fmt.Sprintf("%d", buf.Len())
 	}
 
 	// Setup path and query parameters
@@ -327,18 +329,7 @@ func (c *APIClient) prepareRequest(
 	url.RawQuery = query.Encode()
 
 	// Generate a new request
-	if body != nil {
-		var b io.Reader = body
-		if enc, ok := headerParams["Content-Encoding"]; ok && enc == "gzip" {
-			b, err = compressWithGzip(b)
-			if err != nil {
-				return nil, err
-			}
-		}
-		localVarRequest, err = http.NewRequest(method, url.String(), b)
-	} else {
-		localVarRequest, err = http.NewRequest(method, url.String(), nil)
-	}
+	localVarRequest, err = http.NewRequest(method, url.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -433,16 +424,20 @@ func reportError(format string, a ...interface{}) error {
 }
 
 // Set request body from an interface{}
-func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err error) {
-	if bodyBuf == nil {
-		bodyBuf = &bytes.Buffer{}
+// NOTE: Assumes that `body` is non-nil.
+func setBody(body interface{}, contentType string) (io.ReadCloser, error) {
+	if rc, ok := body.(io.ReadCloser); ok {
+		return rc, nil
+	} else if reader, ok := body.(io.Reader); ok {
+		return ioutil.NopCloser(reader), nil
+	} else if fp, ok := body.(**os.File); ok {
+		return *fp, nil
 	}
 
-	if reader, ok := body.(io.Reader); ok {
-		_, err = bodyBuf.ReadFrom(reader)
-	} else if fp, ok := body.(**os.File); ok {
-		_, err = bodyBuf.ReadFrom(*fp)
-	} else if b, ok := body.([]byte); ok {
+	var err error
+	bodyBuf := &bytes.Buffer{}
+
+	if b, ok := body.([]byte); ok {
 		_, err = bodyBuf.Write(b)
 	} else if s, ok := body.(string); ok {
 		_, err = bodyBuf.WriteString(s)
@@ -459,24 +454,9 @@ func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err e
 	}
 
 	if bodyBuf.Len() == 0 {
-		err = fmt.Errorf("invalid body type %s", contentType)
-		return nil, err
+		return nil, fmt.Errorf("invalid body type %s", contentType)
 	}
-	return bodyBuf, nil
-}
-
-func compressWithGzip(data io.Reader) (io.Reader, error) {
-	pr, pw := io.Pipe()
-	gw := gzip.NewWriter(pw)
-	var err error
-
-	go func() {
-		_, err = io.Copy(gw, data)
-		gw.Close()
-		pw.Close()
-	}()
-
-	return pr, err
+	return ioutil.NopCloser(bodyBuf), nil
 }
 
 // detectContentType method is used to figure out `Request.Body` content type for request header

@@ -1,6 +1,8 @@
 package write
 
 import (
+	"bytes"
+	"compress/gzip"
 	"context"
 	"errors"
 	"fmt"
@@ -57,7 +59,15 @@ func (c Client) Write(ctx context.Context, params *Params) error {
 	}
 
 	writeBatch := func(batch []byte) error {
-		req := c.PostWrite(ctx).Body(batch).ContentEncoding("gzip").Precision(params.Precision)
+		buf := bytes.Buffer{}
+		gzw := gzip.NewWriter(&buf)
+		_, err := gzw.Write(batch)
+		gzw.Close()
+		if err != nil {
+			return err
+		}
+
+		req := c.PostWrite(ctx).Body(buf.Bytes()).ContentEncoding("gzip").Precision(params.Precision)
 		if params.BucketID != "" {
 			req = req.Bucket(params.BucketID)
 		} else {
