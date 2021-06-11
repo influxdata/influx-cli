@@ -16,8 +16,7 @@ import (
 
 // LineProtocolError struct for LineProtocolError
 type LineProtocolError struct {
-	// Code is the machine-readable error code.
-	Code string `json:"code"`
+	Code LineProtocolErrorCode `json:"code"`
 	// Message is a human-readable message.
 	Message string `json:"message"`
 	// Op describes the logical code operation during error. Useful for debugging.
@@ -32,7 +31,7 @@ type LineProtocolError struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewLineProtocolError(code string, message string, op string, err string) *LineProtocolError {
+func NewLineProtocolError(code LineProtocolErrorCode, message string, op string, err string) *LineProtocolError {
 	this := LineProtocolError{}
 	this.Code = code
 	this.Message = message
@@ -50,9 +49,9 @@ func NewLineProtocolErrorWithDefaults() *LineProtocolError {
 }
 
 // GetCode returns the Code field value
-func (o *LineProtocolError) GetCode() string {
+func (o *LineProtocolError) GetCode() LineProtocolErrorCode {
 	if o == nil {
-		var ret string
+		var ret LineProtocolErrorCode
 		return ret
 	}
 
@@ -61,7 +60,7 @@ func (o *LineProtocolError) GetCode() string {
 
 // GetCodeOk returns a tuple with the Code field value
 // and a boolean to check if the value has been set.
-func (o *LineProtocolError) GetCodeOk() (*string, bool) {
+func (o *LineProtocolError) GetCodeOk() (*LineProtocolErrorCode, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -69,7 +68,7 @@ func (o *LineProtocolError) GetCodeOk() (*string, bool) {
 }
 
 // SetCode sets field value
-func (o *LineProtocolError) SetCode(v string) {
+func (o *LineProtocolError) SetCode(v LineProtocolErrorCode) {
 	o.Code = v
 }
 

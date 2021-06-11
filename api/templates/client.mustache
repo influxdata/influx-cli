@@ -307,13 +307,13 @@ func (c *APIClient) prepareRequest(
 
 	// Generate a new request
 	if body != nil {
-        var b io.Reader = body
-        if enc, ok := headerParams["Content-Encoding"]; ok && enc == "gzip" {
-            b, err = compressWithGzip(b)
-            if err != nil {
-                return nil, err
-            }
-        }
+		var b io.Reader = body
+		if enc, ok := headerParams["Content-Encoding"]; ok && enc == "gzip" {
+			b, err = compressWithGzip(b)
+			if err != nil {
+				return nil, err
+			}
+		}
 		localVarRequest, err = http.NewRequest(method, url.String(), b)
 	} else {
 		localVarRequest, err = http.NewRequest(method, url.String(), nil)
@@ -486,17 +486,17 @@ func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err e
 }
 
 func compressWithGzip(data io.Reader) (io.Reader, error) {
-    pr, pw := io.Pipe()
-    gw := gzip.NewWriter(pw)
-    var err error
+	pr, pw := io.Pipe()
+	gw := gzip.NewWriter(pw)
+	var err error
 
-    go func() {
-        _, err = io.Copy(gw, data)
-        gw.Close()
-        pw.Close()
-    }()
+	go func() {
+		_, err = io.Copy(gw, data)
+		gw.Close()
+		pw.Close()
+	}()
 
-    return pr, err
+	return pr, err
 }
 
 // detectContentType method is used to figure out `Request.Body` content type for request header
@@ -576,25 +576,31 @@ func strlen(s string) int {
 
 // GenericOpenAPIError Provides access to the body, error and model on returned errors.
 type GenericOpenAPIError struct {
-	body  []byte
+	body []byte
 	error string
-	model error
+	model ApiError
 }
 
-// Error returns non-empty string if there was an error.
-func (e GenericOpenAPIError) Error() string {
-    if e.model != nil {
-        return e.model.Error()
-    }
-    return e.error
-}
-
-// Body returns the raw bytes of the response
 func (e GenericOpenAPIError) Body() []byte {
 	return e.body
 }
 
+// Error returns non-empty string if there was an error.
+func (e GenericOpenAPIError) Error() string {
+	if e.model != nil {
+		return e.model.Error()
+	}
+	return e.error
+}
+
 // Model returns the unpacked model of the error
-func (e GenericOpenAPIError) Model() interface{} {
+func (e GenericOpenAPIError) Model() ApiError {
 	return e.model
+}
+
+func (e GenericOpenAPIError) ErrorCode() ErrorCode {
+	if e.model == nil {
+		return ERRORCODE_INTERNAL_ERROR
+	}
+	return e.model.ErrorCode()
 }

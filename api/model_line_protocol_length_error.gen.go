@@ -16,8 +16,7 @@ import (
 
 // LineProtocolLengthError struct for LineProtocolLengthError
 type LineProtocolLengthError struct {
-	// Code is the machine-readable error code.
-	Code string `json:"code"`
+	Code LineProtocolLengthErrorCode `json:"code"`
 	// Message is a human-readable message.
 	Message string `json:"message"`
 	// Max length in bytes for a body of line-protocol.
@@ -28,7 +27,7 @@ type LineProtocolLengthError struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewLineProtocolLengthError(code string, message string, maxLength int32) *LineProtocolLengthError {
+func NewLineProtocolLengthError(code LineProtocolLengthErrorCode, message string, maxLength int32) *LineProtocolLengthError {
 	this := LineProtocolLengthError{}
 	this.Code = code
 	this.Message = message
@@ -45,9 +44,9 @@ func NewLineProtocolLengthErrorWithDefaults() *LineProtocolLengthError {
 }
 
 // GetCode returns the Code field value
-func (o *LineProtocolLengthError) GetCode() string {
+func (o *LineProtocolLengthError) GetCode() LineProtocolLengthErrorCode {
 	if o == nil {
-		var ret string
+		var ret LineProtocolLengthErrorCode
 		return ret
 	}
 
@@ -56,7 +55,7 @@ func (o *LineProtocolLengthError) GetCode() string {
 
 // GetCodeOk returns a tuple with the Code field value
 // and a boolean to check if the value has been set.
-func (o *LineProtocolLengthError) GetCodeOk() (*string, bool) {
+func (o *LineProtocolLengthError) GetCodeOk() (*LineProtocolLengthErrorCode, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -64,7 +63,7 @@ func (o *LineProtocolLengthError) GetCodeOk() (*string, bool) {
 }
 
 // SetCode sets field value
-func (o *LineProtocolLengthError) SetCode(v string) {
+func (o *LineProtocolLengthError) SetCode(v LineProtocolLengthErrorCode) {
 	o.Code = v
 }
 
