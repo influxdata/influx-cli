@@ -12,7 +12,6 @@ package api
 
 import (
 	_context "context"
-	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -196,22 +195,6 @@ type TasksApi interface {
 	 * @return Run
 	 */
 	PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRetryRequest) (Run, error)
-}
-
-// tasksApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
-type tasksApiGzipReadCloser struct {
-	underlying _io.ReadCloser
-	gzip       _io.ReadCloser
-}
-
-func (gzrc *tasksApiGzipReadCloser) Read(p []byte) (int, error) {
-	return gzrc.gzip.Read(p)
-}
-func (gzrc *tasksApiGzipReadCloser) Close() error {
-	if err := gzrc.gzip.Close(); err != nil {
-		return err
-	}
-	return gzrc.underlying.Close()
 }
 
 // TasksApiService TasksApi service

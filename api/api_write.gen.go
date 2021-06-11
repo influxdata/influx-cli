@@ -12,7 +12,6 @@ package api
 
 import (
 	_context "context"
-	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -36,22 +35,6 @@ type WriteApi interface {
 	 * PostWriteExecute executes the request
 	 */
 	PostWriteExecute(r ApiPostWriteRequest) error
-}
-
-// writeApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
-type writeApiGzipReadCloser struct {
-	underlying _io.ReadCloser
-	gzip       _io.ReadCloser
-}
-
-func (gzrc *writeApiGzipReadCloser) Read(p []byte) (int, error) {
-	return gzrc.gzip.Read(p)
-}
-func (gzrc *writeApiGzipReadCloser) Close() error {
-	if err := gzrc.gzip.Close(); err != nil {
-		return err
-	}
-	return gzrc.underlying.Close()
 }
 
 // WriteApiService WriteApi service

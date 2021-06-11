@@ -12,7 +12,6 @@ package api
 
 import (
 	_context "context"
-	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -92,22 +91,6 @@ type BucketsApi interface {
 	 * @return Bucket
 	 */
 	PostBucketsExecute(r ApiPostBucketsRequest) (Bucket, error)
-}
-
-// bucketsApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
-type bucketsApiGzipReadCloser struct {
-	underlying _io.ReadCloser
-	gzip       _io.ReadCloser
-}
-
-func (gzrc *bucketsApiGzipReadCloser) Read(p []byte) (int, error) {
-	return gzrc.gzip.Read(p)
-}
-func (gzrc *bucketsApiGzipReadCloser) Close() error {
-	if err := gzrc.gzip.Close(); err != nil {
-		return err
-	}
-	return gzrc.underlying.Close()
 }
 
 // BucketsApiService BucketsApi service

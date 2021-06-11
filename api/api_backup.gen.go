@@ -12,7 +12,6 @@ package api
 
 import (
 	_context "context"
-	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -53,22 +52,6 @@ type BackupApi interface {
 	 * @return *os.File
 	 */
 	GetBackupShardIdExecute(r ApiGetBackupShardIdRequest) (*_nethttp.Response, error)
-}
-
-// backupApiGzipReadCloser supports streaming gzip response-bodies directly from the server.
-type backupApiGzipReadCloser struct {
-	underlying _io.ReadCloser
-	gzip       _io.ReadCloser
-}
-
-func (gzrc *backupApiGzipReadCloser) Read(p []byte) (int, error) {
-	return gzrc.gzip.Read(p)
-}
-func (gzrc *backupApiGzipReadCloser) Close() error {
-	if err := gzrc.gzip.Close(); err != nil {
-		return err
-	}
-	return gzrc.underlying.Close()
 }
 
 // BackupApiService BackupApi service

@@ -14,10 +14,11 @@ multiple locations.
 `api.mustache`
 * Add `GetX()` methods for each request parameter `X`, for use in unit tests
 * Add checks for `isByteArray` to generate `[]byte` request fields instead of `*string`
+* Add checks for `isBinary` to generate `io.ReadCloser` request fields instead of `**os.File`
 * Update creation of `GenericOpenAPIError` to track sub-error models by reference
 * Add checks for `isResponseBinary` to directly return the raw `*http.Response`, instead of
   pulling the entire body into memory and transforming it into an `*os.File`
-* GUnzip response bodies before unmarshalling when `Content-Encoding: gzip` is set
+* GUnzip non-binary response bodies before unmarshalling when `Content-Encoding: gzip` is set
 * Remove `*http.Response`s from the return values of generated operations
 
 `client.mustache`
