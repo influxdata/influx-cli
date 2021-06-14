@@ -78,7 +78,7 @@ func newCreateTelegrafCmd() *cli.Command {
 
 func newRemoveTelegrafCmd() *cli.Command {
 	var params telegrafs.TelegrafParams
-	flags := append(commonFlags())
+	flags := commonFlags()
 	flags = append(flags, &cli.StringSliceFlag{
 		Name:    "id",
 		Usage:   "Telegraf configuration ID(s) to remove",
