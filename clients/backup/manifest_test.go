@@ -7,6 +7,7 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients/backup"
+	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
 	"github.com/stretchr/testify/require"
 )
 
@@ -87,46 +88,46 @@ func TestConvertBucketManifest(t *testing.T) {
 		},
 	}
 
-	fakeGetShard := func(id int64) (*backup.ManifestFileEntry, error) {
+	fakeGetShard := func(id int64) (*br.ManifestFileEntry, error) {
 		if id == 20 {
 			return nil, nil
 		}
-		return &backup.ManifestFileEntry{
+		return &br.ManifestFileEntry{
 			FileName:    fmt.Sprintf("%d.gz", id),
 			Size:        id * 100,
-			Compression: backup.GzipCompression,
+			Compression: br.GzipCompression,
 		}, nil
 	}
 
 	converted, err := backup.ConvertBucketManifest(manifest, fakeGetShard)
 	require.NoError(t, err)
 
-	expected := backup.ManifestBucketEntry{
+	expected := br.ManifestBucketEntry{
 		OrganizationID:         "123",
 		OrganizationName:       "org",
 		BucketID:               "456",
 		BucketName:             "bucket",
 		DefaultRetentionPolicy: "foo",
-		RetentionPolicies: []backup.ManifestRetentionPolicy{
+		RetentionPolicies: []br.ManifestRetentionPolicy{
 			{
 				Name:               "foo",
 				ReplicaN:           1,
 				Duration:           100,
 				ShardGroupDuration: 10,
-				ShardGroups: []backup.ManifestShardGroup{
+				ShardGroups: []br.ManifestShardGroup{
 					{
 						ID:          1,
 						StartTime:   now,
 						EndTime:     now,
 						TruncatedAt: &now,
-						Shards: []backup.ManifestShardEntry{
+						Shards: []br.ManifestShardEntry{
 							{
 								ID:          10,
-								ShardOwners: []backup.ShardOwner{{NodeID: 1}},
-								ManifestFileEntry: backup.ManifestFileEntry{
+								ShardOwners: []br.ShardOwner{{NodeID: 1}},
+								ManifestFileEntry: br.ManifestFileEntry{
 									FileName:    "10.gz",
 									Size:        1000,
-									Compression: backup.GzipCompression,
+									Compression: br.GzipCompression,
 								},
 							},
 						},
@@ -136,35 +137,35 @@ func TestConvertBucketManifest(t *testing.T) {
 						StartTime: now,
 						EndTime:   now,
 						DeletedAt: &now,
-						Shards: []backup.ManifestShardEntry{
+						Shards: []br.ManifestShardEntry{
 							{
 								ID:          30,
-								ShardOwners: []backup.ShardOwner{},
-								ManifestFileEntry: backup.ManifestFileEntry{
+								ShardOwners: []br.ShardOwner{},
+								ManifestFileEntry: br.ManifestFileEntry{
 									FileName:    "30.gz",
 									Size:        3000,
-									Compression: backup.GzipCompression,
+									Compression: br.GzipCompression,
 								},
 							},
 						},
 					},
 				},
-				Subscriptions: []backup.ManifestSubscription{},
+				Subscriptions: []br.ManifestSubscription{},
 			},
 			{
 				Name:               "bar",
 				ReplicaN:           3,
 				Duration:           9999,
 				ShardGroupDuration: 1,
-				ShardGroups: []backup.ManifestShardGroup{
+				ShardGroups: []br.ManifestShardGroup{
 					{
 						ID:        3,
 						StartTime: now,
 						EndTime:   now,
-						Shards:    []backup.ManifestShardEntry{},
+						Shards:    []br.ManifestShardEntry{},
 					},
 				},
-				Subscriptions: []backup.ManifestSubscription{
+				Subscriptions: []br.ManifestSubscription{
 					{
 						Name:         "test",
 						Mode:         "on",

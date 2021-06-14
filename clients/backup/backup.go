@@ -15,6 +15,7 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
+	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
 )
 
 type Client struct {
@@ -24,7 +25,7 @@ type Client struct {
 	// Local state tracked across steps in the backup process.
 	baseName       string
 	bucketMetadata []api.BucketMetadataManifest
-	manifest       Manifest
+	manifest       br.Manifest
 }
 
 type Params struct {
@@ -42,7 +43,7 @@ type Params struct {
 	Path string
 
 	// Compression to use for local copies of snapshot files.
-	Compression FileCompression
+	Compression br.FileCompression
 }
 
 func (p *Params) matches(bkt api.BucketMetadataManifest) bool {
@@ -104,9 +105,9 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 	}
 	defer body.Close()
 
-	writeFile := func(from io.Reader, to string) (ManifestFileEntry, error) {
+	writeFile := func(from io.Reader, to string) (br.ManifestFileEntry, error) {
 		toPath := filepath.Join(params.Path, to)
-		if params.Compression == GzipCompression {
+		if params.Compression == br.GzipCompression {
 			toPath = toPath + ".gz"
 		}
 
@@ -120,7 +121,7 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 			defer out.Close()
 
 			var outW io.Writer = out
-			if params.Compression == GzipCompression {
+			if params.Compression == br.GzipCompression {
 				gw := gzip.NewWriter(out)
 				defer gw.Close()
 				outW = gw
@@ -129,14 +130,14 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 			_, err = io.Copy(outW, from)
 			return err
 		}(); err != nil {
-			return ManifestFileEntry{}, err
+			return br.ManifestFileEntry{}, err
 		}
 
 		fi, err := os.Stat(toPath)
 		if err != nil {
-			return ManifestFileEntry{}, err
+			return br.ManifestFileEntry{}, err
 		}
-		return ManifestFileEntry{
+		return br.ManifestFileEntry{
 			FileName:    fi.Name(),
 			Size:        fi.Size(),
 			Compression: params.Compression,
@@ -185,12 +186,12 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 //
 // Bucket metadata must be pre-seeded via downloadMetadata before this method is called.
 func (c *Client) downloadBucketData(ctx context.Context, params *Params) error {
-	c.manifest.Buckets = make([]ManifestBucketEntry, 0, len(c.bucketMetadata))
+	c.manifest.Buckets = make([]br.ManifestBucketEntry, 0, len(c.bucketMetadata))
 	for _, b := range c.bucketMetadata {
 		if !params.matches(b) {
 			continue
 		}
-		bktManifest, err := ConvertBucketManifest(b, func(shardId int64) (*ManifestFileEntry, error) {
+		bktManifest, err := ConvertBucketManifest(b, func(shardId int64) (*br.ManifestFileEntry, error) {
 			return c.downloadShardData(ctx, params, shardId)
 		})
 		if err != nil {
@@ -203,7 +204,7 @@ func (c *Client) downloadBucketData(ctx context.Context, params *Params) error {
 
 // downloadShardData downloads the TSM snapshot for a single shard. The snapshot is written
 // to a local file, and its metadata is returned for aggregation.
-func (c Client) downloadShardData(ctx context.Context, params *Params, shardId int64) (*ManifestFileEntry, error) {
+func (c Client) downloadShardData(ctx context.Context, params *Params, shardId int64) (*br.ManifestFileEntry, error) {
 	log.Printf("INFO: Backing up TSM for shard %d", shardId)
 	res, err := c.GetBackupShardId(ctx, shardId).AcceptEncoding("gzip").Execute()
 	if err != nil {
@@ -218,7 +219,7 @@ func (c Client) downloadShardData(ctx context.Context, params *Params, shardId i
 	defer res.Body.Close()
 
 	fileName := fmt.Sprintf("%s.%d.tar", c.baseName, shardId)
-	if params.Compression == GzipCompression {
+	if params.Compression == br.GzipCompression {
 		fileName = fileName + ".gz"
 	}
 	path := filepath.Join(params.Path, fileName)
@@ -236,12 +237,12 @@ func (c Client) downloadShardData(ctx context.Context, params *Params, shardId i
 		var outW io.Writer = f
 
 		// Make sure the locally-written data is compressed according to the user's request.
-		if params.Compression == GzipCompression && res.Header.Get("Content-Encoding") != "gzip" {
+		if params.Compression == br.GzipCompression && res.Header.Get("Content-Encoding") != "gzip" {
 			gzw := gzip.NewWriter(outW)
 			defer gzw.Close()
 			outW = gzw
 		}
-		if params.Compression == NoCompression && res.Header.Get("Content-Encoding") == "gzip" {
+		if params.Compression == br.NoCompression && res.Header.Get("Content-Encoding") == "gzip" {
 			gzr, err := gzip.NewReader(inR)
 			if err != nil {
 				return err
@@ -260,7 +261,7 @@ func (c Client) downloadShardData(ctx context.Context, params *Params, shardId i
 	if err != nil {
 		return nil, err
 	}
-	return &ManifestFileEntry{
+	return &br.ManifestFileEntry{
 		FileName:    fi.Name(),
 		Size:        fi.Size(),
 		Compression: params.Compression,
@@ -270,7 +271,7 @@ func (c Client) downloadShardData(ctx context.Context, params *Params, shardId i
 // writeManifest writes a description of all files downloaded as part of the backup process
 // to the backup folder, encoded as JSON.
 func (c Client) writeManifest(params *Params) error {
-	manifestPath := filepath.Join(params.Path, fmt.Sprintf("%s.manifest", c.baseName))
+	manifestPath := filepath.Join(params.Path, fmt.Sprintf("%s.%s", c.baseName, br.ManifestExtension))
 	f, err := os.OpenFile(manifestPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return err
