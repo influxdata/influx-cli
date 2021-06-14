@@ -65,6 +65,10 @@ paths:
     $ref: "./openapi/src/oss/paths/restore_bucket-metadata_bucketID.yml"
   /restore/shards/{shardID}:
     $ref: "./openapi/src/oss/paths/restore_shards_shardID.yml"
+  "/telegrafs":
+    $ref: "./openapi/src/common/paths/telegrafs.yml"
+  "/telegrafs/{telegrafID}":
+    $ref: "./overrides/paths/telegrafs_telegrafID.yml"
 components:
   parameters:
     TraceSpan:
@@ -229,3 +233,9 @@ components:
       $ref: "./openapi/src/oss/schemas/BucketShardMappings.yml"
     BucketShardMapping:
       $ref: "./openapi/src/oss/schemas/BucketShardMapping.yml"
+    Telegrafs:
+      $ref: "./openapi/src/common/schemas/Telegrafs.yml"
+    TelegrafRequest:
+      $ref: "./openapi/src/common/schemas/TelegrafRequest.yml"
+    Telegraf:
+      $ref: "./openapi/src/common/schemas/Telegraf.yml"
