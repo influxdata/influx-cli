@@ -91,9 +91,10 @@ mock: ./internal/mock/gen.go
 	go generate ./internal/mock/
 
 test:
-	$(GO_TEST) $(GO_TEST_PATHS)
+	CGO_ENABLED=0 $(GO_TEST) $(GO_TEST_PATHS)
 
 test-race:
+	# Race-checking requires CGO.
 	$(GO_TEST) -v -race -count=1 $(GO_TEST_PATHS)
 
 ### List of all targets that don't produce a file

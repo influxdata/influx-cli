@@ -1,67 +1,121 @@
 version: "2.1"
 
+executors:
+  linux-amd64:
+    machine:
+      image: ubuntu-2004:202104-01
+
+  linux-arm64:
+    machine:
+      image: ubuntu-2004:202104-01
+    resource_class: arm.medium
+
+  mac:
+    macos:
+      xcode: 12.4.0
+    resource_class: medium
+    shell: /bin/bash -eo pipefail
+
+  windows:
+    machine:
+      image: windows-server-2019-vs2019:stable
+    resource_class: windows.medium
+    shell: bash.exe -eo pipefail
+
 workflows:
   version: 2
-  build:
+  build-and-test:
     jobs:
       - lint
       - check-openapi
-      - build
-      - test
+      - build-all
+      - test:
+          matrix:
+            parameters:
+              executor:
+                - linux-amd64
+                - linux-arm64
+                - mac
+                - windows
+
+commands:
+  setup:
+    steps:
+      - run:
+          name: Install system dependencies
+          command: ./scripts/ci/setup-system.sh
+      - run:
+          name: Install Go
+          command: |
+            ./scripts/ci/install-go.sh ${HOME}/.tools
+            echo 'export PATH=${HOME}/.tools/go/bin:${PATH}' >> $BASH_ENV
+      - run:
+          name: Set GOPATH and GOCACHE
+          command: |
+            GOPATH=${HOME}/go
+            echo "export GOPATH=${GOPATH}" >> $BASH_ENV
+            mkdir -p ${GOPATH}/bin
+            echo 'export PATH=${GOPATH}/bin:${PATH}' >> $BASH_ENV
+            mkdir -p ${HOME}/.cache
+            echo 'export GOCACHE=${HOME}/.cache' >> $BASH_ENV
 
 jobs:
   lint:
-    docker:
-      - image: cimg/go:1.16.3
-    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    executor: linux-amd64
     steps:
       - checkout
+      - setup
       - run: make vet
       - run: make checkfmt
       - run: make checktidy
       - run: make staticcheck
 
   check-openapi:
-    machine: true
-    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    executor: linux-amd64
     steps:
       - checkout
+      - setup
       - run:
           name: Init openapi submodule
           command: git submodule update --init --recursive
-      - run:
-          name: Upgrade Go
-          command: |
-            wget https://golang.org/dl/go1.16.3.linux-amd64.tar.gz
-            tar -C ${HOME} -xzf go1.16.3.linux-amd64.tar.gz
-            echo 'export PATH=${HOME}/go/bin:${PATH}' >> $BASH_ENV
       - run: make checkopenapi
 
-  build:
-    docker:
-      - image: cimg/go:1.16.3
-    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+  build-all:
+    executor: linux-amd64
     steps:
       - checkout
+      - setup
       - run: make crossbuild
       - store_artifacts:
           path: dist
 
   test:
-    docker:
-      - image: cimg/go:1.16.3
-    working_directory: /home/circleci/go/src/github.com/influxdata/influx-cli
+    parameters:
+      executor:
+        type: executor
+    executor: << parameters.executor >>
     steps:
       - checkout
+      - setup
+      - run:
+          name: Download gotestsum
+          command: |
+            GOTESTSUM_VERSION=1.6.4
+            GOTESTSUM_ARCHIVE=gotestsum_${GOTESTSUM_VERSION}_$(go env GOOS)_$(go env GOARCH).tar.gz
+            GOTESTSUM_URL=https://github.com/gotestyourself/gotestsum/releases/download/v${GOTESTSUM_VERSION}/${GOTESTSUM_ARCHIVE}
+
+            wget ${GOTESTSUM_URL}
+            tar xzf ${GOTESTSUM_ARCHIVE}
+            install gotestsum ${GOPATH}/bin/
       - run:
           name: Run parallel race tests
           command: |
-            mkdir -p /tmp/test-results
-            GO_TEST_CMD="gotestsum --format standard-quiet --junitfile /tmp/test-results/gotestsum.xml --"
+            mkdir -p test-results
+            GO_TEST_CMD="gotestsum --format standard-quiet --junitfile ./test-results/gotestsum.xml --"
             TESTFILES=($(go list ./... | circleci tests split --split-by=timings))
             make GO_TEST="$GO_TEST_CMD" GO_TEST_PATHS="${TESTFILES[*]}" test-race
       - store_artifacts:
-          path: /tmp/test-results
+          path: ./test-results
           destination: raw-test-output
       - store_test_results:
-          path: /tmp/test-results
+          path: ./test-results
