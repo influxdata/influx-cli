@@ -23,7 +23,7 @@ type TelegrafParams struct {
 	File string
 	Name string
 
-	Id string
+	Id  string
 	Ids []string
 }
 

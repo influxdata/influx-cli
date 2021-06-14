@@ -1,10 +1,11 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/influxdata/influx-cli/v2/clients/telegrafs"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
-	"strings"
 )
 
 func newTelegrafsCommand() *cli.Command {
@@ -79,9 +80,9 @@ func newRemoveTelegrafCmd() *cli.Command {
 	var params telegrafs.TelegrafParams
 	flags := append(commonFlags())
 	flags = append(flags, &cli.StringSliceFlag{
-		Name:        "id",
-		Usage:       "Telegraf configuration ID(s) to remove",
-		Aliases:     []string{"i"},
+		Name:    "id",
+		Usage:   "Telegraf configuration ID(s) to remove",
+		Aliases: []string{"i"},
 	})
 	return &cli.Command{
 		Name:    "rm",
