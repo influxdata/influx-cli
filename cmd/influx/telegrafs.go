@@ -9,7 +9,7 @@ import (
 )
 
 func newTelegrafsCommand() *cli.Command {
-	var params telegrafs.TelegrafParams
+	var params telegrafs.ListParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, &cli.StringFlag{
 		Name:        "id",
@@ -26,19 +26,20 @@ func newTelegrafsCommand() *cli.Command {
 			newUpdateTelegrafCmd(),
 		},
 		Flags: flags,
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := telegrafs.Client{
 				CLI:          getCLI(ctx),
 				TelegrafsApi: api.TelegrafsApi,
 			}
-			return client.Telegrafs(ctx.Context, &params)
+			return client.List(ctx.Context, &params)
 		},
 	}
 }
 
 func newCreateTelegrafCmd() *cli.Command {
-	var params telegrafs.TelegrafParams
+	var params telegrafs.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
@@ -77,7 +78,7 @@ func newCreateTelegrafCmd() *cli.Command {
 }
 
 func newRemoveTelegrafCmd() *cli.Command {
-	var params telegrafs.TelegrafParams
+	var params telegrafs.RemoveParams
 	flags := commonFlags()
 	flags = append(flags, &cli.StringSliceFlag{
 		Name:    "id",
@@ -112,7 +113,7 @@ func newRemoveTelegrafCmd() *cli.Command {
 }
 
 func newUpdateTelegrafCmd() *cli.Command {
-	var params telegrafs.TelegrafParams
+	var params telegrafs.UpdateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{

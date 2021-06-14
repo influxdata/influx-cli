@@ -16,24 +16,18 @@ type Client struct {
 	api.TelegrafsApi
 }
 
-type TelegrafParams struct {
-	clients.OrgParams
-
-	Desc string
-	File string
-	Name string
-
-	Id  string
-	Ids []string
-}
-
 type telegrafPrintOpts struct {
 	graf  *api.Telegraf
 	grafs *api.Telegrafs
 }
 
-func (c Client) Telegrafs(ctx context.Context, params *TelegrafParams) error {
-	if params.OrgID == 0 || params.Id == "" {
+type ListParams struct {
+	clients.OrgParams
+	Id string
+}
+
+func (c Client) List(ctx context.Context, params *ListParams) error {
+	if !params.OrgID.Valid() || params.Id == "" {
 		return errors.New("at least one of org, org-id, or id must be provided")
 	}
 
@@ -48,7 +42,7 @@ func (c Client) Telegrafs(ctx context.Context, params *TelegrafParams) error {
 			return err
 		}
 
-		return c.writeTelegrafConfigs(telegrafPrintOpts{graf: &telegraf})
+		return c.printTelegrafs(telegrafPrintOpts{graf: &telegraf})
 	}
 
 	telegrafs, err := c.GetTelegrafs(ctx).OrgID(params.OrgID.String()).Execute()
@@ -56,10 +50,17 @@ func (c Client) Telegrafs(ctx context.Context, params *TelegrafParams) error {
 		return err
 	}
 
-	return c.writeTelegrafConfigs(telegrafPrintOpts{grafs: &telegrafs})
+	return c.printTelegrafs(telegrafPrintOpts{grafs: &telegrafs})
 }
 
-func (c Client) Create(ctx context.Context, params *TelegrafParams) error {
+type CreateParams struct {
+	clients.OrgParams
+	Desc string
+	File string
+	Name string
+}
+
+func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	cfg, err := c.readConfig(params.File)
 	if err != nil {
 		return err
@@ -79,10 +80,15 @@ func (c Client) Create(ctx context.Context, params *TelegrafParams) error {
 		return err
 	}
 
-	return c.writeTelegrafConfigs(telegrafPrintOpts{graf: &graf})
+	return c.printTelegrafs(telegrafPrintOpts{graf: &graf})
 }
 
-func (c Client) Remove(ctx context.Context, params *TelegrafParams) error {
+type RemoveParams struct {
+	clients.OrgParams
+	Ids []string
+}
+
+func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
 	for _, rawID := range params.Ids {
 		id, err := influxid.IDFromString(rawID)
 		if err != nil {
@@ -96,7 +102,15 @@ func (c Client) Remove(ctx context.Context, params *TelegrafParams) error {
 	return nil
 }
 
-func (c Client) Update(ctx context.Context, params *TelegrafParams) error {
+type UpdateParams struct {
+	clients.OrgParams
+	Desc string
+	File string
+	Name string
+	Id   string
+}
+
+func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	cfg, err := c.readConfig(params.File)
 	if err != nil {
 		return err
@@ -120,10 +134,10 @@ func (c Client) Update(ctx context.Context, params *TelegrafParams) error {
 		return err
 	}
 
-	return c.writeTelegrafConfigs(telegrafPrintOpts{graf: &graf})
+	return c.printTelegrafs(telegrafPrintOpts{graf: &graf})
 }
 
-func (c Client) writeTelegrafConfigs(opts telegrafPrintOpts) error {
+func (c Client) printTelegrafs(opts telegrafPrintOpts) error {
 	if c.PrintAsJSON {
 		var v interface{}
 		if opts.graf != nil {
