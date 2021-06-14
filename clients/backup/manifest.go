@@ -13,6 +13,7 @@ func ConvertBucketManifest(manifest api.BucketMetadataManifest, getShard func(sh
 		OrganizationName:       manifest.OrganizationName,
 		BucketID:               manifest.BucketID,
 		BucketName:             manifest.BucketName,
+		Description:            manifest.Description,
 		DefaultRetentionPolicy: manifest.DefaultRetentionPolicy,
 		RetentionPolicies:      make([]br.ManifestRetentionPolicy, len(manifest.RetentionPolicies)),
 	}

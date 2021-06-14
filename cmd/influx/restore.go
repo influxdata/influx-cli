@@ -85,9 +85,11 @@ Examples:
 				return errors.New("--bucket-id or --bucket must be set to use --new-bucket")
 			}
 
+			api := getAPI(ctx)
 			client := restore.Client{
-				CLI:        getCLI(ctx),
-				RestoreApi: getAPI(ctx).RestoreApi,
+				CLI:              getCLI(ctx),
+				RestoreApi:       api.RestoreApi,
+				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.Restore(ctx.Context, &params)
 		},

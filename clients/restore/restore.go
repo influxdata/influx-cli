@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
@@ -19,6 +20,7 @@ import (
 type Client struct {
 	clients.CLI
 	api.RestoreApi
+	api.OrganizationsApi
 
 	manifest br.Manifest
 }
@@ -48,6 +50,22 @@ type Params struct {
 	// If true, replace all data on the server with the local backup.
 	// Otherwise only restore the requested org/bucket, leaving other data untouched.
 	Full bool
+}
+
+func (p *Params) matches(bkt br.ManifestBucketEntry) bool {
+	if p.OrgID != "" && bkt.OrganizationID != p.OrgID {
+		return false
+	}
+	if p.Org != "" && bkt.OrganizationName != p.Org {
+		return false
+	}
+	if p.BucketID != "" && bkt.BucketID != p.BucketID {
+		return false
+	}
+	if p.Bucket != "" && bkt.BucketName != p.Bucket {
+		return false
+	}
+	return true
 }
 
 func (c *Client) Restore(ctx context.Context, params *Params) error {
@@ -145,8 +163,91 @@ func (c Client) fullRestore(ctx context.Context, path string) error {
 	return nil
 }
 
-func (c Client) partialRestore(ctx context.Context, params *Params) error {
-	panic("TODO")
+func (c Client) partialRestore(ctx context.Context, params *Params) (err error) {
+	orgIds := map[string]string{}
+
+	for _, bkt := range c.manifest.Buckets {
+		// Skip internal buckets.
+		if strings.HasPrefix(bkt.BucketName, "_") {
+			continue
+		}
+		if !params.matches(bkt) {
+			continue
+		}
+
+		orgName := bkt.OrganizationName
+		// Before this method is called, we ensure that new-org-name is only set if
+		// a filter on org-name or org-id is set. If that check passes and execution
+		// reaches this code, we can assume that all buckets matching the filter come
+		// from the same org, so we can swap in the new org name unconditionally.
+		if params.NewOrgName != "" {
+			orgName = params.NewOrgName
+		}
+
+		if _, ok := orgIds[orgName]; !ok {
+			orgIds[orgName], err = c.restoreOrg(ctx, orgName)
+			if err != nil {
+				return
+			}
+		}
+
+		// By the same reasoning as above, if new-bucket-name is non-empty we know
+		// filters must have been set to ensure we only match 1 bucket, so we can
+		// swap the name without additional checks.
+		if params.NewBucketName != "" {
+			bkt.BucketName = params.NewBucketName
+		}
+
+		log.Printf("INFO: Restoring bucket %q as %q\n", bkt.BucketID, bkt.BucketName)
+		bucketMapping, err := c.PostRestoreBucketMetadata(ctx).
+			BucketMetadataManifest(ConvertBucketManifest(bkt)).
+			Execute()
+		if err != nil {
+			return fmt.Errorf("failed to restore bucket %q: %w", bkt.BucketName, err)
+		}
+
+		shardIdMap := make(map[int64]int64, len(bucketMapping.ShardMappings))
+		for _, mapping := range bucketMapping.ShardMappings {
+			shardIdMap[mapping.OldId] = mapping.NewId
+		}
+
+		for _, rp := range bkt.RetentionPolicies {
+			for _, sg := range rp.ShardGroups {
+				for _, sh := range sg.Shards {
+					newID, ok := shardIdMap[sh.ID]
+					if !ok {
+						log.Printf("WARN: Server didn't map ID for shard %d in bucket %q, skipping\n", sh.ID, bkt.BucketName)
+						continue
+					}
+					sh.ID = newID
+					if err := c.restoreShard(ctx, params.Path, sh); err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+// restoreOrg gets the ID for the org with the given name, creating the org if it doesn't already exist.
+func (c Client) restoreOrg(ctx context.Context, name string) (string, error) {
+	orgs, err := c.GetOrgs(ctx).Org(name).Execute()
+	if err != nil {
+		return "", fmt.Errorf("failed to check existence of organization %q: %w", name, err)
+	}
+
+	if orgs.Orgs == nil || len(*orgs.Orgs) == 0 {
+		// Create any missing orgs.
+		newOrg, err := c.PostOrgs(ctx).PostOrganizationRequest(api.PostOrganizationRequest{Name: name}).Execute()
+		if err != nil {
+			return "", fmt.Errorf("failed to create organization %q: %w", name, err)
+		}
+		return *newOrg.Id, nil
+	}
+
+	return *(*orgs.Orgs)[0].Id, nil
 }
 
 // readFileGzipped opens a local file and returns a reader of its contents,
