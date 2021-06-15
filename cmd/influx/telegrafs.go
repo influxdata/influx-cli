@@ -44,8 +44,9 @@ func newTelegrafsCommand() *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := telegrafs.Client{
-				CLI:          getCLI(ctx),
-				TelegrafsApi: api.TelegrafsApi,
+				CLI:              getCLI(ctx),
+				TelegrafsApi:     api.TelegrafsApi,
+				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.List(ctx.Context, &params)
 		},
@@ -100,8 +101,9 @@ func newCreateTelegrafCmd() *cli.Command {
 			params.Config = conf
 			api := getAPI(ctx)
 			client := telegrafs.Client{
-				CLI:          getCLI(ctx),
-				TelegrafsApi: api.TelegrafsApi,
+				CLI:              getCLI(ctx),
+				TelegrafsApi:     api.TelegrafsApi,
+				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.Create(ctx.Context, &params)
 		},
@@ -145,8 +147,9 @@ func newRemoveTelegrafCmd() *cli.Command {
 
 			api := getAPI(ctx)
 			client := telegrafs.Client{
-				CLI:          getCLI(ctx),
-				TelegrafsApi: api.TelegrafsApi,
+				CLI:              getCLI(ctx),
+				TelegrafsApi:     api.TelegrafsApi,
+				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.Remove(ctx.Context, &params)
 		},
@@ -211,8 +214,9 @@ func newUpdateTelegrafCmd() *cli.Command {
 			params.Config = conf
 			api := getAPI(ctx)
 			client := telegrafs.Client{
-				CLI:          getCLI(ctx),
-				TelegrafsApi: api.TelegrafsApi,
+				CLI:              getCLI(ctx),
+				TelegrafsApi:     api.TelegrafsApi,
+				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.Update(ctx.Context, &params)
 		},
