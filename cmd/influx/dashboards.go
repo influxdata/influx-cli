@@ -17,18 +17,17 @@ func newDashboardsCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "dashboards",
 		Usage: "List Dashboard(s).",
-		Description: `
-	List Dashboard(s).
+		Description: `List Dashboard(s).
 
-	Examples:
-		# list all known Dashboards
-		influx dashboards
+Examples:
+	# list all known Dashboards
+	influx dashboards
 
-		# list all known Dashboards matching ids
-		influx dashboards --id $ID1 --id $ID2
+	# list all known Dashboards matching ids
+	influx dashboards --id $ID1 --id $ID2
 
-		# list all known Dashboards matching ids shorts
-		influx dashboards -i $ID1 -i $ID2
+	# list all known Dashboards matching ids shorts
+	influx dashboards -i $ID1 -i $ID2
 `,
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),

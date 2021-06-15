@@ -35,7 +35,7 @@ func (c Client) List(ctx context.Context, params *Params) error {
 	req = req.OrgID(orgID).Id(params.Ids)
 	dashboards, err := req.Execute()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to find dashboards with OrgID %q and IDs %q: %w", orgID, params.Ids, err)
 	}
 
 	return c.printDashboards(dashboards)
