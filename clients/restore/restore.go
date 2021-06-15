@@ -88,7 +88,7 @@ func (c *Client) loadManifests(path string) error {
 	} else if len(manifests) == 0 {
 		return fmt.Errorf("no backup manifests found at %q", path)
 	}
-	sort.Sort(sort.StringSlice(manifests))
+	sort.Strings(manifests)
 
 	bucketManifests := map[string]br.ManifestBucketEntry{}
 	for _, manifestFile := range manifests {
