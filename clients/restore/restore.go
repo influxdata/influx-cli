@@ -246,7 +246,7 @@ func (c Client) restoreOrg(ctx context.Context, name string) (string, error) {
 		return "", fmt.Errorf("failed to check existence of organization %q: %w", name, err)
 	}
 
-	if orgs.Orgs == nil || len(*orgs.Orgs) == 0 {
+	if len(orgs.GetOrgs()) == 0 {
 		// Create any missing orgs.
 		newOrg, err := c.PostOrgs(ctx).PostOrganizationRequest(api.PostOrganizationRequest{Name: name}).Execute()
 		if err != nil {
@@ -255,7 +255,7 @@ func (c Client) restoreOrg(ctx context.Context, name string) (string, error) {
 		return *newOrg.Id, nil
 	}
 
-	return *(*orgs.Orgs)[0].Id, nil
+	return *orgs.GetOrgs()[0].Id, nil
 }
 
 // readFileGzipped opens a local file and returns a reader of its contents,
