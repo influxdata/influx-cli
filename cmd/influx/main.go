@@ -45,6 +45,7 @@ var app = cli.App{
 		newUserCmd(),
 		newTaskCommand(),
 		newBackupCmd(),
+		newTelegrafsCommand(),
 	},
 }
 
