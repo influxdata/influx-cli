@@ -55,19 +55,10 @@ type ManifestBucketEntry struct {
 	BucketID               string                    `json:"bucketID"`
 	BucketName             string                    `json:"bucketName"`
 	Description            *string                   `json:"description,omitempty"`
-	RetentionRules         []ManifestRetentionRule   `json:"retentionRules"`
 	DefaultRetentionPolicy string                    `json:"defaultRetentionPolicy"`
 	RetentionPolicies      []ManifestRetentionPolicy `json:"retentionPolicies"`
 }
 
-// ManifestRetentionRule captures the 2.x format of retention metadata on a bucket.
-type ManifestRetentionRule struct {
-	Type                      string `json:"type"`
-	EverySeconds              int64  `json:"everySeconds"`
-	ShardGroupDurationSeconds *int64 `json:"ShardGroupDurationSeconds"`
-}
-
-// ManifestRetentionPolicy captures the 1.x/storage format of retention metadata on a DB.
 type ManifestRetentionPolicy struct {
 	Name               string                 `json:"name"`
 	ReplicaN           int32                  `json:"replicaN"`
