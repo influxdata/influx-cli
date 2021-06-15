@@ -139,11 +139,19 @@ func (c Client) fullRestore(ctx context.Context, path string) error {
 
 	// Upload metadata snapshots to the server.
 	log.Println("INFO: Restoring KV snapshot")
-	if err := c.PostRestoreKV(ctx).ContentEncoding("gzip").Body(kvBytes).Execute(); err != nil {
+	if err := c.PostRestoreKV(ctx).
+		ContentEncoding("gzip").
+		ContentType("application/octet-stream").
+		Body(kvBytes).
+		Execute(); err != nil {
 		return fmt.Errorf("failed to restore KV snapshot: %w", err)
 	}
 	log.Println("INFO: Restoring SQL snapshot")
-	if err := c.PostRestoreSQL(ctx).ContentEncoding("gzip").Body(sqlBytes).Execute(); err != nil {
+	if err := c.PostRestoreSQL(ctx).
+		ContentEncoding("gzip").
+		ContentType("application/octet-stream").
+		Body(sqlBytes).
+		Execute(); err != nil {
 		return fmt.Errorf("failed to restore SQL snapshot: %w", err)
 	}
 
@@ -273,7 +281,11 @@ func (c Client) restoreShard(ctx context.Context, path string, m br.ManifestShar
 	defer tsmBytes.Close()
 
 	log.Printf("INFO: Restoring TSM snapshot for shard %d\n", m.ID)
-	if err := c.PostRestoreShardId(ctx, fmt.Sprintf("%d", m.ID)).ContentEncoding("gzip").Body(tsmBytes).Execute(); err != nil {
+	if err := c.PostRestoreShardId(ctx, fmt.Sprintf("%d", m.ID)).
+		ContentEncoding("gzip").
+		ContentType("application/octet-stream").
+		Body(tsmBytes).
+		Execute(); err != nil {
 		return fmt.Errorf("failed to restore TSM snapshot for shard %d: %w", m.ID, err)
 	}
 	return nil
