@@ -16,16 +16,18 @@ import (
 
 // BucketShardMapping struct for BucketShardMapping
 type BucketShardMapping struct {
-	OldId *int64 `json:"oldId,omitempty"`
-	NewId *int64 `json:"newId,omitempty"`
+	OldId int64 `json:"oldId"`
+	NewId int64 `json:"newId"`
 }
 
 // NewBucketShardMapping instantiates a new BucketShardMapping object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBucketShardMapping() *BucketShardMapping {
+func NewBucketShardMapping(oldId int64, newId int64) *BucketShardMapping {
 	this := BucketShardMapping{}
+	this.OldId = oldId
+	this.NewId = newId
 	return &this
 }
 
@@ -37,76 +39,60 @@ func NewBucketShardMappingWithDefaults() *BucketShardMapping {
 	return &this
 }
 
-// GetOldId returns the OldId field value if set, zero value otherwise.
+// GetOldId returns the OldId field value
 func (o *BucketShardMapping) GetOldId() int64 {
-	if o == nil || o.OldId == nil {
+	if o == nil {
 		var ret int64
 		return ret
 	}
-	return *o.OldId
+
+	return o.OldId
 }
 
-// GetOldIdOk returns a tuple with the OldId field value if set, nil otherwise
+// GetOldIdOk returns a tuple with the OldId field value
 // and a boolean to check if the value has been set.
 func (o *BucketShardMapping) GetOldIdOk() (*int64, bool) {
-	if o == nil || o.OldId == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.OldId, true
+	return &o.OldId, true
 }
 
-// HasOldId returns a boolean if a field has been set.
-func (o *BucketShardMapping) HasOldId() bool {
-	if o != nil && o.OldId != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetOldId gets a reference to the given int64 and assigns it to the OldId field.
+// SetOldId sets field value
 func (o *BucketShardMapping) SetOldId(v int64) {
-	o.OldId = &v
+	o.OldId = v
 }
 
-// GetNewId returns the NewId field value if set, zero value otherwise.
+// GetNewId returns the NewId field value
 func (o *BucketShardMapping) GetNewId() int64 {
-	if o == nil || o.NewId == nil {
+	if o == nil {
 		var ret int64
 		return ret
 	}
-	return *o.NewId
+
+	return o.NewId
 }
 
-// GetNewIdOk returns a tuple with the NewId field value if set, nil otherwise
+// GetNewIdOk returns a tuple with the NewId field value
 // and a boolean to check if the value has been set.
 func (o *BucketShardMapping) GetNewIdOk() (*int64, bool) {
-	if o == nil || o.NewId == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.NewId, true
+	return &o.NewId, true
 }
 
-// HasNewId returns a boolean if a field has been set.
-func (o *BucketShardMapping) HasNewId() bool {
-	if o != nil && o.NewId != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetNewId gets a reference to the given int64 and assigns it to the NewId field.
+// SetNewId sets field value
 func (o *BucketShardMapping) SetNewId(v int64) {
-	o.NewId = &v
+	o.NewId = v
 }
 
 func (o BucketShardMapping) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.OldId != nil {
+	if true {
 		toSerialize["oldId"] = o.OldId
 	}
-	if o.NewId != nil {
+	if true {
 		toSerialize["newId"] = o.NewId
 	}
 	return json.Marshal(toSerialize)

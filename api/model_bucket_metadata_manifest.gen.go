@@ -20,6 +20,7 @@ type BucketMetadataManifest struct {
 	OrganizationName       string                    `json:"organizationName"`
 	BucketID               string                    `json:"bucketID"`
 	BucketName             string                    `json:"bucketName"`
+	Description            *string                   `json:"description,omitempty"`
 	DefaultRetentionPolicy string                    `json:"defaultRetentionPolicy"`
 	RetentionPolicies      []RetentionPolicyManifest `json:"retentionPolicies"`
 }
@@ -143,6 +144,38 @@ func (o *BucketMetadataManifest) SetBucketName(v string) {
 	o.BucketName = v
 }
 
+// GetDescription returns the Description field value if set, zero value otherwise.
+func (o *BucketMetadataManifest) GetDescription() string {
+	if o == nil || o.Description == nil {
+		var ret string
+		return ret
+	}
+	return *o.Description
+}
+
+// GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BucketMetadataManifest) GetDescriptionOk() (*string, bool) {
+	if o == nil || o.Description == nil {
+		return nil, false
+	}
+	return o.Description, true
+}
+
+// HasDescription returns a boolean if a field has been set.
+func (o *BucketMetadataManifest) HasDescription() bool {
+	if o != nil && o.Description != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetDescription gets a reference to the given string and assigns it to the Description field.
+func (o *BucketMetadataManifest) SetDescription(v string) {
+	o.Description = &v
+}
+
 // GetDefaultRetentionPolicy returns the DefaultRetentionPolicy field value
 func (o *BucketMetadataManifest) GetDefaultRetentionPolicy() string {
 	if o == nil {
@@ -204,6 +237,9 @@ func (o BucketMetadataManifest) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["bucketName"] = o.BucketName
+	}
+	if o.Description != nil {
+		toSerialize["description"] = o.Description
 	}
 	if true {
 		toSerialize["defaultRetentionPolicy"] = o.DefaultRetentionPolicy

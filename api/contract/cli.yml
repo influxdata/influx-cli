@@ -61,8 +61,8 @@ paths:
     $ref: "./openapi/src/oss/paths/restore_kv.yml"
   /restore/sql:
     $ref: "./openapi/src/oss/paths/restore_sql.yml"
-  /restore/bucket-metadata/{bucketID}:
-    $ref: "./openapi/src/oss/paths/restore_bucket-metadata_bucketID.yml"
+  /restore/bucket-metadata:
+    $ref: "./openapi/src/oss/paths/restore_bucket-metadata.yml"
   /restore/shards/{shardID}:
     $ref: "./openapi/src/oss/paths/restore_shards_shardID.yml"
   "/telegrafs":
@@ -229,6 +229,8 @@ components:
       $ref: "./openapi/src/oss/schemas/SubscriptionManifests.yml"
     SubscriptionManifest:
       $ref: "./openapi/src/oss/schemas/SubscriptionManifest.yml"
+    RestoredBucketMappings:
+      $ref: "./openapi/src/oss/schemas/RestoredBucketMappings.yml"
     BucketShardMappings:
       $ref: "./openapi/src/oss/schemas/BucketShardMappings.yml"
     BucketShardMapping:

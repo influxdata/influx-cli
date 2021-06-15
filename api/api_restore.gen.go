@@ -27,18 +27,17 @@ var (
 type RestoreApi interface {
 
 	/*
-	 * PostRestoreBucketMetadataId Create a new bucket pre-seeded with shard info from a backup.
+	 * PostRestoreBucketMetadata Create a new bucket pre-seeded with shard info from a backup.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The bucket ID.
-	 * @return ApiPostRestoreBucketMetadataIdRequest
+	 * @return ApiPostRestoreBucketMetadataRequest
 	 */
-	PostRestoreBucketMetadataId(ctx _context.Context, bucketID string) ApiPostRestoreBucketMetadataIdRequest
+	PostRestoreBucketMetadata(ctx _context.Context) ApiPostRestoreBucketMetadataRequest
 
 	/*
-	 * PostRestoreBucketMetadataIdExecute executes the request
-	 * @return []BucketShardMapping
+	 * PostRestoreBucketMetadataExecute executes the request
+	 * @return RestoredBucketMappings
 	 */
-	PostRestoreBucketMetadataIdExecute(r ApiPostRestoreBucketMetadataIdRequest) ([]BucketShardMapping, error)
+	PostRestoreBucketMetadataExecute(r ApiPostRestoreBucketMetadataRequest) (RestoredBucketMappings, error)
 
 	/*
 	 * PostRestoreKV Overwrite the embedded KV store on the server with a backed-up snapshot.
@@ -81,77 +80,65 @@ type RestoreApi interface {
 // RestoreApiService RestoreApi service
 type RestoreApiService service
 
-type ApiPostRestoreBucketMetadataIdRequest struct {
+type ApiPostRestoreBucketMetadataRequest struct {
 	ctx                    _context.Context
 	ApiService             RestoreApi
-	bucketID               string
 	bucketMetadataManifest *BucketMetadataManifest
 	zapTraceSpan           *string
 }
 
-func (r ApiPostRestoreBucketMetadataIdRequest) BucketID(bucketID string) ApiPostRestoreBucketMetadataIdRequest {
-	r.bucketID = bucketID
-	return r
-}
-func (r ApiPostRestoreBucketMetadataIdRequest) GetBucketID() string {
-	return r.bucketID
-}
-
-func (r ApiPostRestoreBucketMetadataIdRequest) BucketMetadataManifest(bucketMetadataManifest BucketMetadataManifest) ApiPostRestoreBucketMetadataIdRequest {
+func (r ApiPostRestoreBucketMetadataRequest) BucketMetadataManifest(bucketMetadataManifest BucketMetadataManifest) ApiPostRestoreBucketMetadataRequest {
 	r.bucketMetadataManifest = &bucketMetadataManifest
 	return r
 }
-func (r ApiPostRestoreBucketMetadataIdRequest) GetBucketMetadataManifest() *BucketMetadataManifest {
+func (r ApiPostRestoreBucketMetadataRequest) GetBucketMetadataManifest() *BucketMetadataManifest {
 	return r.bucketMetadataManifest
 }
 
-func (r ApiPostRestoreBucketMetadataIdRequest) ZapTraceSpan(zapTraceSpan string) ApiPostRestoreBucketMetadataIdRequest {
+func (r ApiPostRestoreBucketMetadataRequest) ZapTraceSpan(zapTraceSpan string) ApiPostRestoreBucketMetadataRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiPostRestoreBucketMetadataIdRequest) GetZapTraceSpan() *string {
+func (r ApiPostRestoreBucketMetadataRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiPostRestoreBucketMetadataIdRequest) Execute() ([]BucketShardMapping, error) {
-	return r.ApiService.PostRestoreBucketMetadataIdExecute(r)
+func (r ApiPostRestoreBucketMetadataRequest) Execute() (RestoredBucketMappings, error) {
+	return r.ApiService.PostRestoreBucketMetadataExecute(r)
 }
 
 /*
- * PostRestoreBucketMetadataId Create a new bucket pre-seeded with shard info from a backup.
+ * PostRestoreBucketMetadata Create a new bucket pre-seeded with shard info from a backup.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The bucket ID.
- * @return ApiPostRestoreBucketMetadataIdRequest
+ * @return ApiPostRestoreBucketMetadataRequest
  */
-func (a *RestoreApiService) PostRestoreBucketMetadataId(ctx _context.Context, bucketID string) ApiPostRestoreBucketMetadataIdRequest {
-	return ApiPostRestoreBucketMetadataIdRequest{
+func (a *RestoreApiService) PostRestoreBucketMetadata(ctx _context.Context) ApiPostRestoreBucketMetadataRequest {
+	return ApiPostRestoreBucketMetadataRequest{
 		ApiService: a,
 		ctx:        ctx,
-		bucketID:   bucketID,
 	}
 }
 
 /*
  * Execute executes the request
- * @return []BucketShardMapping
+ * @return RestoredBucketMappings
  */
-func (a *RestoreApiService) PostRestoreBucketMetadataIdExecute(r ApiPostRestoreBucketMetadataIdRequest) ([]BucketShardMapping, error) {
+func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBucketMetadataRequest) (RestoredBucketMappings, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  []BucketShardMapping
+		localVarReturnValue  RestoredBucketMappings
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RestoreApiService.PostRestoreBucketMetadataId")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RestoreApiService.PostRestoreBucketMetadata")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/restore/bucket-metadata/{bucketID}"
-	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
+	localVarPath := localBasePath + "/restore/bucket-metadata"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -245,6 +232,7 @@ type ApiPostRestoreKVRequest struct {
 	body            _io.ReadCloser
 	zapTraceSpan    *string
 	contentEncoding *string
+	contentType     *string
 }
 
 func (r ApiPostRestoreKVRequest) Body(body _io.ReadCloser) ApiPostRestoreKVRequest {
@@ -269,6 +257,14 @@ func (r ApiPostRestoreKVRequest) ContentEncoding(contentEncoding string) ApiPost
 }
 func (r ApiPostRestoreKVRequest) GetContentEncoding() *string {
 	return r.contentEncoding
+}
+
+func (r ApiPostRestoreKVRequest) ContentType(contentType string) ApiPostRestoreKVRequest {
+	r.contentType = &contentType
+	return r
+}
+func (r ApiPostRestoreKVRequest) GetContentType() *string {
+	return r.contentType
 }
 
 func (r ApiPostRestoreKVRequest) Execute() error {
@@ -314,7 +310,7 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/octet-stream"}
+	localVarHTTPContentTypes := []string{"text/plain"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -335,6 +331,9 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 	}
 	if r.contentEncoding != nil {
 		localVarHeaderParams["Content-Encoding"] = parameterToString(*r.contentEncoding, "")
+	}
+	if r.contentType != nil {
+		localVarHeaderParams["Content-Type"] = parameterToString(*r.contentType, "")
 	}
 	// body params
 	localVarPostBody = r.body
@@ -382,6 +381,7 @@ type ApiPostRestoreSQLRequest struct {
 	body            _io.ReadCloser
 	zapTraceSpan    *string
 	contentEncoding *string
+	contentType     *string
 }
 
 func (r ApiPostRestoreSQLRequest) Body(body _io.ReadCloser) ApiPostRestoreSQLRequest {
@@ -406,6 +406,14 @@ func (r ApiPostRestoreSQLRequest) ContentEncoding(contentEncoding string) ApiPos
 }
 func (r ApiPostRestoreSQLRequest) GetContentEncoding() *string {
 	return r.contentEncoding
+}
+
+func (r ApiPostRestoreSQLRequest) ContentType(contentType string) ApiPostRestoreSQLRequest {
+	r.contentType = &contentType
+	return r
+}
+func (r ApiPostRestoreSQLRequest) GetContentType() *string {
+	return r.contentType
 }
 
 func (r ApiPostRestoreSQLRequest) Execute() error {
@@ -451,7 +459,7 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/octet-stream"}
+	localVarHTTPContentTypes := []string{"text/plain"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -472,6 +480,9 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 	}
 	if r.contentEncoding != nil {
 		localVarHeaderParams["Content-Encoding"] = parameterToString(*r.contentEncoding, "")
+	}
+	if r.contentType != nil {
+		localVarHeaderParams["Content-Type"] = parameterToString(*r.contentType, "")
 	}
 	// body params
 	localVarPostBody = r.body
@@ -520,6 +531,7 @@ type ApiPostRestoreShardIdRequest struct {
 	body            _io.ReadCloser
 	zapTraceSpan    *string
 	contentEncoding *string
+	contentType     *string
 }
 
 func (r ApiPostRestoreShardIdRequest) ShardID(shardID string) ApiPostRestoreShardIdRequest {
@@ -552,6 +564,14 @@ func (r ApiPostRestoreShardIdRequest) ContentEncoding(contentEncoding string) Ap
 }
 func (r ApiPostRestoreShardIdRequest) GetContentEncoding() *string {
 	return r.contentEncoding
+}
+
+func (r ApiPostRestoreShardIdRequest) ContentType(contentType string) ApiPostRestoreShardIdRequest {
+	r.contentType = &contentType
+	return r
+}
+func (r ApiPostRestoreShardIdRequest) GetContentType() *string {
+	return r.contentType
 }
 
 func (r ApiPostRestoreShardIdRequest) Execute() error {
@@ -600,7 +620,7 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/octet-stream"}
+	localVarHTTPContentTypes := []string{"text/plain"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -621,6 +641,9 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 	}
 	if r.contentEncoding != nil {
 		localVarHeaderParams["Content-Encoding"] = parameterToString(*r.contentEncoding, "")
+	}
+	if r.contentType != nil {
+		localVarHeaderParams["Content-Type"] = parameterToString(*r.contentType, "")
 	}
 	// body params
 	localVarPostBody = r.body
