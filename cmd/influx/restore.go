@@ -48,9 +48,10 @@ Examples:
 				Destination: &params.BucketID,
 			},
 			&cli.StringFlag{
-				Name:    "bucket",
-				Usage:   "The original name of the bucket to restore",
-				Aliases: []string{"b"},
+				Name:        "bucket",
+				Usage:       "The original name of the bucket to restore",
+				Aliases:     []string{"b"},
+				Destination: &params.Bucket,
 			},
 			&cli.StringFlag{
 				Name:        "new-bucket",
