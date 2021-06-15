@@ -47,7 +47,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 
 	telegrafs, err := c.GetTelegrafs(ctx).OrgID(orgID).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to get telegraf config with OrgID %q: %w", orgID, err)
+		return fmt.Errorf("failed to get telegraf configs from org %q: %w", orgID, err)
 	}
 
 	return c.printTelegrafs(telegrafPrintOpts{grafs: &telegrafs})
@@ -75,7 +75,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 	graf, err := c.PostTelegrafs(ctx).TelegrafRequest(newTelegraf).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to create telegraf config %w", err) // todo more info
+		return fmt.Errorf("failed to create telegraf config %q: %w", params.Name, err)
 	}
 
 	return c.printTelegrafs(telegrafPrintOpts{graf: &graf})
@@ -88,7 +88,7 @@ type RemoveParams struct {
 func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
 	for _, rawID := range params.Ids {
 		if err := c.DeleteTelegrafsID(ctx, rawID).Execute(); err != nil {
-			return fmt.Errorf("failed to delete telegraf config with Id %q: %w", rawID, err)
+			return fmt.Errorf("failed to delete telegraf config with ID %q: %w", rawID, err)
 		}
 	}
 	return nil
@@ -104,7 +104,7 @@ type UpdateParams struct {
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	oldTelegraf, err := c.GetTelegrafsID(ctx, params.Id).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to find telegraf config with Id %q: %w", params.Id, err)
+		return fmt.Errorf("failed to find telegraf config with ID %q: %w", params.Id, err)
 	}
 	orgID := oldTelegraf.OrgID
 
