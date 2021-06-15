@@ -3,8 +3,7 @@ package telegrafs
 import (
 	"context"
 	"errors"
-	"io/ioutil"
-	"os"
+	"fmt"
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
@@ -14,6 +13,7 @@ import (
 type Client struct {
 	clients.CLI
 	api.TelegrafsApi
+	api.OrganizationsApi
 }
 
 type telegrafPrintOpts struct {
@@ -27,17 +27,12 @@ type ListParams struct {
 }
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
-	if !params.OrgID.Valid() || params.Id == "" {
+	if params.Id == "" && !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return errors.New("at least one of org, org-id, or id must be provided")
 	}
 
 	if params.Id != "" {
-		id, err := influxid.IDFromString(params.Id)
-		if err != nil {
-			return err
-		}
-
-		telegraf, err := c.GetTelegrafsID(ctx, id.String()).Execute()
+		telegraf, err := c.GetTelegrafsID(ctx, params.Id).Execute()
 		if err != nil {
 			return err
 		}
@@ -45,7 +40,12 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 		return c.printTelegrafs(telegrafPrintOpts{graf: &telegraf})
 	}
 
-	telegrafs, err := c.GetTelegrafs(ctx).OrgID(params.OrgID.String()).Execute()
+	orgID, err := c.getOrgID(ctx, params.OrgID, params.OrgName)
+	if err != nil {
+		return err
+	}
+
+	telegrafs, err := c.GetTelegrafs(ctx).OrgID(orgID).Execute()
 	if err != nil {
 		return err
 	}
@@ -55,23 +55,21 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 
 type CreateParams struct {
 	clients.OrgParams
-	Desc string
-	File string
-	Name string
+	Desc   string
+	Config string
+	Name   string
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
-	cfg, err := c.readConfig(params.File)
+	orgID, err := c.getOrgID(ctx, params.OrgID, params.OrgName)
 	if err != nil {
 		return err
 	}
 
-	orgID := params.OrgID.String()
-
 	newTelegraf := api.TelegrafRequest{
 		Name:        &params.Name,
 		Description: &params.Desc,
-		Config:      &cfg,
+		Config:      &params.Config,
 		OrgID:       &orgID,
 	}
 
@@ -84,18 +82,13 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 }
 
 type RemoveParams struct {
-	clients.OrgParams
 	Ids []string
 }
 
 func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
 	for _, rawID := range params.Ids {
-		id, err := influxid.IDFromString(rawID)
-		if err != nil {
-			return err
-		}
 
-		if err = c.DeleteTelegrafsID(ctx, id.String()).Execute(); err != nil {
+		if err := c.DeleteTelegrafsID(ctx, rawID).Execute(); err != nil {
 			return err
 		}
 	}
@@ -103,33 +96,27 @@ func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
 }
 
 type UpdateParams struct {
-	clients.OrgParams
-	Desc string
-	File string
-	Name string
-	Id   string
+	Desc   string
+	Config string
+	Name   string
+	Id     string
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
-	cfg, err := c.readConfig(params.File)
+	oldTelegraf, err := c.GetTelegrafsID(ctx, params.Id).Execute()
 	if err != nil {
 		return err
 	}
+	orgID := oldTelegraf.OrgID
 
-	id, err := influxid.IDFromString(params.Id)
-	if err != nil {
-		return err
-	}
-
-	orgID := params.OrgID.String()
 	updateTelegraf := api.TelegrafRequest{
 		Name:        &params.Name,
 		Description: &params.Desc,
-		Config:      &cfg,
-		OrgID:       &orgID,
+		Config:      &params.Config,
+		OrgID:       orgID,
 	}
 
-	graf, err := c.PutTelegrafsID(ctx, id.String()).TelegrafRequest(updateTelegraf).Execute()
+	graf, err := c.PutTelegrafsID(ctx, params.Id).TelegrafRequest(updateTelegraf).Execute()
 	if err != nil {
 		return err
 	}
@@ -169,19 +156,21 @@ func (c Client) printTelegrafs(opts telegrafPrintOpts) error {
 	return c.PrintTable(headers, rows...)
 }
 
-func (c Client) readConfig(file string) (string, error) {
-	if file != "" {
-		bb, err := ioutil.ReadFile(file)
-		if err != nil {
-			return "", err
+func (c Client) getOrgID(ctx context.Context, orgID influxid.ID, orgName string) (string, error) {
+	if orgID.Valid() {
+		return orgID.String(), nil
+	} else {
+		if orgName == "" {
+			orgName = c.ActiveConfig.Org
 		}
-
-		return string(bb), nil
+		resp, err := c.GetOrgs(ctx).Org(orgName).Execute()
+		if err != nil {
+			return "", fmt.Errorf("failed to lookup ID of org %q: %w", orgName, err)
+		}
+		orgs := resp.GetOrgs()
+		if len(orgs) == 0 {
+			return "", fmt.Errorf("no organization found with name %q", orgName)
+		}
+		return orgs[0].GetId(), nil
 	}
-
-	bb, err := ioutil.ReadAll(os.Stdin)
-	if err != nil {
-		return "", err
-	}
-	return string(bb), nil
 }

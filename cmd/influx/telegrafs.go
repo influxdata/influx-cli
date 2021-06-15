@@ -1,7 +1,8 @@
 package main
 
 import (
-	"strings"
+	"io/ioutil"
+	"os"
 
 	"github.com/influxdata/influx-cli/v2/clients/telegrafs"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
@@ -20,12 +21,25 @@ func newTelegrafsCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "telegrafs",
 		Usage: "List Telegraf configuration(s). Subcommands manage Telegraf configurations.",
+		Description: `
+	List Telegraf configuration(s). Subcommands manage Telegraf configurations.
+
+	Examples:
+		# list all known Telegraf configurations
+		influx telegrafs
+
+		# list Telegraf configuration corresponding to specific ID
+		influx telegrafs --id $ID
+
+		# list Telegraf configuration corresponding to specific ID shorts
+		influx telegrafs -i $ID
+`,
 		Subcommands: []*cli.Command{
 			newCreateTelegrafCmd(),
 			newRemoveTelegrafCmd(),
 			newUpdateTelegrafCmd(),
 		},
-		Flags: flags,
+		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
@@ -41,7 +55,7 @@ func newTelegrafsCommand() *cli.Command {
 func newCreateTelegrafCmd() *cli.Command {
 	var params telegrafs.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
-	flags = append(flags, []cli.Flag{
+	flags = append(flags,
 		&cli.StringFlag{
 			Name:        "description",
 			Usage:       "Description for Telegraf configuration",
@@ -49,10 +63,9 @@ func newCreateTelegrafCmd() *cli.Command {
 			Destination: &params.Desc,
 		},
 		&cli.StringFlag{
-			Name:        "file",
-			Usage:       "Path to Telegraf configuration",
-			Aliases:     []string{"f"},
-			Destination: &params.File,
+			Name:    "file",
+			Usage:   "Path to Telegraf configuration",
+			Aliases: []string{"f"},
 		},
 		&cli.StringFlag{
 			Name:        "name",
@@ -60,13 +73,31 @@ func newCreateTelegrafCmd() *cli.Command {
 			Aliases:     []string{"n"},
 			Destination: &params.Name,
 		},
-	}...)
+	)
 	return &cli.Command{
-		Name:   "create",
-		Usage:  "The telegrafs create command creates a new Telegraf configuration.",
+		Name:  "create",
+		Usage: "The telegrafs create command creates a new Telegraf configuration.",
+		Description: `
+	The telegrafs create command creates a new Telegraf configuration.
+
+	Examples:
+		# create new Telegraf configuration
+		influx telegrafs create --name $CFG_NAME --description $CFG_DESC --file $PATH_TO_TELE_CFG
+
+		# create new Telegraf configuration using shorts
+		influx telegrafs create -n $CFG_NAME -d $CFG_DESC -f $PATH_TO_TELE_CFG
+
+		# create a new Telegraf config with a config provided via STDIN
+		cat $CONFIG_FILE | influx telegrafs create -n $CFG_NAME -d $CFG_DESC
+`,
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
+			conf, err := readConfig(ctx.String("file"))
+			if err != nil {
+				return err
+			}
+			params.Config = conf
 			api := getAPI(ctx)
 			client := telegrafs.Client{
 				CLI:          getCLI(ctx),
@@ -80,27 +111,37 @@ func newCreateTelegrafCmd() *cli.Command {
 func newRemoveTelegrafCmd() *cli.Command {
 	var params telegrafs.RemoveParams
 	flags := commonFlags()
-	flags = append(flags, &cli.StringSliceFlag{
-		Name:    "id",
-		Usage:   "Telegraf configuration ID(s) to remove",
-		Aliases: []string{"i"},
-	})
+	flags = append(flags,
+		&cli.StringSliceFlag{
+			Name:    "id",
+			Usage:   "Telegraf configuration ID(s) to remove",
+			Aliases: []string{"i"},
+		},
+		&cli.StringFlag{Name: "org", Hidden: true},
+		&cli.StringFlag{Name: "org-id", Hidden: true},
+	)
 	return &cli.Command{
-		Name:    "rm",
-		Usage:   "The telegrafs rm command removes Telegraf configuration(s).",
+		Name:  "rm",
+		Usage: "The telegrafs rm command removes Telegraf configuration(s).",
+		Description: `
+	The telegrafs rm command removes Telegraf configuration(s).
+
+	Examples:
+		# remove a single Telegraf configuration
+		influx telegrafs rm --id $ID
+
+		# remove multiple Telegraf configurations
+		influx telegrafs rm --id $ID1 --id $ID2
+
+		# remove using short flags
+		influx telegrafs rm -i $ID1
+`,
 		Aliases: []string{"remove"},
 		Flags:   flags,
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
-
-			// The old CLI allowed specifying this either via repeated flags or
-			// via a single flag w/ a comma-separated value.
 			rawIds := ctx.StringSlice("id")
-			var ids []string
-			for _, p := range rawIds {
-				ids = append(ids, strings.Split(p, ",")...)
-			}
-			params.Ids = ids
+			params.Ids = rawIds
 
 			api := getAPI(ctx)
 			client := telegrafs.Client{
@@ -114,8 +155,8 @@ func newRemoveTelegrafCmd() *cli.Command {
 
 func newUpdateTelegrafCmd() *cli.Command {
 	var params telegrafs.UpdateParams
-	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
-	flags = append(flags, []cli.Flag{
+	flags := commonFlags()
+	flags = append(flags,
 		&cli.StringFlag{
 			Name:        "description",
 			Usage:       "Description for Telegraf configuration",
@@ -123,10 +164,9 @@ func newUpdateTelegrafCmd() *cli.Command {
 			Destination: &params.Desc,
 		},
 		&cli.StringFlag{
-			Name:        "file",
-			Usage:       "Path to Telegraf configuration",
-			Aliases:     []string{"f"},
-			Destination: &params.File,
+			Name:    "file",
+			Usage:   "Path to Telegraf configuration",
+			Aliases: []string{"f"},
 		},
 		&cli.StringFlag{
 			Name:        "name",
@@ -140,13 +180,35 @@ func newUpdateTelegrafCmd() *cli.Command {
 			Aliases:     []string{"i"},
 			Destination: &params.Id,
 		},
-	}...)
+		&cli.StringFlag{Name: "org", Hidden: true},
+		&cli.StringFlag{Name: "org-id", Hidden: true},
+	)
 	return &cli.Command{
-		Name:   "update",
-		Usage:  "Update a Telegraf configuration.",
+		Name:  "update",
+		Usage: "Update a Telegraf configuration.",
+		Description: `
+	The telegrafs update command updates a Telegraf configuration to match the
+	specified parameters. If a name or description is not provided, then are set
+	to an empty string.
+
+	Examples:
+		# update new Telegraf configuration
+		influx telegrafs update --id $ID --name $CFG_NAME --description $CFG_DESC --file $PATH_TO_TELE_CFG
+
+		# update new Telegraf configuration using shorts
+		influx telegrafs update -i $ID -n $CFG_NAME -d $CFG_DESC -f $PATH_TO_TELE_CFG
+
+		# update a Telegraf config with a config provided via STDIN
+		cat $CONFIG_FILE | influx telegrafs update -i $ID  -n $CFG_NAME -d $CFG_DESC
+`,
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
+			conf, err := readConfig(ctx.String("file"))
+			if err != nil {
+				return err
+			}
+			params.Config = conf
 			api := getAPI(ctx)
 			client := telegrafs.Client{
 				CLI:          getCLI(ctx),
@@ -155,4 +217,21 @@ func newUpdateTelegrafCmd() *cli.Command {
 			return client.Update(ctx.Context, &params)
 		},
 	}
+}
+
+func readConfig(file string) (string, error) {
+	if file != "" {
+		bb, err := ioutil.ReadFile(file)
+		if err != nil {
+			return "", err
+		}
+
+		return string(bb), nil
+	}
+
+	bb, err := ioutil.ReadAll(os.Stdin)
+	if err != nil {
+		return "", err
+	}
+	return string(bb), nil
 }
