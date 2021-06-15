@@ -6,7 +6,6 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 )
 
 type Client struct {
@@ -21,43 +20,40 @@ type Params struct {
 }
 
 func (c Client) List(ctx context.Context, params *Params) error {
-	orgID, err := c.getOrgID(ctx, params.OrgID, params.OrgName)
-	if err != nil {
-		return err
-	}
-	if orgID == "" && len(params.Ids) == 0 {
+	if !params.OrgID.Valid() && params.OrgName == "" && len(params.Ids) == 0 {
 		return fmt.Errorf("at least one of org, org-id, or id must be provided")
 	}
 
+	var req api.ApiGetOrgsRequest
+	if params.OrgID.Valid() {
+		req = req.OrgID(params.OrgID.String())
+	}
+	if params.OrgName != "" {
+		req = req.Org(params.OrgName)
+	}
+	if !params.OrgID.Valid() && params.OrgName == "" {
+		req = req.Org(c.ActiveConfig.Org)
+	}
+	orgReq, err := req.Execute()
+	if err != nil {
+		return fmt.Errorf("failed to lookup org with ID %q or name %q: %w", params.OrgID, params.OrgName, err)
+	}
+	orgIDs := orgReq.GetOrgs()
+	if len(orgIDs) == 0 {
+		return fmt.Errorf("no organization found with name %q: %w", params.OrgName, err)
+	}
+
+	orgID := orgIDs[0].GetId()
 	const limit = 100
-	req := c.GetDashboards(ctx)
-	req = req.Limit(limit)
-	req = req.OrgID(orgID).Id(params.Ids)
-	dashboards, err := req.Execute()
+	dashReq := c.GetDashboards(ctx)
+	dashReq = dashReq.Limit(limit)
+	dashReq = dashReq.OrgID(orgID).Id(params.Ids)
+	dashboards, err := dashReq.Execute()
 	if err != nil {
 		return fmt.Errorf("failed to find dashboards with OrgID %q and IDs %q: %w", orgID, params.Ids, err)
 	}
 
 	return c.printDashboards(dashboards)
-}
-
-func (c Client) getOrgID(ctx context.Context, orgID influxid.ID, orgName string) (string, error) {
-	if orgID.Valid() {
-		return orgID.String(), nil
-	} else {
-		if orgName == "" {
-			orgName = c.ActiveConfig.Org
-		}
-		resp, err := c.GetOrgs(ctx).Org(orgName).Execute()
-		if err != nil {
-			return "", fmt.Errorf("failed to lookup ID of org %q: %w", orgName, err)
-		}
-		orgs := resp.GetOrgs()
-		if len(orgs) == 0 {
-			return "", fmt.Errorf("no organization found with name %q", orgName)
-		}
-		return orgs[0].GetId(), nil
-	}
 }
 
 func (c Client) printDashboards(dashboards api.Dashboards) error {
