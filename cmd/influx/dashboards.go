@@ -37,8 +37,8 @@ Examples:
 
 			api := getAPI(ctx)
 			client := dashboards.Client{
-				CLI:              getCLI(ctx),
-				DashboardsApi:    api.DashboardsApi,
+				CLI:           getCLI(ctx),
+				DashboardsApi: api.DashboardsApi,
 			}
 			return client.List(ctx.Context, &params)
 		},

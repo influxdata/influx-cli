@@ -35,10 +35,9 @@ func (c Client) List(ctx context.Context, params *Params) error {
 	if !params.OrgID.Valid() && params.OrgName == "" {
 		req = req.Org(c.ActiveConfig.Org)
 	}
-	orgID := req.GetOrgID() // for logging purposes
 	dashboards, err := req.Id(params.Ids).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to find dashboards with OrgID %q and IDs %q: %w", orgID, params.Ids, err)
+		return fmt.Errorf("failed to find dashboards: %w", err)
 	}
 
 	return c.printDashboards(dashboards)
