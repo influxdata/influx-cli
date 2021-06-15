@@ -39,7 +39,6 @@ Examples:
 			client := dashboards.Client{
 				CLI:              getCLI(ctx),
 				DashboardsApi:    api.DashboardsApi,
-				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.List(ctx.Context, &params)
 		},
