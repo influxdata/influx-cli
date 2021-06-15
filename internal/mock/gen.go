@@ -13,5 +13,5 @@ package mock
 //go:generate go run github.com/golang/mock/mockgen -package mock -destination api_backup.gen.go github.com/influxdata/influx-cli/v2/api BackupApi
 
 // Other mocks
-//go:generate go run github.com/golang/mock/mockgen -package mock -destination config.gen.go -mock_names Service=MockConfigService github.com/influxdata/influx-cli/v2/internal/config Service
+//go:generate go run github.com/golang/mock/mockgen -package mock -destination config.gen.go -mock_names Service=MockConfigService github.com/influxdata/influx-cli/v2/config Service
 //go:generate go run github.com/golang/mock/mockgen -package mock -destination stdio.gen.go github.com/influxdata/influx-cli/v2/pkg/stdio StdIO

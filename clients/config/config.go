@@ -7,7 +7,7 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/influxdata/influx-cli/v2/internal/config"
+	"github.com/influxdata/influx-cli/v2/config"
 )
 
 var ErrInvalidHostUrlScheme = errors.New("a scheme of http or https must be provided for host url")
