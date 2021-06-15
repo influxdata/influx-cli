@@ -1,0 +1,57 @@
+get:
+  operationId: GetDashboards
+  tags:
+    - Dashboards
+  summary: List all dashboards
+  parameters:
+    - $ref: "../../openapi/src/common/parameters/TraceSpan.yml"
+    - $ref: "../../openapi/src/common/parameters/Offset.yml"
+    - $ref: "../../openapi/src/common/parameters/Limit.yml"
+    - $ref: "../../openapi/src/common/parameters/Descending.yml"
+    - in: query
+      name: owner
+      description: A user identifier. Returns only dashboards where this user has the `owner` role.
+      schema:
+        type: string
+    - in: query
+      name: sortBy
+      description: The column to sort by.
+      schema:
+        type: string
+        enum:
+          - "ID"
+          - "CreatedAt"
+          - "UpdatedAt"
+    - in: query
+      name: id
+      description: A list of dashboard identifiers. Returns only the listed dashboards. If both `id` and `owner` are specified, only `id` is used.
+      schema:
+        type: array
+        items:
+          type: string
+    - in: query
+      name: orgID
+      description: The identifier of the organization.
+      schema:
+        type: string
+    - in: query
+      name: org
+      description: The name of the organization.
+      schema:
+        type: string
+  responses:
+    "200":
+      description: All dashboards
+      content:
+        application/json:
+          schema:
+            $ref: "../../openapi/src/common/schemas/Dashboards.yml"
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "../../openapi/src/common/schemas/Error.yml"
+
+# Cuts out the post section since it is not needed
+# for CLI and adds a large amount of extra code-gen.

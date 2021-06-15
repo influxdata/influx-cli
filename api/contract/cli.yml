@@ -69,6 +69,8 @@ paths:
     $ref: "./openapi/src/common/paths/telegrafs.yml"
   "/telegrafs/{telegrafID}":
     $ref: "./overrides/paths/telegrafs_telegrafID.yml"
+  /dashboards:
+    $ref: "./overrides/paths/dashboards.yml"
 components:
   parameters:
     TraceSpan:
@@ -241,3 +243,13 @@ components:
       $ref: "./openapi/src/common/schemas/TelegrafRequest.yml"
     Telegraf:
       $ref: "./openapi/src/common/schemas/Telegraf.yml"
+    Dashboards:
+      $ref: "./openapi/src/common/schemas/Dashboards.yml"
+    Dashboard:
+      $ref: "./openapi/src/common/schemas/Dashboard.yml"
+    CreateDashboardRequest:
+      $ref: "./openapi/src/common/schemas/CreateDashboardRequest.yml"
+    Cells:
+      $ref: "./openapi/src/common/schemas/Cells.yml"
+    Cell:
+      $ref: "./openapi/src/common/schemas/Cell.yml"
