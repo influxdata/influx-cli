@@ -117,7 +117,7 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 
 	graf, err := c.PutTelegrafsID(ctx, params.Id).TelegrafRequest(updateTelegraf).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to update telegraf config with Id %q: %w", params.Id, err)
+		return fmt.Errorf("failed to update telegraf config with ID %q: %w", params.Id, err)
 	}
 
 	return c.printTelegrafs(telegrafPrintOpts{graf: &graf})
