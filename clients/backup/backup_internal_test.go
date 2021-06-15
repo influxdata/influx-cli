@@ -18,6 +18,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
+	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -55,28 +56,28 @@ func TestBackup_DownloadMetadata(t *testing.T) {
 
 	testCases := []struct {
 		name                string
-		compression         FileCompression
-		responseCompression FileCompression
+		compression         br.FileCompression
+		responseCompression br.FileCompression
 	}{
 		{
 			name:                "no gzip",
-			compression:         NoCompression,
-			responseCompression: NoCompression,
+			compression:         br.NoCompression,
+			responseCompression: br.NoCompression,
 		},
 		{
 			name:                "response gzip, no local gzip",
-			compression:         NoCompression,
-			responseCompression: GzipCompression,
+			compression:         br.NoCompression,
+			responseCompression: br.GzipCompression,
 		},
 		{
 			name:                "no response gzip, local gzip",
-			compression:         GzipCompression,
-			responseCompression: NoCompression,
+			compression:         br.GzipCompression,
+			responseCompression: br.NoCompression,
 		},
 		{
 			name:                "all gzip",
-			compression:         GzipCompression,
-			responseCompression: GzipCompression,
+			compression:         br.GzipCompression,
+			responseCompression: br.GzipCompression,
 		},
 	}
 
@@ -94,7 +95,7 @@ func TestBackup_DownloadMetadata(t *testing.T) {
 				DoAndReturn(func(request api.ApiGetBackupMetadataRequest) (*http.Response, error) {
 					out := bytes.Buffer{}
 					var outW io.Writer = &out
-					if tc.responseCompression == GzipCompression {
+					if tc.responseCompression == br.GzipCompression {
 						gzw := gzip.NewWriter(outW)
 						defer gzw.Close()
 						outW = gzw
@@ -144,7 +145,7 @@ func TestBackup_DownloadMetadata(t *testing.T) {
 
 					res := http.Response{Header: http.Header{}, Body: ioutil.NopCloser(&out)}
 					res.Header.Add("Content-Type", fmt.Sprintf("multipart/mixed; boundary=%s", writer.Boundary()))
-					if tc.responseCompression == GzipCompression {
+					if tc.responseCompression == br.GzipCompression {
 						res.Header.Add("Content-Encoding", "gzip")
 					}
 					return &res, nil
@@ -173,7 +174,7 @@ func TestBackup_DownloadMetadata(t *testing.T) {
 			defer localKv.Close()
 
 			var kvReader io.Reader = localKv
-			if tc.compression == GzipCompression {
+			if tc.compression == br.GzipCompression {
 				gzr, err := gzip.NewReader(kvReader)
 				require.NoError(t, err)
 				defer gzr.Close()
@@ -188,7 +189,7 @@ func TestBackup_DownloadMetadata(t *testing.T) {
 			defer localSql.Close()
 
 			var sqlReader io.Reader = localSql
-			if tc.compression == GzipCompression {
+			if tc.compression == br.GzipCompression {
 				gzr, err := gzip.NewReader(sqlReader)
 				require.NoError(t, err)
 				defer gzr.Close()
@@ -208,28 +209,28 @@ func TestBackup_DownloadShardData(t *testing.T) {
 
 	testCases := []struct {
 		name                string
-		compression         FileCompression
-		responseCompression FileCompression
+		compression         br.FileCompression
+		responseCompression br.FileCompression
 	}{
 		{
 			name:                "no gzip",
-			compression:         NoCompression,
-			responseCompression: NoCompression,
+			compression:         br.NoCompression,
+			responseCompression: br.NoCompression,
 		},
 		{
 			name:                "response gzip, no local gzip",
-			compression:         NoCompression,
-			responseCompression: GzipCompression,
+			compression:         br.NoCompression,
+			responseCompression: br.GzipCompression,
 		},
 		{
 			name:                "no response gzip, local gzip",
-			compression:         GzipCompression,
-			responseCompression: NoCompression,
+			compression:         br.GzipCompression,
+			responseCompression: br.NoCompression,
 		},
 		{
 			name:                "all gzip",
-			compression:         GzipCompression,
-			responseCompression: GzipCompression,
+			compression:         br.GzipCompression,
+			responseCompression: br.GzipCompression,
 		},
 	}
 
@@ -247,7 +248,7 @@ func TestBackup_DownloadShardData(t *testing.T) {
 				DoAndReturn(func(api.ApiGetBackupShardIdRequest) (*http.Response, error) {
 					out := bytes.Buffer{}
 					var outW io.Writer = &out
-					if tc.responseCompression == GzipCompression {
+					if tc.responseCompression == br.GzipCompression {
 						gzw := gzip.NewWriter(outW)
 						defer gzw.Close()
 						outW = gzw
@@ -256,7 +257,7 @@ func TestBackup_DownloadShardData(t *testing.T) {
 					require.NoError(t, err)
 					res := http.Response{Header: http.Header{}, Body: ioutil.NopCloser(&out)}
 					res.Header.Add("Content-Type", "application/octet-stream")
-					if tc.responseCompression == GzipCompression {
+					if tc.responseCompression == br.GzipCompression {
 						res.Header.Add("Content-Encoding", "gzip")
 					}
 					return &res, nil
@@ -285,7 +286,7 @@ func TestBackup_DownloadShardData(t *testing.T) {
 			defer localShard.Close()
 
 			var shardReader io.Reader = localShard
-			if tc.compression == GzipCompression {
+			if tc.compression == br.GzipCompression {
 				gzr, err := gzip.NewReader(shardReader)
 				require.NoError(t, err)
 				defer gzr.Close()

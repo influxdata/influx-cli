@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/influxdata/influx-cli/v2/clients/backup"
+	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
@@ -11,7 +12,7 @@ import (
 func newBackupCmd() *cli.Command {
 	var params backup.Params
 	// Default to gzipping local files.
-	params.Compression = backup.GzipCompression
+	params.Compression = br.GzipCompression
 
 	return &cli.Command{
 		Name:  "backup",
