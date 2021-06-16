@@ -75,7 +75,7 @@ func (mr *MockStdIOMockRecorder) GetConfirm(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConfirm", reflect.TypeOf((*MockStdIO)(nil).GetConfirm), arg0)
 }
 
-// GetPassword mocks base method.
+// GetSecret mocks base method.
 func (m *MockStdIO) GetSecret(arg0 string, arg1 int) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSecret", arg0, arg1)
@@ -84,8 +84,8 @@ func (m *MockStdIO) GetSecret(arg0 string, arg1 int) (string, error) {
 	return ret0, ret1
 }
 
-// GetPassword indicates an expected call of GetPassword.
-func (mr *MockStdIOMockRecorder) GetPassword(arg0, arg1 interface{}) *gomock.Call {
+// GetSecret indicates an expected call of GetSecret.
+func (mr *MockStdIOMockRecorder) GetSecret(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSecret", reflect.TypeOf((*MockStdIO)(nil).GetSecret), arg0, arg1)
 }

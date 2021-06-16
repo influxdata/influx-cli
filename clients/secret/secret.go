@@ -3,6 +3,7 @@ package secret
 import (
 	"context"
 	"fmt"
+
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 )
@@ -35,8 +36,14 @@ func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
 		return err
 	}
 
-	if err := c.PostOrgsIDSecrets(ctx, orgID).Execute(); err != nil {
-		return fmt.Errorf("failed to delete secret with key %q: %v", params.Key, err)
+	// PostOrgsIDSecrets is used to remove secrets from an organization.
+	// The name is generated from the operationId in the
+	// orgs_orgsID_secrets_delete.yml path.
+	err = c.PostOrgsIDSecrets(ctx, orgID).
+		SecretKeys(api.SecretKeys{Secrets: &[]string{params.Key}}).
+		Execute()
+	if err != nil {
+		return fmt.Errorf("failed to delete secret with key %q: %w", params.Key, err)
 	}
 
 	return c.printSecrets(secretPrintOpt{
@@ -61,16 +68,16 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 
 	response, err := c.GetOrgsIDSecrets(ctx, orgID).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to retrieve secret keys: %s", err)
+		return fmt.Errorf("failed to retrieve secret keys: %w", err)
 	}
 
 	secrets := response.GetSecrets()
-	opts := make([]secret, 0, len(secrets))
-	for _, entry := range secrets {
-		opts = append(opts, secret{
+	opts := make([]secret, len(secrets))
+	for i, entry := range secrets {
+		opts[i] = secret{
 			key:   entry,
 			orgID: orgID,
-		})
+		}
 	}
 	return c.printSecrets(secretPrintOpt{secrets: opts})
 }
@@ -97,11 +104,11 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 		}
 	}
 
-	err = c.PatchOrgsIDSecrets(ctx, orgID).RequestBody(map[string]string{
-		params.Key: secretVal,
-	}).Execute()
+	err = c.PatchOrgsIDSecrets(ctx, orgID).
+		RequestBody(map[string]string{params.Key: secretVal}).
+		Execute()
 	if err != nil {
-		return fmt.Errorf("failed to update secret with key %q: %v", params.Key, err)
+		return fmt.Errorf("failed to update secret with key %q: %w", params.Key, err)
 	}
 
 	return c.printSecrets(secretPrintOpt{
@@ -125,7 +132,7 @@ func (c Client) printSecrets(opts secretPrintOpt) error {
 	if opts.deleted {
 		headers = append(headers, "Deleted")
 	}
-	if opts.secrets == nil {
+	if &opts.secret != nil {
 		opts.secrets = append(opts.secrets, opts.secret)
 	}
 
