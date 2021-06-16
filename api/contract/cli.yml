@@ -25,6 +25,10 @@ paths:
     $ref: "./openapi/src/common/paths/orgs_orgID_members.yml"
   /orgs/{orgID}/members/{userID}:
     $ref: "./openapi/src/common/paths/orgs_orgID_members_userID.yml"
+  /orgs/{orgID}/secrets:
+    $ref: "./openapi/src/common/paths/orgs_orgID_secrets.yml"
+  /orgs/{orgID}/secrets/{delete}:
+    $ref: "./openapi/src/common/paths/orgs_orgID_secrets_delete.yml"
   /buckets/{bucketID}/schema/measurements:
     $ref: "./openapi/src/cloud/paths/measurements.yml"
   /buckets/{bucketID}/schema/measurements/{measurementID}:
@@ -263,3 +267,9 @@ components:
       $ref: "./openapi/src/common/schemas/TemplateKind.yml"
     TemplateEntry:
       $ref: "./openapi/src/common/schemas/TemplateEntry.yml"
+    SecretKeysResponse:
+      $ref: "./openapi/src/common/schemas/SecretKeysResponse.yml"
+    SecretKeys:
+      $ref: "./openapi/src/common/schemas/SecretKeys.yml"
+    Secrets:
+      $ref: "./openapi/src/common/schemas/Secrets.yml"

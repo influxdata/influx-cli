@@ -65,6 +65,8 @@ type APIClient struct {
 
 	RestoreApi RestoreApi
 
+	SecretsApi SecretsApi
+
 	SetupApi SetupApi
 
 	TasksApi TasksApi
@@ -103,6 +105,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.OrganizationsApi = (*OrganizationsApiService)(&c.common)
 	c.QueryApi = (*QueryApiService)(&c.common)
 	c.RestoreApi = (*RestoreApiService)(&c.common)
+	c.SecretsApi = (*SecretsApiService)(&c.common)
 	c.SetupApi = (*SetupApiService)(&c.common)
 	c.TasksApi = (*TasksApiService)(&c.common)
 	c.TelegrafsApi = (*TelegrafsApiService)(&c.common)
