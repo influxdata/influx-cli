@@ -37,6 +37,7 @@ func newDeleteSecretCmd() *cli.Command {
 			api := getAPI(ctx)
 			client := secret.Client{
 				CLI:              getCLI(ctx),
+				SecretsApi:       api.SecretsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.Delete(ctx.Context, &params)
@@ -57,6 +58,7 @@ func newListSecretCmd() *cli.Command {
 			api := getAPI(ctx)
 			client := secret.Client{
 				CLI:              getCLI(ctx),
+				SecretsApi:       api.SecretsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.List(ctx.Context, &params)
@@ -91,6 +93,7 @@ func newUpdateSecretCmd() *cli.Command {
 			api := getAPI(ctx)
 			client := secret.Client{
 				CLI:              getCLI(ctx),
+				SecretsApi:       api.SecretsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.Update(ctx.Context, &params)
