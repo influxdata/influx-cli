@@ -198,6 +198,8 @@ func (c Client) partialRestore(ctx context.Context, params *Params) (err error) 
 				return
 			}
 		}
+		bkt.OrganizationName = orgName
+		bkt.OrganizationID = orgIds[orgName]
 
 		// By the same reasoning as above, if new-bucket-name is non-empty we know
 		// filters must have been set to ensure we only match 1 bucket, so we can
