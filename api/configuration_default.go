@@ -18,7 +18,7 @@ type ConfigParams struct {
 
 // NewAPIConfig builds a configuration tailored to the InfluxDB v2 API.
 func NewAPIConfig(params ConfigParams) *Configuration {
-	clientTransport := http.DefaultTransport.(*http.Transport)
+	clientTransport := http.DefaultTransport.(*http.Transport).Clone()
 	clientTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: params.AllowInsecureTLS}
 
 	apiConfig := NewConfiguration()
