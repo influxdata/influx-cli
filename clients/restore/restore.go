@@ -198,6 +198,8 @@ func (c Client) partialRestore(ctx context.Context, params *Params) (err error) 
 				return
 			}
 		}
+		bkt.OrganizationName = orgName
+		bkt.OrganizationID = orgIds[orgName]
 
 		// By the same reasoning as above, if new-bucket-name is non-empty we know
 		// filters must have been set to ensure we only match 1 bucket, so we can
@@ -241,12 +243,16 @@ func (c Client) partialRestore(ctx context.Context, params *Params) (err error) 
 
 // restoreOrg gets the ID for the org with the given name, creating the org if it doesn't already exist.
 func (c Client) restoreOrg(ctx context.Context, name string) (string, error) {
+	// NOTE: Our orgs API returns a 404 instead of an empty list when filtering by a specific name.
 	orgs, err := c.GetOrgs(ctx).Org(name).Execute()
 	if err != nil {
-		return "", fmt.Errorf("failed to check existence of organization %q: %w", name, err)
+		if apiErr, ok := err.(api.ApiError); !ok || apiErr.ErrorCode() != api.ERRORCODE_NOT_FOUND {
+			return "", fmt.Errorf("failed to check existence of organization %q: %w", name, err)
+		}
 	}
 
-	if len(orgs.GetOrgs()) == 0 {
+	// If we've gotten this far and err != nil, it means err was a 404.
+	if err != nil || len(orgs.GetOrgs()) == 0 {
 		// Create any missing orgs.
 		newOrg, err := c.PostOrgs(ctx).PostOrganizationRequest(api.PostOrganizationRequest{Name: name}).Execute()
 		if err != nil {
