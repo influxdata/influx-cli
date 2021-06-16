@@ -20,7 +20,6 @@ multiple locations.
   pulling the entire body into memory and transforming it into an `*os.File`
 * GUnzip non-binary response bodies before unmarshalling when `Content-Encoding: gzip` is set
 * Remove `*http.Response`s from the return values of generated operations
-* Rename `NewAPIClient` to `newAPIClient` to force use of our alternate `NewApiClient` constructor
 
 `client.mustache`
 * Removed use of `golang.org/x/oauth2` to avoid its heavy dependencies

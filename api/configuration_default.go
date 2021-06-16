@@ -7,7 +7,7 @@ import (
 	"net/url"
 )
 
-type ClientParams struct {
+type ConfigParams struct {
 	Host             *url.URL
 	UserAgent        string
 	Token            *string
@@ -16,7 +16,8 @@ type ClientParams struct {
 	Debug            bool
 }
 
-func NewApiClient(params ClientParams) *APIClient {
+// NewAPIConfig builds a configuration tailored to the InfluxDB v2 API.
+func NewAPIConfig(params ConfigParams) *Configuration {
 	clientTransport := http.DefaultTransport.(*http.Transport)
 	clientTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: params.AllowInsecureTLS}
 
@@ -39,5 +40,5 @@ func NewApiClient(params ClientParams) *APIClient {
 	}
 	apiConfig.Debug = params.Debug
 
-	return newAPIClient(apiConfig)
+	return apiConfig
 }

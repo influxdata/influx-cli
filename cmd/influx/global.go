@@ -69,7 +69,7 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 		cfg.Host = ctx.String(hostFlagName)
 	}
 
-	clientParams := api.ClientParams{
+	configParams := api.ConfigParams{
 		UserAgent:        fmt.Sprintf("influx/%s (%s) Sha/%s Date/%s", version, runtime.GOOS, commit, date),
 		AllowInsecureTLS: ctx.Bool(skipVerifyFlagName),
 		Debug:            ctx.Bool(httpDebugFlagName),
@@ -79,16 +79,16 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 	if err != nil {
 		return nil, fmt.Errorf("host URL %q is invalid: %w", cfg.Host, err)
 	}
-	clientParams.Host = parsedHost
+	configParams.Host = parsedHost
 
 	if injectToken {
-		clientParams.Token = &cfg.Token
+		configParams.Token = &cfg.Token
 	}
 	if ctx.IsSet(traceIdFlagName) {
-		clientParams.TraceId = api.PtrString(ctx.String(traceIdFlagName))
+		configParams.TraceId = api.PtrString(ctx.String(traceIdFlagName))
 	}
 
-	return api.NewApiClient(clientParams), nil
+	return api.NewAPIClient(api.NewAPIConfig(configParams)), nil
 }
 
 func withCli() cli.BeforeFunc {
