@@ -67,7 +67,7 @@ func (t *terminalStdio) GetStringInput(prompt, defaultValue string) (input strin
 	return
 }
 
-// GetPassword prompts the user for a password.
+// GetSecret prompts the user for a password.
 func (t *terminalStdio) GetSecret(prompt string, minLen int) (password string, err error) {
 	question := survey.Password{Message: prompt}
 	opts := []survey.AskOpt{survey.WithStdio(t.Stdin, t.Stdout, t.Stderr)}

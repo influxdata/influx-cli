@@ -3,11 +3,8 @@ package secret
 import (
 	"context"
 	"fmt"
-	"os"
-
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/tcnksm/go-input"
 )
 
 type Client struct {
@@ -90,15 +87,14 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 		return err
 	}
 
-	ui := &input.UI{
-		Writer: c.StdIO,
-		Reader: os.Stdin,
-	}
 	var secretVal string
 	if params.Value != "" {
 		secretVal = params.Value
 	} else {
-		secretVal = getSecret(ui)
+		secretVal, err = c.StdIO.GetSecret("Please type your secret", 0)
+		if err != nil {
+			return err
+		}
 	}
 
 	err = c.PatchOrgsIDSecrets(ctx, orgID).RequestBody(map[string]string{

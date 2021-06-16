@@ -14,7 +14,6 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mattn/go-isatty v0.0.13
 	github.com/stretchr/testify v1.7.0
-	github.com/tcnksm/go-input v0.0.0-20180404061846-548a7d7a8ee8
 	github.com/urfave/cli/v2 v2.3.0
 	golang.org/x/text v0.3.3
 	golang.org/x/tools v0.1.0
