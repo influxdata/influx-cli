@@ -1,15 +1,13 @@
 package main
 
 import (
-	"crypto/tls"
 	"fmt"
-	"net/http"
 	"net/url"
 	"runtime"
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/influxdata/influx-cli/v2/internal/config"
+	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 	"github.com/urfave/cli/v2"
@@ -71,34 +69,26 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 		cfg.Host = ctx.String(hostFlagName)
 	}
 
+	configParams := api.ConfigParams{
+		UserAgent:        fmt.Sprintf("influx/%s (%s) Sha/%s Date/%s", version, runtime.GOOS, commit, date),
+		AllowInsecureTLS: ctx.Bool(skipVerifyFlagName),
+		Debug:            ctx.Bool(httpDebugFlagName),
+	}
+
 	parsedHost, err := url.Parse(cfg.Host)
 	if err != nil {
 		return nil, fmt.Errorf("host URL %q is invalid: %w", cfg.Host, err)
 	}
+	configParams.Host = parsedHost
 
-	clientTransport := http.DefaultTransport.(*http.Transport)
-	clientTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: ctx.Bool(skipVerifyFlagName)}
-
-	apiConfig := api.NewConfiguration()
-	apiConfig.Host = parsedHost.Host
-	apiConfig.Scheme = parsedHost.Scheme
-	apiConfig.UserAgent = fmt.Sprintf("influx/%s (%s) Sha/%s Date/%s", version, runtime.GOOS, commit, date)
-	apiConfig.HTTPClient = &http.Client{Transport: clientTransport}
 	if injectToken {
-		apiConfig.DefaultHeader["Authorization"] = fmt.Sprintf("Token %s", cfg.Token)
+		configParams.Token = &cfg.Token
 	}
 	if ctx.IsSet(traceIdFlagName) {
-		// NOTE: This is circumventing our codegen. If the header we use for tracing ever changes,
-		// we'll need to manually update the string here to match.
-		//
-		// The alternative is to pass the trace ID to the business logic for every CLI command, and
-		// use codegen'd logic to set the header on every HTTP request. Early versions of the CLI
-		// used that technique, and we found it to be error-prone and easy to forget during testing.
-		apiConfig.DefaultHeader["Zap-Trace-Span"] = ctx.String(traceIdFlagName)
+		configParams.TraceId = api.PtrString(ctx.String(traceIdFlagName))
 	}
-	apiConfig.Debug = ctx.Bool(httpDebugFlagName)
 
-	return api.NewAPIClient(apiConfig), nil
+	return api.NewAPIClient(api.NewAPIConfig(configParams)), nil
 }
 
 func withCli() cli.BeforeFunc {

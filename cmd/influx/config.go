@@ -5,8 +5,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/influxdata/influx-cli/v2/clients/config"
-	iconfig "github.com/influxdata/influx-cli/v2/internal/config"
+	cmd "github.com/influxdata/influx-cli/v2/clients/config"
+	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/urfave/cli/v2"
 )
 
@@ -48,7 +48,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/
 			if ctx.NArg() > 1 {
 				return fmt.Errorf("usage: %s config [config name]", prog)
 			}
-			client := config.Client{CLI: getCLI(ctx)}
+			client := cmd.Client{CLI: getCLI(ctx)}
 			if ctx.NArg() == 1 {
 				return client.SwitchActive(ctx.Args().Get(0))
 			}
@@ -64,7 +64,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/
 }
 
 func newConfigCreateCmd() *cli.Command {
-	var cfg iconfig.Config
+	var cfg config.Config
 	return &cli.Command{
 		Name:  "create",
 		Usage: "Create config",
@@ -122,7 +122,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/create/
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			client := config.Client{CLI: getCLI(ctx)}
+			client := cmd.Client{CLI: getCLI(ctx)}
 			return client.Create(cfg)
 		},
 	}
@@ -153,14 +153,14 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/rm/
 		Before: withCli(),
 		Flags:  append([]cli.Flag{configPathFlag()}, printFlags()...),
 		Action: func(ctx *cli.Context) error {
-			client := config.Client{CLI: getCLI(ctx)}
+			client := cmd.Client{CLI: getCLI(ctx)}
 			return client.Delete(ctx.Args().Slice())
 		},
 	}
 }
 
 func newConfigUpdateCmd() *cli.Command {
-	var cfg iconfig.Config
+	var cfg config.Config
 	return &cli.Command{
 		Name:    "set",
 		Aliases: []string{"update"},
@@ -217,7 +217,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/set/
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			client := config.Client{CLI: getCLI(ctx)}
+			client := cmd.Client{CLI: getCLI(ctx)}
 			return client.Update(cfg)
 		},
 	}
@@ -249,7 +249,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/list/
 		Before: withCli(),
 		Flags:  configPathAndPrintFlags,
 		Action: func(ctx *cli.Context) error {
-			client := config.Client{CLI: getCLI(ctx)}
+			client := cmd.Client{CLI: getCLI(ctx)}
 			return client.List()
 		},
 	}

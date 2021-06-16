@@ -3,7 +3,7 @@ package clients
 import (
 	"encoding/json"
 
-	"github.com/influxdata/influx-cli/v2/internal/config"
+	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/internal/tabwriter"
 	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 )

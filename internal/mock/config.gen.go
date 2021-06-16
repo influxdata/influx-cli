@@ -5,10 +5,10 @@
 package mock
 
 import (
-	reflect "reflect"
+	"reflect"
 
-	gomock "github.com/golang/mock/gomock"
-	config "github.com/influxdata/influx-cli/v2/internal/config"
+	"github.com/golang/mock/gomock"
+	"github.com/influxdata/influx-cli/v2/config"
 )
 
 // MockConfigService is a mock of Service interface.
