@@ -132,7 +132,7 @@ func (c Client) printSecrets(opts secretPrintOpt) error {
 	if opts.deleted {
 		headers = append(headers, "Deleted")
 	}
-	if &opts.secret != nil {
+	if opts.secrets == nil {
 		opts.secrets = append(opts.secrets, opts.secret)
 	}
 
