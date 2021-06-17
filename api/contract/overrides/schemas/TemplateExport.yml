@@ -1,0 +1,35 @@
+type: object
+properties:
+  stackID:
+    type: string
+  orgIDs:
+    type: array
+    items:
+      type: object
+      properties:
+        orgID:
+          type: string
+        resourceFilters:
+          type: object
+          properties:
+            byLabel:
+              type: array
+              items:
+                type: string
+            byResourceKind:
+              type: array
+              items:
+                $ref: "../../openapi/src/common/schemas/TemplateKind.yml"
+  resources:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          $ref: "../../openapi/src/common/schemas/TemplateKind.yml"
+        name:
+          type: string
+      required: [kind]
+required: [resources]
