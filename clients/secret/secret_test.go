@@ -3,6 +3,8 @@ package secret_test
 import (
 	"bytes"
 	"context"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
@@ -10,10 +12,12 @@ import (
 	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
-	"github.com/stretchr/testify/assert"
-	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"testing"
+)
+
+const (
+	printHeader = "Key\t\tOrganization ID\n"
+	fakeResults = "data data data"
 )
 
 func TestSecret_List(t *testing.T) {
@@ -22,13 +26,12 @@ func TestSecret_List(t *testing.T) {
 	id, err := influxid.IDFromString("1111111111111111")
 	require.NoError(t, err)
 
-	fakeResults := "data data data"
-
 	testCases := []struct {
 		name string
 		params secret.ListParams
 		defaultOrgName string
 		registerExpectations func(t *testing.T, secretApi *mock.MockSecretsApi)
+		expectError string
 	}{
 		{
 			name: "org id",
@@ -39,27 +42,17 @@ func TestSecret_List(t *testing.T) {
 			},
 			defaultOrgName: "default-org",
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi) {
-				secretApi.EXPECT().GetOrgsIDSecrets(gomock.Any(), gomock.Any()).Return(api.ApiGetOrgsIDSecretsRequest{ApiService: secretApi})
-				secretApi.EXPECT().GetOrgsIDSecretsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsIDSecretsRequest) bool {
-					body := in.GetOrgID()
-					return assert.NotEmpty(t, body) &&
-						assert.Equal(t, body, id.String())
-				})).Return(api.SecretKeysResponse{Secrets: &[]string{fakeResults}}, nil)
+				req := api.ApiGetOrgsIDSecretsRequest{ApiService: secretApi}.OrgID(id.String())
+				secretApi.EXPECT().GetOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
+				secretApi.EXPECT().GetOrgsIDSecretsExecute(gomock.Eq(req)).Return(api.SecretKeysResponse{Secrets: &[]string{fakeResults}}, nil)
 			},
 		},
 		{
-			name: "org id empty",
+			name: "no org provided",
 			params: secret.ListParams{
 				OrgParams: clients.OrgParams{},
 			},
-			/*registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi) {
-				secretApi.EXPECT().GetOrgsIDSecrets(gomock.Any(), gomock.Any()).Return(api.ApiGetOrgsIDSecretsRequest{ApiService: secretApi})
-				secretApi.EXPECT().GetOrgsIDSecretsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsIDSecretsRequest) bool {
-					body := in.GetOrgID()
-					return assert.NotEmpty(t, body) &&
-						assert.Equal(t, body, id1.String())
-				})).Return(api.SecretKeysResponse{Secrets: &[]string{fakeResults}}, nil)
-			},*/
+			expectError: "org or org-id must be provided",
 		},
 	}
 
@@ -84,11 +77,19 @@ func TestSecret_List(t *testing.T) {
 					},
 					StdIO: stdio,
 				},
+				SecretsApi: secretsApi,
 			}
 
 			err := cli.List(context.Background(), &tc.params)
+			if tc.expectError != "" {
+				require.Error(t, err)
+				require.Equal(t, tc.expectError, err.Error())
+				return
+			}
 			require.NoError(t, err)
-			require.Equal(t, fakeResults, writtenBytes.String())
+			require.Equal(t,
+				printHeader+fakeResults+"\t"+id.String()+"\n",
+				writtenBytes.String())
 		})
 	}
 }

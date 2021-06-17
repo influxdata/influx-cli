@@ -16,7 +16,7 @@ type Client struct {
 
 type secretPrintOpt struct {
 	deleted bool
-	secret  secret
+	secret  *secret
 	secrets []secret
 }
 
@@ -48,7 +48,7 @@ func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
 
 	return c.printSecrets(secretPrintOpt{
 		deleted: true,
-		secret: secret{
+		secret: &secret{
 			key:   params.Key,
 			orgID: orgID,
 		},
@@ -112,7 +112,7 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	}
 
 	return c.printSecrets(secretPrintOpt{
-		secret: secret{
+		secret: &secret{
 			key:   params.Key,
 			orgID: orgID,
 		},
@@ -132,8 +132,8 @@ func (c Client) printSecrets(opts secretPrintOpt) error {
 	if opts.deleted {
 		headers = append(headers, "Deleted")
 	}
-	if opts.secrets == nil {
-		opts.secrets = append(opts.secrets, opts.secret)
+	if opts.secret != nil {
+		opts.secrets = append(opts.secrets, *opts.secret)
 	}
 
 	var rows []map[string]interface{}
