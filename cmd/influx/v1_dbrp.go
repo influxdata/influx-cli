@@ -1,19 +1,179 @@
 package main
 
-import "github.com/urfave/cli/v2"
+import (
+	"github.com/influxdata/influx-cli/v2/clients/v1dbrps"
+	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
+	"github.com/urfave/cli/v2"
+)
 
 func newV1DBRPCmd() *cli.Command {
 	return &cli.Command{
-		Name:        "dbrp",
-		Usage:       "Commands to manage database and retention policy mappings for v1 APIs",
+		Name:  "dbrp",
+		Usage: "Commands to manage database and retention policy mappings for v1 APIs",
 		Subcommands: []*cli.Command{
-			// newV1DBRPListCmd(),
-			// newV1DBRPCreateCmd(),
-			// newV1DBRPDeleteCmd(),
-			// newV1DBRPUpdateCmd(),
+			newV1DBRPListCmd(),
+			newV1DBRPCreateCmd(),
+			newV1DBRPDeleteCmd(),
+			newV1DBRPUpdateCmd(),
 		},
 	}
 }
 
-// commands will be implemented below, with business logic residing in their
-// respective client package, like "v1_dbrp"
+func newV1DBRPListCmd() *cli.Command {
+	var params v1dbrps.ListParams
+	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
+
+	return &cli.Command{
+		Name:    "list",
+		Usage:   "List database and retention policy mappings",
+		Aliases: []string{"find", "ls"},
+		Flags: append(
+			flags,
+			&cli.StringFlag{
+				Name:        "bucket-id",
+				Usage:       "Limit results to the matching bucket id",
+				Destination: &params.BucketID,
+			},
+			&cli.StringFlag{
+				Name:        "db",
+				Usage:       "Limit results to the matching database name",
+				Destination: &params.DB,
+			},
+			&cli.BoolFlag{
+				Name:        "default",
+				Usage:       "Limit results to default mappings",
+				Destination: &params.Default_,
+			},
+			&cli.StringFlag{
+				Name:        "id",
+				Usage:       "Limit results to a single mapping",
+				Destination: &params.ID,
+			},
+			&cli.StringFlag{
+				Name:        "rp",
+				Usage:       "Limit results to the matching retention policy name",
+				Destination: &params.RP,
+			},
+		),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+			client := v1dbrps.Client{
+				CLI:      getCLI(ctx),
+				DBRPsApi: api.DBRPsApi,
+			}
+			return client.List(ctx.Context, &params)
+		},
+	}
+}
+
+func newV1DBRPCreateCmd() *cli.Command {
+	var params v1dbrps.CreateParams
+	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
+
+	return &cli.Command{
+		Name:  "create",
+		Usage: "Create a database and retention policy mapping to an existing bucket",
+		Flags: append(
+			flags,
+			&cli.StringFlag{
+				Name:        "bucket-id",
+				Usage:       "The ID of the bucket to be mapped",
+				Destination: &params.BucketID,
+				Required:    true,
+			},
+			&cli.StringFlag{
+				Name:        "db",
+				Usage:       "The name of the database",
+				Destination: &params.DB,
+				Required:    true,
+			},
+			&cli.BoolFlag{
+				Name:        "default",
+				Usage:       "Identify this retention policy as the default for the database",
+				Destination: &params.Default_,
+			},
+			&cli.StringFlag{
+				Name:        "rp",
+				Usage:       "The name of the retention policy",
+				Destination: &params.RP,
+				Required:    true,
+			},
+		),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+			client := v1dbrps.Client{
+				CLI:      getCLI(ctx),
+				DBRPsApi: api.DBRPsApi,
+			}
+			return client.Create(ctx.Context, &params)
+		},
+	}
+}
+
+func newV1DBRPDeleteCmd() *cli.Command {
+	var params v1dbrps.DeleteParams
+	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
+
+	return &cli.Command{
+		Name:  "delete",
+		Usage: "Delete a database and retention policy mapping",
+		Flags: append(
+			flags,
+			&cli.StringFlag{
+				Name:        "id",
+				Usage:       "The ID of the mapping to delete",
+				Destination: &params.ID,
+				Required:    true,
+			},
+		),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+			client := v1dbrps.Client{
+				CLI:      getCLI(ctx),
+				DBRPsApi: api.DBRPsApi,
+			}
+			return client.Delete(ctx.Context, &params)
+		},
+	}
+}
+
+func newV1DBRPUpdateCmd() *cli.Command {
+	var params v1dbrps.UpdateParams
+	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
+
+	return &cli.Command{
+		Name:  "update",
+		Usage: "Update a database and retention policy mapping",
+		Flags: append(
+			flags,
+			&cli.StringFlag{
+				Name:        "id",
+				Usage:       "The ID of the mapping to update",
+				Destination: &params.ID,
+				Required:    true,
+			},
+			&cli.BoolFlag{
+				Name:        "default",
+				Usage:       "Set this mapping's retention policy as the default for the mapping's database",
+				Destination: &params.Default_,
+			},
+			&cli.StringFlag{
+				Name:        "rp",
+				Usage:       "The updated name of the retention policy",
+				Destination: &params.RP,
+			},
+		),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+			client := v1dbrps.Client{
+				CLI:      getCLI(ctx),
+				DBRPsApi: api.DBRPsApi,
+			}
+			return client.Update(ctx.Context, &params)
+		},
+	}
+}
