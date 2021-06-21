@@ -8,6 +8,6 @@ type StdIO interface {
 	Banner(message string) error
 	Error(message string) error
 	GetStringInput(prompt, defaultValue string) (string, error)
-	GetPassword(prompt string, minLen int) (string, error)
+	GetSecret(prompt string, minLen int) (string, error)
 	GetConfirm(prompt string) bool
 }

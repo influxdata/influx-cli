@@ -165,12 +165,12 @@ func (c Client) onboardingRequest(params *Params) (req api.OnboardingRequest, er
 	}
 	if params.Password == "" {
 		for {
-			pass1, err := c.StdIO.GetPassword("Please type your password", clients.MinPasswordLen)
+			pass1, err := c.StdIO.GetSecret("Please type your password", clients.MinPasswordLen)
 			if err != nil {
 				return req, err
 			}
 			// Don't bother with the length check the 2nd time, since we check equality to pass1.
-			pass2, err := c.StdIO.GetPassword("Please type your password again", 0)
+			pass2, err := c.StdIO.GetSecret("Please type your password again", 0)
 			if err != nil {
 				return req, err
 			}

@@ -49,6 +49,7 @@ var app = cli.App{
 		newTelegrafsCommand(),
 		newDashboardsCommand(),
 		newExportCmd(),
+		newSecretCommand(),
 	},
 }
 

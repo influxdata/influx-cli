@@ -161,12 +161,12 @@ func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) erro
 
 	var password string
 	for {
-		pass1, err := c.StdIO.GetPassword(fmt.Sprintf("Please type new password for %q", displayName), clients.MinPasswordLen)
+		pass1, err := c.StdIO.GetSecret(fmt.Sprintf("Please type new password for %q", displayName), clients.MinPasswordLen)
 		if err != nil {
 			return err
 		}
 		// Don't bother with the length check the 2nd time, since we check equality to pass1.
-		pass2, err := c.StdIO.GetPassword("Please type new password again", 0)
+		pass2, err := c.StdIO.GetSecret("Please type new password again", 0)
 		if err != nil {
 			return err
 		}
