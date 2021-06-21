@@ -8,6 +8,7 @@ func newV1SubCommand() *cli.Command {
 		Usage: "InfluxDB v1 management commands",
 		Subcommands: []*cli.Command{
 			newV1DBRPCmd(),
+			// etc
 		},
 	}
 }
