@@ -276,3 +276,21 @@ func getBucketFlags(params *clients.BucketParams) []cli.Flag {
 func getOrgBucketFlags(c *clients.OrgBucketParams) []cli.Flag {
 	return append(getBucketFlags(&c.BucketParams), getOrgFlags(&c.OrgParams)...)
 }
+
+// getAuthLookupFlags returns flags used for authorization, requiring either an ID or Username,
+// and can specify to require one but not both.
+func getAuthLookupFlags(params *clients.AuthLookupParams, required bool) []cli.Flag {
+	params.Required = required
+	return []cli.Flag{
+		&cli.GenericFlag{
+			Name: "id",
+			Usage: "The ID of the authorization",
+			Value: &params.ID,
+		},
+		&cli.StringFlag{
+			Name: "username",
+			Usage: "The username of the authorization",
+			Destination: &params.Username,
+		},
+	}
+}
