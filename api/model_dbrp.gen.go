@@ -17,19 +17,17 @@ import (
 // DBRP struct for DBRP
 type DBRP struct {
 	// the mapping identifier
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// the organization ID that owns this mapping.
-	OrgID *string `json:"orgID,omitempty"`
-	// the organization that owns this mapping.
-	Org *string `json:"org,omitempty"`
+	OrgID string `json:"orgID"`
 	// the bucket ID used as target for the translation.
-	BucketID *string `json:"bucketID,omitempty"`
+	BucketID string `json:"bucketID"`
 	// InfluxDB v1 database
-	Database *string `json:"database,omitempty"`
+	Database string `json:"database"`
 	// InfluxDB v1 retention policy
-	RetentionPolicy *string `json:"retention_policy,omitempty"`
+	RetentionPolicy string `json:"retention_policy"`
 	// Specify if this mapping represents the default retention policy for the database specificed.
-	Default *bool  `json:"default,omitempty"`
+	Default bool   `json:"default"`
 	Links   *Links `json:"links,omitempty"`
 }
 
@@ -37,8 +35,14 @@ type DBRP struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewDBRP() *DBRP {
+func NewDBRP(id string, orgID string, bucketID string, database string, retentionPolicy string, default_ bool) *DBRP {
 	this := DBRP{}
+	this.Id = id
+	this.OrgID = orgID
+	this.BucketID = bucketID
+	this.Database = database
+	this.RetentionPolicy = retentionPolicy
+	this.Default = default_
 	return &this
 }
 
@@ -50,228 +54,148 @@ func NewDBRPWithDefaults() *DBRP {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *DBRP) GetId() string {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *DBRP) GetIdOk() (*string, bool) {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *DBRP) HasId() bool {
-	if o != nil && o.Id != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *DBRP) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetOrgID returns the OrgID field value if set, zero value otherwise.
+// GetOrgID returns the OrgID field value
 func (o *DBRP) GetOrgID() string {
-	if o == nil || o.OrgID == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrgID
+
+	return o.OrgID
 }
 
-// GetOrgIDOk returns a tuple with the OrgID field value if set, nil otherwise
+// GetOrgIDOk returns a tuple with the OrgID field value
 // and a boolean to check if the value has been set.
 func (o *DBRP) GetOrgIDOk() (*string, bool) {
-	if o == nil || o.OrgID == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrgID, true
+	return &o.OrgID, true
 }
 
-// HasOrgID returns a boolean if a field has been set.
-func (o *DBRP) HasOrgID() bool {
-	if o != nil && o.OrgID != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetOrgID gets a reference to the given string and assigns it to the OrgID field.
+// SetOrgID sets field value
 func (o *DBRP) SetOrgID(v string) {
-	o.OrgID = &v
+	o.OrgID = v
 }
 
-// GetOrg returns the Org field value if set, zero value otherwise.
-func (o *DBRP) GetOrg() string {
-	if o == nil || o.Org == nil {
-		var ret string
-		return ret
-	}
-	return *o.Org
-}
-
-// GetOrgOk returns a tuple with the Org field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *DBRP) GetOrgOk() (*string, bool) {
-	if o == nil || o.Org == nil {
-		return nil, false
-	}
-	return o.Org, true
-}
-
-// HasOrg returns a boolean if a field has been set.
-func (o *DBRP) HasOrg() bool {
-	if o != nil && o.Org != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetOrg gets a reference to the given string and assigns it to the Org field.
-func (o *DBRP) SetOrg(v string) {
-	o.Org = &v
-}
-
-// GetBucketID returns the BucketID field value if set, zero value otherwise.
+// GetBucketID returns the BucketID field value
 func (o *DBRP) GetBucketID() string {
-	if o == nil || o.BucketID == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.BucketID
+
+	return o.BucketID
 }
 
-// GetBucketIDOk returns a tuple with the BucketID field value if set, nil otherwise
+// GetBucketIDOk returns a tuple with the BucketID field value
 // and a boolean to check if the value has been set.
 func (o *DBRP) GetBucketIDOk() (*string, bool) {
-	if o == nil || o.BucketID == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.BucketID, true
+	return &o.BucketID, true
 }
 
-// HasBucketID returns a boolean if a field has been set.
-func (o *DBRP) HasBucketID() bool {
-	if o != nil && o.BucketID != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetBucketID gets a reference to the given string and assigns it to the BucketID field.
+// SetBucketID sets field value
 func (o *DBRP) SetBucketID(v string) {
-	o.BucketID = &v
+	o.BucketID = v
 }
 
-// GetDatabase returns the Database field value if set, zero value otherwise.
+// GetDatabase returns the Database field value
 func (o *DBRP) GetDatabase() string {
-	if o == nil || o.Database == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Database
+
+	return o.Database
 }
 
-// GetDatabaseOk returns a tuple with the Database field value if set, nil otherwise
+// GetDatabaseOk returns a tuple with the Database field value
 // and a boolean to check if the value has been set.
 func (o *DBRP) GetDatabaseOk() (*string, bool) {
-	if o == nil || o.Database == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Database, true
+	return &o.Database, true
 }
 
-// HasDatabase returns a boolean if a field has been set.
-func (o *DBRP) HasDatabase() bool {
-	if o != nil && o.Database != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetDatabase gets a reference to the given string and assigns it to the Database field.
+// SetDatabase sets field value
 func (o *DBRP) SetDatabase(v string) {
-	o.Database = &v
+	o.Database = v
 }
 
-// GetRetentionPolicy returns the RetentionPolicy field value if set, zero value otherwise.
+// GetRetentionPolicy returns the RetentionPolicy field value
 func (o *DBRP) GetRetentionPolicy() string {
-	if o == nil || o.RetentionPolicy == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.RetentionPolicy
+
+	return o.RetentionPolicy
 }
 
-// GetRetentionPolicyOk returns a tuple with the RetentionPolicy field value if set, nil otherwise
+// GetRetentionPolicyOk returns a tuple with the RetentionPolicy field value
 // and a boolean to check if the value has been set.
 func (o *DBRP) GetRetentionPolicyOk() (*string, bool) {
-	if o == nil || o.RetentionPolicy == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.RetentionPolicy, true
+	return &o.RetentionPolicy, true
 }
 
-// HasRetentionPolicy returns a boolean if a field has been set.
-func (o *DBRP) HasRetentionPolicy() bool {
-	if o != nil && o.RetentionPolicy != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetRetentionPolicy gets a reference to the given string and assigns it to the RetentionPolicy field.
+// SetRetentionPolicy sets field value
 func (o *DBRP) SetRetentionPolicy(v string) {
-	o.RetentionPolicy = &v
+	o.RetentionPolicy = v
 }
 
-// GetDefault returns the Default field value if set, zero value otherwise.
+// GetDefault returns the Default field value
 func (o *DBRP) GetDefault() bool {
-	if o == nil || o.Default == nil {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.Default
+
+	return o.Default
 }
 
-// GetDefaultOk returns a tuple with the Default field value if set, nil otherwise
+// GetDefaultOk returns a tuple with the Default field value
 // and a boolean to check if the value has been set.
 func (o *DBRP) GetDefaultOk() (*bool, bool) {
-	if o == nil || o.Default == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Default, true
+	return &o.Default, true
 }
 
-// HasDefault returns a boolean if a field has been set.
-func (o *DBRP) HasDefault() bool {
-	if o != nil && o.Default != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetDefault gets a reference to the given bool and assigns it to the Default field.
+// SetDefault sets field value
 func (o *DBRP) SetDefault(v bool) {
-	o.Default = &v
+	o.Default = v
 }
 
 // GetLinks returns the Links field value if set, zero value otherwise.
@@ -308,25 +232,22 @@ func (o *DBRP) SetLinks(v Links) {
 
 func (o DBRP) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Id != nil {
+	if true {
 		toSerialize["id"] = o.Id
 	}
-	if o.OrgID != nil {
+	if true {
 		toSerialize["orgID"] = o.OrgID
 	}
-	if o.Org != nil {
-		toSerialize["org"] = o.Org
-	}
-	if o.BucketID != nil {
+	if true {
 		toSerialize["bucketID"] = o.BucketID
 	}
-	if o.Database != nil {
+	if true {
 		toSerialize["database"] = o.Database
 	}
-	if o.RetentionPolicy != nil {
+	if true {
 		toSerialize["retention_policy"] = o.RetentionPolicy
 	}
-	if o.Default != nil {
+	if true {
 		toSerialize["default"] = o.Default
 	}
 	if o.Links != nil {
