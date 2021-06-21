@@ -1,0 +1,25 @@
+post:
+  operationId: ExportTemplate
+  tags:
+    - Templates
+  summary: Export a new Influx Template
+  requestBody:
+    description: Export resources as an InfluxDB template.
+    required: false
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/TemplateExport.yml"
+  responses:
+    "200":
+      description: InfluxDB template created
+      content:
+        application/json:
+          schema:
+            $ref: "../../openapi/src/common/schemas/Template.yml"
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "../../openapi/src/common/schemas/Error.yml"

@@ -48,6 +48,7 @@ var app = cli.App{
 		newRestoreCmd(),
 		newTelegrafsCommand(),
 		newDashboardsCommand(),
+		newExportCmd(),
 	},
 }
 

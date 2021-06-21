@@ -71,6 +71,8 @@ paths:
     $ref: "./overrides/paths/telegrafs_telegrafID.yml"
   /dashboards:
     $ref: "./overrides/paths/dashboards.yml"
+  /templates/export:
+    $ref: "./overrides/paths/templates_export.yml"
 components:
   parameters:
     TraceSpan:
@@ -253,3 +255,11 @@ components:
       $ref: "./openapi/src/common/schemas/Cells.yml"
     Cell:
       $ref: "./openapi/src/common/schemas/Cell.yml"
+    TemplateExport:
+      $ref: "./overrides/schemas/TemplateExport.yml"
+    Template:
+      $ref: "./openapi/src/common/schemas/Template.yml"
+    TemplateKind:
+      $ref: "./openapi/src/common/schemas/TemplateKind.yml"
+    TemplateEntry:
+      $ref: "./openapi/src/common/schemas/TemplateEntry.yml"
