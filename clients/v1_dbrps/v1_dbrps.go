@@ -57,9 +57,9 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 		req = req.Db(params.DB)
 	}
 
-	// set this parameter if the --default flag was passed to true. this will
-	// list only default DBRPs. Otherwise, don't set the parameter at all to list DBRPs
-	// that are default and not default.
+	// Set this parameter if the --default flag was passed. This will list only
+	// default DBRPs. Otherwise, don't set the parameter at all to list DBRPs that
+	// are default and not default.
 	if params.Default_ {
 		req = req.Default_(params.Default_)
 	}
@@ -93,9 +93,9 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		RetentionPolicy: params.RP,
 	}
 
-	// For compatibility with the cloud API for creating a DBRP, we must supply
-	// an organization ID. The organization ID will be requested based on the org name
-	// if an org name is provided but no organization ID is.
+	// For compatibility with the cloud API for creating a DBRP, an org ID must be
+	// provided. The organization ID will be obtained based on the org name if an
+	// org name is provided but no organization ID is.
 	if params.OrgID.Valid() {
 		reqBody.OrgID = api.PtrString(params.OrgID.String())
 	} else {
@@ -176,8 +176,8 @@ func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
 		return clients.ErrMustSpecifyOrg
 	}
 
-	// we need to get the DBRP to verify that it exists, and to be able to print
-	// the results from the deleted dbrp.
+	// Get the DBRP to verify that it exists, and to be able to print the results
+	// of the delete command, which output the details of the deleted DBRP.
 	getReq := c.GetDBRPsID(ctx, params.ID)
 	deleteReq := c.DeleteDBRPID(ctx, params.ID)
 
