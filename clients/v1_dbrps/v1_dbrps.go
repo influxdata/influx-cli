@@ -94,8 +94,8 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	}
 
 	// For compatibility with the cloud API for creating a DBRP, an org ID must be
-	// provided. The organization ID will be obtained based on the org name if an
-	// org name is provided but no organization ID is.
+	// provided. The ID will be obtained based on the org name if an
+	// org name is provided but no ID is.
 	if params.OrgID.Valid() {
 		reqBody.OrgID = api.PtrString(params.OrgID.String())
 	} else {
@@ -136,7 +136,6 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	}
 
 	reqBody := api.DBRPUpdate{}
-
 	if params.RP != "" {
 		reqBody.RetentionPolicy = &params.RP
 	}
@@ -180,7 +179,6 @@ func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
 	// of the delete command, which output the details of the deleted DBRP.
 	getReq := c.GetDBRPsID(ctx, params.ID)
 	deleteReq := c.DeleteDBRPID(ctx, params.ID)
-
 	if params.OrgID.Valid() {
 		getReq = getReq.OrgID(params.OrgID.String())
 		deleteReq = deleteReq.OrgID(params.OrgID.String())
