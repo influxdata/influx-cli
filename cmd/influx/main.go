@@ -50,6 +50,7 @@ var app = cli.App{
 		newDashboardsCommand(),
 		newExportCmd(),
 		newSecretCommand(),
+		newV1SubCommand(),
 	},
 }
 
