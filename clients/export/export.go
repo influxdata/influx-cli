@@ -2,20 +2,10 @@ package export
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"gopkg.in/yaml.v3"
-)
-
-type OutEncoding int
-
-const (
-	YamlEncoding OutEncoding = iota
-	JsonEncoding
 )
 
 type Client struct {
@@ -24,8 +14,7 @@ type Client struct {
 }
 
 type Params struct {
-	Out io.Writer
-	OutEncoding
+	OutParams
 	StackId string
 
 	BucketIds      []string
@@ -128,27 +117,9 @@ func (c Client) Export(ctx context.Context, params *Params) error {
 	if err != nil {
 		return fmt.Errorf("failed to export template: %w", err)
 	}
-	if err := writeTemplate(params.Out, params.OutEncoding, tmpl); err != nil {
+	if err := params.OutParams.writeTemplate(tmpl); err != nil {
 		return fmt.Errorf("failed to write exported template: %w", err)
 	}
 	return nil
 }
 
-func writeTemplate(out io.Writer, encoding OutEncoding, template []api.TemplateEntry) error {
-	switch encoding {
-	case JsonEncoding:
-		enc := json.NewEncoder(out)
-		enc.SetIndent("", "\t")
-		return enc.Encode(template)
-	case YamlEncoding:
-		enc := yaml.NewEncoder(out)
-		for _, entry := range template {
-			if err := enc.Encode(entry); err != nil {
-				return err
-			}
-		}
-	default:
-		return fmt.Errorf("encoding %q is not recognized", encoding)
-	}
-	return nil
-}

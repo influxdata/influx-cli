@@ -17,7 +17,7 @@ func newExportCmd() *cli.Command {
 	var params struct {
 		out            string
 		stackId        string
-		resourceType   ResourceType
+		resourceType   export.ResourceType
 		bucketIds      string
 		bucketNames    string
 		checkIds       string
@@ -198,24 +198,16 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 				VariableNames:  splitNonEmpty(params.variableNames),
 			}
 
-			if params.out == "" {
-				parsedParams.Out = os.Stdout
-			} else {
-				f, err := os.OpenFile(params.out, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-				if err != nil {
-					return fmt.Errorf("failed to open output path %q: %w", params.out, err)
-				}
-				defer f.Close()
-				parsedParams.Out = f
+			outParams, closer, err := parseOutParams(params.out)
+			if closer != nil {
+				defer closer()
 			}
-			switch filepath.Ext(params.out) {
-			case ".json":
-				parsedParams.OutEncoding = export.JsonEncoding
-			default: // Also covers path == "" for stdout.
-				parsedParams.OutEncoding = export.YamlEncoding
+			if err != nil {
+				return err
 			}
+			parsedParams.OutParams = outParams
 
-			if params.resourceType != TypeUnset {
+			if params.resourceType != export.TypeUnset {
 				ids := ctx.Args().Slice()
 
 				// Read any IDs from stdin.
@@ -229,23 +221,23 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 				}
 
 				switch params.resourceType {
-				case TypeBucket:
+				case export.TypeBucket:
 					parsedParams.BucketIds = append(parsedParams.BucketIds, ids...)
-				case TypeCheck:
+				case export.TypeCheck:
 					parsedParams.CheckIds = append(parsedParams.CheckIds, ids...)
-				case TypeDashboard:
+				case export.TypeDashboard:
 					parsedParams.DashboardIds = append(parsedParams.DashboardIds, ids...)
-				case TypeLabel:
+				case export.TypeLabel:
 					parsedParams.LabelIds = append(parsedParams.LabelIds, ids...)
-				case TypeNotificationEndpoint:
+				case export.TypeNotificationEndpoint:
 					parsedParams.EndpointIds = append(parsedParams.EndpointIds, ids...)
-				case TypeNotificationRule:
+				case export.TypeNotificationRule:
 					parsedParams.RuleIds = append(parsedParams.RuleIds, ids...)
-				case TypeTask:
+				case export.TypeTask:
 					parsedParams.TaskIds = append(parsedParams.TaskIds, ids...)
-				case TypeTelegraf:
+				case export.TypeTelegraf:
 					parsedParams.TelegrafIds = append(parsedParams.TelegrafIds, ids...)
-				case TypeVariable:
+				case export.TypeVariable:
 					parsedParams.VariableIds = append(parsedParams.VariableIds, ids...)
 
 				// NOTE: The API doesn't support filtering by these resource subtypes,
@@ -258,10 +250,10 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 				// Instead of allowing the type-filter to be silently converted by the server,
 				// we catch the previously-allowed subtypes here and return a (hopefully) useful
 				// error suggesting the correct flag to use.
-				case TypeCheckDeadman, TypeCheckThreshold:
-					return fmt.Errorf("filtering on resource-type %q is not supported by the API. Use resource-type %q instead", params.resourceType, TypeCheck)
-				case TypeNotificationEndpointHTTP, TypeNotificationEndpointPagerDuty, TypeNotificationEndpointSlack:
-					return fmt.Errorf("filtering on resource-type %q is not supported by the API. Use resource-type %q instead", params.resourceType, TypeNotificationEndpoint)
+				case export.TypeCheckDeadman, export.TypeCheckThreshold:
+					return fmt.Errorf("filtering on resource-type %q is not supported by the API. Use resource-type %q instead", params.resourceType, export.TypeCheck)
+				case export.TypeNotificationEndpointHTTP, export.TypeNotificationEndpointPagerDuty, export.TypeNotificationEndpointSlack:
+					return fmt.Errorf("filtering on resource-type %q is not supported by the API. Use resource-type %q instead", params.resourceType, export.TypeNotificationEndpoint)
 
 				default:
 				}
@@ -285,95 +277,22 @@ func splitNonEmpty(s string) []string {
 	return strings.Split(s, ",")
 }
 
-type ResourceType int
-
-const (
-	TypeUnset ResourceType = iota
-	TypeBucket
-	TypeCheck
-	TypeCheckDeadman
-	TypeCheckThreshold
-	TypeDashboard
-	TypeLabel
-	TypeNotificationEndpoint
-	TypeNotificationEndpointHTTP
-	TypeNotificationEndpointPagerDuty
-	TypeNotificationEndpointSlack
-	TypeNotificationRule
-	TypeTask
-	TypeTelegraf
-	TypeVariable
-)
-
-func (r ResourceType) String() string {
-	switch r {
-	case TypeBucket:
-		return "bucket"
-	case TypeCheck:
-		return "check"
-	case TypeCheckDeadman:
-		return "checkDeadman"
-	case TypeCheckThreshold:
-		return "checkThreshold"
-	case TypeDashboard:
-		return "dashboard"
-	case TypeLabel:
-		return "label"
-	case TypeNotificationEndpoint:
-		return "notificationEndpoint"
-	case TypeNotificationEndpointHTTP:
-		return "notificationEndpointHTTP"
-	case TypeNotificationEndpointPagerDuty:
-		return "notificationEndpointPagerDuty"
-	case TypeNotificationEndpointSlack:
-		return "notificationEndpointSlack"
-	case TypeNotificationRule:
-		return "notificationRule"
-	case TypeTask:
-		return "task"
-	case TypeTelegraf:
-		return "telegraf"
-	case TypeVariable:
-		return "variable"
-	case TypeUnset:
-		fallthrough
-	default:
-		return "unset"
+func parseOutParams(outPath string) (export.OutParams, func(), error) {
+	if outPath == "" {
+		return export.OutParams{Out: os.Stdout, Encoding: export.YamlEncoding}, nil, nil
 	}
-}
 
-func (r *ResourceType) Set(v string) error {
-	switch strings.ToLower(v) {
-	case "bucket":
-		*r = TypeBucket
-	case "check":
-		*r = TypeCheck
-	case "checkdeadman":
-		*r = TypeCheckDeadman
-	case "checkthreshold":
-		*r = TypeCheckThreshold
-	case "dashboard":
-		*r = TypeDashboard
-	case "label":
-		*r = TypeLabel
-	case "notificationendpoint":
-		*r = TypeNotificationEndpoint
-	case "notificationendpointhttp":
-		*r = TypeNotificationEndpointHTTP
-	case "notificationendpointpagerduty":
-		*r = TypeNotificationEndpointPagerDuty
-	case "notificationendpointslack":
-		*r = TypeNotificationEndpointSlack
-	case "notificationrule":
-		*r = TypeNotificationRule
-	case "task":
-		*r = TypeTask
-	case "telegraf":
-		*r = TypeTelegraf
-	case "variable":
-		*r = TypeVariable
-	default:
-		return fmt.Errorf("unknown resource type: %s", v)
+	f, err := os.OpenFile(outPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		return export.OutParams{}, nil, fmt.Errorf("failed to open output path %q: %w", outPath, err)
 	}
-	return nil
+	params := export.OutParams{Out: f}
+	switch filepath.Ext(outPath) {
+	case ".json":
+		params.Encoding = export.JsonEncoding
+	default:
+		params.Encoding = export.YamlEncoding
+	}
+
+	return params, func() { _ = f.Close() }, nil
 }
