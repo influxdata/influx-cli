@@ -62,20 +62,20 @@ func TestClient_List(t *testing.T) {
 				DBRPsApi.EXPECT().GetDBRPsExecute(gomock.Any()).Return(api.DBRPs{
 					Content: &[]api.DBRP{
 						{
-							Id:              api.PtrString("123"),
-							Database:        api.PtrString("someDB"),
-							BucketID:        api.PtrString("456"),
-							RetentionPolicy: api.PtrString("someRP"),
-							Default:         api.PtrBool(false),
-							OrgID:           api.PtrString("1234123412341234"),
+							Id:              "123",
+							Database:        "someDB",
+							BucketID:        "456",
+							RetentionPolicy: "someRP",
+							Default:         false,
+							OrgID:           "1234123412341234",
 						},
 						{
-							Id:              api.PtrString("234"),
-							Database:        api.PtrString("someDB"),
-							BucketID:        api.PtrString("456"),
-							RetentionPolicy: api.PtrString("someRP"),
-							Default:         api.PtrBool(true),
-							OrgID:           api.PtrString("1234123412341234"),
+							Id:              "234",
+							Database:        "someDB",
+							BucketID:        "456",
+							RetentionPolicy: "someRP",
+							Default:         true,
+							OrgID:           "1234123412341234",
 						},
 					},
 				}, nil)
@@ -152,12 +152,12 @@ func TestClient_Create(t *testing.T) {
 			registerExpectations: func(t *testing.T, DBRPsApi *mock.MockDBRPsApi) {
 				DBRPsApi.EXPECT().PostDBRP(gomock.Any()).Return(api.ApiPostDBRPRequest{ApiService: DBRPsApi})
 				DBRPsApi.EXPECT().PostDBRPExecute(gomock.Any()).Return(api.DBRP{
-					Id:              api.PtrString("123"),
-					Database:        api.PtrString("someDB"),
-					BucketID:        api.PtrString("456"),
-					RetentionPolicy: api.PtrString("someRP"),
-					Default:         api.PtrBool(false),
-					OrgID:           api.PtrString("1234123412341234"),
+					Id:              "123",
+					Database:        "someDB",
+					BucketID:        "456",
+					RetentionPolicy: "someRP",
+					Default:         false,
+					OrgID:           "1234123412341234",
 				}, nil)
 			},
 			outLines: []string{
@@ -234,12 +234,12 @@ func TestClient_Update(t *testing.T) {
 				DBRPsApi.EXPECT().PatchDBRPID(gomock.Any(), "123").Return(api.ApiPatchDBRPIDRequest{ApiService: DBRPsApi})
 				DBRPsApi.EXPECT().PatchDBRPIDExecute(gomock.Any()).Return(api.DBRPGet{
 					Content: &api.DBRP{
-						Id:              api.PtrString("123"),
-						Database:        api.PtrString("someDB"),
-						BucketID:        api.PtrString("456"),
-						RetentionPolicy: api.PtrString("someRP"),
-						Default:         api.PtrBool(false),
-						OrgID:           api.PtrString("1234123412341234"),
+						Id:              "123",
+						Database:        "someDB",
+						BucketID:        "456",
+						RetentionPolicy: "someRP",
+						Default:         false,
+						OrgID:           "1234123412341234",
 					},
 				}, nil)
 			},
@@ -259,12 +259,12 @@ func TestClient_Update(t *testing.T) {
 				DBRPsApi.EXPECT().PatchDBRPID(gomock.Any(), "123").Return(api.ApiPatchDBRPIDRequest{ApiService: DBRPsApi})
 				DBRPsApi.EXPECT().PatchDBRPIDExecute(gomock.Any()).Return(api.DBRPGet{
 					Content: &api.DBRP{
-						Id:              api.PtrString("123"),
-						Database:        api.PtrString("someDB"),
-						BucketID:        api.PtrString("456"),
-						RetentionPolicy: api.PtrString("someRP"),
-						Default:         api.PtrBool(false),
-						OrgID:           api.PtrString("1234123412341234"),
+						Id:              "123",
+						Database:        "someDB",
+						BucketID:        "456",
+						RetentionPolicy: "someRP",
+						Default:         false,
+						OrgID:           "1234123412341234",
 					},
 				}, nil)
 			},
@@ -344,12 +344,12 @@ func TestClient_Delete(t *testing.T) {
 
 				DBRPsApi.EXPECT().GetDBRPsIDExecute(gomock.Any()).Return(api.DBRPGet{
 					Content: &api.DBRP{
-						Id:              api.PtrString("123"),
-						Database:        api.PtrString("someDB"),
-						BucketID:        api.PtrString("456"),
-						RetentionPolicy: api.PtrString("someRP"),
-						Default:         api.PtrBool(false),
-						OrgID:           api.PtrString("1234123412341234"),
+						Id:              "123",
+						Database:        "someDB",
+						BucketID:        "456",
+						RetentionPolicy: "someRP",
+						Default:         false,
+						OrgID:           "1234123412341234",
 					},
 				}, nil)
 
@@ -373,12 +373,12 @@ func TestClient_Delete(t *testing.T) {
 
 				DBRPsApi.EXPECT().GetDBRPsIDExecute(gomock.Any()).Return(api.DBRPGet{
 					Content: &api.DBRP{
-						Id:              api.PtrString("123"),
-						Database:        api.PtrString("someDB"),
-						BucketID:        api.PtrString("456"),
-						RetentionPolicy: api.PtrString("someRP"),
-						Default:         api.PtrBool(false),
-						OrgID:           api.PtrString("1234123412341234"),
+						Id:              "123",
+						Database:        "someDB",
+						BucketID:        "456",
+						RetentionPolicy: "someRP",
+						Default:         false,
+						OrgID:           "1234123412341234",
 					},
 				}, nil)
 
@@ -418,12 +418,12 @@ func TestClient_Delete(t *testing.T) {
 
 				DBRPsApi.EXPECT().GetDBRPsIDExecute(gomock.Any()).Return(api.DBRPGet{
 					Content: &api.DBRP{
-						Id:              api.PtrString("123"),
-						Database:        api.PtrString("someDB"),
-						BucketID:        api.PtrString("456"),
-						RetentionPolicy: api.PtrString("someRP"),
-						Default:         api.PtrBool(false),
-						OrgID:           api.PtrString("1234123412341234"),
+						Id:              "123",
+						Database:        "someDB",
+						BucketID:        "456",
+						RetentionPolicy: "someRP",
+						Default:         false,
+						OrgID:           "1234123412341234",
 					},
 				}, nil)
 

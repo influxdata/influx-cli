@@ -234,12 +234,12 @@ func (c Client) printDBRPs(opts dbrpPrintOpts) error {
 	var rows []map[string]interface{}
 	for _, t := range opts.dbrps {
 		row := map[string]interface{}{
-			"ID":               *t.Id,
-			"Database":         *t.Database,
-			"Retention Policy": *t.RetentionPolicy,
-			"Default":          *t.Default,
-			"Organization ID":  *t.OrgID,
-			"Bucket ID":        *t.BucketID,
+			"ID":               t.Id,
+			"Database":         t.Database,
+			"Retention Policy": t.RetentionPolicy,
+			"Default":          t.Default,
+			"Organization ID":  t.OrgID,
+			"Bucket ID":        t.BucketID,
 		}
 		rows = append(rows, row)
 	}
