@@ -32,7 +32,8 @@ func TestSecret_List(t *testing.T) {
 		name string
 		params secret.ListParams
 		defaultOrgName string
-		registerExpectations func(t *testing.T, secretApi *mock.MockSecretsApi)
+		registerExpectations func(t *testing.T, secretApi *mock.MockSecretsApi, orgApi *mock.MockOrganizationsApi)
+		expectMatcher string
 		expectError string
 	}{
 		{
@@ -43,12 +44,32 @@ func TestSecret_List(t *testing.T) {
 				},
 			},
 			defaultOrgName: defaultOrgName,
-			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi) {
+			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi, orgApi *mock.MockOrganizationsApi) {
 				req := api.ApiGetOrgsIDSecretsRequest{ApiService: secretApi}.OrgID(id.String())
 				secretApi.EXPECT().GetOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
 				secretApi.EXPECT().GetOrgsIDSecretsExecute(gomock.Eq(req)).
 					Return(api.SecretKeysResponse{Secrets: &[]string{fakeResults}}, nil)
 			},
+			expectMatcher: printHeader+fakeResults+"\t"+id.String()+"\n",
+		},
+		{
+			name: "default org",
+			params: secret.ListParams{
+				OrgParams: clients.OrgParams{},
+			},
+			defaultOrgName: defaultOrgName,
+			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi, orgApi *mock.MockOrganizationsApi) {
+				orgReq := api.ApiGetOrgsRequest{ApiService: orgApi}.Org(defaultOrgName)
+				orgObj := api.Organization{Name: defaultOrgName}
+				orgApi.EXPECT().GetOrgs(gomock.Any()).Return(orgReq)
+				orgApi.EXPECT().GetOrgsExecute(orgReq).Return(api.Organizations{Orgs: &[]api.Organization{orgObj}}, nil)
+
+				secReq := api.ApiGetOrgsIDSecretsRequest{ApiService: secretApi}.OrgID(orgObj.GetId())
+				secObj := api.SecretKeysResponse{}
+				secretApi.EXPECT().GetOrgsIDSecrets(gomock.Any(), orgObj.GetId()).Return(secReq)
+				secretApi.EXPECT().GetOrgsIDSecretsExecute(secReq).Return(secObj, nil)
+			},
+			expectMatcher: "Key\tOrganization ID\n",
 		},
 		{
 			name: "no org provided",
@@ -70,8 +91,9 @@ func TestSecret_List(t *testing.T) {
 			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
 
 			secretsApi := mock.NewMockSecretsApi(ctrl)
+			organizationsApi := mock.NewMockOrganizationsApi(ctrl)
 			if tc.registerExpectations != nil {
-				tc.registerExpectations(t, secretsApi)
+				tc.registerExpectations(t, secretsApi, organizationsApi)
 			}
 			cli := secret.Client{
 				CLI: clients.CLI{
@@ -81,6 +103,7 @@ func TestSecret_List(t *testing.T) {
 					StdIO: stdio,
 				},
 				SecretsApi: secretsApi,
+				OrganizationsApi: organizationsApi,
 			}
 
 			err := cli.List(context.Background(), &tc.params)
@@ -90,9 +113,7 @@ func TestSecret_List(t *testing.T) {
 				return
 			}
 			require.NoError(t, err)
-			require.Equal(t,
-				printHeader+fakeResults+"\t"+id.String()+"\n",
-				writtenBytes.String())
+			require.Equal(t, tc.expectMatcher, writtenBytes.String())
 		})
 	}
 }
