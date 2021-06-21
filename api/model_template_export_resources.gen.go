@@ -16,16 +16,16 @@ import (
 
 // TemplateExportResources struct for TemplateExportResources
 type TemplateExportResources struct {
-	Id   *string      `json:"id,omitempty"`
-	Kind TemplateKind `json:"kind"`
-	Name *string      `json:"name,omitempty"`
+	Id   *string `json:"id,omitempty"`
+	Kind string  `json:"kind"`
+	Name *string `json:"name,omitempty"`
 }
 
 // NewTemplateExportResources instantiates a new TemplateExportResources object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateExportResources(kind TemplateKind) *TemplateExportResources {
+func NewTemplateExportResources(kind string) *TemplateExportResources {
 	this := TemplateExportResources{}
 	this.Kind = kind
 	return &this
@@ -72,9 +72,9 @@ func (o *TemplateExportResources) SetId(v string) {
 }
 
 // GetKind returns the Kind field value
-func (o *TemplateExportResources) GetKind() TemplateKind {
+func (o *TemplateExportResources) GetKind() string {
 	if o == nil {
-		var ret TemplateKind
+		var ret string
 		return ret
 	}
 
@@ -83,7 +83,7 @@ func (o *TemplateExportResources) GetKind() TemplateKind {
 
 // GetKindOk returns a tuple with the Kind field value
 // and a boolean to check if the value has been set.
-func (o *TemplateExportResources) GetKindOk() (*TemplateKind, bool) {
+func (o *TemplateExportResources) GetKindOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -91,7 +91,7 @@ func (o *TemplateExportResources) GetKindOk() (*TemplateKind, bool) {
 }
 
 // SetKind sets field value
-func (o *TemplateExportResources) SetKind(v TemplateKind) {
+func (o *TemplateExportResources) SetKind(v string) {
 	o.Kind = v
 }
 

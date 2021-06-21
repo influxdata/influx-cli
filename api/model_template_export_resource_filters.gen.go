@@ -16,8 +16,8 @@ import (
 
 // TemplateExportResourceFilters struct for TemplateExportResourceFilters
 type TemplateExportResourceFilters struct {
-	ByLabel        *[]string       `json:"byLabel,omitempty"`
-	ByResourceKind *[]TemplateKind `json:"byResourceKind,omitempty"`
+	ByLabel        *[]string `json:"byLabel,omitempty"`
+	ByResourceKind *[]string `json:"byResourceKind,omitempty"`
 }
 
 // NewTemplateExportResourceFilters instantiates a new TemplateExportResourceFilters object
@@ -70,9 +70,9 @@ func (o *TemplateExportResourceFilters) SetByLabel(v []string) {
 }
 
 // GetByResourceKind returns the ByResourceKind field value if set, zero value otherwise.
-func (o *TemplateExportResourceFilters) GetByResourceKind() []TemplateKind {
+func (o *TemplateExportResourceFilters) GetByResourceKind() []string {
 	if o == nil || o.ByResourceKind == nil {
-		var ret []TemplateKind
+		var ret []string
 		return ret
 	}
 	return *o.ByResourceKind
@@ -80,7 +80,7 @@ func (o *TemplateExportResourceFilters) GetByResourceKind() []TemplateKind {
 
 // GetByResourceKindOk returns a tuple with the ByResourceKind field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *TemplateExportResourceFilters) GetByResourceKindOk() (*[]TemplateKind, bool) {
+func (o *TemplateExportResourceFilters) GetByResourceKindOk() (*[]string, bool) {
 	if o == nil || o.ByResourceKind == nil {
 		return nil, false
 	}
@@ -96,8 +96,8 @@ func (o *TemplateExportResourceFilters) HasByResourceKind() bool {
 	return false
 }
 
-// SetByResourceKind gets a reference to the given []TemplateKind and assigns it to the ByResourceKind field.
-func (o *TemplateExportResourceFilters) SetByResourceKind(v []TemplateKind) {
+// SetByResourceKind gets a reference to the given []string and assigns it to the ByResourceKind field.
+func (o *TemplateExportResourceFilters) SetByResourceKind(v []string) {
 	o.ByResourceKind = &v
 }
 

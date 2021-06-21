@@ -18,24 +18,8 @@ type Params struct {
 	OutParams
 	StackId string
 
-	BucketIds      []string
-	BucketNames    []string
-	CheckIds       []string
-	CheckNames     []string
-	DashboardIds   []string
-	DashboardNames []string
-	EndpointIds    []string
-	EndpointNames  []string
-	LabelIds       []string
-	LabelNames     []string
-	RuleIds        []string
-	RuleNames      []string
-	TaskIds        []string
-	TaskNames      []string
-	TelegrafIds    []string
-	TelegrafNames  []string
-	VariableIds    []string
-	VariableNames  []string
+	IdsPerType   map[string][]string
+	NamesPerType map[string][]string
 }
 
 func (c Client) Export(ctx context.Context, params *Params) error {
@@ -45,70 +29,20 @@ func (c Client) Export(ctx context.Context, params *Params) error {
 		exportReq.StackID = &params.StackId
 	}
 
-	filters := []struct {
-		kind  api.TemplateKind
-		ids   []string
-		names []string
-	}{
-		{
-			kind:  api.TEMPLATEKIND_BUCKET,
-			ids:   params.BucketIds,
-			names: params.BucketNames,
-		},
-		{
-			kind:  api.TEMPLATEKIND_CHECK,
-			ids:   params.CheckIds,
-			names: params.CheckNames,
-		},
-		{
-			kind:  api.TEMPLATEKIND_DASHBOARD,
-			ids:   params.DashboardIds,
-			names: params.DashboardNames,
-		},
-		{
-			kind:  api.TEMPLATEKIND_LABEL,
-			ids:   params.LabelIds,
-			names: params.LabelNames,
-		},
-		{
-			kind:  api.TEMPLATEKIND_NOTIFICATION_ENDPOINT,
-			ids:   params.EndpointIds,
-			names: params.EndpointNames,
-		},
-		{
-			kind:  api.TEMPLATEKIND_NOTIFICATION_RULE,
-			ids:   params.RuleIds,
-			names: params.RuleNames,
-		},
-		{
-			kind:  api.TEMPLATEKIND_TASK,
-			ids:   params.TaskIds,
-			names: params.TaskNames,
-		},
-		{
-			kind:  api.TEMPLATEKIND_TELEGRAF,
-			ids:   params.TelegrafIds,
-			names: params.TelegrafNames,
-		},
-		{
-			kind:  api.TEMPLATEKIND_VARIABLE,
-			ids:   params.VariableIds,
-			names: params.VariableNames,
-		},
-	}
-
-	for _, filter := range filters {
-		for _, id := range filter.ids {
+	for typ, ids := range params.IdsPerType {
+		for _, id := range ids {
 			id := id
 			exportReq.Resources = append(exportReq.Resources, api.TemplateExportResources{
-				Kind: filter.kind,
+				Kind: typ,
 				Id:   &id,
 			})
 		}
-		for _, name := range filter.names {
+	}
+	for typ, names := range params.NamesPerType {
+		for _, name := range names {
 			name := name
 			exportReq.Resources = append(exportReq.Resources, api.TemplateExportResources{
-				Kind: filter.kind,
+				Kind: typ,
 				Name: &name,
 			})
 		}
@@ -131,7 +65,7 @@ type AllParams struct {
 	OrgName string
 
 	LabelFilters []string
-	KindFilters  []ResourceType
+	KindFilters  []string
 }
 
 func (c Client) ExportAll(ctx context.Context, params *AllParams) error {
@@ -162,32 +96,7 @@ func (c Client) ExportAll(ctx context.Context, params *AllParams) error {
 			orgExport.ResourceFilters.ByLabel = &params.LabelFilters
 		}
 		if len(params.KindFilters) > 0 {
-			kinds := make([]api.TemplateKind, len(params.KindFilters))
-			for i, kf := range params.KindFilters {
-				switch kf {
-				case TypeBucket:
-					kinds[i] = api.TEMPLATEKIND_BUCKET
-				case TypeCheck:
-					kinds[i] = api.TEMPLATEKIND_CHECK
-				case TypeDashboard:
-					kinds[i] = api.TEMPLATEKIND_DASHBOARD
-				case TypeLabel:
-					kinds[i] = api.TEMPLATEKIND_LABEL
-				case TypeNotificationEndpoint:
-					kinds[i] = api.TEMPLATEKIND_NOTIFICATION_ENDPOINT
-				case TypeNotificationRule:
-					kinds[i] = api.TEMPLATEKIND_NOTIFICATION_RULE
-				case TypeTask:
-					kinds[i] = api.TEMPLATEKIND_TASK
-				case TypeTelegraf:
-					kinds[i] = api.TEMPLATEKIND_TELEGRAF
-				case TypeVariable:
-					kinds[i] = api.TEMPLATEKIND_VARIABLE
-				default:
-					return fmt.Errorf("unsupported resourceKind filter %q", kf)
-				}
-			}
-			orgExport.ResourceFilters.ByResourceKind = &kinds
+			orgExport.ResourceFilters.ByResourceKind = &params.KindFilters
 		}
 	}
 

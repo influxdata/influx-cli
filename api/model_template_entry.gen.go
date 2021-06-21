@@ -17,7 +17,7 @@ import (
 // TemplateEntry struct for TemplateEntry
 type TemplateEntry struct {
 	ApiVersion *string                 `json:"apiVersion,omitempty"`
-	Kind       *TemplateKind           `json:"kind,omitempty"`
+	Kind       *string                 `json:"kind,omitempty"`
 	Meta       *TemplateEntryMeta      `json:"meta,omitempty"`
 	Spec       *map[string]interface{} `json:"spec,omitempty"`
 }
@@ -72,9 +72,9 @@ func (o *TemplateEntry) SetApiVersion(v string) {
 }
 
 // GetKind returns the Kind field value if set, zero value otherwise.
-func (o *TemplateEntry) GetKind() TemplateKind {
+func (o *TemplateEntry) GetKind() string {
 	if o == nil || o.Kind == nil {
-		var ret TemplateKind
+		var ret string
 		return ret
 	}
 	return *o.Kind
@@ -82,7 +82,7 @@ func (o *TemplateEntry) GetKind() TemplateKind {
 
 // GetKindOk returns a tuple with the Kind field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *TemplateEntry) GetKindOk() (*TemplateKind, bool) {
+func (o *TemplateEntry) GetKindOk() (*string, bool) {
 	if o == nil || o.Kind == nil {
 		return nil, false
 	}
@@ -98,8 +98,8 @@ func (o *TemplateEntry) HasKind() bool {
 	return false
 }
 
-// SetKind gets a reference to the given TemplateKind and assigns it to the Kind field.
-func (o *TemplateEntry) SetKind(v TemplateKind) {
+// SetKind gets a reference to the given string and assigns it to the Kind field.
+func (o *TemplateEntry) SetKind(v string) {
 	o.Kind = &v
 }
 

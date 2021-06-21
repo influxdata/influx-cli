@@ -16,7 +16,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: "../../openapi/src/common/schemas/Template.yml"
+            $ref: "../schemas/Template.yml"
     default:
       description: Unexpected error
       content:
