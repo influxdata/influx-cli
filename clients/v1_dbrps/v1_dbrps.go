@@ -11,6 +11,7 @@ import (
 type Client struct {
 	clients.CLI
 	api.DBRPsApi
+	api.OrganizationsApi
 }
 
 type dbrpPrintOpts struct {
@@ -89,24 +90,27 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	reqBody := api.DBRPCreate{
 		BucketID:        params.BucketID,
 		Database:        params.DB,
-		RetentionPolicy: &params.RP,
+		RetentionPolicy: params.RP,
 	}
 
+	// For compatibility with the cloud API for creating a DBRP, we must supply
+	// an organization ID. The organization ID will be requested based on the org name
+	// if an org name is provided but no organization ID is.
 	if params.OrgID.Valid() {
-		reqBody.OrgID = params.OrgID.String()
-	}
-	if params.OrgName != "" {
-		reqBody.Org = &params.OrgName
-	}
-	if !params.OrgID.Valid() && params.OrgName == "" {
-		reqBody.Org = &c.ActiveConfig.Org
-	}
-
-	if params.OrgID.Valid() {
-		reqBody.OrgID = params.OrgID.String()
-	}
-	if params.OrgName != "" {
-		reqBody.Org = &params.OrgName
+		reqBody.OrgID = api.PtrString(params.OrgID.String())
+	} else {
+		orgName := params.OrgName
+		if orgName == "" {
+			orgName = c.ActiveConfig.Org
+		}
+		res, err := c.GetOrgs(ctx).Org(orgName).Execute()
+		if err != nil {
+			return fmt.Errorf("failed to look up ID for org %q: %w", orgName, err)
+		}
+		if len(res.GetOrgs()) == 0 {
+			return fmt.Errorf("no org found with name %q", orgName)
+		}
+		reqBody.OrgID = api.PtrString(res.GetOrgs()[0].GetId())
 	}
 
 	dbrp, err := c.PostDBRP(ctx).DBRPCreate(reqBody).Execute()

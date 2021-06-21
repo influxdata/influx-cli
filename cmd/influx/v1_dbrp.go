@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/influxdata/influx-cli/v2/clients/v1dbrps"
+	v1dbrps "github.com/influxdata/influx-cli/v2/clients/v1_dbrps"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
@@ -104,8 +104,9 @@ func newV1DBRPCreateCmd() *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := v1dbrps.Client{
-				CLI:      getCLI(ctx),
-				DBRPsApi: api.DBRPsApi,
+				CLI:              getCLI(ctx),
+				DBRPsApi:         api.DBRPsApi,
+				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.Create(ctx.Context, &params)
 		},

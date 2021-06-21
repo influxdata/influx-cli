@@ -17,7 +17,7 @@ import (
 // DBRPCreate struct for DBRPCreate
 type DBRPCreate struct {
 	// the organization ID that owns this mapping.
-	OrgID string `json:"orgID"`
+	OrgID *string `json:"orgID,omitempty"`
 	// the organization that owns this mapping.
 	Org *string `json:"org,omitempty"`
 	// the bucket ID used as target for the translation.
@@ -25,7 +25,7 @@ type DBRPCreate struct {
 	// InfluxDB v1 database
 	Database string `json:"database"`
 	// InfluxDB v1 retention policy
-	RetentionPolicy *string `json:"retention_policy,omitempty"`
+	RetentionPolicy string `json:"retention_policy"`
 	// Specify if this mapping represents the default retention policy for the database specificed.
 	Default *bool `json:"default,omitempty"`
 }
@@ -34,11 +34,11 @@ type DBRPCreate struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewDBRPCreate(orgID string, bucketID string, database string) *DBRPCreate {
+func NewDBRPCreate(bucketID string, database string, retentionPolicy string) *DBRPCreate {
 	this := DBRPCreate{}
-	this.OrgID = orgID
 	this.BucketID = bucketID
 	this.Database = database
+	this.RetentionPolicy = retentionPolicy
 	return &this
 }
 
@@ -50,28 +50,36 @@ func NewDBRPCreateWithDefaults() *DBRPCreate {
 	return &this
 }
 
-// GetOrgID returns the OrgID field value
+// GetOrgID returns the OrgID field value if set, zero value otherwise.
 func (o *DBRPCreate) GetOrgID() string {
-	if o == nil {
+	if o == nil || o.OrgID == nil {
 		var ret string
 		return ret
 	}
-
-	return o.OrgID
+	return *o.OrgID
 }
 
-// GetOrgIDOk returns a tuple with the OrgID field value
+// GetOrgIDOk returns a tuple with the OrgID field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *DBRPCreate) GetOrgIDOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.OrgID == nil {
 		return nil, false
 	}
-	return &o.OrgID, true
+	return o.OrgID, true
 }
 
-// SetOrgID sets field value
+// HasOrgID returns a boolean if a field has been set.
+func (o *DBRPCreate) HasOrgID() bool {
+	if o != nil && o.OrgID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetOrgID gets a reference to the given string and assigns it to the OrgID field.
 func (o *DBRPCreate) SetOrgID(v string) {
-	o.OrgID = v
+	o.OrgID = &v
 }
 
 // GetOrg returns the Org field value if set, zero value otherwise.
@@ -154,36 +162,28 @@ func (o *DBRPCreate) SetDatabase(v string) {
 	o.Database = v
 }
 
-// GetRetentionPolicy returns the RetentionPolicy field value if set, zero value otherwise.
+// GetRetentionPolicy returns the RetentionPolicy field value
 func (o *DBRPCreate) GetRetentionPolicy() string {
-	if o == nil || o.RetentionPolicy == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.RetentionPolicy
+
+	return o.RetentionPolicy
 }
 
-// GetRetentionPolicyOk returns a tuple with the RetentionPolicy field value if set, nil otherwise
+// GetRetentionPolicyOk returns a tuple with the RetentionPolicy field value
 // and a boolean to check if the value has been set.
 func (o *DBRPCreate) GetRetentionPolicyOk() (*string, bool) {
-	if o == nil || o.RetentionPolicy == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.RetentionPolicy, true
+	return &o.RetentionPolicy, true
 }
 
-// HasRetentionPolicy returns a boolean if a field has been set.
-func (o *DBRPCreate) HasRetentionPolicy() bool {
-	if o != nil && o.RetentionPolicy != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetRetentionPolicy gets a reference to the given string and assigns it to the RetentionPolicy field.
+// SetRetentionPolicy sets field value
 func (o *DBRPCreate) SetRetentionPolicy(v string) {
-	o.RetentionPolicy = &v
+	o.RetentionPolicy = v
 }
 
 // GetDefault returns the Default field value if set, zero value otherwise.
@@ -220,7 +220,7 @@ func (o *DBRPCreate) SetDefault(v bool) {
 
 func (o DBRPCreate) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if true {
+	if o.OrgID != nil {
 		toSerialize["orgID"] = o.OrgID
 	}
 	if o.Org != nil {
@@ -232,7 +232,7 @@ func (o DBRPCreate) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["database"] = o.Database
 	}
-	if o.RetentionPolicy != nil {
+	if true {
 		toSerialize["retention_policy"] = o.RetentionPolicy
 	}
 	if o.Default != nil {

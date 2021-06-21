@@ -11,7 +11,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/influxdata/influx-cli/v2/clients/v1dbrps"
+	v1dbrps "github.com/influxdata/influx-cli/v2/clients/v1_dbrps"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
@@ -165,32 +165,10 @@ func TestClient_Create(t *testing.T) {
 			},
 		},
 		{
-			name: "create with org name",
-			params: v1dbrps.CreateParams{
-				OrgParams: clients.OrgParams{
-					OrgName: "someOrg",
-				},
-			},
-			registerExpectations: func(t *testing.T, DBRPsApi *mock.MockDBRPsApi) {
-				DBRPsApi.EXPECT().PostDBRP(gomock.Any()).Return(api.ApiPostDBRPRequest{ApiService: DBRPsApi})
-				DBRPsApi.EXPECT().PostDBRPExecute(gomock.Any()).Return(api.DBRP{
-					Id:              api.PtrString("123"),
-					Database:        api.PtrString("someDB"),
-					BucketID:        api.PtrString("456"),
-					RetentionPolicy: api.PtrString("someRP"),
-					Default:         api.PtrBool(false),
-					OrgID:           api.PtrString("1234123412341234"),
-				}, nil)
-			},
-			outLines: []string{
-				`123\s+someDB\s+456\s+someRP\s+false\s+1234123412341234`,
-			},
-		},
-		{
 			name: "api error",
 			params: v1dbrps.CreateParams{
 				OrgParams: clients.OrgParams{
-					OrgName: "someOrg",
+					OrgID: id1,
 				},
 				BucketID: "1234",
 			},
