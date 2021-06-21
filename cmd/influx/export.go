@@ -17,7 +17,7 @@ func newExportCmd() *cli.Command {
 	var params struct {
 		out            string
 		stackId        string
-		resourceType   ResourceType
+		resourceType   export.ResourceType
 		bucketIds      string
 		bucketNames    string
 		checkIds       string
@@ -64,6 +64,9 @@ resource flag and then provide the IDs.
 
 For information about exporting InfluxDB templates, see
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
+		Subcommands: []*cli.Command{
+			newExportAllCmd(),
+		},
 		Flags: append(
 			commonFlagsNoPrint(),
 			&cli.StringFlag{
@@ -198,24 +201,16 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 				VariableNames:  splitNonEmpty(params.variableNames),
 			}
 
-			if params.out == "" {
-				parsedParams.Out = os.Stdout
-			} else {
-				f, err := os.OpenFile(params.out, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-				if err != nil {
-					return fmt.Errorf("failed to open output path %q: %w", params.out, err)
-				}
-				defer f.Close()
-				parsedParams.Out = f
+			outParams, closer, err := parseOutParams(params.out)
+			if closer != nil {
+				defer closer()
 			}
-			switch filepath.Ext(params.out) {
-			case ".json":
-				parsedParams.OutEncoding = export.JsonEncoding
-			default: // Also covers path == "" for stdout.
-				parsedParams.OutEncoding = export.YamlEncoding
+			if err != nil {
+				return err
 			}
+			parsedParams.OutParams = outParams
 
-			if params.resourceType != TypeUnset {
+			if params.resourceType != export.TypeUnset {
 				ids := ctx.Args().Slice()
 
 				// Read any IDs from stdin.
@@ -229,23 +224,23 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 				}
 
 				switch params.resourceType {
-				case TypeBucket:
+				case export.TypeBucket:
 					parsedParams.BucketIds = append(parsedParams.BucketIds, ids...)
-				case TypeCheck:
+				case export.TypeCheck:
 					parsedParams.CheckIds = append(parsedParams.CheckIds, ids...)
-				case TypeDashboard:
+				case export.TypeDashboard:
 					parsedParams.DashboardIds = append(parsedParams.DashboardIds, ids...)
-				case TypeLabel:
+				case export.TypeLabel:
 					parsedParams.LabelIds = append(parsedParams.LabelIds, ids...)
-				case TypeNotificationEndpoint:
+				case export.TypeNotificationEndpoint:
 					parsedParams.EndpointIds = append(parsedParams.EndpointIds, ids...)
-				case TypeNotificationRule:
+				case export.TypeNotificationRule:
 					parsedParams.RuleIds = append(parsedParams.RuleIds, ids...)
-				case TypeTask:
+				case export.TypeTask:
 					parsedParams.TaskIds = append(parsedParams.TaskIds, ids...)
-				case TypeTelegraf:
+				case export.TypeTelegraf:
 					parsedParams.TelegrafIds = append(parsedParams.TelegrafIds, ids...)
-				case TypeVariable:
+				case export.TypeVariable:
 					parsedParams.VariableIds = append(parsedParams.VariableIds, ids...)
 
 				// NOTE: The API doesn't support filtering by these resource subtypes,
@@ -258,10 +253,10 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 				// Instead of allowing the type-filter to be silently converted by the server,
 				// we catch the previously-allowed subtypes here and return a (hopefully) useful
 				// error suggesting the correct flag to use.
-				case TypeCheckDeadman, TypeCheckThreshold:
-					return fmt.Errorf("filtering on resource-type %q is not supported by the API. Use resource-type %q instead", params.resourceType, TypeCheck)
-				case TypeNotificationEndpointHTTP, TypeNotificationEndpointPagerDuty, TypeNotificationEndpointSlack:
-					return fmt.Errorf("filtering on resource-type %q is not supported by the API. Use resource-type %q instead", params.resourceType, TypeNotificationEndpoint)
+				case export.TypeCheckDeadman, export.TypeCheckThreshold:
+					return fmt.Errorf("filtering on resource-type %q is not supported by the API. Use resource-type %q instead", params.resourceType, export.TypeCheck)
+				case export.TypeNotificationEndpointHTTP, export.TypeNotificationEndpointPagerDuty, export.TypeNotificationEndpointSlack:
+					return fmt.Errorf("filtering on resource-type %q is not supported by the API. Use resource-type %q instead", params.resourceType, export.TypeNotificationEndpoint)
 
 				default:
 				}
@@ -278,6 +273,138 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 	}
 }
 
+func newExportAllCmd() *cli.Command {
+	var params struct {
+		out     string
+		orgId   string
+		orgName string
+		filters cli.StringSlice
+	}
+	return &cli.Command{
+		Name:  "all",
+		Usage: "Export all existing resources for an organization as a template",
+		Description: `The export all command will export all resources for an organization. The
+command also provides a mechanism to filter by label name or resource kind.
+
+Examples:
+	# Export all resources for an organization
+	influx export all --org $ORG_NAME
+
+	# Export all bucket resources
+	influx export all --org $ORG_NAME --filter=kind=Bucket
+
+	# Export all resources associated with label Foo
+	influx export all --org $ORG_NAME --filter=labelName=Foo
+
+	# Export all bucket resources and filter by label Foo
+	influx export all --org $ORG_NAME \
+		--filter kind=Bucket \
+		--filter labelName=Foo
+
+	# Export all bucket or dashboard resources and filter by label Foo.
+	# note: like filters are unioned and filter types are intersections.
+	#		This example will export a resource if it is a dashboard or
+	#		bucket and has an associated label of Foo.
+	influx export all --org $ORG_NAME \
+		--filter kind=Bucket \
+		--filter kind=Dashboard \
+		--filter labelName=Foo
+
+For information about exporting InfluxDB templates, see
+https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/
+and
+https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
+`,
+		Flags: append(
+			commonFlagsNoPrint(),
+			&cli.StringFlag{
+				Name:        "org-id",
+				Usage:       "The ID of the organization",
+				EnvVars:     []string{"INFLUX_ORG_ID"},
+				Destination: &params.orgId,
+			},
+			&cli.StringFlag{
+				Name:        "org",
+				Usage:       "The name of the organization",
+				Aliases:     []string{"o"},
+				EnvVars:     []string{"INFLUX_ORG"},
+				Destination: &params.orgName,
+			},
+			&cli.StringFlag{
+				Name:        "file",
+				Usage:       "Output file for created template; defaults to std out if no file provided; the extension of provided file (.yml/.json) will dictate encoding",
+				Aliases:     []string{"f"},
+				Destination: &params.out,
+			},
+			&cli.StringSliceFlag{
+				Name:        "filter",
+				Usage:       "Filter exported resources by labelName or resourceKind (format: labelName=example)",
+				Destination: &params.filters,
+			},
+		),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Action: func(ctx *cli.Context) error {
+			parsedParams := export.AllParams{
+				OrgId:   params.orgId,
+				OrgName: params.orgName,
+			}
+
+			for _, filter := range params.filters.Value() {
+				components := strings.Split(filter, "=")
+				if len(components) != 2 {
+					return fmt.Errorf("invalid filter %q, must have format `type=example`", filter)
+				}
+				switch key, val := components[0], components[1]; key {
+				case "labelName":
+					parsedParams.LabelFilters = append(parsedParams.LabelFilters, val)
+				case "kind", "resourceKind":
+					var resType export.ResourceType
+					if err := resType.Set(val); err != nil {
+						return err
+					}
+					switch resType {
+					// NOTE: The API doesn't support filtering by these resource subtypes,
+					// and instead converts them to the parent type. For example,
+					// `--resource-type notificationEndpointHTTP` gets translated to a filter
+					// on all notification endpoints on the server-side. I think this was
+					// intentional since the 2.0.x CLI didn't expose flags to filter on subtypes,
+					// but a bug/oversight in its parsing still allowed the subtypes through
+					// when passing IDs over stdin.
+					// Instead of allowing the type-filter to be silently converted by the server,
+					// we catch the previously-allowed subtypes here and return a (hopefully) useful
+					// error suggesting the correct flag to use.
+					case export.TypeCheckDeadman, export.TypeCheckThreshold:
+						return fmt.Errorf("filtering on resourceKind=%s is not supported by the API. Use resourceKind=%s instead", resType, export.TypeCheck)
+					case export.TypeNotificationEndpointSlack, export.TypeNotificationEndpointPagerDuty, export.TypeNotificationEndpointHTTP:
+						return fmt.Errorf("filtering on resourceKind=%s is not supported by the API. Use resourceKind=%s instead", resType, export.TypeNotificationEndpoint)
+					default:
+					}
+					parsedParams.KindFilters = append(parsedParams.KindFilters, resType)
+				default:
+					return fmt.Errorf("invalid filter provided %q; filter must be 1 in [labelName, resourceKind]", filter)
+				}
+			}
+
+			outParams, closer, err := parseOutParams(params.out)
+			if closer != nil {
+				defer closer()
+			}
+			if err != nil {
+				return err
+			}
+			parsedParams.OutParams = outParams
+
+			apiClient := getAPI(ctx)
+			client := export.Client{
+				CLI:              getCLI(ctx),
+				TemplatesApi:     apiClient.TemplatesApi,
+				OrganizationsApi: apiClient.OrganizationsApi,
+			}
+			return client.ExportAll(ctx.Context, &parsedParams)
+		},
+	}
+}
+
 func splitNonEmpty(s string) []string {
 	if s == "" {
 		return nil
@@ -285,95 +412,22 @@ func splitNonEmpty(s string) []string {
 	return strings.Split(s, ",")
 }
 
-type ResourceType int
-
-const (
-	TypeUnset ResourceType = iota
-	TypeBucket
-	TypeCheck
-	TypeCheckDeadman
-	TypeCheckThreshold
-	TypeDashboard
-	TypeLabel
-	TypeNotificationEndpoint
-	TypeNotificationEndpointHTTP
-	TypeNotificationEndpointPagerDuty
-	TypeNotificationEndpointSlack
-	TypeNotificationRule
-	TypeTask
-	TypeTelegraf
-	TypeVariable
-)
-
-func (r ResourceType) String() string {
-	switch r {
-	case TypeBucket:
-		return "bucket"
-	case TypeCheck:
-		return "check"
-	case TypeCheckDeadman:
-		return "checkDeadman"
-	case TypeCheckThreshold:
-		return "checkThreshold"
-	case TypeDashboard:
-		return "dashboard"
-	case TypeLabel:
-		return "label"
-	case TypeNotificationEndpoint:
-		return "notificationEndpoint"
-	case TypeNotificationEndpointHTTP:
-		return "notificationEndpointHTTP"
-	case TypeNotificationEndpointPagerDuty:
-		return "notificationEndpointPagerDuty"
-	case TypeNotificationEndpointSlack:
-		return "notificationEndpointSlack"
-	case TypeNotificationRule:
-		return "notificationRule"
-	case TypeTask:
-		return "task"
-	case TypeTelegraf:
-		return "telegraf"
-	case TypeVariable:
-		return "variable"
-	case TypeUnset:
-		fallthrough
-	default:
-		return "unset"
+func parseOutParams(outPath string) (export.OutParams, func(), error) {
+	if outPath == "" {
+		return export.OutParams{Out: os.Stdout, Encoding: export.YamlEncoding}, nil, nil
 	}
-}
 
-func (r *ResourceType) Set(v string) error {
-	switch strings.ToLower(v) {
-	case "bucket":
-		*r = TypeBucket
-	case "check":
-		*r = TypeCheck
-	case "checkdeadman":
-		*r = TypeCheckDeadman
-	case "checkthreshold":
-		*r = TypeCheckThreshold
-	case "dashboard":
-		*r = TypeDashboard
-	case "label":
-		*r = TypeLabel
-	case "notificationendpoint":
-		*r = TypeNotificationEndpoint
-	case "notificationendpointhttp":
-		*r = TypeNotificationEndpointHTTP
-	case "notificationendpointpagerduty":
-		*r = TypeNotificationEndpointPagerDuty
-	case "notificationendpointslack":
-		*r = TypeNotificationEndpointSlack
-	case "notificationrule":
-		*r = TypeNotificationRule
-	case "task":
-		*r = TypeTask
-	case "telegraf":
-		*r = TypeTelegraf
-	case "variable":
-		*r = TypeVariable
-	default:
-		return fmt.Errorf("unknown resource type: %s", v)
+	f, err := os.OpenFile(outPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		return export.OutParams{}, nil, fmt.Errorf("failed to open output path %q: %w", outPath, err)
 	}
-	return nil
+	params := export.OutParams{Out: f}
+	switch filepath.Ext(outPath) {
+	case ".json":
+		params.Encoding = export.JsonEncoding
+	default:
+		params.Encoding = export.YamlEncoding
+	}
+
+	return params, func() { _ = f.Close() }, nil
 }

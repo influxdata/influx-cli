@@ -2,30 +2,20 @@ package export
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"gopkg.in/yaml.v3"
-)
-
-type OutEncoding int
-
-const (
-	YamlEncoding OutEncoding = iota
-	JsonEncoding
 )
 
 type Client struct {
 	clients.CLI
 	api.TemplatesApi
+	api.OrganizationsApi
 }
 
 type Params struct {
-	Out io.Writer
-	OutEncoding
+	OutParams
 	StackId string
 
 	BucketIds      []string
@@ -128,27 +118,86 @@ func (c Client) Export(ctx context.Context, params *Params) error {
 	if err != nil {
 		return fmt.Errorf("failed to export template: %w", err)
 	}
-	if err := writeTemplate(params.Out, params.OutEncoding, tmpl); err != nil {
+	if err := params.OutParams.writeTemplate(tmpl); err != nil {
 		return fmt.Errorf("failed to write exported template: %w", err)
 	}
 	return nil
 }
 
-func writeTemplate(out io.Writer, encoding OutEncoding, template []api.TemplateEntry) error {
-	switch encoding {
-	case JsonEncoding:
-		enc := json.NewEncoder(out)
-		enc.SetIndent("", "\t")
-		return enc.Encode(template)
-	case YamlEncoding:
-		enc := yaml.NewEncoder(out)
-		for _, entry := range template {
-			if err := enc.Encode(entry); err != nil {
-				return err
-			}
+type AllParams struct {
+	OutParams
+
+	OrgId   string
+	OrgName string
+
+	LabelFilters []string
+	KindFilters  []ResourceType
+}
+
+func (c Client) ExportAll(ctx context.Context, params *AllParams) error {
+	if params.OrgId == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
+		return clients.ErrMustSpecifyOrg
+	}
+
+	orgId := params.OrgId
+	if orgId == "" {
+		orgName := params.OrgName
+		if orgName == "" {
+			orgName = c.ActiveConfig.Org
 		}
-	default:
-		return fmt.Errorf("encoding %q is not recognized", encoding)
+		res, err := c.GetOrgs(ctx).Org(orgName).Execute()
+		if err != nil {
+			return fmt.Errorf("failed to look up ID for org %q: %w", orgName, err)
+		}
+		if len(res.GetOrgs()) == 0 {
+			return fmt.Errorf("no org found with name %q", orgName)
+		}
+		orgId = res.GetOrgs()[0].GetId()
+	}
+
+	orgExport := api.TemplateExportOrgIDs{OrgID: &orgId}
+	if len(params.LabelFilters) > 0 || len(params.KindFilters) > 0 {
+		orgExport.ResourceFilters = &api.TemplateExportResourceFilters{}
+		if len(params.LabelFilters) > 0 {
+			orgExport.ResourceFilters.ByLabel = &params.LabelFilters
+		}
+		if len(params.KindFilters) > 0 {
+			kinds := make([]api.TemplateKind, len(params.KindFilters))
+			for i, kf := range params.KindFilters {
+				switch kf {
+				case TypeBucket:
+					kinds[i] = api.TEMPLATEKIND_BUCKET
+				case TypeCheck:
+					kinds[i] = api.TEMPLATEKIND_CHECK
+				case TypeDashboard:
+					kinds[i] = api.TEMPLATEKIND_DASHBOARD
+				case TypeLabel:
+					kinds[i] = api.TEMPLATEKIND_LABEL
+				case TypeNotificationEndpoint:
+					kinds[i] = api.TEMPLATEKIND_NOTIFICATION_ENDPOINT
+				case TypeNotificationRule:
+					kinds[i] = api.TEMPLATEKIND_NOTIFICATION_RULE
+				case TypeTask:
+					kinds[i] = api.TEMPLATEKIND_TASK
+				case TypeTelegraf:
+					kinds[i] = api.TEMPLATEKIND_TELEGRAF
+				case TypeVariable:
+					kinds[i] = api.TEMPLATEKIND_VARIABLE
+				default:
+					return fmt.Errorf("unsupported resourceKind filter %q", kf)
+				}
+			}
+			orgExport.ResourceFilters.ByResourceKind = &kinds
+		}
+	}
+
+	exportReq := api.TemplateExport{OrgIDs: &[]api.TemplateExportOrgIDs{orgExport}}
+	tmpl, err := c.ExportTemplate(ctx).TemplateExport(exportReq).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to export template: %w", err)
+	}
+	if err := params.OutParams.writeTemplate(tmpl); err != nil {
+		return fmt.Errorf("failed to write exported template: %w", err)
 	}
 	return nil
 }
