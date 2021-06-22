@@ -42,7 +42,7 @@ func newV1DBRPListCmd() *cli.Command {
 			&cli.BoolFlag{
 				Name:        "default",
 				Usage:       "Limit results to default mappings",
-				Destination: &params.Default_,
+				Destination: &params.Default,
 			},
 			&cli.StringFlag{
 				Name:        "id",
@@ -91,7 +91,7 @@ func newV1DBRPCreateCmd() *cli.Command {
 			&cli.BoolFlag{
 				Name:        "default",
 				Usage:       "Identify this retention policy as the default for the database",
-				Destination: &params.Default_,
+				Destination: &params.Default,
 			},
 			&cli.StringFlag{
 				Name:        "rp",
@@ -159,7 +159,7 @@ func newV1DBRPUpdateCmd() *cli.Command {
 			&cli.BoolFlag{
 				Name:        "default",
 				Usage:       "Set this mapping's retention policy as the default for the mapping's database",
-				Destination: &params.Default_,
+				Destination: &params.Default,
 			},
 			&cli.StringFlag{
 				Name:        "rp",

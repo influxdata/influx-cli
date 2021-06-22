@@ -23,7 +23,7 @@ type ListParams struct {
 	clients.OrgParams
 	ID       string
 	BucketID string
-	Default_ bool
+	Default  bool
 	DB       string
 	RP       string
 }
@@ -60,8 +60,8 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	// Set this parameter if the --default flag was passed. This will list only
 	// default DBRPs. Otherwise, don't set the parameter at all to list DBRPs that
 	// are default and not default.
-	if params.Default_ {
-		req = req.Default_(params.Default_)
+	if params.Default {
+		req = req.Default_(params.Default) // Note: codegen sets this property as "Default_" instead of "Default"
 	}
 
 	dbrps, err := req.Execute()
@@ -77,7 +77,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 type CreateParams struct {
 	clients.OrgParams
 	BucketID string
-	Default_ bool
+	Default  bool
 	DB       string
 	RP       string
 }
@@ -125,9 +125,9 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 type UpdateParams struct {
 	clients.OrgParams
-	ID       string
-	Default_ bool
-	RP       string
+	ID      string
+	Default bool
+	RP      string
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
@@ -139,8 +139,8 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	if params.RP != "" {
 		reqBody.RetentionPolicy = &params.RP
 	}
-	if params.Default_ {
-		reqBody.Default = &params.Default_
+	if params.Default {
+		reqBody.Default = &params.Default
 	}
 
 	req := c.PatchDBRPID(ctx, params.ID)
@@ -179,6 +179,9 @@ func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
 	// of the delete command, which output the details of the deleted DBRP.
 	getReq := c.GetDBRPsID(ctx, params.ID)
 	deleteReq := c.DeleteDBRPID(ctx, params.ID)
+
+	// The org name or ID must be set on requests for OSS because of how the OSS
+	// authorization mechanism currently works.
 	if params.OrgID.Valid() {
 		getReq = getReq.OrgID(params.OrgID.String())
 		deleteReq = deleteReq.OrgID(params.OrgID.String())
