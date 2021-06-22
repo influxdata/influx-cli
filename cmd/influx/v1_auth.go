@@ -79,7 +79,7 @@ func newCreateV1AuthCmd() *cli.Command {
 
 func newRemoveV1AuthCmd() *cli.Command {
 	var params v1_auth.RemoveParams
-	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams, true)...)
+	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams)...)
 	return &cli.Command{
 		Name:   "delete",
 		Usage:  "Delete authorization",
@@ -105,7 +105,7 @@ func newRemoveV1AuthCmd() *cli.Command {
 func newListV1AuthCmd() *cli.Command {
 	var params v1_auth.ListParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
-	flags = append(flags, getAuthLookupFlags(&params.AuthLookupParams, false)...)
+	flags = append(flags, getAuthLookupFlags(&params.AuthLookupParams)...)
 	flags = append(flags,
 		&cli.StringFlag{
 			Name:        "user",
@@ -126,10 +126,6 @@ func newListV1AuthCmd() *cli.Command {
 		Flags:   flags,
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
-			if err := params.AuthLookupParams.Validate(); err != nil {
-				return err
-			}
-
 			api := getAPI(ctx)
 			client := v1_auth.Client{
 				CLI:               getCLI(ctx),
@@ -144,7 +140,7 @@ func newListV1AuthCmd() *cli.Command {
 
 func newSetActiveV1AuthCmd() *cli.Command {
 	var params v1_auth.ActiveParams
-	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams, true)...)
+	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams)...)
 	return &cli.Command{
 		Name:   "set-active",
 		Usage:  "Change the status of an authorization to active",
@@ -169,7 +165,7 @@ func newSetActiveV1AuthCmd() *cli.Command {
 
 func newSetInactiveV1AuthCmd() *cli.Command {
 	var params v1_auth.ActiveParams
-	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams, true)...)
+	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams)...)
 	return &cli.Command{
 		Name:   "set-inactive",
 		Usage:  "Change the status of an authorization to inactive",
@@ -195,7 +191,7 @@ func newSetInactiveV1AuthCmd() *cli.Command {
 func newSetPswdV1AuthCmd() *cli.Command {
 	var params v1_auth.SetPasswordParams
 	flags := append(coreFlags(), commonTokenFlag())
-	flags = append(flags, getAuthLookupFlags(&params.AuthLookupParams, false)...)
+	flags = append(flags, getAuthLookupFlags(&params.AuthLookupParams)...)
 	flags = append(flags,
 		&cli.StringFlag{
 			Name:        "password",
@@ -209,10 +205,6 @@ func newSetPswdV1AuthCmd() *cli.Command {
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
-			if err := params.AuthLookupParams.Validate(); err != nil {
-				return err
-			}
-
 			api := getAPI(ctx)
 			client := v1_auth.Client{
 				CLI:               getCLI(ctx),

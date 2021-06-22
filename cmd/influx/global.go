@@ -279,8 +279,7 @@ func getOrgBucketFlags(c *clients.OrgBucketParams) []cli.Flag {
 
 // getAuthLookupFlags returns flags used for authorization, requiring either an ID or Username,
 // and can specify to require one but not both.
-func getAuthLookupFlags(params *clients.AuthLookupParams, required bool) []cli.Flag {
-	params.Required = required
+func getAuthLookupFlags(params *clients.AuthLookupParams) []cli.Flag {
 	return []cli.Flag{
 		&cli.GenericFlag{
 			Name:  "id",

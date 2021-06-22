@@ -81,13 +81,13 @@ paths:
     $ref: "./openapi/src/common/paths/dbrps.yml"
   "/dbrps/{dbrpID}":
     $ref: "./openapi/src/common/paths/dbrps_dbrpID.yml"
-  /authorizations:
+  /legacy/authorizations:
     servers:
-      - url: "/legacy"
+      - url: "/private"
     $ref: "./openapi/src/common/paths/authorizations.yml"
-  /authorizations/{authID}:
+  /legacy/authorizations/{authID}:
     servers:
-      - url: "/legacy"
+      - url: "/private"
     $ref: "./openapi/src/common/paths/authorizations_authID.yml"
 components:
   parameters:

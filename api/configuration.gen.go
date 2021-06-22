@@ -109,31 +109,31 @@ func NewConfiguration() *Configuration {
 		OperationServers: map[string]ServerConfigurations{
 			"AuthorizationsApiService.DeleteAuthorizationsID": {
 				{
-					URL:         "/legacy",
+					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
 			"AuthorizationsApiService.GetAuthorizations": {
 				{
-					URL:         "/legacy",
+					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
 			"AuthorizationsApiService.GetAuthorizationsID": {
 				{
-					URL:         "/legacy",
+					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
 			"AuthorizationsApiService.PatchAuthorizationsID": {
 				{
-					URL:         "/legacy",
+					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
 			"AuthorizationsApiService.PostAuthorizations": {
 				{
-					URL:         "/legacy",
+					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
