@@ -1,13 +1,11 @@
 package main
 
 import (
-	"github.com/influxdata/influx-cli/v2/clients/v1auth"
+	"github.com/influxdata/influx-cli/v2/clients/v1_auth"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli/v2"
 )
 
-// TODO Must be a subcommand of "v1", need to coordinate with Will
-// TODO to make sure both this and "dbrp" are under "v1"
 func newV1AuthCommand() *cli.Command {
 	return &cli.Command{
 		Name:    "auth",
@@ -17,15 +15,15 @@ func newV1AuthCommand() *cli.Command {
 			newCreateV1AuthCmd(),
 			newRemoveV1AuthCmd(),
 			newListV1AuthCmd(),
-			newSetActiveV1AuthCmd(),   // todo can these two be combined?
-			newSetInactiveV1AuthCmd(), // todo not here, but in client?
+			newSetActiveV1AuthCmd(),
+			newSetInactiveV1AuthCmd(),
 			newSetPswdV1AuthCmd(),
 		},
 	}
 }
 
 func newCreateV1AuthCmd() *cli.Command {
-	var params v1auth.CreateParams
+	var params v1_auth.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags,
 		&cli.StringFlag{
@@ -68,9 +66,11 @@ func newCreateV1AuthCmd() *cli.Command {
 			params.ReadBucket = ctx.StringSlice("read-bucket")
 			params.WriteBucket = ctx.StringSlice("write-bucket")
 			api := getAPI(ctx)
-			client := v1auth.Client{
-				CLI: getCLI(ctx),
+			client := v1_auth.Client{
+				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
+				UsersApi:          api.UsersApi,
+				OrganizationsApi:  api.OrganizationsApi,
 			}
 			return client.Create(ctx.Context, &params)
 		},
@@ -78,12 +78,12 @@ func newCreateV1AuthCmd() *cli.Command {
 }
 
 func newRemoveV1AuthCmd() *cli.Command {
-	var params v1auth.RemoveParams
+	var params v1_auth.RemoveParams
 	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams, true)...)
 	return &cli.Command{
-		Name: "delete",
-		Usage: "Delete authorization",
-		Flags: flags,
+		Name:   "delete",
+		Usage:  "Delete authorization",
+		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
 			if err := params.AuthLookupParams.Validate(); err != nil {
@@ -91,9 +91,11 @@ func newRemoveV1AuthCmd() *cli.Command {
 			}
 
 			api := getAPI(ctx)
-			client := v1auth.Client{
-				CLI: getCLI(ctx),
+			client := v1_auth.Client{
+				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
+				UsersApi:          api.UsersApi,
+				OrganizationsApi:  api.OrganizationsApi,
 			}
 			return client.Remove(ctx.Context, &params)
 		},
@@ -101,37 +103,39 @@ func newRemoveV1AuthCmd() *cli.Command {
 }
 
 func newListV1AuthCmd() *cli.Command {
-	var params v1auth.ListParams
+	var params v1_auth.ListParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, getAuthLookupFlags(&params.AuthLookupParams, false)...)
 	flags = append(flags,
 		&cli.StringFlag{
-			Name: "user",
-			Usage: "The user",
-			Aliases: []string{"u"},
+			Name:        "user",
+			Usage:       "The user",
+			Aliases:     []string{"u"},
 			Destination: &params.User,
 		},
 		&cli.StringFlag{
-			Name: "user-id",
-			Usage: "The user ID",
+			Name:        "user-id",
+			Usage:       "The user ID",
 			Destination: &params.UserID,
 		},
 	)
 	return &cli.Command{
-		Name: "list",
-		Usage: "List authorizations",
+		Name:    "list",
+		Usage:   "List authorizations",
 		Aliases: []string{"ls", "find"},
-		Flags: flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Flags:   flags,
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
 			if err := params.AuthLookupParams.Validate(); err != nil {
 				return err
 			}
 
 			api := getAPI(ctx)
-			client := v1auth.Client{
-				CLI: getCLI(ctx),
+			client := v1_auth.Client{
+				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
+				UsersApi:          api.UsersApi,
+				OrganizationsApi:  api.OrganizationsApi,
 			}
 			return client.List(ctx.Context, &params)
 		},
@@ -139,12 +143,12 @@ func newListV1AuthCmd() *cli.Command {
 }
 
 func newSetActiveV1AuthCmd() *cli.Command {
-	var params v1auth.SetActiveParams
+	var params v1_auth.ActiveParams
 	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams, true)...)
 	return &cli.Command{
-		Name: "set-active",
-		Usage: "Change the status of an authorization to active",
-		Flags: flags,
+		Name:   "set-active",
+		Usage:  "Change the status of an authorization to active",
+		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
 			if err := params.AuthLookupParams.Validate(); err != nil {
@@ -152,22 +156,24 @@ func newSetActiveV1AuthCmd() *cli.Command {
 			}
 
 			api := getAPI(ctx)
-			client := v1auth.Client{
-				CLI: getCLI(ctx),
+			client := v1_auth.Client{
+				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
+				UsersApi:          api.UsersApi,
+				OrganizationsApi:  api.OrganizationsApi,
 			}
-			return client.SetActive(ctx.Context, &params)
+			return client.SetActive(ctx.Context, &params, true)
 		},
 	}
 }
 
 func newSetInactiveV1AuthCmd() *cli.Command {
-	var params v1auth.SetInactiveParams
+	var params v1_auth.ActiveParams
 	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams, true)...)
 	return &cli.Command{
-		Name: "set-inactive",
-		Usage: "Change the status of an authorization to inactive",
-		Flags: flags,
+		Name:   "set-inactive",
+		Usage:  "Change the status of an authorization to inactive",
+		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
 			if err := params.AuthLookupParams.Validate(); err != nil {
@@ -175,30 +181,32 @@ func newSetInactiveV1AuthCmd() *cli.Command {
 			}
 
 			api := getAPI(ctx)
-			client := v1auth.Client{
-				CLI: getCLI(ctx),
+			client := v1_auth.Client{
+				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
+				UsersApi:          api.UsersApi,
+				OrganizationsApi:  api.OrganizationsApi,
 			}
-			return client.SetInactive(ctx.Context, &params)
+			return client.SetActive(ctx.Context, &params, false)
 		},
 	}
 }
 
 func newSetPswdV1AuthCmd() *cli.Command {
-	var params v1auth.SetPasswordParams
+	var params v1_auth.SetPasswordParams
 	flags := append(coreFlags(), commonTokenFlag())
 	flags = append(flags, getAuthLookupFlags(&params.AuthLookupParams, false)...)
 	flags = append(flags,
 		&cli.StringFlag{
-			Name: "password",
-			Usage: "Password to set on the authorization",
+			Name:        "password",
+			Usage:       "Password to set on the authorization",
 			Destination: &params.Password,
 		},
 	)
 	return &cli.Command{
-		Name: "set-password",
-		Usage: "Set a password for an existing authorization",
-		Flags: flags,
+		Name:   "set-password",
+		Usage:  "Set a password for an existing authorization",
+		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
 			if err := params.AuthLookupParams.Validate(); err != nil {
@@ -206,8 +214,8 @@ func newSetPswdV1AuthCmd() *cli.Command {
 			}
 
 			api := getAPI(ctx)
-			client := v1auth.Client{
-				CLI: getCLI(ctx),
+			client := v1_auth.Client{
+				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
 			}
 			return client.SetPassword(ctx.Context, &params)

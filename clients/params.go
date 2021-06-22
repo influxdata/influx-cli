@@ -2,6 +2,7 @@ package clients
 
 import (
 	"fmt"
+
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 )
 
@@ -21,7 +22,7 @@ type OrgBucketParams struct {
 }
 
 type AuthLookupParams struct {
-	ID influxid.ID
+	ID       influxid.ID
 	Username string
 	Required bool // Required when set to true determines whether validate expects either ID or Username to be set
 }
@@ -30,10 +31,13 @@ func (p AuthLookupParams) Validate() (err error) {
 	if p.Required {
 		if p.Username == "" && !p.ID.Valid() {
 			err = fmt.Errorf("id or username required")
-		}
-		if p.Username != "" && p.ID.Valid() {
+		} else if p.Username != "" && p.ID.Valid() {
 			err = fmt.Errorf("specify id or username, not both")
 		}
 	}
 	return
+}
+
+func (p AuthLookupParams) IsSet() bool {
+	return p.ID.Valid() || p.Username != ""
 }

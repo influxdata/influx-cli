@@ -283,13 +283,13 @@ func getAuthLookupFlags(params *clients.AuthLookupParams, required bool) []cli.F
 	params.Required = required
 	return []cli.Flag{
 		&cli.GenericFlag{
-			Name: "id",
+			Name:  "id",
 			Usage: "The ID of the authorization",
 			Value: &params.ID,
 		},
 		&cli.StringFlag{
-			Name: "username",
-			Usage: "The username of the authorization",
+			Name:        "username",
+			Usage:       "The username of the authorization",
 			Destination: &params.Username,
 		},
 	}
