@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
+	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 )
 
 type Client struct {
