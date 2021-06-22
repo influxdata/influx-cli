@@ -96,8 +96,8 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 				Action: bp.action,
 				Resource: api.PermissionResource{
 					Type:  "buckets",
-					Id:    *api.NewNullableString(&p),
-					OrgID: *api.NewNullableString(&orgID),
+					Id:    &p,
+					OrgID: &orgID,
 				},
 			}
 			permissions = append(permissions, newPerm)
@@ -365,12 +365,12 @@ func (c Client) printV1Tokens(params *v1PrintOpts) error {
 	var rows []map[string]interface{}
 	for _, u := range params.tokens {
 		row := map[string]interface{}{
-			"ID":          u.ID,
-			"Description": u.Description,
-			"Name / Token":       u.Token,
-			"User Name":   u.UserName,
-			"User ID":     u.UserID,
-			"Permissions": u.Permissions,
+			"ID":           u.ID,
+			"Description":  u.Description,
+			"Name / Token": u.Token,
+			"User Name":    u.UserName,
+			"User ID":      u.UserID,
+			"Permissions":  u.Permissions,
 		}
 		if params.deleted {
 			row["Deleted"] = true
