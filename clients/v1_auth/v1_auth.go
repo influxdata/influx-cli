@@ -69,7 +69,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 	password := params.Password
 	if password == "" && !params.NoPassword {
-		pass, err := c.StdIO.GetPassword("Please type your password", clients.MinPasswordLen)
+		pass, err := c.StdIO.GetPassword("Please type your password")
 		if err != nil {
 			return err
 		}
@@ -322,7 +322,7 @@ func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) erro
 
 	password := params.Password
 	if password == "" {
-		pass, err := c.StdIO.GetPassword("Please type new password", clients.MinPasswordLen)
+		pass, err := c.StdIO.GetPassword("Please type new password")
 		if err != nil {
 			return err
 		}
