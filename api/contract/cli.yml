@@ -77,6 +77,10 @@ paths:
     $ref: "./overrides/paths/dashboards.yml"
   /templates/export:
     $ref: "./overrides/paths/templates_export.yml"
+  /dbrps:
+    $ref: "./openapi/src/common/paths/dbrps.yml"
+  "/dbrps/{dbrpID}":
+    $ref: "./openapi/src/common/paths/dbrps_dbrpID.yml"
 components:
   parameters:
     TraceSpan:
@@ -271,3 +275,13 @@ components:
       $ref: "./openapi/src/common/schemas/SecretKeys.yml"
     Secrets:
       $ref: "./openapi/src/common/schemas/Secrets.yml"
+    DBRP:
+      $ref: "./openapi/src/common/schemas/DBRP.yml"
+    DBRPs:
+      $ref: "./openapi/src/common/schemas/DBRPs.yml"
+    DBRPCreate:
+      $ref: "./openapi/src/common/schemas/DBRPCreate.yml"
+    DBRPUpdate:
+      $ref: "./openapi/src/common/schemas/DBRPUpdate.yml"
+    DBRPGet:
+      $ref: "./openapi/src/common/schemas/DBRPGet.yml"
