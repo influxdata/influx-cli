@@ -8,6 +8,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
+	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 )
 
 type Client struct {
@@ -49,7 +50,7 @@ func getOrgID(ctx context.Context, params *clients.OrgParams, c clients.CLI, org
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
-	if params.Password != "" && len(params.Password) < clients.MinPasswordLen {
+	if params.Password != "" && len(params.Password) < stdio.MinPasswordLen {
 		return clients.ErrPasswordIsTooShort
 	}
 
@@ -159,31 +160,16 @@ func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) erro
 		id = (*users.Users)[0].GetId()
 	}
 
-	var password string
-	for {
-		pass1, err := c.StdIO.GetSecret(fmt.Sprintf("Please type new password for %q", displayName), clients.MinPasswordLen)
-		if err != nil {
-			return err
-		}
-		// Don't bother with the length check the 2nd time, since we check equality to pass1.
-		pass2, err := c.StdIO.GetSecret("Please type new password again", 0)
-		if err != nil {
-			return err
-		}
-		if pass1 == pass2 {
-			password = pass1
-			break
-		}
-		if err := c.StdIO.Error("Passwords do not match"); err != nil {
-			return err
-		}
+	password, err := c.StdIO.GetPassword(fmt.Sprintf("Please type new password for %q", displayName))
+	if err != nil {
+		return err
 	}
 
 	body := api.PasswordResetBody{Password: password}
 	if err := c.PostUsersIDPassword(ctx, id).PasswordResetBody(body).Execute(); err != nil {
 		return fmt.Errorf("failed to set password for user %q: %w", params.Id.String(), err)
 	}
-	_, err := c.StdIO.Write([]byte(fmt.Sprintf("Successfully updated password for user %q\n", displayName)))
+	_, err = c.StdIO.Write([]byte(fmt.Sprintf("Successfully updated password for user %q\n", displayName)))
 	return err
 }
 

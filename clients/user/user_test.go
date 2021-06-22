@@ -573,7 +573,7 @@ func TestClient_SetPassword(t *testing.T) {
 			stdio := mock.NewMockStdIO(ctrl)
 			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(stdout.Write).AnyTimes()
 			if !tc.noExpectAsk {
-				stdio.EXPECT().GetSecret(gomock.Any(), gomock.Any()).Return("mypassword", nil).Times(2)
+				stdio.EXPECT().GetPassword(gomock.Any()).Return("mypassword", nil)
 			}
 
 			cli := user.Client{CLI: clients.CLI{StdIO: stdio}, UsersApi: userApi}

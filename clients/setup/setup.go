@@ -13,6 +13,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients/bucket"
 	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/internal/duration"
+	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 )
 
 var (
@@ -121,7 +122,7 @@ func (c Client) validateNoNameCollision(configName string) error {
 // Unless the 'force' parameter is set, the user will be prompted to enter any missing information
 // and to confirm the final request parameters.
 func (c Client) onboardingRequest(params *Params) (req api.OnboardingRequest, err error) {
-	if (params.Force || params.Password != "") && len(params.Password) < clients.MinPasswordLen {
+	if (params.Force || params.Password != "") && len(params.Password) < stdio.MinPasswordLen {
 		return req, clients.ErrPasswordIsTooShort
 	}
 
@@ -164,24 +165,11 @@ func (c Client) onboardingRequest(params *Params) (req api.OnboardingRequest, er
 		}
 	}
 	if params.Password == "" {
-		for {
-			pass1, err := c.StdIO.GetSecret("Please type your password", clients.MinPasswordLen)
-			if err != nil {
-				return req, err
-			}
-			// Don't bother with the length check the 2nd time, since we check equality to pass1.
-			pass2, err := c.StdIO.GetSecret("Please type your password again", 0)
-			if err != nil {
-				return req, err
-			}
-			if pass1 == pass2 {
-				req.Password = &pass1
-				break
-			}
-			if err := c.StdIO.Error("Passwords do not match"); err != nil {
-				return req, err
-			}
+		pass, err := c.StdIO.GetPassword("Please type your password")
+		if err != nil {
+			return req, err
 		}
+		req.Password = &pass
 	}
 	if params.Org == "" {
 		req.Org, err = c.StdIO.GetStringInput("Please type your primary organization name", "")

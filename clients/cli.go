@@ -8,8 +8,6 @@ import (
 	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 )
 
-const MinPasswordLen = 8
-
 // CLI is a container for common functionality used to execute commands.
 type CLI struct {
 	StdIO stdio.StdIO
