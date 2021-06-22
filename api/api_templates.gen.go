@@ -12,6 +12,7 @@ package api
 
 import (
 	_context "context"
+	_fmt "fmt"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -36,15 +37,33 @@ type TemplatesApi interface {
 	 * @return []TemplateEntry
 	 */
 	ExportTemplateExecute(r ApiExportTemplateRequest) ([]TemplateEntry, error)
+
+	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	OnlyOSS() TemplatesApi
+
+	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	OnlyCloud() TemplatesApi
 }
 
 // TemplatesApiService TemplatesApi service
 type TemplatesApiService service
 
+func (a *TemplatesApiService) OnlyOSS() TemplatesApi {
+	a.isOnlyOSS = true
+	return a
+}
+
+func (a *TemplatesApiService) OnlyCloud() TemplatesApi {
+	a.isOnlyCloud = true
+	return a
+}
+
 type ApiExportTemplateRequest struct {
 	ctx            _context.Context
 	ApiService     TemplatesApi
 	templateExport *TemplateExport
+	isOnlyOSS      bool
+	isOnlyCloud    bool
 }
 
 func (r ApiExportTemplateRequest) TemplateExport(templateExport TemplateExport) ApiExportTemplateRequest {
@@ -57,6 +76,16 @@ func (r ApiExportTemplateRequest) GetTemplateExport() *TemplateExport {
 
 func (r ApiExportTemplateRequest) Execute() ([]TemplateEntry, error) {
 	return r.ApiService.ExportTemplateExecute(r)
+}
+
+func (r ApiExportTemplateRequest) OnlyOSS() ApiExportTemplateRequest {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r ApiExportTemplateRequest) OnlyCloud() ApiExportTemplateRequest {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -125,46 +154,53 @@ func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) 
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}

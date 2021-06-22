@@ -12,6 +12,7 @@ package api
 
 import (
 	_context "context"
+	_fmt "fmt"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -91,16 +92,34 @@ type TelegrafsApi interface {
 	 * @return Telegraf
 	 */
 	PutTelegrafsIDExecute(r ApiPutTelegrafsIDRequest) (Telegraf, error)
+
+	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	OnlyOSS() TelegrafsApi
+
+	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	OnlyCloud() TelegrafsApi
 }
 
 // TelegrafsApiService TelegrafsApi service
 type TelegrafsApiService service
+
+func (a *TelegrafsApiService) OnlyOSS() TelegrafsApi {
+	a.isOnlyOSS = true
+	return a
+}
+
+func (a *TelegrafsApiService) OnlyCloud() TelegrafsApi {
+	a.isOnlyCloud = true
+	return a
+}
 
 type ApiDeleteTelegrafsIDRequest struct {
 	ctx          _context.Context
 	ApiService   TelegrafsApi
 	telegrafID   string
 	zapTraceSpan *string
+	isOnlyOSS    bool
+	isOnlyCloud  bool
 }
 
 func (r ApiDeleteTelegrafsIDRequest) TelegrafID(telegrafID string) ApiDeleteTelegrafsIDRequest {
@@ -121,6 +140,16 @@ func (r ApiDeleteTelegrafsIDRequest) GetZapTraceSpan() *string {
 
 func (r ApiDeleteTelegrafsIDRequest) Execute() error {
 	return r.ApiService.DeleteTelegrafsIDExecute(r)
+}
+
+func (r ApiDeleteTelegrafsIDRequest) OnlyOSS() ApiDeleteTelegrafsIDRequest {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r ApiDeleteTelegrafsIDRequest) OnlyCloud() ApiDeleteTelegrafsIDRequest {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -191,28 +220,35 @@ func (a *TelegrafsApiService) DeleteTelegrafsIDExecute(r ApiDeleteTelegrafsIDReq
 		return err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return err
+			return _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return err
+			return _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
-		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 
@@ -224,6 +260,8 @@ type ApiGetTelegrafsRequest struct {
 	ApiService   TelegrafsApi
 	zapTraceSpan *string
 	orgID        *string
+	isOnlyOSS    bool
+	isOnlyCloud  bool
 }
 
 func (r ApiGetTelegrafsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetTelegrafsRequest {
@@ -244,6 +282,16 @@ func (r ApiGetTelegrafsRequest) GetOrgID() *string {
 
 func (r ApiGetTelegrafsRequest) Execute() (Telegrafs, error) {
 	return r.ApiService.GetTelegrafsExecute(r)
+}
+
+func (r ApiGetTelegrafsRequest) OnlyOSS() ApiGetTelegrafsRequest {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r ApiGetTelegrafsRequest) OnlyCloud() ApiGetTelegrafsRequest {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -316,46 +364,53 @@ func (a *TelegrafsApiService) GetTelegrafsExecute(r ApiGetTelegrafsRequest) (Tel
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -369,6 +424,8 @@ type ApiGetTelegrafsIDRequest struct {
 	telegrafID   string
 	zapTraceSpan *string
 	accept       *string
+	isOnlyOSS    bool
+	isOnlyCloud  bool
 }
 
 func (r ApiGetTelegrafsIDRequest) TelegrafID(telegrafID string) ApiGetTelegrafsIDRequest {
@@ -397,6 +454,16 @@ func (r ApiGetTelegrafsIDRequest) GetAccept() *string {
 
 func (r ApiGetTelegrafsIDRequest) Execute() (Telegraf, error) {
 	return r.ApiService.GetTelegrafsIDExecute(r)
+}
+
+func (r ApiGetTelegrafsIDRequest) OnlyOSS() ApiGetTelegrafsIDRequest {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r ApiGetTelegrafsIDRequest) OnlyCloud() ApiGetTelegrafsIDRequest {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -472,46 +539,53 @@ func (a *TelegrafsApiService) GetTelegrafsIDExecute(r ApiGetTelegrafsIDRequest) 
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -524,6 +598,8 @@ type ApiPostTelegrafsRequest struct {
 	ApiService      TelegrafsApi
 	telegrafRequest *TelegrafRequest
 	zapTraceSpan    *string
+	isOnlyOSS       bool
+	isOnlyCloud     bool
 }
 
 func (r ApiPostTelegrafsRequest) TelegrafRequest(telegrafRequest TelegrafRequest) ApiPostTelegrafsRequest {
@@ -544,6 +620,16 @@ func (r ApiPostTelegrafsRequest) GetZapTraceSpan() *string {
 
 func (r ApiPostTelegrafsRequest) Execute() (Telegraf, error) {
 	return r.ApiService.PostTelegrafsExecute(r)
+}
+
+func (r ApiPostTelegrafsRequest) OnlyOSS() ApiPostTelegrafsRequest {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r ApiPostTelegrafsRequest) OnlyCloud() ApiPostTelegrafsRequest {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -618,46 +704,53 @@ func (a *TelegrafsApiService) PostTelegrafsExecute(r ApiPostTelegrafsRequest) (T
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -671,6 +764,8 @@ type ApiPutTelegrafsIDRequest struct {
 	telegrafID      string
 	telegrafRequest *TelegrafRequest
 	zapTraceSpan    *string
+	isOnlyOSS       bool
+	isOnlyCloud     bool
 }
 
 func (r ApiPutTelegrafsIDRequest) TelegrafID(telegrafID string) ApiPutTelegrafsIDRequest {
@@ -699,6 +794,16 @@ func (r ApiPutTelegrafsIDRequest) GetZapTraceSpan() *string {
 
 func (r ApiPutTelegrafsIDRequest) Execute() (Telegraf, error) {
 	return r.ApiService.PutTelegrafsIDExecute(r)
+}
+
+func (r ApiPutTelegrafsIDRequest) OnlyOSS() ApiPutTelegrafsIDRequest {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r ApiPutTelegrafsIDRequest) OnlyCloud() ApiPutTelegrafsIDRequest {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -776,46 +881,53 @@ func (a *TelegrafsApiService) PutTelegrafsIDExecute(r ApiPutTelegrafsIDRequest) 
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}

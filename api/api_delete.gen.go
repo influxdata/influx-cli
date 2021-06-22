@@ -12,6 +12,7 @@ package api
 
 import (
 	_context "context"
+	_fmt "fmt"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -35,10 +36,26 @@ type DeleteApi interface {
 	 * PostDeleteExecute executes the request
 	 */
 	PostDeleteExecute(r ApiPostDeleteRequest) error
+
+	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	OnlyOSS() DeleteApi
+
+	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	OnlyCloud() DeleteApi
 }
 
 // DeleteApiService DeleteApi service
 type DeleteApiService service
+
+func (a *DeleteApiService) OnlyOSS() DeleteApi {
+	a.isOnlyOSS = true
+	return a
+}
+
+func (a *DeleteApiService) OnlyCloud() DeleteApi {
+	a.isOnlyCloud = true
+	return a
+}
 
 type ApiPostDeleteRequest struct {
 	ctx                    _context.Context
@@ -49,6 +66,8 @@ type ApiPostDeleteRequest struct {
 	bucket                 *string
 	orgID                  *string
 	bucketID               *string
+	isOnlyOSS              bool
+	isOnlyCloud            bool
 }
 
 func (r ApiPostDeleteRequest) DeletePredicateRequest(deletePredicateRequest DeletePredicateRequest) ApiPostDeleteRequest {
@@ -101,6 +120,16 @@ func (r ApiPostDeleteRequest) GetBucketID() *string {
 
 func (r ApiPostDeleteRequest) Execute() error {
 	return r.ApiService.PostDeleteExecute(r)
+}
+
+func (r ApiPostDeleteRequest) OnlyOSS() ApiPostDeleteRequest {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r ApiPostDeleteRequest) OnlyCloud() ApiPostDeleteRequest {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -185,58 +214,65 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 		return err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return err
+			return _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return err
+			return _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = err.Error()
+				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return newErr
 			}
-			newErr.model = &v
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = err.Error()
+				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return newErr
 			}
-			newErr.model = &v
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = err.Error()
+				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return newErr
 			}
-			newErr.model = &v
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
-		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 

@@ -9,6 +9,7 @@ import (
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
+	_fmt "fmt"
 {{#imports}}	"{{import}}"
 {{/imports}}
 )
@@ -39,11 +40,28 @@ type {{classname}} interface {
 	 */
 	{{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error)
 	{{/operation}}
+
+	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	OnlyOSS() {{classname}}
+
+	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	OnlyCloud() {{classname}}
 }
 {{/generateInterfaces}}
 
 // {{classname}}Service {{classname}} service
 type {{classname}}Service service
+
+func (a *{{classname}}Service) OnlyOSS() {{classname}} {
+	a.isOnlyOSS = true
+	return a
+}
+
+func (a *{{classname}}Service) OnlyCloud() {{classname}} {
+	a.isOnlyCloud = true
+	return a
+}
+
 {{#operation}}
 
 type {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request struct {
@@ -55,6 +73,8 @@ type {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request s
 {{#allParams}}
 	{{paramName}} {{#isByteArray}}[]byte{{/isByteArray}}{{#isBinary}}_io.ReadCloser{{/isBinary}}{{^isByteArray}}{{^isBinary}}{{^isPathParam}}*{{/isPathParam}}{{{dataType}}}{{/isBinary}}{{/isByteArray}}
 {{/allParams}}
+	isOnlyOSS bool
+	isOnlyCloud bool
 }
 {{#allParams}}
 func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) {{vendorExtensions.x-export-param-name}}({{paramName}} {{#isByteArray}}[]byte{{/isByteArray}}{{#isBinary}}_io.ReadCloser{{/isBinary}}{{^isByteArray}}{{^isBinary}}{{{dataType}}}{{/isBinary}}{{/isByteArray}}) {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request {
@@ -69,6 +89,16 @@ func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Reques
 
 func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) Execute() ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error) {
 	return r.ApiService.{{nickname}}Execute(r)
+}
+
+func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) OnlyOSS() {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) OnlyCloud() {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -334,20 +364,27 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 		return {{#returnType}}localVarReturnValue, {{/returnType}}err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return {{#returnType}}localVarReturnValue, {{/returnType}}err
+			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return {{#returnType}}localVarReturnValue, {{/returnType}}err
+			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		{{#responses}}
 		{{#dataType}}
@@ -359,10 +396,10 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 			var v {{{dataType}}}
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = err.Error()
+				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 			}
-			newErr.model = &v
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			{{^-last}}
 			return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 			{{/-last}}
@@ -384,18 +421,18 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return {{#returnType}}localVarReturnValue, {{/returnType}}err
+		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}err
+		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 	}

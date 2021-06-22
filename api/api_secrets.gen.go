@@ -12,6 +12,7 @@ package api
 
 import (
 	_context "context"
+	_fmt "fmt"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -64,16 +65,34 @@ type SecretsApi interface {
 	 * PostOrgsIDSecretsExecute executes the request
 	 */
 	PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsRequest) error
+
+	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	OnlyOSS() SecretsApi
+
+	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	OnlyCloud() SecretsApi
 }
 
 // SecretsApiService SecretsApi service
 type SecretsApiService service
+
+func (a *SecretsApiService) OnlyOSS() SecretsApi {
+	a.isOnlyOSS = true
+	return a
+}
+
+func (a *SecretsApiService) OnlyCloud() SecretsApi {
+	a.isOnlyCloud = true
+	return a
+}
 
 type ApiGetOrgsIDSecretsRequest struct {
 	ctx          _context.Context
 	ApiService   SecretsApi
 	orgID        string
 	zapTraceSpan *string
+	isOnlyOSS    bool
+	isOnlyCloud  bool
 }
 
 func (r ApiGetOrgsIDSecretsRequest) OrgID(orgID string) ApiGetOrgsIDSecretsRequest {
@@ -94,6 +113,16 @@ func (r ApiGetOrgsIDSecretsRequest) GetZapTraceSpan() *string {
 
 func (r ApiGetOrgsIDSecretsRequest) Execute() (SecretKeysResponse, error) {
 	return r.ApiService.GetOrgsIDSecretsExecute(r)
+}
+
+func (r ApiGetOrgsIDSecretsRequest) OnlyOSS() ApiGetOrgsIDSecretsRequest {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r ApiGetOrgsIDSecretsRequest) OnlyCloud() ApiGetOrgsIDSecretsRequest {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -166,46 +195,53 @@ func (a *SecretsApiService) GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -219,6 +255,8 @@ type ApiPatchOrgsIDSecretsRequest struct {
 	orgID        string
 	requestBody  *map[string]string
 	zapTraceSpan *string
+	isOnlyOSS    bool
+	isOnlyCloud  bool
 }
 
 func (r ApiPatchOrgsIDSecretsRequest) OrgID(orgID string) ApiPatchOrgsIDSecretsRequest {
@@ -247,6 +285,16 @@ func (r ApiPatchOrgsIDSecretsRequest) GetZapTraceSpan() *string {
 
 func (r ApiPatchOrgsIDSecretsRequest) Execute() error {
 	return r.ApiService.PatchOrgsIDSecretsExecute(r)
+}
+
+func (r ApiPatchOrgsIDSecretsRequest) OnlyOSS() ApiPatchOrgsIDSecretsRequest {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r ApiPatchOrgsIDSecretsRequest) OnlyCloud() ApiPatchOrgsIDSecretsRequest {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -322,28 +370,35 @@ func (a *SecretsApiService) PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsReq
 		return err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return err
+			return _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return err
+			return _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
-		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 
@@ -356,6 +411,8 @@ type ApiPostOrgsIDSecretsRequest struct {
 	orgID        string
 	secretKeys   *SecretKeys
 	zapTraceSpan *string
+	isOnlyOSS    bool
+	isOnlyCloud  bool
 }
 
 func (r ApiPostOrgsIDSecretsRequest) OrgID(orgID string) ApiPostOrgsIDSecretsRequest {
@@ -384,6 +441,16 @@ func (r ApiPostOrgsIDSecretsRequest) GetZapTraceSpan() *string {
 
 func (r ApiPostOrgsIDSecretsRequest) Execute() error {
 	return r.ApiService.PostOrgsIDSecretsExecute(r)
+}
+
+func (r ApiPostOrgsIDSecretsRequest) OnlyOSS() ApiPostOrgsIDSecretsRequest {
+	r.isOnlyOSS = true
+	return r
+}
+
+func (r ApiPostOrgsIDSecretsRequest) OnlyCloud() ApiPostOrgsIDSecretsRequest {
+	r.isOnlyCloud = true
+	return r
 }
 
 /*
@@ -459,28 +526,35 @@ func (a *SecretsApiService) PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsReque
 		return err
 	}
 
+	var errorPrefix string
+	if r.isOnlyOSS || a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if r.isOnlyCloud || a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return err
+			return _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return err
+			return _fmt.Errorf("%s%v", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
-		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 

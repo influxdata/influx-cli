@@ -121,6 +121,34 @@ func (mr *MockDBRPsApiMockRecorder) GetDBRPsIDExecute(arg0 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDBRPsIDExecute", reflect.TypeOf((*MockDBRPsApi)(nil).GetDBRPsIDExecute), arg0)
 }
 
+// OnlyCloud mocks base method.
+func (m *MockDBRPsApi) OnlyCloud() api.DBRPsApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyCloud")
+	ret0, _ := ret[0].(api.DBRPsApi)
+	return ret0
+}
+
+// OnlyCloud indicates an expected call of OnlyCloud.
+func (mr *MockDBRPsApiMockRecorder) OnlyCloud() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyCloud", reflect.TypeOf((*MockDBRPsApi)(nil).OnlyCloud))
+}
+
+// OnlyOSS mocks base method.
+func (m *MockDBRPsApi) OnlyOSS() api.DBRPsApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyOSS")
+	ret0, _ := ret[0].(api.DBRPsApi)
+	return ret0
+}
+
+// OnlyOSS indicates an expected call of OnlyOSS.
+func (mr *MockDBRPsApiMockRecorder) OnlyOSS() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyOSS", reflect.TypeOf((*MockDBRPsApi)(nil).OnlyOSS))
+}
+
 // PatchDBRPID mocks base method.
 func (m *MockDBRPsApi) PatchDBRPID(arg0 context.Context, arg1 string) api.ApiPatchDBRPIDRequest {
 	m.ctrl.T.Helper()
