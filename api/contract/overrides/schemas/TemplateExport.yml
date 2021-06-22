@@ -19,7 +19,7 @@ properties:
             byResourceKind:
               type: array
               items:
-                $ref: "../../openapi/src/common/schemas/TemplateKind.yml"
+                type: string
   resources:
     type: array
     items:
@@ -28,7 +28,7 @@ properties:
         id:
           type: string
         kind:
-          $ref: "../../openapi/src/common/schemas/TemplateKind.yml"
+          type: string
         name:
           type: string
       required: [kind]

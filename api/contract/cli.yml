@@ -262,11 +262,9 @@ components:
     TemplateExport:
       $ref: "./overrides/schemas/TemplateExport.yml"
     Template:
-      $ref: "./openapi/src/common/schemas/Template.yml"
-    TemplateKind:
-      $ref: "./openapi/src/common/schemas/TemplateKind.yml"
+      $ref: "./overrides/schemas/Template.yml"
     TemplateEntry:
-      $ref: "./openapi/src/common/schemas/TemplateEntry.yml"
+      $ref: "./overrides/schemas/TemplateEntry.yml"
     SecretKeysResponse:
       $ref: "./openapi/src/common/schemas/SecretKeysResponse.yml"
     SecretKeys:

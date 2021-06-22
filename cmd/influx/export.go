@@ -17,7 +17,7 @@ func newExportCmd() *cli.Command {
 	var params struct {
 		out            string
 		stackId        string
-		resourceType   export.ResourceType
+		resourceType   string
 		bucketIds      string
 		bucketNames    string
 		checkIds       string
@@ -80,10 +80,10 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 				Usage:       "ID for stack to include in export",
 				Destination: &params.stackId,
 			},
-			&cli.GenericFlag{
-				Name:  "resource-type",
-				Usage: "If specified, strings on stdin/positional args will be treated as IDs of the given type",
-				Value: &params.resourceType,
+			&cli.StringFlag{
+				Name:        "resource-type",
+				Usage:       "If specified, strings on stdin/positional args will be treated as IDs of the given type",
+				Destination: &params.resourceType,
 			},
 			&cli.StringFlag{
 				Name:        "buckets",
@@ -180,25 +180,29 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 		Before:    middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
 			parsedParams := export.Params{
-				StackId:        params.stackId,
-				BucketIds:      splitNonEmpty(params.bucketIds),
-				BucketNames:    splitNonEmpty(params.bucketNames),
-				CheckIds:       splitNonEmpty(params.checkIds),
-				CheckNames:     splitNonEmpty(params.checkNames),
-				DashboardIds:   splitNonEmpty(params.dashboardIds),
-				DashboardNames: splitNonEmpty(params.dashboardNames),
-				EndpointIds:    splitNonEmpty(params.endpointIds),
-				EndpointNames:  splitNonEmpty(params.endpointNames),
-				LabelIds:       splitNonEmpty(params.labelIds),
-				LabelNames:     splitNonEmpty(params.labelNames),
-				RuleIds:        splitNonEmpty(params.ruleIds),
-				RuleNames:      splitNonEmpty(params.ruleNames),
-				TaskIds:        splitNonEmpty(params.taskIds),
-				TaskNames:      splitNonEmpty(params.taskNames),
-				TelegrafIds:    splitNonEmpty(params.telegrafIds),
-				TelegrafNames:  splitNonEmpty(params.telegrafNames),
-				VariableIds:    splitNonEmpty(params.variableIds),
-				VariableNames:  splitNonEmpty(params.variableNames),
+				StackId: params.stackId,
+				IdsPerType: map[string][]string{
+					"Bucket":               splitNonEmpty(params.bucketIds),
+					"Check":                splitNonEmpty(params.checkIds),
+					"Dashboard":            splitNonEmpty(params.dashboardIds),
+					"NotificationEndpoint": splitNonEmpty(params.endpointIds),
+					"Label":                splitNonEmpty(params.labelIds),
+					"NotificationRule":     splitNonEmpty(params.ruleIds),
+					"Task":                 splitNonEmpty(params.taskIds),
+					"Telegraf":             splitNonEmpty(params.telegrafIds),
+					"Variable":             splitNonEmpty(params.variableIds),
+				},
+				NamesPerType: map[string][]string{
+					"Bucket":               splitNonEmpty(params.bucketNames),
+					"Check":                splitNonEmpty(params.checkNames),
+					"Dashboard":            splitNonEmpty(params.dashboardNames),
+					"NotificationEndpoint": splitNonEmpty(params.endpointNames),
+					"Label":                splitNonEmpty(params.labelNames),
+					"NotificationRule":     splitNonEmpty(params.ruleNames),
+					"Task":                 splitNonEmpty(params.taskNames),
+					"Telegraf":             splitNonEmpty(params.telegrafNames),
+					"Variable":             splitNonEmpty(params.variableNames),
+				},
 			}
 
 			outParams, closer, err := parseOutParams(params.out)
@@ -210,7 +214,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 			}
 			parsedParams.OutParams = outParams
 
-			if params.resourceType != export.TypeUnset {
+			if params.resourceType != "" {
 				ids := ctx.Args().Slice()
 
 				// Read any IDs from stdin.
@@ -223,43 +227,15 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 					ids = append(ids, strings.Fields(string(inBytes))...)
 				}
 
-				switch params.resourceType {
-				case export.TypeBucket:
-					parsedParams.BucketIds = append(parsedParams.BucketIds, ids...)
-				case export.TypeCheck:
-					parsedParams.CheckIds = append(parsedParams.CheckIds, ids...)
-				case export.TypeDashboard:
-					parsedParams.DashboardIds = append(parsedParams.DashboardIds, ids...)
-				case export.TypeLabel:
-					parsedParams.LabelIds = append(parsedParams.LabelIds, ids...)
-				case export.TypeNotificationEndpoint:
-					parsedParams.EndpointIds = append(parsedParams.EndpointIds, ids...)
-				case export.TypeNotificationRule:
-					parsedParams.RuleIds = append(parsedParams.RuleIds, ids...)
-				case export.TypeTask:
-					parsedParams.TaskIds = append(parsedParams.TaskIds, ids...)
-				case export.TypeTelegraf:
-					parsedParams.TelegrafIds = append(parsedParams.TelegrafIds, ids...)
-				case export.TypeVariable:
-					parsedParams.VariableIds = append(parsedParams.VariableIds, ids...)
-
-				// NOTE: The API doesn't support filtering by these resource subtypes,
-				// and instead converts them to the parent type. For example,
-				// `--resource-type notificationEndpointHTTP` gets translated to a filter
-				// on all notification endpoints on the server-side. I think this was
-				// intentional since the 2.0.x CLI didn't expose flags to filter on subtypes,
-				// but a bug/oversight in its parsing still allowed the subtypes through
-				// when passing IDs over stdin.
-				// Instead of allowing the type-filter to be silently converted by the server,
-				// we catch the previously-allowed subtypes here and return a (hopefully) useful
-				// error suggesting the correct flag to use.
-				case export.TypeCheckDeadman, export.TypeCheckThreshold:
-					return fmt.Errorf("filtering on resource-type %q is not supported by the API. Use resource-type %q instead", params.resourceType, export.TypeCheck)
-				case export.TypeNotificationEndpointHTTP, export.TypeNotificationEndpointPagerDuty, export.TypeNotificationEndpointSlack:
-					return fmt.Errorf("filtering on resource-type %q is not supported by the API. Use resource-type %q instead", params.resourceType, export.TypeNotificationEndpoint)
-
-				default:
+				if _, ok := parsedParams.IdsPerType[params.resourceType]; !ok {
+					parsedParams.IdsPerType[params.resourceType] = []string{}
 				}
+				parsedParams.IdsPerType[params.resourceType] = append(parsedParams.IdsPerType[params.resourceType], ids...)
+
+				if _, ok := parsedParams.NamesPerType[params.resourceType]; !ok {
+					parsedParams.NamesPerType[params.resourceType] = []string{}
+				}
+				parsedParams.NamesPerType[params.resourceType] = append(parsedParams.NamesPerType[params.resourceType], ids...)
 			} else if ctx.NArg() > 0 {
 				return fmt.Errorf("must specify --resource-type when passing IDs as args")
 			}
@@ -358,28 +334,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 				case "labelName":
 					parsedParams.LabelFilters = append(parsedParams.LabelFilters, val)
 				case "kind", "resourceKind":
-					var resType export.ResourceType
-					if err := resType.Set(val); err != nil {
-						return err
-					}
-					switch resType {
-					// NOTE: The API doesn't support filtering by these resource subtypes,
-					// and instead converts them to the parent type. For example,
-					// `--resource-type notificationEndpointHTTP` gets translated to a filter
-					// on all notification endpoints on the server-side. I think this was
-					// intentional since the 2.0.x CLI didn't expose flags to filter on subtypes,
-					// but a bug/oversight in its parsing still allowed the subtypes through
-					// when passing IDs over stdin.
-					// Instead of allowing the type-filter to be silently converted by the server,
-					// we catch the previously-allowed subtypes here and return a (hopefully) useful
-					// error suggesting the correct flag to use.
-					case export.TypeCheckDeadman, export.TypeCheckThreshold:
-						return fmt.Errorf("filtering on resourceKind=%s is not supported by the API. Use resourceKind=%s instead", resType, export.TypeCheck)
-					case export.TypeNotificationEndpointSlack, export.TypeNotificationEndpointPagerDuty, export.TypeNotificationEndpointHTTP:
-						return fmt.Errorf("filtering on resourceKind=%s is not supported by the API. Use resourceKind=%s instead", resType, export.TypeNotificationEndpoint)
-					default:
-					}
-					parsedParams.KindFilters = append(parsedParams.KindFilters, resType)
+					parsedParams.KindFilters = append(parsedParams.KindFilters, val)
 				default:
 					return fmt.Errorf("invalid filter provided %q; filter must be 1 in [labelName, resourceKind]", filter)
 				}
