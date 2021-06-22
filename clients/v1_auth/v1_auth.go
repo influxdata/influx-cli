@@ -103,7 +103,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		}
 	}
 
-	authReq := &api.Authorization{
+	authReq := &api.AuthorizationPostRequest{
 		Description: &params.Desc,
 		OrgID:       orgID,
 		Permissions: permissions,
