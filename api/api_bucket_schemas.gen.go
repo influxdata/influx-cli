@@ -84,10 +84,14 @@ type BucketSchemasApi interface {
 	 */
 	UpdateMeasurementSchemaExecute(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() BucketSchemasApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() BucketSchemasApi
 }
 
@@ -151,11 +155,17 @@ func (r ApiCreateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) 
 	return r.ApiService.CreateMeasurementSchemaExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiCreateMeasurementSchemaRequest) OnlyOSS() ApiCreateMeasurementSchemaRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiCreateMeasurementSchemaRequest) OnlyCloud() ApiCreateMeasurementSchemaRequest {
 	r.isOnlyCloud = true
 	return r
@@ -339,11 +349,17 @@ func (r ApiGetMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
 	return r.ApiService.GetMeasurementSchemaExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetMeasurementSchemaRequest) OnlyOSS() ApiGetMeasurementSchemaRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetMeasurementSchemaRequest) OnlyCloud() ApiGetMeasurementSchemaRequest {
 	r.isOnlyCloud = true
 	return r
@@ -519,11 +535,17 @@ func (r ApiGetMeasurementSchemasRequest) Execute() (MeasurementSchemaList, error
 	return r.ApiService.GetMeasurementSchemasExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetMeasurementSchemasRequest) OnlyOSS() ApiGetMeasurementSchemasRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetMeasurementSchemasRequest) OnlyCloud() ApiGetMeasurementSchemasRequest {
 	r.isOnlyCloud = true
 	return r
@@ -717,11 +739,17 @@ func (r ApiUpdateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) 
 	return r.ApiService.UpdateMeasurementSchemaExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiUpdateMeasurementSchemaRequest) OnlyOSS() ApiUpdateMeasurementSchemaRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiUpdateMeasurementSchemaRequest) OnlyCloud() ApiUpdateMeasurementSchemaRequest {
 	r.isOnlyCloud = true
 	return r

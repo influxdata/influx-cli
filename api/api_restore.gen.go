@@ -77,10 +77,14 @@ type RestoreApi interface {
 	 */
 	PostRestoreShardIdExecute(r ApiPostRestoreShardIdRequest) error
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() RestoreApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() RestoreApi
 }
 
@@ -126,11 +130,17 @@ func (r ApiPostRestoreBucketMetadataRequest) Execute() (RestoredBucketMappings, 
 	return r.ApiService.PostRestoreBucketMetadataExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostRestoreBucketMetadataRequest) OnlyOSS() ApiPostRestoreBucketMetadataRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostRestoreBucketMetadataRequest) OnlyCloud() ApiPostRestoreBucketMetadataRequest {
 	r.isOnlyCloud = true
 	return r
@@ -309,11 +319,17 @@ func (r ApiPostRestoreKVRequest) Execute() error {
 	return r.ApiService.PostRestoreKVExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostRestoreKVRequest) OnlyOSS() ApiPostRestoreKVRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostRestoreKVRequest) OnlyCloud() ApiPostRestoreKVRequest {
 	r.isOnlyCloud = true
 	return r
@@ -477,11 +493,17 @@ func (r ApiPostRestoreSQLRequest) Execute() error {
 	return r.ApiService.PostRestoreSQLExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostRestoreSQLRequest) OnlyOSS() ApiPostRestoreSQLRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostRestoreSQLRequest) OnlyCloud() ApiPostRestoreSQLRequest {
 	r.isOnlyCloud = true
 	return r
@@ -654,11 +676,17 @@ func (r ApiPostRestoreShardIdRequest) Execute() error {
 	return r.ApiService.PostRestoreShardIdExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostRestoreShardIdRequest) OnlyOSS() ApiPostRestoreShardIdRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostRestoreShardIdRequest) OnlyCloud() ApiPostRestoreShardIdRequest {
 	r.isOnlyCloud = true
 	return r

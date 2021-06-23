@@ -41,10 +41,14 @@ type {{classname}} interface {
 	{{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error)
 	{{/operation}}
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() {{classname}}
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() {{classname}}
 }
 {{/generateInterfaces}}
@@ -91,11 +95,17 @@ func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Reques
 	return r.ApiService.{{nickname}}Execute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) OnlyOSS() {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) OnlyCloud() {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request {
 	r.isOnlyCloud = true
 	return r

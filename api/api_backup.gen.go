@@ -54,10 +54,14 @@ type BackupApi interface {
 	 */
 	GetBackupShardIdExecute(r ApiGetBackupShardIdRequest) (*_nethttp.Response, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() BackupApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() BackupApi
 }
 
@@ -103,11 +107,17 @@ func (r ApiGetBackupMetadataRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.GetBackupMetadataExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetBackupMetadataRequest) OnlyOSS() ApiGetBackupMetadataRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetBackupMetadataRequest) OnlyCloud() ApiGetBackupMetadataRequest {
 	r.isOnlyCloud = true
 	return r
@@ -267,11 +277,17 @@ func (r ApiGetBackupShardIdRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.GetBackupShardIdExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetBackupShardIdRequest) OnlyOSS() ApiGetBackupShardIdRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetBackupShardIdRequest) OnlyCloud() ApiGetBackupShardIdRequest {
 	r.isOnlyCloud = true
 	return r

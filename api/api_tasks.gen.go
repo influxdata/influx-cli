@@ -197,10 +197,14 @@ type TasksApi interface {
 	 */
 	PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRetryRequest) (Run, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() TasksApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() TasksApi
 }
 
@@ -246,11 +250,17 @@ func (r ApiDeleteTasksIDRequest) Execute() error {
 	return r.ApiService.DeleteTasksIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiDeleteTasksIDRequest) OnlyOSS() ApiDeleteTasksIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiDeleteTasksIDRequest) OnlyCloud() ApiDeleteTasksIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -398,11 +408,17 @@ func (r ApiDeleteTasksIDRunsIDRequest) Execute() error {
 	return r.ApiService.DeleteTasksIDRunsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiDeleteTasksIDRunsIDRequest) OnlyOSS() ApiDeleteTasksIDRunsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiDeleteTasksIDRunsIDRequest) OnlyCloud() ApiDeleteTasksIDRunsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -597,11 +613,17 @@ func (r ApiGetTasksRequest) Execute() (Tasks, error) {
 	return r.ApiService.GetTasksExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetTasksRequest) OnlyOSS() ApiGetTasksRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetTasksRequest) OnlyCloud() ApiGetTasksRequest {
 	r.isOnlyCloud = true
 	return r
@@ -778,11 +800,17 @@ func (r ApiGetTasksIDRequest) Execute() (Task, error) {
 	return r.ApiService.GetTasksIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetTasksIDRequest) OnlyOSS() ApiGetTasksIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetTasksIDRequest) OnlyCloud() ApiGetTasksIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -941,11 +969,17 @@ func (r ApiGetTasksIDLogsRequest) Execute() (Logs, error) {
 	return r.ApiService.GetTasksIDLogsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetTasksIDLogsRequest) OnlyOSS() ApiGetTasksIDLogsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetTasksIDLogsRequest) OnlyCloud() ApiGetTasksIDLogsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -1140,11 +1174,17 @@ func (r ApiGetTasksIDRunsRequest) Execute() (Runs, error) {
 	return r.ApiService.GetTasksIDRunsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetTasksIDRunsRequest) OnlyOSS() ApiGetTasksIDRunsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetTasksIDRunsRequest) OnlyCloud() ApiGetTasksIDRunsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -1324,11 +1364,17 @@ func (r ApiGetTasksIDRunsIDRequest) Execute() (Run, error) {
 	return r.ApiService.GetTasksIDRunsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetTasksIDRunsIDRequest) OnlyOSS() ApiGetTasksIDRunsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetTasksIDRunsIDRequest) OnlyCloud() ApiGetTasksIDRunsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -1499,11 +1545,17 @@ func (r ApiGetTasksIDRunsIDLogsRequest) Execute() (Logs, error) {
 	return r.ApiService.GetTasksIDRunsIDLogsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetTasksIDRunsIDLogsRequest) OnlyOSS() ApiGetTasksIDRunsIDLogsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetTasksIDRunsIDLogsRequest) OnlyCloud() ApiGetTasksIDRunsIDLogsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -1674,11 +1726,17 @@ func (r ApiPatchTasksIDRequest) Execute() (Task, error) {
 	return r.ApiService.PatchTasksIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPatchTasksIDRequest) OnlyOSS() ApiPatchTasksIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPatchTasksIDRequest) OnlyCloud() ApiPatchTasksIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -1843,11 +1901,17 @@ func (r ApiPostTasksRequest) Execute() (Task, error) {
 	return r.ApiService.PostTasksExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostTasksRequest) OnlyOSS() ApiPostTasksRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostTasksRequest) OnlyCloud() ApiPostTasksRequest {
 	r.isOnlyCloud = true
 	return r
@@ -2017,11 +2081,17 @@ func (r ApiPostTasksIDRunsRequest) Execute() (Run, error) {
 	return r.ApiService.PostTasksIDRunsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostTasksIDRunsRequest) OnlyOSS() ApiPostTasksIDRunsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostTasksIDRunsRequest) OnlyCloud() ApiPostTasksIDRunsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -2200,11 +2270,17 @@ func (r ApiPostTasksIDRunsIDRetryRequest) Execute() (Run, error) {
 	return r.ApiService.PostTasksIDRunsIDRetryExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostTasksIDRunsIDRetryRequest) OnlyOSS() ApiPostTasksIDRunsIDRetryRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostTasksIDRunsIDRetryRequest) OnlyCloud() ApiPostTasksIDRunsIDRetryRequest {
 	r.isOnlyCloud = true
 	return r

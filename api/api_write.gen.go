@@ -37,10 +37,14 @@ type WriteApi interface {
 	 */
 	PostWriteExecute(r ApiPostWriteRequest) error
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() WriteApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() WriteApi
 }
 
@@ -158,11 +162,17 @@ func (r ApiPostWriteRequest) Execute() error {
 	return r.ApiService.PostWriteExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostWriteRequest) OnlyOSS() ApiPostWriteRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostWriteRequest) OnlyCloud() ApiPostWriteRequest {
 	r.isOnlyCloud = true
 	return r

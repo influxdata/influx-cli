@@ -66,10 +66,14 @@ type SecretsApi interface {
 	 */
 	PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsRequest) error
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() SecretsApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() SecretsApi
 }
 
@@ -115,11 +119,17 @@ func (r ApiGetOrgsIDSecretsRequest) Execute() (SecretKeysResponse, error) {
 	return r.ApiService.GetOrgsIDSecretsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetOrgsIDSecretsRequest) OnlyOSS() ApiGetOrgsIDSecretsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetOrgsIDSecretsRequest) OnlyCloud() ApiGetOrgsIDSecretsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -287,11 +297,17 @@ func (r ApiPatchOrgsIDSecretsRequest) Execute() error {
 	return r.ApiService.PatchOrgsIDSecretsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPatchOrgsIDSecretsRequest) OnlyOSS() ApiPatchOrgsIDSecretsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPatchOrgsIDSecretsRequest) OnlyCloud() ApiPatchOrgsIDSecretsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -443,11 +459,17 @@ func (r ApiPostOrgsIDSecretsRequest) Execute() error {
 	return r.ApiService.PostOrgsIDSecretsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostOrgsIDSecretsRequest) OnlyOSS() ApiPostOrgsIDSecretsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostOrgsIDSecretsRequest) OnlyCloud() ApiPostOrgsIDSecretsRequest {
 	r.isOnlyCloud = true
 	return r

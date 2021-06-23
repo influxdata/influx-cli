@@ -38,10 +38,14 @@ type QueryApi interface {
 	 */
 	PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Response, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() QueryApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() QueryApi
 }
 
@@ -123,11 +127,17 @@ func (r ApiPostQueryRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.PostQueryExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostQueryRequest) OnlyOSS() ApiPostQueryRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostQueryRequest) OnlyCloud() ApiPostQueryRequest {
 	r.isOnlyCloud = true
 	return r

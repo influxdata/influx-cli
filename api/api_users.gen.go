@@ -106,10 +106,14 @@ type UsersApi interface {
 	 */
 	PostUsersIDPasswordExecute(r ApiPostUsersIDPasswordRequest) error
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() UsersApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() UsersApi
 }
 
@@ -155,11 +159,17 @@ func (r ApiDeleteUsersIDRequest) Execute() error {
 	return r.ApiService.DeleteUsersIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiDeleteUsersIDRequest) OnlyOSS() ApiDeleteUsersIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiDeleteUsersIDRequest) OnlyCloud() ApiDeleteUsersIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -333,11 +343,17 @@ func (r ApiGetUsersRequest) Execute() (Users, error) {
 	return r.ApiService.GetUsersExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetUsersRequest) OnlyOSS() ApiGetUsersRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetUsersRequest) OnlyCloud() ApiGetUsersRequest {
 	r.isOnlyCloud = true
 	return r
@@ -508,11 +524,17 @@ func (r ApiGetUsersIDRequest) Execute() (UserResponse, error) {
 	return r.ApiService.GetUsersIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetUsersIDRequest) OnlyOSS() ApiGetUsersIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetUsersIDRequest) OnlyCloud() ApiGetUsersIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -680,11 +702,17 @@ func (r ApiPatchUsersIDRequest) Execute() (UserResponse, error) {
 	return r.ApiService.PatchUsersIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPatchUsersIDRequest) OnlyOSS() ApiPatchUsersIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPatchUsersIDRequest) OnlyCloud() ApiPatchUsersIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -848,11 +876,17 @@ func (r ApiPostUsersRequest) Execute() (UserResponse, error) {
 	return r.ApiService.PostUsersExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostUsersRequest) OnlyOSS() ApiPostUsersRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostUsersRequest) OnlyCloud() ApiPostUsersRequest {
 	r.isOnlyCloud = true
 	return r
@@ -1022,11 +1056,17 @@ func (r ApiPostUsersIDPasswordRequest) Execute() error {
 	return r.ApiService.PostUsersIDPasswordExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostUsersIDPasswordRequest) OnlyOSS() ApiPostUsersIDPasswordRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostUsersIDPasswordRequest) OnlyCloud() ApiPostUsersIDPasswordRequest {
 	r.isOnlyCloud = true
 	return r

@@ -93,10 +93,14 @@ type TelegrafsApi interface {
 	 */
 	PutTelegrafsIDExecute(r ApiPutTelegrafsIDRequest) (Telegraf, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() TelegrafsApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() TelegrafsApi
 }
 
@@ -142,11 +146,17 @@ func (r ApiDeleteTelegrafsIDRequest) Execute() error {
 	return r.ApiService.DeleteTelegrafsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiDeleteTelegrafsIDRequest) OnlyOSS() ApiDeleteTelegrafsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiDeleteTelegrafsIDRequest) OnlyCloud() ApiDeleteTelegrafsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -284,11 +294,17 @@ func (r ApiGetTelegrafsRequest) Execute() (Telegrafs, error) {
 	return r.ApiService.GetTelegrafsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetTelegrafsRequest) OnlyOSS() ApiGetTelegrafsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetTelegrafsRequest) OnlyCloud() ApiGetTelegrafsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -456,11 +472,17 @@ func (r ApiGetTelegrafsIDRequest) Execute() (Telegraf, error) {
 	return r.ApiService.GetTelegrafsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetTelegrafsIDRequest) OnlyOSS() ApiGetTelegrafsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetTelegrafsIDRequest) OnlyCloud() ApiGetTelegrafsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -622,11 +644,17 @@ func (r ApiPostTelegrafsRequest) Execute() (Telegraf, error) {
 	return r.ApiService.PostTelegrafsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostTelegrafsRequest) OnlyOSS() ApiPostTelegrafsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostTelegrafsRequest) OnlyCloud() ApiPostTelegrafsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -796,11 +824,17 @@ func (r ApiPutTelegrafsIDRequest) Execute() (Telegraf, error) {
 	return r.ApiService.PutTelegrafsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPutTelegrafsIDRequest) OnlyOSS() ApiPutTelegrafsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPutTelegrafsIDRequest) OnlyCloud() ApiPutTelegrafsIDRequest {
 	r.isOnlyCloud = true
 	return r

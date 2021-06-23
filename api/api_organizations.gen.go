@@ -135,10 +135,14 @@ type OrganizationsApi interface {
 	 */
 	PostOrgsIDMembersExecute(r ApiPostOrgsIDMembersRequest) (ResourceMember, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() OrganizationsApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() OrganizationsApi
 }
 
@@ -184,11 +188,17 @@ func (r ApiDeleteOrgsIDRequest) Execute() error {
 	return r.ApiService.DeleteOrgsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiDeleteOrgsIDRequest) OnlyOSS() ApiDeleteOrgsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiDeleteOrgsIDRequest) OnlyCloud() ApiDeleteOrgsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -345,11 +355,17 @@ func (r ApiDeleteOrgsIDMembersIDRequest) Execute() error {
 	return r.ApiService.DeleteOrgsIDMembersIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiDeleteOrgsIDMembersIDRequest) OnlyOSS() ApiDeleteOrgsIDMembersIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiDeleteOrgsIDMembersIDRequest) OnlyCloud() ApiDeleteOrgsIDMembersIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -535,11 +551,17 @@ func (r ApiGetOrgsRequest) Execute() (Organizations, error) {
 	return r.ApiService.GetOrgsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetOrgsRequest) OnlyOSS() ApiGetOrgsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetOrgsRequest) OnlyCloud() ApiGetOrgsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -713,11 +735,17 @@ func (r ApiGetOrgsIDRequest) Execute() (Organization, error) {
 	return r.ApiService.GetOrgsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetOrgsIDRequest) OnlyOSS() ApiGetOrgsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetOrgsIDRequest) OnlyCloud() ApiGetOrgsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -876,11 +904,17 @@ func (r ApiGetOrgsIDMembersRequest) Execute() (ResourceMembers, error) {
 	return r.ApiService.GetOrgsIDMembersExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetOrgsIDMembersRequest) OnlyOSS() ApiGetOrgsIDMembersRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetOrgsIDMembersRequest) OnlyCloud() ApiGetOrgsIDMembersRequest {
 	r.isOnlyCloud = true
 	return r
@@ -1058,11 +1092,17 @@ func (r ApiPatchOrgsIDRequest) Execute() (Organization, error) {
 	return r.ApiService.PatchOrgsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPatchOrgsIDRequest) OnlyOSS() ApiPatchOrgsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPatchOrgsIDRequest) OnlyCloud() ApiPatchOrgsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -1226,11 +1266,17 @@ func (r ApiPostOrgsRequest) Execute() (Organization, error) {
 	return r.ApiService.PostOrgsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostOrgsRequest) OnlyOSS() ApiPostOrgsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostOrgsRequest) OnlyCloud() ApiPostOrgsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -1400,11 +1446,17 @@ func (r ApiPostOrgsIDMembersRequest) Execute() (ResourceMember, error) {
 	return r.ApiService.PostOrgsIDMembersExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostOrgsIDMembersRequest) OnlyOSS() ApiPostOrgsIDMembersRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostOrgsIDMembersRequest) OnlyCloud() ApiPostOrgsIDMembersRequest {
 	r.isOnlyCloud = true
 	return r

@@ -93,10 +93,14 @@ type BucketsApi interface {
 	 */
 	PostBucketsExecute(r ApiPostBucketsRequest) (Bucket, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() BucketsApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() BucketsApi
 }
 
@@ -142,11 +146,17 @@ func (r ApiDeleteBucketsIDRequest) Execute() error {
 	return r.ApiService.DeleteBucketsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiDeleteBucketsIDRequest) OnlyOSS() ApiDeleteBucketsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiDeleteBucketsIDRequest) OnlyCloud() ApiDeleteBucketsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -348,11 +358,17 @@ func (r ApiGetBucketsRequest) Execute() (Buckets, error) {
 	return r.ApiService.GetBucketsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetBucketsRequest) OnlyOSS() ApiGetBucketsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetBucketsRequest) OnlyCloud() ApiGetBucketsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -529,11 +545,17 @@ func (r ApiGetBucketsIDRequest) Execute() (Bucket, error) {
 	return r.ApiService.GetBucketsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetBucketsIDRequest) OnlyOSS() ApiGetBucketsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetBucketsIDRequest) OnlyCloud() ApiGetBucketsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -701,11 +723,17 @@ func (r ApiPatchBucketsIDRequest) Execute() (Bucket, error) {
 	return r.ApiService.PatchBucketsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPatchBucketsIDRequest) OnlyOSS() ApiPatchBucketsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPatchBucketsIDRequest) OnlyCloud() ApiPatchBucketsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -869,11 +897,17 @@ func (r ApiPostBucketsRequest) Execute() (Bucket, error) {
 	return r.ApiService.PostBucketsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostBucketsRequest) OnlyOSS() ApiPostBucketsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostBucketsRequest) OnlyCloud() ApiPostBucketsRequest {
 	r.isOnlyCloud = true
 	return r

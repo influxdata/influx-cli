@@ -53,10 +53,14 @@ type SetupApi interface {
 	 */
 	PostSetupExecute(r ApiPostSetupRequest) (OnboardingResponse, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() SetupApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() SetupApi
 }
 
@@ -93,11 +97,17 @@ func (r ApiGetSetupRequest) Execute() (InlineResponse200, error) {
 	return r.ApiService.GetSetupExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetSetupRequest) OnlyOSS() ApiGetSetupRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetSetupRequest) OnlyCloud() ApiGetSetupRequest {
 	r.isOnlyCloud = true
 	return r
@@ -247,11 +257,17 @@ func (r ApiPostSetupRequest) Execute() (OnboardingResponse, error) {
 	return r.ApiService.PostSetupExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostSetupRequest) OnlyOSS() ApiPostSetupRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostSetupRequest) OnlyCloud() ApiPostSetupRequest {
 	r.isOnlyCloud = true
 	return r

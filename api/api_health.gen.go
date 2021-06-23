@@ -38,10 +38,14 @@ type HealthApi interface {
 	 */
 	GetHealthExecute(r ApiGetHealthRequest) (HealthCheck, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() HealthApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() HealthApi
 }
 
@@ -78,11 +82,17 @@ func (r ApiGetHealthRequest) Execute() (HealthCheck, error) {
 	return r.ApiService.GetHealthExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetHealthRequest) OnlyOSS() ApiGetHealthRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetHealthRequest) OnlyCloud() ApiGetHealthRequest {
 	r.isOnlyCloud = true
 	return r

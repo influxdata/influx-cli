@@ -39,10 +39,14 @@ type DashboardsApi interface {
 	 */
 	GetDashboardsExecute(r ApiGetDashboardsRequest) (Dashboards, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() DashboardsApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() DashboardsApi
 }
 
@@ -151,11 +155,17 @@ func (r ApiGetDashboardsRequest) Execute() (Dashboards, error) {
 	return r.ApiService.GetDashboardsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetDashboardsRequest) OnlyOSS() ApiGetDashboardsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetDashboardsRequest) OnlyCloud() ApiGetDashboardsRequest {
 	r.isOnlyCloud = true
 	return r

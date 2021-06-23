@@ -38,10 +38,14 @@ type TemplatesApi interface {
 	 */
 	ExportTemplateExecute(r ApiExportTemplateRequest) ([]TemplateEntry, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() TemplatesApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() TemplatesApi
 }
 
@@ -78,11 +82,17 @@ func (r ApiExportTemplateRequest) Execute() ([]TemplateEntry, error) {
 	return r.ApiService.ExportTemplateExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiExportTemplateRequest) OnlyOSS() ApiExportTemplateRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiExportTemplateRequest) OnlyCloud() ApiExportTemplateRequest {
 	r.isOnlyCloud = true
 	return r

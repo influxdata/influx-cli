@@ -93,10 +93,14 @@ type DBRPsApi interface {
 	 */
 	PostDBRPExecute(r ApiPostDBRPRequest) (DBRP, error)
 
-	// Sets the intention of the API to only work for InfluxDB OSS servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
 	OnlyOSS() DBRPsApi
 
-	// Sets the intention of the API to only work for InfluxDB Cloud servers - for logging error messages
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
 	OnlyCloud() DBRPsApi
 }
 
@@ -160,11 +164,17 @@ func (r ApiDeleteDBRPIDRequest) Execute() error {
 	return r.ApiService.DeleteDBRPIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiDeleteDBRPIDRequest) OnlyOSS() ApiDeleteDBRPIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiDeleteDBRPIDRequest) OnlyCloud() ApiDeleteDBRPIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -372,11 +382,17 @@ func (r ApiGetDBRPsRequest) Execute() (DBRPs, error) {
 	return r.ApiService.GetDBRPsExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetDBRPsRequest) OnlyOSS() ApiGetDBRPsRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetDBRPsRequest) OnlyCloud() ApiGetDBRPsRequest {
 	r.isOnlyCloud = true
 	return r
@@ -581,11 +597,17 @@ func (r ApiGetDBRPsIDRequest) Execute() (DBRPGet, error) {
 	return r.ApiService.GetDBRPsIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiGetDBRPsIDRequest) OnlyOSS() ApiGetDBRPsIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiGetDBRPsIDRequest) OnlyCloud() ApiGetDBRPsIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -787,11 +809,17 @@ func (r ApiPatchDBRPIDRequest) Execute() (DBRPGet, error) {
 	return r.ApiService.PatchDBRPIDExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPatchDBRPIDRequest) OnlyOSS() ApiPatchDBRPIDRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPatchDBRPIDRequest) OnlyCloud() ApiPatchDBRPIDRequest {
 	r.isOnlyCloud = true
 	return r
@@ -981,11 +1009,17 @@ func (r ApiPostDBRPRequest) Execute() (DBRP, error) {
 	return r.ApiService.PostDBRPExecute(r)
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on OSS
+// servers.
 func (r ApiPostDBRPRequest) OnlyOSS() ApiPostDBRPRequest {
 	r.isOnlyOSS = true
 	return r
 }
 
+// Sets additional descriptive text in the error message if this specific
+// request fails, indicating that it is intended to be used only on cloud
+// servers.
 func (r ApiPostDBRPRequest) OnlyCloud() ApiPostDBRPRequest {
 	r.isOnlyCloud = true
 	return r
