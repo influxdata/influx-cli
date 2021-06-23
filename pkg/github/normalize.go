@@ -21,7 +21,7 @@ func NormalizeURLToContent(u *url.URL, extensions ...string) *url.URL {
 
 	p := u.Path
 	if !strings.HasPrefix(p, "/") {
-		p = "/"+p
+		p = "/" + p
 	}
 	parts := strings.Split(p, "/")
 	if len(parts) < 4 {
@@ -30,7 +30,7 @@ func NormalizeURLToContent(u *url.URL, extensions ...string) *url.URL {
 
 	normalized := *u
 	normalized.Host = githubRawContentHost
-	normalized.Path = "/"+path.Join(append(parts[:3], parts[4:]...)...)
+	normalized.Path = "/" + path.Join(append(parts[:3], parts[4:]...)...)
 	return &normalized
 }
 
