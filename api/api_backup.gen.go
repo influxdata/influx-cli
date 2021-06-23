@@ -203,6 +203,7 @@ func (a *BackupApiService) GetBackupMetadataExecute(r ApiGetBackupMetadataReques
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
+		newErr.model = &v
 		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
@@ -362,6 +363,7 @@ func (a *BackupApiService) GetBackupShardIdExecute(r ApiGetBackupShardIdRequest)
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return localVarReturnValue, newErr
 		}
@@ -371,6 +373,7 @@ func (a *BackupApiService) GetBackupShardIdExecute(r ApiGetBackupShardIdRequest)
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
+		newErr.model = &v
 		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}

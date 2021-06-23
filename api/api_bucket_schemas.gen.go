@@ -257,6 +257,7 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		}
 		return localVarReturnValue, newErr
@@ -602,6 +603,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		}
 		return localVarReturnValue, newErr
@@ -790,6 +792,7 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		}
 		return localVarReturnValue, newErr

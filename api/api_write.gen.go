@@ -285,6 +285,7 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
@@ -295,6 +296,7 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
@@ -305,6 +307,7 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
@@ -315,6 +318,7 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
@@ -324,6 +328,7 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
+		newErr.model = &v
 		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}

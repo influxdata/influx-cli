@@ -265,6 +265,7 @@ func (a *DBRPsApiService) DeleteDBRPIDExecute(r ApiDeleteDBRPIDRequest) error {
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
@@ -274,6 +275,7 @@ func (a *DBRPsApiService) DeleteDBRPIDExecute(r ApiDeleteDBRPIDRequest) error {
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
+		newErr.model = &v
 		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
@@ -479,6 +481,7 @@ func (a *DBRPsApiService) GetDBRPsExecute(r ApiGetDBRPsRequest) (DBRPs, error) {
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return localVarReturnValue, newErr
 		}
@@ -488,6 +491,7 @@ func (a *DBRPsApiService) GetDBRPsExecute(r ApiGetDBRPsRequest) (DBRPs, error) {
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
+		newErr.model = &v
 		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
@@ -664,6 +668,7 @@ func (a *DBRPsApiService) GetDBRPsIDExecute(r ApiGetDBRPsIDRequest) (DBRPGet, er
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return localVarReturnValue, newErr
 		}
@@ -673,6 +678,7 @@ func (a *DBRPsApiService) GetDBRPsIDExecute(r ApiGetDBRPsIDRequest) (DBRPGet, er
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
+		newErr.model = &v
 		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
@@ -863,6 +869,7 @@ func (a *DBRPsApiService) PatchDBRPIDExecute(r ApiPatchDBRPIDRequest) (DBRPGet, 
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return localVarReturnValue, newErr
 		}
@@ -873,6 +880,7 @@ func (a *DBRPsApiService) PatchDBRPIDExecute(r ApiPatchDBRPIDRequest) (DBRPGet, 
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return localVarReturnValue, newErr
 		}
@@ -882,6 +890,7 @@ func (a *DBRPsApiService) PatchDBRPIDExecute(r ApiPatchDBRPIDRequest) (DBRPGet, 
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
+		newErr.model = &v
 		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
@@ -1036,6 +1045,7 @@ func (a *DBRPsApiService) PostDBRPExecute(r ApiPostDBRPRequest) (DBRP, error) {
 				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
+			newErr.model = &v
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return localVarReturnValue, newErr
 		}
@@ -1045,6 +1055,7 @@ func (a *DBRPsApiService) PostDBRPExecute(r ApiPostDBRPRequest) (DBRP, error) {
 			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
+		newErr.model = &v
 		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
