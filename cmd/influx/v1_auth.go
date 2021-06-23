@@ -67,10 +67,10 @@ func newCreateV1AuthCmd() *cli.Command {
 			params.WriteBucket = ctx.StringSlice("write-bucket")
 			api := getAPI(ctx)
 			client := v1_auth.Client{
-				CLI:               getCLI(ctx),
+				CLI:                     getCLI(ctx),
 				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
-				UsersApi:          api.UsersApi,
-				OrganizationsApi:  api.OrganizationsApi,
+				UsersApi:                api.UsersApi,
+				OrganizationsApi:        api.OrganizationsApi,
 			}
 			return client.Create(ctx.Context, &params)
 		},
@@ -92,10 +92,10 @@ func newRemoveV1AuthCmd() *cli.Command {
 
 			api := getAPI(ctx)
 			client := v1_auth.Client{
-				CLI:               getCLI(ctx),
+				CLI:                     getCLI(ctx),
 				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
-				UsersApi:          api.UsersApi,
-				OrganizationsApi:  api.OrganizationsApi,
+				UsersApi:                api.UsersApi,
+				OrganizationsApi:        api.OrganizationsApi,
 			}
 			return client.Remove(ctx.Context, &params)
 		},
@@ -128,10 +128,10 @@ func newListV1AuthCmd() *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := v1_auth.Client{
-				CLI:               getCLI(ctx),
+				CLI:                     getCLI(ctx),
 				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
-				UsersApi:          api.UsersApi,
-				OrganizationsApi:  api.OrganizationsApi,
+				UsersApi:                api.UsersApi,
+				OrganizationsApi:        api.OrganizationsApi,
 			}
 			return client.List(ctx.Context, &params)
 		},
@@ -153,10 +153,10 @@ func newSetActiveV1AuthCmd() *cli.Command {
 
 			api := getAPI(ctx)
 			client := v1_auth.Client{
-				CLI:               getCLI(ctx),
+				CLI:                     getCLI(ctx),
 				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
-				UsersApi:          api.UsersApi,
-				OrganizationsApi:  api.OrganizationsApi,
+				UsersApi:                api.UsersApi,
+				OrganizationsApi:        api.OrganizationsApi,
 			}
 			return client.SetActive(ctx.Context, &params, true)
 		},
@@ -178,10 +178,10 @@ func newSetInactiveV1AuthCmd() *cli.Command {
 
 			api := getAPI(ctx)
 			client := v1_auth.Client{
-				CLI:               getCLI(ctx),
+				CLI:                     getCLI(ctx),
 				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
-				UsersApi:          api.UsersApi,
-				OrganizationsApi:  api.OrganizationsApi,
+				UsersApi:                api.UsersApi,
+				OrganizationsApi:        api.OrganizationsApi,
 			}
 			return client.SetActive(ctx.Context, &params, false)
 		},
@@ -207,7 +207,7 @@ func newSetPswdV1AuthCmd() *cli.Command {
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := v1_auth.Client{
-				CLI:               getCLI(ctx),
+				CLI:                     getCLI(ctx),
 				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
 			}
 			return client.SetPassword(ctx.Context, &params)

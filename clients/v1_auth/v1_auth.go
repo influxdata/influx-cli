@@ -56,9 +56,10 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	if err != nil || len(ids.GetUsers()) == 0 {
 		return fmt.Errorf("could not get user from Username %q: %w", params.Username, err)
 	}
+	userId := ids.GetUsers()[0].GetId()
 
 	// verify an existing token with the same username doesn't already exist
-	auth, err := c.LegacyAuthorizationsApi.GetAuthorizationsID(ctx, ids.GetUsers()[0].GetId()).Execute()
+	auth, err := c.LegacyAuthorizationsApi.GetAuthorizationsID(ctx, userId).Execute()
 	if apiError, ok := err.(api.ApiError); ok {
 		if apiError.ErrorCode() != api.ERRORCODE_NOT_FOUND {
 			return fmt.Errorf("failed to verify username %q has no auth: %w", params.Username, err)
@@ -103,15 +104,13 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 			permissions = append(permissions, newPerm)
 		}
 	}
-
-	authReq := &api.AuthorizationPostRequest{
+	authReq := api.AuthorizationPostRequest{
 		Description: &params.Desc,
 		OrgID:       orgID,
 		Permissions: permissions,
-		Token:       &params.Username,
+		UserID:      &userId,
 	}
 
-	// TODO Something wrong here
 	newAuth, err := c.LegacyAuthorizationsApi.PostAuthorizations(ctx).AuthorizationPostRequest(authReq).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to create new authorization: %w", err)
@@ -160,10 +159,13 @@ func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
 		return err
 	}
 
-	auth, err1 := c.LegacyAuthorizationsApi.GetAuthorizationsID(ctx, id).Execute()
-	err2 := c.LegacyAuthorizationsApi.DeleteAuthorizationsID(ctx, id).Execute()
-	if err1 != nil || err2 != nil {
-		return fmt.Errorf("could not find Authorization from ID %q: %w", id, err1)
+	auth, err := c.LegacyAuthorizationsApi.GetAuthorizationsID(ctx, id).Execute()
+	if err != nil {
+		return fmt.Errorf("could not find Authorization from ID %q: %w", id, err)
+	}
+	err = c.LegacyAuthorizationsApi.DeleteAuthorizationsID(ctx, id).Execute()
+	if err != nil {
+		return fmt.Errorf("could not remove Authorization with ID %q: %w", id, err)
 	}
 
 	usr, err := c.UsersApi.GetUsersID(ctx, auth.GetUserID()).Execute()
@@ -399,11 +401,11 @@ func (c Client) getAuthReqID(ctx context.Context, params *clients.AuthLookupPara
 	if params.ID.Valid() {
 		id = params.ID.String()
 	} else {
-		userid, err := c.UsersApi.GetUsers(ctx).Name(params.Username).Execute()
-		if err != nil || len(userid.GetUsers()) == 0 {
+		authId, err := c.LegacyAuthorizationsApi.GetAuthorizations(ctx).UserID(params.Username).Execute()
+		if err != nil || len(authId.GetAuthorizations()) == 0 {
 			err = fmt.Errorf("could not find v1 auth with username %q: %w", params.Username, err)
 		} else {
-			id = userid.GetUsers()[0].GetId()
+			id = authId.GetAuthorizations()[0].GetId()
 		}
 	}
 	return
