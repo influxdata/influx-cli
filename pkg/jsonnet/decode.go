@@ -8,7 +8,7 @@ import (
 	"github.com/google/go-jsonnet"
 )
 
-// Decoder type can decoce a jsonnet stream into the given output.
+// Decoder type can decode a jsonnet stream into the given output.
 type Decoder struct {
 	r io.Reader
 }
