@@ -107,39 +107,45 @@ func NewConfiguration() *Configuration {
 			},
 		},
 		OperationServers: map[string]ServerConfigurations{
-			"AuthorizationsApiService.DeleteAuthorizationsID": {
-				{
-					URL:         "/private",
-					Description: "No description provided",
-				},
-			},
-			"AuthorizationsApiService.GetAuthorizations": {
-				{
-					URL:         "/private",
-					Description: "No description provided",
-				},
-			},
-			"AuthorizationsApiService.GetAuthorizationsID": {
-				{
-					URL:         "/private",
-					Description: "No description provided",
-				},
-			},
-			"AuthorizationsApiService.PatchAuthorizationsID": {
-				{
-					URL:         "/private",
-					Description: "No description provided",
-				},
-			},
-			"AuthorizationsApiService.PostAuthorizations": {
-				{
-					URL:         "/private",
-					Description: "No description provided",
-				},
-			},
 			"HealthApiService.GetHealth": {
 				{
 					URL:         "",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.DeleteAuthorizationsID": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.GetAuthorizations": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.GetAuthorizationsID": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.PatchAuthorizationsID": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.PostAuthorizations": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.SetAuthorizationsIDPassword": {
+				{
+					URL:         "private",
 					Description: "No description provided",
 				},
 			},

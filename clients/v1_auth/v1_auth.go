@@ -11,7 +11,7 @@ import (
 
 type Client struct {
 	clients.CLI
-	api.AuthorizationsApi
+	api.LegacyAuthorizationsApi
 	api.UsersApi
 	api.OrganizationsApi
 }
@@ -58,7 +58,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	}
 
 	// verify an existing token with the same username doesn't already exist
-	auth, err := c.AuthorizationsApi.GetAuthorizationsID(ctx, ids.GetUsers()[0].GetId()).Execute()
+	auth, err := c.LegacyAuthorizationsApi.GetAuthorizationsID(ctx, ids.GetUsers()[0].GetId()).Execute()
 	if apiError, ok := err.(api.ApiError); ok {
 		if apiError.ErrorCode() != api.ERRORCODE_NOT_FOUND {
 			return fmt.Errorf("failed to verify username %q has no auth: %w", params.Username, err)
@@ -112,17 +112,17 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	}
 
 	// TODO Something wrong here
-	newAuth, err := c.AuthorizationsApi.PostAuthorizations(ctx).AuthorizationPostRequest(authReq).Execute()
+	newAuth, err := c.LegacyAuthorizationsApi.PostAuthorizations(ctx).AuthorizationPostRequest(authReq).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to create new authorization: %w", err)
 	}
 
 	if password != "" {
-		err := c.UsersApi.PostUsersIDPassword(ctx, newAuth.GetUserID()).
-			PasswordResetBody(api.PasswordResetBody{Password: password}).
+		err := c.LegacyAuthorizationsApi.SetAuthorizationsIDPassword(ctx, newAuth.GetId()).
+			Password(password).
 			Execute()
 		if err != nil {
-			_ = c.AuthorizationsApi.DeleteAuthorizationsID(ctx, newAuth.GetId()).Execute()
+			_ = c.LegacyAuthorizationsApi.DeleteAuthorizationsID(ctx, newAuth.GetId()).Execute()
 			return fmt.Errorf("failed to update password for user ID %q: %w", newAuth.GetUserID(), err)
 		}
 	}
@@ -160,8 +160,8 @@ func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
 		return err
 	}
 
-	auth, err1 := c.AuthorizationsApi.GetAuthorizationsID(ctx, id).Execute()
-	err2 := c.AuthorizationsApi.DeleteAuthorizationsID(ctx, id).Execute()
+	auth, err1 := c.LegacyAuthorizationsApi.GetAuthorizationsID(ctx, id).Execute()
+	err2 := c.LegacyAuthorizationsApi.DeleteAuthorizationsID(ctx, id).Execute()
 	if err1 != nil || err2 != nil {
 		return fmt.Errorf("could not find Authorization from ID %q: %w", id, err1)
 	}
@@ -198,7 +198,7 @@ type ListParams struct {
 }
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
-	req := c.AuthorizationsApi.GetAuthorizations(ctx)
+	req := c.LegacyAuthorizationsApi.GetAuthorizations(ctx)
 
 	if params.User != "" {
 		req = req.User(params.User)
@@ -265,7 +265,7 @@ func (c Client) SetActive(ctx context.Context, params *ActiveParams, active bool
 		return err
 	}
 
-	req := c.AuthorizationsApi.PatchAuthorizationsID(ctx, id)
+	req := c.LegacyAuthorizationsApi.PatchAuthorizationsID(ctx, id)
 	var status string
 	if active {
 		status = "active"
@@ -315,7 +315,7 @@ func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) erro
 		return err
 	}
 
-	auth, err := c.AuthorizationsApi.GetAuthorizationsID(ctx, id).Execute()
+	auth, err := c.LegacyAuthorizationsApi.GetAuthorizationsID(ctx, id).Execute()
 	if err != nil {
 		return fmt.Errorf("could not find authorization with User ID %q: %w", id, err)
 	}
@@ -329,7 +329,8 @@ func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) erro
 		password = pass
 	}
 
-	if err := c.UsersApi.PostUsersIDPassword(ctx, auth.GetUserID()).Execute(); err != nil {
+	err = c.LegacyAuthorizationsApi.SetAuthorizationsIDPassword(ctx, auth.GetId()).Password(password).Execute()
+	if err != nil {
 		return fmt.Errorf("error setting password: %w", err)
 	}
 

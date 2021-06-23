@@ -23,7 +23,7 @@ var (
 	_ _context.Context
 )
 
-type AuthorizationsApi interface {
+type LegacyAuthorizationsApi interface {
 
 	/*
 	 * DeleteAuthorizationsID Delete an authorization
@@ -91,14 +91,27 @@ type AuthorizationsApi interface {
 	 * @return Authorization
 	 */
 	PostAuthorizationsExecute(r ApiPostAuthorizationsRequest) (Authorization, error)
+
+	/*
+	 * SetAuthorizationsIDPassword Set an authorization password
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param authID The ID of the authorization to update.
+	 * @return ApiSetAuthorizationsIDPasswordRequest
+	 */
+	SetAuthorizationsIDPassword(ctx _context.Context, authID string) ApiSetAuthorizationsIDPasswordRequest
+
+	/*
+	 * SetAuthorizationsIDPasswordExecute executes the request
+	 */
+	SetAuthorizationsIDPasswordExecute(r ApiSetAuthorizationsIDPasswordRequest) error
 }
 
-// AuthorizationsApiService AuthorizationsApi service
-type AuthorizationsApiService service
+// LegacyAuthorizationsApiService LegacyAuthorizationsApi service
+type LegacyAuthorizationsApiService service
 
 type ApiDeleteAuthorizationsIDRequest struct {
 	ctx          _context.Context
-	ApiService   AuthorizationsApi
+	ApiService   LegacyAuthorizationsApi
 	authID       string
 	zapTraceSpan *string
 }
@@ -129,7 +142,7 @@ func (r ApiDeleteAuthorizationsIDRequest) Execute() error {
  * @param authID The ID of the authorization to delete.
  * @return ApiDeleteAuthorizationsIDRequest
  */
-func (a *AuthorizationsApiService) DeleteAuthorizationsID(ctx _context.Context, authID string) ApiDeleteAuthorizationsIDRequest {
+func (a *LegacyAuthorizationsApiService) DeleteAuthorizationsID(ctx _context.Context, authID string) ApiDeleteAuthorizationsIDRequest {
 	return ApiDeleteAuthorizationsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -140,7 +153,7 @@ func (a *AuthorizationsApiService) DeleteAuthorizationsID(ctx _context.Context, 
 /*
  * Execute executes the request
  */
-func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuthorizationsIDRequest) error {
+func (a *LegacyAuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuthorizationsIDRequest) error {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -149,7 +162,7 @@ func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuth
 		localVarFileBytes    []byte
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.DeleteAuthorizationsID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.DeleteAuthorizationsID")
 	if err != nil {
 		return GenericOpenAPIError{error: err.Error()}
 	}
@@ -221,7 +234,7 @@ func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuth
 
 type ApiGetAuthorizationsRequest struct {
 	ctx          _context.Context
-	ApiService   AuthorizationsApi
+	ApiService   LegacyAuthorizationsApi
 	zapTraceSpan *string
 	userID       *string
 	user         *string
@@ -278,7 +291,7 @@ func (r ApiGetAuthorizationsRequest) Execute() (Authorizations, error) {
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetAuthorizationsRequest
  */
-func (a *AuthorizationsApiService) GetAuthorizations(ctx _context.Context) ApiGetAuthorizationsRequest {
+func (a *LegacyAuthorizationsApiService) GetAuthorizations(ctx _context.Context) ApiGetAuthorizationsRequest {
 	return ApiGetAuthorizationsRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -289,7 +302,7 @@ func (a *AuthorizationsApiService) GetAuthorizations(ctx _context.Context) ApiGe
  * Execute executes the request
  * @return Authorizations
  */
-func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizationsRequest) (Authorizations, error) {
+func (a *LegacyAuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizationsRequest) (Authorizations, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -299,7 +312,7 @@ func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizatio
 		localVarReturnValue  Authorizations
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.GetAuthorizations")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.GetAuthorizations")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
@@ -401,7 +414,7 @@ func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizatio
 
 type ApiGetAuthorizationsIDRequest struct {
 	ctx          _context.Context
-	ApiService   AuthorizationsApi
+	ApiService   LegacyAuthorizationsApi
 	authID       string
 	zapTraceSpan *string
 }
@@ -432,7 +445,7 @@ func (r ApiGetAuthorizationsIDRequest) Execute() (Authorization, error) {
  * @param authID The ID of the authorization to get.
  * @return ApiGetAuthorizationsIDRequest
  */
-func (a *AuthorizationsApiService) GetAuthorizationsID(ctx _context.Context, authID string) ApiGetAuthorizationsIDRequest {
+func (a *LegacyAuthorizationsApiService) GetAuthorizationsID(ctx _context.Context, authID string) ApiGetAuthorizationsIDRequest {
 	return ApiGetAuthorizationsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -444,7 +457,7 @@ func (a *AuthorizationsApiService) GetAuthorizationsID(ctx _context.Context, aut
  * Execute executes the request
  * @return Authorization
  */
-func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizationsIDRequest) (Authorization, error) {
+func (a *LegacyAuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizationsIDRequest) (Authorization, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -454,7 +467,7 @@ func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizat
 		localVarReturnValue  Authorization
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.GetAuthorizationsID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.GetAuthorizationsID")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
@@ -545,7 +558,7 @@ func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizat
 
 type ApiPatchAuthorizationsIDRequest struct {
 	ctx                        _context.Context
-	ApiService                 AuthorizationsApi
+	ApiService                 LegacyAuthorizationsApi
 	authID                     string
 	authorizationUpdateRequest *AuthorizationUpdateRequest
 	zapTraceSpan               *string
@@ -585,7 +598,7 @@ func (r ApiPatchAuthorizationsIDRequest) Execute() (Authorization, error) {
  * @param authID The ID of the authorization to update.
  * @return ApiPatchAuthorizationsIDRequest
  */
-func (a *AuthorizationsApiService) PatchAuthorizationsID(ctx _context.Context, authID string) ApiPatchAuthorizationsIDRequest {
+func (a *LegacyAuthorizationsApiService) PatchAuthorizationsID(ctx _context.Context, authID string) ApiPatchAuthorizationsIDRequest {
 	return ApiPatchAuthorizationsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -597,7 +610,7 @@ func (a *AuthorizationsApiService) PatchAuthorizationsID(ctx _context.Context, a
  * Execute executes the request
  * @return Authorization
  */
-func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthorizationsIDRequest) (Authorization, error) {
+func (a *LegacyAuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthorizationsIDRequest) (Authorization, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -607,7 +620,7 @@ func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthor
 		localVarReturnValue  Authorization
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.PatchAuthorizationsID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.PatchAuthorizationsID")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
@@ -703,7 +716,7 @@ func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthor
 
 type ApiPostAuthorizationsRequest struct {
 	ctx                      _context.Context
-	ApiService               AuthorizationsApi
+	ApiService               LegacyAuthorizationsApi
 	authorizationPostRequest *AuthorizationPostRequest
 	zapTraceSpan             *string
 }
@@ -733,7 +746,7 @@ func (r ApiPostAuthorizationsRequest) Execute() (Authorization, error) {
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiPostAuthorizationsRequest
  */
-func (a *AuthorizationsApiService) PostAuthorizations(ctx _context.Context) ApiPostAuthorizationsRequest {
+func (a *LegacyAuthorizationsApiService) PostAuthorizations(ctx _context.Context) ApiPostAuthorizationsRequest {
 	return ApiPostAuthorizationsRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -744,7 +757,7 @@ func (a *AuthorizationsApiService) PostAuthorizations(ctx _context.Context) ApiP
  * Execute executes the request
  * @return Authorization
  */
-func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizationsRequest) (Authorization, error) {
+func (a *LegacyAuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizationsRequest) (Authorization, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -754,7 +767,7 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizat
 		localVarReturnValue  Authorization
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.PostAuthorizations")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.PostAuthorizations")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
@@ -855,4 +868,140 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizat
 	}
 
 	return localVarReturnValue, nil
+}
+
+type ApiSetAuthorizationsIDPasswordRequest struct {
+	ctx          _context.Context
+	ApiService   LegacyAuthorizationsApi
+	authID       string
+	password     *string
+	zapTraceSpan *string
+}
+
+func (r ApiSetAuthorizationsIDPasswordRequest) AuthID(authID string) ApiSetAuthorizationsIDPasswordRequest {
+	r.authID = authID
+	return r
+}
+func (r ApiSetAuthorizationsIDPasswordRequest) GetAuthID() string {
+	return r.authID
+}
+
+func (r ApiSetAuthorizationsIDPasswordRequest) Password(password string) ApiSetAuthorizationsIDPasswordRequest {
+	r.password = &password
+	return r
+}
+func (r ApiSetAuthorizationsIDPasswordRequest) GetPassword() *string {
+	return r.password
+}
+
+func (r ApiSetAuthorizationsIDPasswordRequest) ZapTraceSpan(zapTraceSpan string) ApiSetAuthorizationsIDPasswordRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiSetAuthorizationsIDPasswordRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiSetAuthorizationsIDPasswordRequest) Execute() error {
+	return r.ApiService.SetAuthorizationsIDPasswordExecute(r)
+}
+
+/*
+ * SetAuthorizationsIDPassword Set an authorization password
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param authID The ID of the authorization to update.
+ * @return ApiSetAuthorizationsIDPasswordRequest
+ */
+func (a *LegacyAuthorizationsApiService) SetAuthorizationsIDPassword(ctx _context.Context, authID string) ApiSetAuthorizationsIDPasswordRequest {
+	return ApiSetAuthorizationsIDPasswordRequest{
+		ApiService: a,
+		ctx:        ctx,
+		authID:     authID,
+	}
+}
+
+/*
+ * Execute executes the request
+ */
+func (a *LegacyAuthorizationsApiService) SetAuthorizationsIDPasswordExecute(r ApiSetAuthorizationsIDPasswordRequest) error {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodPatch
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.SetAuthorizationsIDPassword")
+	if err != nil {
+		return GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/legacy/authorizations/{authID}/password"
+	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+	if r.password == nil {
+		return reportError("password is required and must be specified")
+	}
+
+	localVarQueryParams.Add("password", parameterToString(*r.password, ""))
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			return err
+		}
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return err
+		}
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = err.Error()
+			return newErr
+		}
+		newErr.model = &v
+		return newErr
+	}
+
+	return nil
 }

@@ -68,7 +68,7 @@ func newCreateV1AuthCmd() *cli.Command {
 			api := getAPI(ctx)
 			client := v1_auth.Client{
 				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
+				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
 			}
@@ -93,7 +93,7 @@ func newRemoveV1AuthCmd() *cli.Command {
 			api := getAPI(ctx)
 			client := v1_auth.Client{
 				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
+				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
 			}
@@ -129,7 +129,7 @@ func newListV1AuthCmd() *cli.Command {
 			api := getAPI(ctx)
 			client := v1_auth.Client{
 				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
+				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
 			}
@@ -154,7 +154,7 @@ func newSetActiveV1AuthCmd() *cli.Command {
 			api := getAPI(ctx)
 			client := v1_auth.Client{
 				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
+				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
 			}
@@ -179,7 +179,7 @@ func newSetInactiveV1AuthCmd() *cli.Command {
 			api := getAPI(ctx)
 			client := v1_auth.Client{
 				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
+				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
 			}
@@ -208,7 +208,7 @@ func newSetPswdV1AuthCmd() *cli.Command {
 			api := getAPI(ctx)
 			client := v1_auth.Client{
 				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
+				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
 			}
 			return client.SetPassword(ctx.Context, &params)
 		},
