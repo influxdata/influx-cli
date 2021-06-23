@@ -12,6 +12,7 @@ package api
 
 import (
 	_context "context"
+	_fmt "fmt"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -91,10 +92,30 @@ type TelegrafsApi interface {
 	 * @return Telegraf
 	 */
 	PutTelegrafsIDExecute(r ApiPutTelegrafsIDRequest) (Telegraf, error)
+
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
+	OnlyOSS() TelegrafsApi
+
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
+	OnlyCloud() TelegrafsApi
 }
 
 // TelegrafsApiService TelegrafsApi service
 type TelegrafsApiService service
+
+func (a *TelegrafsApiService) OnlyOSS() TelegrafsApi {
+	a.isOnlyOSS = true
+	return a
+}
+
+func (a *TelegrafsApiService) OnlyCloud() TelegrafsApi {
+	a.isOnlyCloud = true
+	return a
+}
 
 type ApiDeleteTelegrafsIDRequest struct {
 	ctx          _context.Context
@@ -191,28 +212,36 @@ func (a *TelegrafsApiService) DeleteTelegrafsIDExecute(r ApiDeleteTelegrafsIDReq
 		return err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 
@@ -316,46 +345,54 @@ func (a *TelegrafsApiService) GetTelegrafsExecute(r ApiGetTelegrafsRequest) (Tel
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -472,46 +509,54 @@ func (a *TelegrafsApiService) GetTelegrafsIDExecute(r ApiGetTelegrafsIDRequest) 
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -618,46 +663,54 @@ func (a *TelegrafsApiService) PostTelegrafsExecute(r ApiPostTelegrafsRequest) (T
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -776,46 +829,54 @@ func (a *TelegrafsApiService) PutTelegrafsIDExecute(r ApiPutTelegrafsIDRequest) 
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}

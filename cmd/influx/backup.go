@@ -65,7 +65,7 @@ Examples:
 
 			client := backup.Client{
 				CLI:       getCLI(ctx),
-				BackupApi: getAPI(ctx).BackupApi,
+				BackupApi: getAPI(ctx).BackupApi.OnlyOSS(),
 			}
 			return client.Backup(ctx.Context, &params)
 		},

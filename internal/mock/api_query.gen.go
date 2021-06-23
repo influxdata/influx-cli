@@ -36,6 +36,34 @@ func (m *MockQueryApi) EXPECT() *MockQueryApiMockRecorder {
 	return m.recorder
 }
 
+// OnlyCloud mocks base method.
+func (m *MockQueryApi) OnlyCloud() api.QueryApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyCloud")
+	ret0, _ := ret[0].(api.QueryApi)
+	return ret0
+}
+
+// OnlyCloud indicates an expected call of OnlyCloud.
+func (mr *MockQueryApiMockRecorder) OnlyCloud() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyCloud", reflect.TypeOf((*MockQueryApi)(nil).OnlyCloud))
+}
+
+// OnlyOSS mocks base method.
+func (m *MockQueryApi) OnlyOSS() api.QueryApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyOSS")
+	ret0, _ := ret[0].(api.QueryApi)
+	return ret0
+}
+
+// OnlyOSS indicates an expected call of OnlyOSS.
+func (mr *MockQueryApiMockRecorder) OnlyOSS() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyOSS", reflect.TypeOf((*MockQueryApi)(nil).OnlyOSS))
+}
+
 // PostQuery mocks base method.
 func (m *MockQueryApi) PostQuery(arg0 context.Context) api.ApiPostQueryRequest {
 	m.ctrl.T.Helper()

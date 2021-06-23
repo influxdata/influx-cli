@@ -83,7 +83,9 @@ type APIClient struct {
 }
 
 type service struct {
-	client *APIClient
+	client      *APIClient
+	isOnlyOSS   bool
+	isOnlyCloud bool
 }
 
 // NewAPIClient creates a new API client. Requires a userAgent string describing your application.
@@ -413,7 +415,7 @@ func (c *APIClient) decode(v interface{}, b []byte, contentType string) (err err
 		}
 		return nil
 	}
-	return errors.New("undefined response type")
+	return fmt.Errorf("unable to decode response content type %q", contentType)
 }
 
 // Add a file to the multipart request

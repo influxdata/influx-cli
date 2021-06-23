@@ -64,6 +64,34 @@ func (mr *MockSecretsApiMockRecorder) GetOrgsIDSecretsExecute(arg0 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDSecretsExecute", reflect.TypeOf((*MockSecretsApi)(nil).GetOrgsIDSecretsExecute), arg0)
 }
 
+// OnlyCloud mocks base method.
+func (m *MockSecretsApi) OnlyCloud() api.SecretsApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyCloud")
+	ret0, _ := ret[0].(api.SecretsApi)
+	return ret0
+}
+
+// OnlyCloud indicates an expected call of OnlyCloud.
+func (mr *MockSecretsApiMockRecorder) OnlyCloud() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyCloud", reflect.TypeOf((*MockSecretsApi)(nil).OnlyCloud))
+}
+
+// OnlyOSS mocks base method.
+func (m *MockSecretsApi) OnlyOSS() api.SecretsApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyOSS")
+	ret0, _ := ret[0].(api.SecretsApi)
+	return ret0
+}
+
+// OnlyOSS indicates an expected call of OnlyOSS.
+func (mr *MockSecretsApiMockRecorder) OnlyOSS() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyOSS", reflect.TypeOf((*MockSecretsApi)(nil).OnlyOSS))
+}
+
 // PatchOrgsIDSecrets mocks base method.
 func (m *MockSecretsApi) PatchOrgsIDSecrets(arg0 context.Context, arg1 string) api.ApiPatchOrgsIDSecretsRequest {
 	m.ctrl.T.Helper()

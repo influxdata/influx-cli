@@ -64,6 +64,34 @@ func (mr *MockSetupApiMockRecorder) GetSetupExecute(arg0 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSetupExecute", reflect.TypeOf((*MockSetupApi)(nil).GetSetupExecute), arg0)
 }
 
+// OnlyCloud mocks base method.
+func (m *MockSetupApi) OnlyCloud() api.SetupApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyCloud")
+	ret0, _ := ret[0].(api.SetupApi)
+	return ret0
+}
+
+// OnlyCloud indicates an expected call of OnlyCloud.
+func (mr *MockSetupApiMockRecorder) OnlyCloud() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyCloud", reflect.TypeOf((*MockSetupApi)(nil).OnlyCloud))
+}
+
+// OnlyOSS mocks base method.
+func (m *MockSetupApi) OnlyOSS() api.SetupApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyOSS")
+	ret0, _ := ret[0].(api.SetupApi)
+	return ret0
+}
+
+// OnlyOSS indicates an expected call of OnlyOSS.
+func (mr *MockSetupApiMockRecorder) OnlyOSS() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyOSS", reflect.TypeOf((*MockSetupApi)(nil).OnlyOSS))
+}
+
 // PostSetup mocks base method.
 func (m *MockSetupApi) PostSetup(arg0 context.Context) api.ApiPostSetupRequest {
 	m.ctrl.T.Helper()

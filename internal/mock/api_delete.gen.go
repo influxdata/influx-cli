@@ -35,6 +35,34 @@ func (m *MockDeleteApi) EXPECT() *MockDeleteApiMockRecorder {
 	return m.recorder
 }
 
+// OnlyCloud mocks base method.
+func (m *MockDeleteApi) OnlyCloud() api.DeleteApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyCloud")
+	ret0, _ := ret[0].(api.DeleteApi)
+	return ret0
+}
+
+// OnlyCloud indicates an expected call of OnlyCloud.
+func (mr *MockDeleteApiMockRecorder) OnlyCloud() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyCloud", reflect.TypeOf((*MockDeleteApi)(nil).OnlyCloud))
+}
+
+// OnlyOSS mocks base method.
+func (m *MockDeleteApi) OnlyOSS() api.DeleteApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyOSS")
+	ret0, _ := ret[0].(api.DeleteApi)
+	return ret0
+}
+
+// OnlyOSS indicates an expected call of OnlyOSS.
+func (mr *MockDeleteApiMockRecorder) OnlyOSS() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyOSS", reflect.TypeOf((*MockDeleteApi)(nil).OnlyOSS))
+}
+
 // PostDelete mocks base method.
 func (m *MockDeleteApi) PostDelete(arg0 context.Context) api.ApiPostDeleteRequest {
 	m.ctrl.T.Helper()

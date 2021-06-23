@@ -122,6 +122,34 @@ func (mr *MockBucketSchemasApiMockRecorder) GetMeasurementSchemasExecute(arg0 in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMeasurementSchemasExecute", reflect.TypeOf((*MockBucketSchemasApi)(nil).GetMeasurementSchemasExecute), arg0)
 }
 
+// OnlyCloud mocks base method.
+func (m *MockBucketSchemasApi) OnlyCloud() api.BucketSchemasApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyCloud")
+	ret0, _ := ret[0].(api.BucketSchemasApi)
+	return ret0
+}
+
+// OnlyCloud indicates an expected call of OnlyCloud.
+func (mr *MockBucketSchemasApiMockRecorder) OnlyCloud() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyCloud", reflect.TypeOf((*MockBucketSchemasApi)(nil).OnlyCloud))
+}
+
+// OnlyOSS mocks base method.
+func (m *MockBucketSchemasApi) OnlyOSS() api.BucketSchemasApi {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OnlyOSS")
+	ret0, _ := ret[0].(api.BucketSchemasApi)
+	return ret0
+}
+
+// OnlyOSS indicates an expected call of OnlyOSS.
+func (mr *MockBucketSchemasApiMockRecorder) OnlyOSS() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyOSS", reflect.TypeOf((*MockBucketSchemasApi)(nil).OnlyOSS))
+}
+
 // UpdateMeasurementSchema mocks base method.
 func (m *MockBucketSchemasApi) UpdateMeasurementSchema(arg0 context.Context, arg1, arg2 string) api.ApiUpdateMeasurementSchemaRequest {
 	m.ctrl.T.Helper()

@@ -12,6 +12,7 @@ package api
 
 import (
 	_context "context"
+	_fmt "fmt"
 	_io "io"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
@@ -75,10 +76,30 @@ type RestoreApi interface {
 	 * PostRestoreShardIdExecute executes the request
 	 */
 	PostRestoreShardIdExecute(r ApiPostRestoreShardIdRequest) error
+
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
+	OnlyOSS() RestoreApi
+
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
+	OnlyCloud() RestoreApi
 }
 
 // RestoreApiService RestoreApi service
 type RestoreApiService service
+
+func (a *RestoreApiService) OnlyOSS() RestoreApi {
+	a.isOnlyOSS = true
+	return a
+}
+
+func (a *RestoreApiService) OnlyCloud() RestoreApi {
+	a.isOnlyCloud = true
+	return a
+}
 
 type ApiPostRestoreBucketMetadataRequest struct {
 	ctx                    _context.Context
@@ -179,46 +200,54 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -347,28 +376,36 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 		return err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 
@@ -496,28 +533,36 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 		return err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 
@@ -657,28 +702,36 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 		return err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 

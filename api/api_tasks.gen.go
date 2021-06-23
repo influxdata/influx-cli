@@ -12,6 +12,7 @@ package api
 
 import (
 	_context "context"
+	_fmt "fmt"
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
@@ -195,10 +196,30 @@ type TasksApi interface {
 	 * @return Run
 	 */
 	PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRetryRequest) (Run, error)
+
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on OSS
+	// servers.
+	OnlyOSS() TasksApi
+
+	// Sets additional descriptive text in the error message if any request in
+	// this API fails, indicating that it is intended to be used only on cloud
+	// servers.
+	OnlyCloud() TasksApi
 }
 
 // TasksApiService TasksApi service
 type TasksApiService service
+
+func (a *TasksApiService) OnlyOSS() TasksApi {
+	a.isOnlyOSS = true
+	return a
+}
+
+func (a *TasksApiService) OnlyCloud() TasksApi {
+	a.isOnlyCloud = true
+	return a
+}
 
 type ApiDeleteTasksIDRequest struct {
 	ctx          _context.Context
@@ -296,28 +317,36 @@ func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error 
 		return err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 
@@ -431,28 +460,36 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDReq
 		return err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return err
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 
@@ -628,46 +665,54 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -772,46 +817,54 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -916,46 +969,54 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -1108,46 +1169,54 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -1264,46 +1333,54 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -1420,46 +1497,54 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -1579,46 +1664,54 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -1725,46 +1818,54 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -1880,46 +1981,54 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -2047,46 +2156,54 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 		return localVarReturnValue, err
 	}
 
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, err
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = err.Error()
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
 		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: err.Error(),
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
 		return localVarReturnValue, newErr
 	}
