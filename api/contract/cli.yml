@@ -77,6 +77,8 @@ paths:
     $ref: "./overrides/paths/dashboards.yml"
   /templates/export:
     $ref: "./overrides/paths/templates_export.yml"
+  /templates/apply:
+    $ref: "./overrides/paths/templates_apply.yml"
   /dbrps:
     $ref: "./openapi/src/common/paths/dbrps.yml"
   "/dbrps/{dbrpID}":
@@ -269,6 +271,88 @@ components:
       $ref: "./overrides/schemas/Template.yml"
     TemplateEntry:
       $ref: "./overrides/schemas/TemplateEntry.yml"
+    TemplateApply:
+      $ref: "./overrides/schemas/TemplateApply.yml"
+    TemplateApplyTemplate:
+      $ref: "./overrides/schemas/TemplateApplyTemplate.yml"
+    TemplateApplyRemoteRef:
+      $ref: "./overrides/schemas/TemplateApplyRemoteRef.yml"
+    TemplateApplyAction:
+      $ref: "./overrides/schemas/TemplateApplyAction.yml"
+    TemplateApplyActionKind:
+      $ref: "./overrides/schemas/TemplateApplyActionKind.yml"
+    TemplateSummary:
+      $ref: "./overrides/schemas/TemplateSummary.yml"
+    TemplateSummaryResources:
+      $ref: "./overrides/schemas/TemplateSummaryResources.yml"
+    TemplateSummaryError:
+      $ref: "./overrides/schemas/TemplateSummaryError.yml"
+    TemplateSummaryBucket:
+      $ref: "./overrides/schemas/TemplateSummaryBucket.yml"
+    TemplateSummaryCheck:
+      $ref: "./overrides/schemas/TemplateSummaryCheck.yml"
+    TemplateSummaryCommon:
+      $ref: "./overrides/schemas/TemplateSummaryCommon.yml"
+    TemplateSummaryCore:
+      $ref: "./overrides/schemas/TemplateSummaryCore.yml"
+    TemplateEnvReference:
+      $ref: "./overrides/schemas/TemplateEnvReference.yml"
+    TemplateSummaryDashboard:
+      $ref: "./overrides/schemas/TemplateSummaryDashboard.yml"
+    TemplateSummaryLabel:
+      $ref: "./overrides/schemas/TemplateSummaryLabel.yml"
+    TemplateSummaryLabelMapping:
+      $ref: "./overrides/schemas/TemplateSummaryLabelMapping.yml"
+    TemplateSummaryNotificationEndpoint:
+      $ref: "./overrides/schemas/TemplateSummaryNotificationEndpoint.yml"
+    TemplateSummaryNotificationRule:
+      $ref: "./overrides/schemas/TemplateSummaryNotificationRule.yml"
+    TemplateSummaryTask:
+      $ref: "./overrides/schemas/TemplateSummaryTask.yml"
+    TemplateSummaryTelegraf:
+      $ref: "./overrides/schemas/TemplateSummaryTelegraf.yml"
+    TemplateSummaryTelegrafConfig:
+      $ref: "./overrides/schemas/TemplateSummaryTelegrafConfig.yml"
+    TemplateSummaryVariable:
+      $ref: "./overrides/schemas/TemplateSummaryVariable.yml"
+    TemplateSummaryVariableArgs:
+      $ref: "./overrides/schemas/TemplateSummaryVariableArgs.yml"
+    TemplateSummaryDiff:
+      $ref: "./overrides/schemas/TemplateSummaryDiff.yml"
+    TemplateSummaryDiffBucket:
+      $ref: "./overrides/schemas/TemplateSummaryDiffBucket.yml"
+    TemplateSummaryDiffBucketFields:
+      $ref: "./overrides/schemas/TemplateSummaryDiffBucketFields.yml"
+    TemplateSummaryDiffCheck:
+      $ref: "./overrides/schemas/TemplateSummaryDiffCheck.yml"
+    TemplateSummaryDiffCheckFields:
+      $ref: "./overrides/schemas/TemplateSummaryDiffCheckFields.yml"
+    TemplateSummaryDiffDashboard:
+      $ref: "./overrides/schemas/TemplateSummaryDiffDashboard.yml"
+    TemplateSummaryDiffDashboardFields:
+      $ref: "./overrides/schemas/TemplateSummaryDiffDashboardFields.yml"
+    TemplateSummaryDiffLabel:
+      $ref: "./overrides/schemas/TemplateSummaryDiffLabel.yml"
+    TemplateSummaryDiffLabelFields:
+      $ref: "./overrides/schemas/TemplateSummaryDiffLabelFields.yml"
+    TemplateSummaryDiffNotificationEndpoint:
+      $ref: "./overrides/schemas/TemplateSummaryDiffNotificationEndpoint.yml"
+    TemplateSummaryDiffNotificationEndpointFields:
+      $ref: "./overrides/schemas/TemplateSummaryDiffNotificationEndpointFields.yml"
+    TemplateSummaryDiffNotificationRule:
+      $ref: "./overrides/schemas/TemplateSummaryDiffNotificationRule.yml"
+    TemplateSummaryDiffNotificationRuleFields:
+      $ref: "./overrides/schemas/TemplateSummaryDiffNotificationRuleFields.yml"
+    TemplateSummaryDiffTask:
+      $ref: "./overrides/schemas/TemplateSummaryDiffTask.yml"
+    TemplateSummaryDiffTaskFields:
+      $ref: "./overrides/schemas/TemplateSummaryDiffTaskFields.yml"
+    TemplateSummaryDiffTelegraf:
+      $ref: "./overrides/schemas/TemplateSummaryDiffTelegraf.yml"
+    TemplateSummaryDiffVariable:
+      $ref: "./overrides/schemas/TemplateSummaryDiffVariable.yml"
+    TemplateSummaryDiffVariableFields:
+      $ref: "./overrides/schemas/TemplateSummaryDiffVariableFields.yml"
     SecretKeysResponse:
       $ref: "./openapi/src/common/schemas/SecretKeysResponse.yml"
     SecretKeys:

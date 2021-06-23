@@ -1,0 +1,8 @@
+type: object
+properties:
+  sources:
+    type: array
+    items:
+      type: string
+  contents:
+    $ref: "./Template.yml"

@@ -1,0 +1,8 @@
+type: object
+properties:
+  name:
+    type: string
+  description:
+    type: string
+  retentionRules:
+    $ref: "../../openapi/src/common/schemas/RetentionRules.yml"

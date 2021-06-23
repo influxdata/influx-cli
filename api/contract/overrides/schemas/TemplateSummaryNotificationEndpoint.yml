@@ -1,0 +1,12 @@
+allOf:
+  - $ref: "./TemplateSummaryCommon.yml"
+  - type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      status:
+        type: string

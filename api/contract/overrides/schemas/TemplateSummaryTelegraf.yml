@@ -1,0 +1,6 @@
+allOf:
+  - $ref: "./TemplateSummaryCommon.yml"
+  - type: object
+    properties:
+      telegrafConfig:
+        $ref: "./TemplateSummaryTelegrafConfig.yml"

@@ -26,6 +26,19 @@ var (
 type TemplatesApi interface {
 
 	/*
+	 * ApplyTemplate Apply or dry-run an InfluxDB Template
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @return ApiApplyTemplateRequest
+	 */
+	ApplyTemplate(ctx _context.Context) ApiApplyTemplateRequest
+
+	/*
+	 * ApplyTemplateExecute executes the request
+	 * @return TemplateSummary
+	 */
+	ApplyTemplateExecute(r ApiApplyTemplateRequest) (TemplateSummary, error)
+
+	/*
 	 * ExportTemplate Export a new Influx Template
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiExportTemplateRequest
@@ -60,6 +73,148 @@ func (a *TemplatesApiService) OnlyOSS() TemplatesApi {
 func (a *TemplatesApiService) OnlyCloud() TemplatesApi {
 	a.isOnlyCloud = true
 	return a
+}
+
+type ApiApplyTemplateRequest struct {
+	ctx           _context.Context
+	ApiService    TemplatesApi
+	templateApply *TemplateApply
+}
+
+func (r ApiApplyTemplateRequest) TemplateApply(templateApply TemplateApply) ApiApplyTemplateRequest {
+	r.templateApply = &templateApply
+	return r
+}
+func (r ApiApplyTemplateRequest) GetTemplateApply() *TemplateApply {
+	return r.templateApply
+}
+
+func (r ApiApplyTemplateRequest) Execute() (TemplateSummary, error) {
+	return r.ApiService.ApplyTemplateExecute(r)
+}
+
+/*
+ * ApplyTemplate Apply or dry-run an InfluxDB Template
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiApplyTemplateRequest
+ */
+func (a *TemplatesApiService) ApplyTemplate(ctx _context.Context) ApiApplyTemplateRequest {
+	return ApiApplyTemplateRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return TemplateSummary
+ */
+func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (TemplateSummary, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodPost
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  TemplateSummary
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TemplatesApiService.ApplyTemplate")
+	if err != nil {
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/templates/apply"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+	if r.templateApply == nil {
+		return localVarReturnValue, reportError("templateApply is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.templateApply
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, err
+	}
+
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		}
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		}
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+			return localVarReturnValue, newErr
+		}
+		newErr.model = &v
+		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
+		return localVarReturnValue, newErr
+	}
+
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+	}
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+	}
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
+		}
+		return localVarReturnValue, newErr
+	}
+
+	return localVarReturnValue, nil
 }
 
 type ApiExportTemplateRequest struct {

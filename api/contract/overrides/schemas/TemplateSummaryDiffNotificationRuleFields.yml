@@ -1,0 +1,18 @@
+type: object
+properties:
+  name:
+    type: string
+  description:
+    type: string
+  endpointName:
+    type: string
+  endpointID:
+    type: string
+  endpointType:
+    type: string
+  every:
+    type: string
+  offset:
+    type: string
+  messageTemplate:
+    type: string

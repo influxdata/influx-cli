@@ -1,0 +1,18 @@
+type: object
+properties:
+  status:
+    type: string
+  resourceTemplateMetaName:
+    type: string
+  resourceName:
+    type: string
+  resourceID:
+    type: string
+  resourceType:
+    type: string
+  labelTemplateMetaName:
+    type: string
+  labelName:
+    type: string
+  labelID:
+    type: string

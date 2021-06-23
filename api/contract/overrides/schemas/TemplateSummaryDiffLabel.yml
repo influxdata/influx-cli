@@ -1,0 +1,14 @@
+type: object
+properties:
+  stateStatus:
+    type: string
+  kind:
+    type: string
+  id:
+    type: string
+  templateMetaName:
+    type: string
+  new:
+    $ref: "./TemplateSummaryDiffLabelFields.yml"
+  old:
+    $ref: "./TemplateSummaryDiffLabelFields.yml"

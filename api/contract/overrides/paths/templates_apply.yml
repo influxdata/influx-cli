@@ -1,0 +1,37 @@
+post:
+  operationId: ApplyTemplate
+  tags:
+    - Templates
+  summary: Apply or dry-run an InfluxDB Template
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/TemplateApply.yml"
+  responses:
+    "200":
+      description: >
+        Influx package dry-run successful, no new resources created.
+        The provided diff and summary will not have IDs for resources
+        that do not exist at the time of the dry run.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/TemplateSummary.yml"
+    "201":
+      description: >
+        Influx package applied successfully. Newly created resources created
+        available in summary. The diff compares the state of the world before
+        the package is applied with the changes the application will impose.
+        This corresponds to `"dryRun": true`
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/TemplateSummary.yml"
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "../../openapi/src/common/schemas/Error.yml"
