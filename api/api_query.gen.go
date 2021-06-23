@@ -71,8 +71,6 @@ type ApiPostQueryRequest struct {
 	org            *string
 	orgID          *string
 	query          *Query
-	isOnlyOSS      bool
-	isOnlyCloud    bool
 }
 
 func (r ApiPostQueryRequest) ZapTraceSpan(zapTraceSpan string) ApiPostQueryRequest {
@@ -125,22 +123,6 @@ func (r ApiPostQueryRequest) GetQuery() *Query {
 
 func (r ApiPostQueryRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.PostQueryExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPostQueryRequest) OnlyOSS() ApiPostQueryRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPostQueryRequest) OnlyCloud() ApiPostQueryRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -225,9 +207,9 @@ func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Res
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -235,12 +217,12 @@ func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Res
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,

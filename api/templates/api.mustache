@@ -77,8 +77,6 @@ type {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request s
 {{#allParams}}
 	{{paramName}} {{#isByteArray}}[]byte{{/isByteArray}}{{#isBinary}}_io.ReadCloser{{/isBinary}}{{^isByteArray}}{{^isBinary}}{{^isPathParam}}*{{/isPathParam}}{{{dataType}}}{{/isBinary}}{{/isByteArray}}
 {{/allParams}}
-	isOnlyOSS bool
-	isOnlyCloud bool
 }
 {{#allParams}}
 func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) {{vendorExtensions.x-export-param-name}}({{paramName}} {{#isByteArray}}[]byte{{/isByteArray}}{{#isBinary}}_io.ReadCloser{{/isBinary}}{{^isByteArray}}{{^isBinary}}{{{dataType}}}{{/isBinary}}{{/isByteArray}}) {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request {
@@ -93,22 +91,6 @@ func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Reques
 
 func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) Execute() ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error) {
 	return r.ApiService.{{nickname}}Execute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) OnlyOSS() {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) OnlyCloud() {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -375,9 +357,9 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -385,12 +367,12 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%v", errorPrefix, err)
+			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%v", errorPrefix, err)
+			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -431,12 +413,12 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%v", errorPrefix, err)
+		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%v", errorPrefix, err)
+		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {

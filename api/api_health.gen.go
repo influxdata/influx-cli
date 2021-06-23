@@ -66,8 +66,6 @@ type ApiGetHealthRequest struct {
 	ctx          _context.Context
 	ApiService   HealthApi
 	zapTraceSpan *string
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiGetHealthRequest) ZapTraceSpan(zapTraceSpan string) ApiGetHealthRequest {
@@ -80,22 +78,6 @@ func (r ApiGetHealthRequest) GetZapTraceSpan() *string {
 
 func (r ApiGetHealthRequest) Execute() (HealthCheck, error) {
 	return r.ApiService.GetHealthExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetHealthRequest) OnlyOSS() ApiGetHealthRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetHealthRequest) OnlyCloud() ApiGetHealthRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -166,9 +148,9 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -176,12 +158,12 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -210,12 +192,12 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {

@@ -106,8 +106,6 @@ type ApiPostRestoreBucketMetadataRequest struct {
 	ApiService             RestoreApi
 	bucketMetadataManifest *BucketMetadataManifest
 	zapTraceSpan           *string
-	isOnlyOSS              bool
-	isOnlyCloud            bool
 }
 
 func (r ApiPostRestoreBucketMetadataRequest) BucketMetadataManifest(bucketMetadataManifest BucketMetadataManifest) ApiPostRestoreBucketMetadataRequest {
@@ -128,22 +126,6 @@ func (r ApiPostRestoreBucketMetadataRequest) GetZapTraceSpan() *string {
 
 func (r ApiPostRestoreBucketMetadataRequest) Execute() (RestoredBucketMappings, error) {
 	return r.ApiService.PostRestoreBucketMetadataExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPostRestoreBucketMetadataRequest) OnlyOSS() ApiPostRestoreBucketMetadataRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPostRestoreBucketMetadataRequest) OnlyCloud() ApiPostRestoreBucketMetadataRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -219,9 +201,9 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -229,12 +211,12 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -253,12 +235,12 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -279,8 +261,6 @@ type ApiPostRestoreKVRequest struct {
 	zapTraceSpan    *string
 	contentEncoding *string
 	contentType     *string
-	isOnlyOSS       bool
-	isOnlyCloud     bool
 }
 
 func (r ApiPostRestoreKVRequest) Body(body _io.ReadCloser) ApiPostRestoreKVRequest {
@@ -317,22 +297,6 @@ func (r ApiPostRestoreKVRequest) GetContentType() *string {
 
 func (r ApiPostRestoreKVRequest) Execute() error {
 	return r.ApiService.PostRestoreKVExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPostRestoreKVRequest) OnlyOSS() ApiPostRestoreKVRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPostRestoreKVRequest) OnlyCloud() ApiPostRestoreKVRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -412,9 +376,9 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -422,12 +386,12 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -453,8 +417,6 @@ type ApiPostRestoreSQLRequest struct {
 	zapTraceSpan    *string
 	contentEncoding *string
 	contentType     *string
-	isOnlyOSS       bool
-	isOnlyCloud     bool
 }
 
 func (r ApiPostRestoreSQLRequest) Body(body _io.ReadCloser) ApiPostRestoreSQLRequest {
@@ -491,22 +453,6 @@ func (r ApiPostRestoreSQLRequest) GetContentType() *string {
 
 func (r ApiPostRestoreSQLRequest) Execute() error {
 	return r.ApiService.PostRestoreSQLExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPostRestoreSQLRequest) OnlyOSS() ApiPostRestoreSQLRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPostRestoreSQLRequest) OnlyCloud() ApiPostRestoreSQLRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -586,9 +532,9 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -596,12 +542,12 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -628,8 +574,6 @@ type ApiPostRestoreShardIdRequest struct {
 	zapTraceSpan    *string
 	contentEncoding *string
 	contentType     *string
-	isOnlyOSS       bool
-	isOnlyCloud     bool
 }
 
 func (r ApiPostRestoreShardIdRequest) ShardID(shardID string) ApiPostRestoreShardIdRequest {
@@ -674,22 +618,6 @@ func (r ApiPostRestoreShardIdRequest) GetContentType() *string {
 
 func (r ApiPostRestoreShardIdRequest) Execute() error {
 	return r.ApiService.PostRestoreShardIdExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPostRestoreShardIdRequest) OnlyOSS() ApiPostRestoreShardIdRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPostRestoreShardIdRequest) OnlyCloud() ApiPostRestoreShardIdRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -772,9 +700,9 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -782,12 +710,12 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,

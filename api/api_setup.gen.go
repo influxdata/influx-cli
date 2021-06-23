@@ -81,8 +81,6 @@ type ApiGetSetupRequest struct {
 	ctx          _context.Context
 	ApiService   SetupApi
 	zapTraceSpan *string
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiGetSetupRequest) ZapTraceSpan(zapTraceSpan string) ApiGetSetupRequest {
@@ -95,22 +93,6 @@ func (r ApiGetSetupRequest) GetZapTraceSpan() *string {
 
 func (r ApiGetSetupRequest) Execute() (InlineResponse200, error) {
 	return r.ApiService.GetSetupExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetSetupRequest) OnlyOSS() ApiGetSetupRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetSetupRequest) OnlyCloud() ApiGetSetupRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -182,9 +164,9 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -192,12 +174,12 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -209,12 +191,12 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -233,8 +215,6 @@ type ApiPostSetupRequest struct {
 	ApiService        SetupApi
 	onboardingRequest *OnboardingRequest
 	zapTraceSpan      *string
-	isOnlyOSS         bool
-	isOnlyCloud       bool
 }
 
 func (r ApiPostSetupRequest) OnboardingRequest(onboardingRequest OnboardingRequest) ApiPostSetupRequest {
@@ -255,22 +235,6 @@ func (r ApiPostSetupRequest) GetZapTraceSpan() *string {
 
 func (r ApiPostSetupRequest) Execute() (OnboardingResponse, error) {
 	return r.ApiService.PostSetupExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPostSetupRequest) OnlyOSS() ApiPostSetupRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPostSetupRequest) OnlyCloud() ApiPostSetupRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -347,9 +311,9 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -357,12 +321,12 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -381,12 +345,12 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {

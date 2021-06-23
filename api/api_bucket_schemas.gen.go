@@ -115,8 +115,6 @@ type ApiCreateMeasurementSchemaRequest struct {
 	org                            *string
 	orgID                          *string
 	measurementSchemaCreateRequest *MeasurementSchemaCreateRequest
-	isOnlyOSS                      bool
-	isOnlyCloud                    bool
 }
 
 func (r ApiCreateMeasurementSchemaRequest) BucketID(bucketID string) ApiCreateMeasurementSchemaRequest {
@@ -153,22 +151,6 @@ func (r ApiCreateMeasurementSchemaRequest) GetMeasurementSchemaCreateRequest() *
 
 func (r ApiCreateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
 	return r.ApiService.CreateMeasurementSchemaExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiCreateMeasurementSchemaRequest) OnlyOSS() ApiCreateMeasurementSchemaRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiCreateMeasurementSchemaRequest) OnlyCloud() ApiCreateMeasurementSchemaRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -247,9 +229,9 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -257,12 +239,12 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -283,12 +265,12 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -309,8 +291,6 @@ type ApiGetMeasurementSchemaRequest struct {
 	measurementID string
 	org           *string
 	orgID         *string
-	isOnlyOSS     bool
-	isOnlyCloud   bool
 }
 
 func (r ApiGetMeasurementSchemaRequest) BucketID(bucketID string) ApiGetMeasurementSchemaRequest {
@@ -347,22 +327,6 @@ func (r ApiGetMeasurementSchemaRequest) GetOrgID() *string {
 
 func (r ApiGetMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
 	return r.ApiService.GetMeasurementSchemaExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetMeasurementSchemaRequest) OnlyOSS() ApiGetMeasurementSchemaRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetMeasurementSchemaRequest) OnlyCloud() ApiGetMeasurementSchemaRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -442,9 +406,9 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -452,12 +416,12 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -469,12 +433,12 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -489,14 +453,12 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 }
 
 type ApiGetMeasurementSchemasRequest struct {
-	ctx         _context.Context
-	ApiService  BucketSchemasApi
-	bucketID    string
-	org         *string
-	orgID       *string
-	name        *string
-	isOnlyOSS   bool
-	isOnlyCloud bool
+	ctx        _context.Context
+	ApiService BucketSchemasApi
+	bucketID   string
+	org        *string
+	orgID      *string
+	name       *string
 }
 
 func (r ApiGetMeasurementSchemasRequest) BucketID(bucketID string) ApiGetMeasurementSchemasRequest {
@@ -533,22 +495,6 @@ func (r ApiGetMeasurementSchemasRequest) GetName() *string {
 
 func (r ApiGetMeasurementSchemasRequest) Execute() (MeasurementSchemaList, error) {
 	return r.ApiService.GetMeasurementSchemasExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetMeasurementSchemasRequest) OnlyOSS() ApiGetMeasurementSchemasRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetMeasurementSchemasRequest) OnlyCloud() ApiGetMeasurementSchemasRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -628,9 +574,9 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -638,12 +584,12 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -664,12 +610,12 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -691,8 +637,6 @@ type ApiUpdateMeasurementSchemaRequest struct {
 	org                            *string
 	orgID                          *string
 	measurementSchemaUpdateRequest *MeasurementSchemaUpdateRequest
-	isOnlyOSS                      bool
-	isOnlyCloud                    bool
 }
 
 func (r ApiUpdateMeasurementSchemaRequest) BucketID(bucketID string) ApiUpdateMeasurementSchemaRequest {
@@ -737,22 +681,6 @@ func (r ApiUpdateMeasurementSchemaRequest) GetMeasurementSchemaUpdateRequest() *
 
 func (r ApiUpdateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
 	return r.ApiService.UpdateMeasurementSchemaExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiUpdateMeasurementSchemaRequest) OnlyOSS() ApiUpdateMeasurementSchemaRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiUpdateMeasurementSchemaRequest) OnlyCloud() ApiUpdateMeasurementSchemaRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -834,9 +762,9 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -844,12 +772,12 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -870,12 +798,12 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {

@@ -75,8 +75,6 @@ type ApiGetDashboardsRequest struct {
 	id           *[]string
 	orgID        *string
 	org          *string
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiGetDashboardsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetDashboardsRequest {
@@ -153,22 +151,6 @@ func (r ApiGetDashboardsRequest) GetOrg() *string {
 
 func (r ApiGetDashboardsRequest) Execute() (Dashboards, error) {
 	return r.ApiService.GetDashboardsExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetDashboardsRequest) OnlyOSS() ApiGetDashboardsRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetDashboardsRequest) OnlyCloud() ApiGetDashboardsRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -271,9 +253,9 @@ func (a *DashboardsApiService) GetDashboardsExecute(r ApiGetDashboardsRequest) (
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -281,12 +263,12 @@ func (a *DashboardsApiService) GetDashboardsExecute(r ApiGetDashboardsRequest) (
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -305,12 +287,12 @@ func (a *DashboardsApiService) GetDashboardsExecute(r ApiGetDashboardsRequest) (
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {

@@ -226,8 +226,6 @@ type ApiDeleteTasksIDRequest struct {
 	ApiService   TasksApi
 	taskID       string
 	zapTraceSpan *string
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiDeleteTasksIDRequest) TaskID(taskID string) ApiDeleteTasksIDRequest {
@@ -248,22 +246,6 @@ func (r ApiDeleteTasksIDRequest) GetZapTraceSpan() *string {
 
 func (r ApiDeleteTasksIDRequest) Execute() error {
 	return r.ApiService.DeleteTasksIDExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiDeleteTasksIDRequest) OnlyOSS() ApiDeleteTasksIDRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiDeleteTasksIDRequest) OnlyCloud() ApiDeleteTasksIDRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -336,9 +318,9 @@ func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error 
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -346,12 +328,12 @@ func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error 
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -376,8 +358,6 @@ type ApiDeleteTasksIDRunsIDRequest struct {
 	taskID       string
 	runID        string
 	zapTraceSpan *string
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiDeleteTasksIDRunsIDRequest) TaskID(taskID string) ApiDeleteTasksIDRunsIDRequest {
@@ -406,22 +386,6 @@ func (r ApiDeleteTasksIDRunsIDRequest) GetZapTraceSpan() *string {
 
 func (r ApiDeleteTasksIDRunsIDRequest) Execute() error {
 	return r.ApiService.DeleteTasksIDRunsIDExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiDeleteTasksIDRunsIDRequest) OnlyOSS() ApiDeleteTasksIDRunsIDRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiDeleteTasksIDRunsIDRequest) OnlyCloud() ApiDeleteTasksIDRunsIDRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -496,9 +460,9 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDReq
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -506,12 +470,12 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDReq
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -541,8 +505,6 @@ type ApiGetTasksRequest struct {
 	orgID        *string
 	status       *string
 	limit        *int32
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiGetTasksRequest) ZapTraceSpan(zapTraceSpan string) ApiGetTasksRequest {
@@ -611,22 +573,6 @@ func (r ApiGetTasksRequest) GetLimit() *int32 {
 
 func (r ApiGetTasksRequest) Execute() (Tasks, error) {
 	return r.ApiService.GetTasksExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetTasksRequest) OnlyOSS() ApiGetTasksRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetTasksRequest) OnlyCloud() ApiGetTasksRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -718,9 +664,9 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -728,12 +674,12 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -752,12 +698,12 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -776,8 +722,6 @@ type ApiGetTasksIDRequest struct {
 	ApiService   TasksApi
 	taskID       string
 	zapTraceSpan *string
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiGetTasksIDRequest) TaskID(taskID string) ApiGetTasksIDRequest {
@@ -798,22 +742,6 @@ func (r ApiGetTasksIDRequest) GetZapTraceSpan() *string {
 
 func (r ApiGetTasksIDRequest) Execute() (Task, error) {
 	return r.ApiService.GetTasksIDExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetTasksIDRequest) OnlyOSS() ApiGetTasksIDRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetTasksIDRequest) OnlyCloud() ApiGetTasksIDRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -887,9 +815,9 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -897,12 +825,12 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -921,12 +849,12 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -945,8 +873,6 @@ type ApiGetTasksIDLogsRequest struct {
 	ApiService   TasksApi
 	taskID       string
 	zapTraceSpan *string
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiGetTasksIDLogsRequest) TaskID(taskID string) ApiGetTasksIDLogsRequest {
@@ -967,22 +893,6 @@ func (r ApiGetTasksIDLogsRequest) GetZapTraceSpan() *string {
 
 func (r ApiGetTasksIDLogsRequest) Execute() (Logs, error) {
 	return r.ApiService.GetTasksIDLogsExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetTasksIDLogsRequest) OnlyOSS() ApiGetTasksIDLogsRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetTasksIDLogsRequest) OnlyCloud() ApiGetTasksIDLogsRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -1056,9 +966,9 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -1066,12 +976,12 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1090,12 +1000,12 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1118,8 +1028,6 @@ type ApiGetTasksIDRunsRequest struct {
 	limit        *int32
 	afterTime    *time.Time
 	beforeTime   *time.Time
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiGetTasksIDRunsRequest) TaskID(taskID string) ApiGetTasksIDRunsRequest {
@@ -1172,22 +1080,6 @@ func (r ApiGetTasksIDRunsRequest) GetBeforeTime() *time.Time {
 
 func (r ApiGetTasksIDRunsRequest) Execute() (Runs, error) {
 	return r.ApiService.GetTasksIDRunsExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetTasksIDRunsRequest) OnlyOSS() ApiGetTasksIDRunsRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetTasksIDRunsRequest) OnlyCloud() ApiGetTasksIDRunsRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -1273,9 +1165,9 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -1283,12 +1175,12 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1307,12 +1199,12 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1332,8 +1224,6 @@ type ApiGetTasksIDRunsIDRequest struct {
 	taskID       string
 	runID        string
 	zapTraceSpan *string
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiGetTasksIDRunsIDRequest) TaskID(taskID string) ApiGetTasksIDRunsIDRequest {
@@ -1362,22 +1252,6 @@ func (r ApiGetTasksIDRunsIDRequest) GetZapTraceSpan() *string {
 
 func (r ApiGetTasksIDRunsIDRequest) Execute() (Run, error) {
 	return r.ApiService.GetTasksIDRunsIDExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetTasksIDRunsIDRequest) OnlyOSS() ApiGetTasksIDRunsIDRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetTasksIDRunsIDRequest) OnlyCloud() ApiGetTasksIDRunsIDRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -1454,9 +1328,9 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -1464,12 +1338,12 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1488,12 +1362,12 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1513,8 +1387,6 @@ type ApiGetTasksIDRunsIDLogsRequest struct {
 	taskID       string
 	runID        string
 	zapTraceSpan *string
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiGetTasksIDRunsIDLogsRequest) TaskID(taskID string) ApiGetTasksIDRunsIDLogsRequest {
@@ -1543,22 +1415,6 @@ func (r ApiGetTasksIDRunsIDLogsRequest) GetZapTraceSpan() *string {
 
 func (r ApiGetTasksIDRunsIDLogsRequest) Execute() (Logs, error) {
 	return r.ApiService.GetTasksIDRunsIDLogsExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetTasksIDRunsIDLogsRequest) OnlyOSS() ApiGetTasksIDRunsIDLogsRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetTasksIDRunsIDLogsRequest) OnlyCloud() ApiGetTasksIDRunsIDLogsRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -1635,9 +1491,9 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -1645,12 +1501,12 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1669,12 +1525,12 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1694,8 +1550,6 @@ type ApiPatchTasksIDRequest struct {
 	taskID            string
 	taskUpdateRequest *TaskUpdateRequest
 	zapTraceSpan      *string
-	isOnlyOSS         bool
-	isOnlyCloud       bool
 }
 
 func (r ApiPatchTasksIDRequest) TaskID(taskID string) ApiPatchTasksIDRequest {
@@ -1724,22 +1578,6 @@ func (r ApiPatchTasksIDRequest) GetZapTraceSpan() *string {
 
 func (r ApiPatchTasksIDRequest) Execute() (Task, error) {
 	return r.ApiService.PatchTasksIDExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPatchTasksIDRequest) OnlyOSS() ApiPatchTasksIDRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPatchTasksIDRequest) OnlyCloud() ApiPatchTasksIDRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -1819,9 +1657,9 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -1829,12 +1667,12 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1853,12 +1691,12 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1877,8 +1715,6 @@ type ApiPostTasksRequest struct {
 	ApiService        TasksApi
 	taskCreateRequest *TaskCreateRequest
 	zapTraceSpan      *string
-	isOnlyOSS         bool
-	isOnlyCloud       bool
 }
 
 func (r ApiPostTasksRequest) TaskCreateRequest(taskCreateRequest TaskCreateRequest) ApiPostTasksRequest {
@@ -1899,22 +1735,6 @@ func (r ApiPostTasksRequest) GetZapTraceSpan() *string {
 
 func (r ApiPostTasksRequest) Execute() (Task, error) {
 	return r.ApiService.PostTasksExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPostTasksRequest) OnlyOSS() ApiPostTasksRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPostTasksRequest) OnlyCloud() ApiPostTasksRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -1990,9 +1810,9 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -2000,12 +1820,12 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -2024,12 +1844,12 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -2049,8 +1869,6 @@ type ApiPostTasksIDRunsRequest struct {
 	taskID       string
 	zapTraceSpan *string
 	runManually  *RunManually
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiPostTasksIDRunsRequest) TaskID(taskID string) ApiPostTasksIDRunsRequest {
@@ -2079,22 +1897,6 @@ func (r ApiPostTasksIDRunsRequest) GetRunManually() *RunManually {
 
 func (r ApiPostTasksIDRunsRequest) Execute() (Run, error) {
 	return r.ApiService.PostTasksIDRunsExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPostTasksIDRunsRequest) OnlyOSS() ApiPostTasksIDRunsRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPostTasksIDRunsRequest) OnlyCloud() ApiPostTasksIDRunsRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -2170,9 +1972,9 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -2180,12 +1982,12 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -2204,12 +2006,12 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -2230,8 +2032,6 @@ type ApiPostTasksIDRunsIDRetryRequest struct {
 	runID        string
 	zapTraceSpan *string
 	body         *map[string]interface{}
-	isOnlyOSS    bool
-	isOnlyCloud  bool
 }
 
 func (r ApiPostTasksIDRunsIDRetryRequest) TaskID(taskID string) ApiPostTasksIDRunsIDRetryRequest {
@@ -2268,22 +2068,6 @@ func (r ApiPostTasksIDRunsIDRetryRequest) GetBody() *map[string]interface{} {
 
 func (r ApiPostTasksIDRunsIDRetryRequest) Execute() (Run, error) {
 	return r.ApiService.PostTasksIDRunsIDRetryExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPostTasksIDRunsIDRetryRequest) OnlyOSS() ApiPostTasksIDRunsIDRetryRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPostTasksIDRunsIDRetryRequest) OnlyCloud() ApiPostTasksIDRunsIDRetryRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -2362,9 +2146,9 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -2372,12 +2156,12 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -2396,12 +2180,12 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {

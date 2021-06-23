@@ -83,8 +83,6 @@ type ApiGetBackupMetadataRequest struct {
 	ApiService     BackupApi
 	zapTraceSpan   *string
 	acceptEncoding *string
-	isOnlyOSS      bool
-	isOnlyCloud    bool
 }
 
 func (r ApiGetBackupMetadataRequest) ZapTraceSpan(zapTraceSpan string) ApiGetBackupMetadataRequest {
@@ -105,22 +103,6 @@ func (r ApiGetBackupMetadataRequest) GetAcceptEncoding() *string {
 
 func (r ApiGetBackupMetadataRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.GetBackupMetadataExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetBackupMetadataRequest) OnlyOSS() ApiGetBackupMetadataRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetBackupMetadataRequest) OnlyCloud() ApiGetBackupMetadataRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -194,9 +176,9 @@ func (a *BackupApiService) GetBackupMetadataExecute(r ApiGetBackupMetadataReques
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -204,12 +186,12 @@ func (a *BackupApiService) GetBackupMetadataExecute(r ApiGetBackupMetadataReques
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -237,8 +219,6 @@ type ApiGetBackupShardIdRequest struct {
 	zapTraceSpan   *string
 	acceptEncoding *string
 	since          *time.Time
-	isOnlyOSS      bool
-	isOnlyCloud    bool
 }
 
 func (r ApiGetBackupShardIdRequest) ShardID(shardID int64) ApiGetBackupShardIdRequest {
@@ -275,22 +255,6 @@ func (r ApiGetBackupShardIdRequest) GetSince() *time.Time {
 
 func (r ApiGetBackupShardIdRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.GetBackupShardIdExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiGetBackupShardIdRequest) OnlyOSS() ApiGetBackupShardIdRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiGetBackupShardIdRequest) OnlyCloud() ApiGetBackupShardIdRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -370,9 +334,9 @@ func (a *BackupApiService) GetBackupShardIdExecute(r ApiGetBackupShardIdRequest)
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -380,12 +344,12 @@ func (a *BackupApiService) GetBackupShardIdExecute(r ApiGetBackupShardIdRequest)
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%v", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,

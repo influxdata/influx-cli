@@ -14,7 +14,7 @@ type Client struct {
 
 // Ping checks the health of a remote InfluxDB instance.
 func (c Client) Ping(ctx context.Context) error {
-	if _, err := c.GetHealth(ctx).OnlyOSS().Execute(); err != nil {
+	if _, err := c.GetHealth(ctx).Execute(); err != nil {
 		return err
 	}
 	_, err := c.StdIO.Write([]byte("OK\n"))

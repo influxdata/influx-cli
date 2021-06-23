@@ -70,8 +70,6 @@ type ApiPostDeleteRequest struct {
 	bucket                 *string
 	orgID                  *string
 	bucketID               *string
-	isOnlyOSS              bool
-	isOnlyCloud            bool
 }
 
 func (r ApiPostDeleteRequest) DeletePredicateRequest(deletePredicateRequest DeletePredicateRequest) ApiPostDeleteRequest {
@@ -124,22 +122,6 @@ func (r ApiPostDeleteRequest) GetBucketID() *string {
 
 func (r ApiPostDeleteRequest) Execute() error {
 	return r.ApiService.PostDeleteExecute(r)
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on OSS
-// servers.
-func (r ApiPostDeleteRequest) OnlyOSS() ApiPostDeleteRequest {
-	r.isOnlyOSS = true
-	return r
-}
-
-// Sets additional descriptive text in the error message if this specific
-// request fails, indicating that it is intended to be used only on cloud
-// servers.
-func (r ApiPostDeleteRequest) OnlyCloud() ApiPostDeleteRequest {
-	r.isOnlyCloud = true
-	return r
 }
 
 /*
@@ -225,9 +207,9 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 	}
 
 	var errorPrefix string
-	if r.isOnlyOSS || a.isOnlyOSS {
+	if a.isOnlyOSS {
 		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if r.isOnlyCloud || a.isOnlyCloud {
+	} else if a.isOnlyCloud {
 		errorPrefix = "InfluxDB Cloud-only command failed: "
 	}
 
@@ -235,12 +217,12 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%v", errorPrefix, err)
+			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
