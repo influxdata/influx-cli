@@ -16,7 +16,7 @@ func withBucketSchemaClient() cli.BeforeFunc {
 			client := getAPI(ctx)
 			ctx.App.Metadata["measurement_schema"] = bucket_schema.Client{
 				BucketsApi:       client.BucketsApi,
-				BucketSchemasApi: client.BucketSchemasApi,
+				BucketSchemasApi: client.BucketSchemasApi.OnlyCloud(),
 				CLI:              getCLI(ctx),
 			}
 			return nil
