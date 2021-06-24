@@ -16,14 +16,14 @@ import (
 
 // TemplateSummaryVariable struct for TemplateSummaryVariable
 type TemplateSummaryVariable struct {
-	Kind              string                      `json:"kind"`
-	TemplateMetaName  *string                     `json:"templateMetaName,omitempty"`
-	EnvReferences     []TemplateEnvReference      `json:"envReferences"`
-	LabelAssociations []TemplateSummaryLabel      `json:"labelAssociations"`
-	Id                string                      `json:"id"`
-	Name              string                      `json:"name"`
-	Description       *string                     `json:"description,omitempty"`
-	Arguments         TemplateSummaryVariableArgs `json:"arguments"`
+	Kind              string                      `json:"kind" yaml:"kind"`
+	TemplateMetaName  *string                     `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
+	EnvReferences     []TemplateEnvReference      `json:"envReferences" yaml:"envReferences"`
+	LabelAssociations []TemplateSummaryLabel      `json:"labelAssociations" yaml:"labelAssociations"`
+	Id                string                      `json:"id" yaml:"id"`
+	Name              string                      `json:"name" yaml:"name"`
+	Description       *string                     `json:"description,omitempty" yaml:"description,omitempty"`
+	Arguments         TemplateSummaryVariableArgs `json:"arguments" yaml:"arguments"`
 }
 
 // NewTemplateSummaryVariable instantiates a new TemplateSummaryVariable object

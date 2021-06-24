@@ -16,7 +16,7 @@ import (
 
 // DBRPs struct for DBRPs
 type DBRPs struct {
-	Content *[]DBRP `json:"content,omitempty"`
+	Content *[]DBRP `json:"content,omitempty" yaml:"content,omitempty"`
 }
 
 // NewDBRPs instantiates a new DBRPs object

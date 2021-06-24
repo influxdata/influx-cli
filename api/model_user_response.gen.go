@@ -16,12 +16,12 @@ import (
 
 // UserResponse struct for UserResponse
 type UserResponse struct {
-	Id      *string `json:"id,omitempty"`
-	OauthID *string `json:"oauthID,omitempty"`
-	Name    string  `json:"name"`
+	Id      *string `json:"id,omitempty" yaml:"id,omitempty"`
+	OauthID *string `json:"oauthID,omitempty" yaml:"oauthID,omitempty"`
+	Name    string  `json:"name" yaml:"name"`
 	// If inactive the user is inactive.
-	Status *string            `json:"status,omitempty"`
-	Links  *UserResponseLinks `json:"links,omitempty"`
+	Status *string            `json:"status,omitempty" yaml:"status,omitempty"`
+	Links  *UserResponseLinks `json:"links,omitempty" yaml:"links,omitempty"`
 }
 
 // NewUserResponse instantiates a new UserResponse object

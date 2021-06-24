@@ -16,8 +16,8 @@ import (
 
 // Buckets struct for Buckets
 type Buckets struct {
-	Links   *Links    `json:"links,omitempty"`
-	Buckets *[]Bucket `json:"buckets,omitempty"`
+	Links   *Links    `json:"links,omitempty" yaml:"links,omitempty"`
+	Buckets *[]Bucket `json:"buckets,omitempty" yaml:"buckets,omitempty"`
 }
 
 // NewBuckets instantiates a new Buckets object

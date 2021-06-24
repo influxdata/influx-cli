@@ -16,7 +16,7 @@ import (
 
 // TelegrafRequestMetadata struct for TelegrafRequestMetadata
 type TelegrafRequestMetadata struct {
-	Buckets *[]string `json:"buckets,omitempty"`
+	Buckets *[]string `json:"buckets,omitempty" yaml:"buckets,omitempty"`
 }
 
 // NewTelegrafRequestMetadata instantiates a new TelegrafRequestMetadata object

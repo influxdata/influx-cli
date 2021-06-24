@@ -17,11 +17,11 @@ import (
 // Links struct for Links
 type Links struct {
 	// URI of resource.
-	Next *string `json:"next,omitempty"`
+	Next *string `json:"next,omitempty" yaml:"next,omitempty"`
 	// URI of resource.
-	Self string `json:"self"`
+	Self string `json:"self" yaml:"self"`
 	// URI of resource.
-	Prev *string `json:"prev,omitempty"`
+	Prev *string `json:"prev,omitempty" yaml:"prev,omitempty"`
 }
 
 // NewLinks instantiates a new Links object

@@ -16,8 +16,8 @@ import (
 
 // BucketShardMapping struct for BucketShardMapping
 type BucketShardMapping struct {
-	OldId int64 `json:"oldId"`
-	NewId int64 `json:"newId"`
+	OldId int64 `json:"oldId" yaml:"oldId"`
+	NewId int64 `json:"newId" yaml:"newId"`
 }
 
 // NewBucketShardMapping instantiates a new BucketShardMapping object

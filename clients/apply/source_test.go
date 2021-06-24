@@ -313,7 +313,7 @@ func TestTemplateSource_Read(t *testing.T) {
 	t.Parallel()
 
 	yamlTemplate := `---
-apiversion: influxdata.com/v2alpha1
+apiVersion: influxdata.com/v2alpha1
 kind: Bucket
 meta: null
 spec:
@@ -321,7 +321,7 @@ spec:
     retentionRules:
       - type: expire
 ---
-apiversion: influxdata.com/v2alpha1
+apiVersion: influxdata.com/v2alpha1
 kind: Bucket
 meta: null
 spec:

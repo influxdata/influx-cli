@@ -16,11 +16,11 @@ import (
 
 // TelegrafRequest struct for TelegrafRequest
 type TelegrafRequest struct {
-	Name        *string                  `json:"name,omitempty"`
-	Description *string                  `json:"description,omitempty"`
-	Metadata    *TelegrafRequestMetadata `json:"metadata,omitempty"`
-	Config      *string                  `json:"config,omitempty"`
-	OrgID       *string                  `json:"orgID,omitempty"`
+	Name        *string                  `json:"name,omitempty" yaml:"name,omitempty"`
+	Description *string                  `json:"description,omitempty" yaml:"description,omitempty"`
+	Metadata    *TelegrafRequestMetadata `json:"metadata,omitempty" yaml:"metadata,omitempty"`
+	Config      *string                  `json:"config,omitempty" yaml:"config,omitempty"`
+	OrgID       *string                  `json:"orgID,omitempty" yaml:"orgID,omitempty"`
 }
 
 // NewTelegrafRequest instantiates a new TelegrafRequest object

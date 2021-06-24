@@ -16,12 +16,12 @@ import (
 
 // TemplateSummaryDiffVariable struct for TemplateSummaryDiffVariable
 type TemplateSummaryDiffVariable struct {
-	Kind             string                             `json:"kind"`
-	StateStatus      string                             `json:"stateStatus"`
-	Id               string                             `json:"id"`
-	TemplateMetaName string                             `json:"templateMetaName"`
-	New              *TemplateSummaryDiffVariableFields `json:"new,omitempty"`
-	Old              *TemplateSummaryDiffVariableFields `json:"old,omitempty"`
+	Kind             string                             `json:"kind" yaml:"kind"`
+	StateStatus      string                             `json:"stateStatus" yaml:"stateStatus"`
+	Id               string                             `json:"id" yaml:"id"`
+	TemplateMetaName string                             `json:"templateMetaName" yaml:"templateMetaName"`
+	New              *TemplateSummaryDiffVariableFields `json:"new,omitempty" yaml:"new,omitempty"`
+	Old              *TemplateSummaryDiffVariableFields `json:"old,omitempty" yaml:"old,omitempty"`
 }
 
 // NewTemplateSummaryDiffVariable instantiates a new TemplateSummaryDiffVariable object

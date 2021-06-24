@@ -17,9 +17,9 @@ import (
 // AuthorizationUpdateRequest struct for AuthorizationUpdateRequest
 type AuthorizationUpdateRequest struct {
 	// If inactive the token is inactive and requests using the token will be rejected.
-	Status *string `json:"status,omitempty"`
+	Status *string `json:"status,omitempty" yaml:"status,omitempty"`
 	// A description of the token.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewAuthorizationUpdateRequest instantiates a new AuthorizationUpdateRequest object

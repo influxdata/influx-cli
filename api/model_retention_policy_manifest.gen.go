@@ -16,12 +16,12 @@ import (
 
 // RetentionPolicyManifest struct for RetentionPolicyManifest
 type RetentionPolicyManifest struct {
-	Name               string                 `json:"name"`
-	ReplicaN           int32                  `json:"replicaN"`
-	Duration           int64                  `json:"duration"`
-	ShardGroupDuration int64                  `json:"shardGroupDuration"`
-	ShardGroups        []ShardGroupManifest   `json:"shardGroups"`
-	Subscriptions      []SubscriptionManifest `json:"subscriptions"`
+	Name               string                 `json:"name" yaml:"name"`
+	ReplicaN           int32                  `json:"replicaN" yaml:"replicaN"`
+	Duration           int64                  `json:"duration" yaml:"duration"`
+	ShardGroupDuration int64                  `json:"shardGroupDuration" yaml:"shardGroupDuration"`
+	ShardGroups        []ShardGroupManifest   `json:"shardGroups" yaml:"shardGroups"`
+	Subscriptions      []SubscriptionManifest `json:"subscriptions" yaml:"subscriptions"`
 }
 
 // NewRetentionPolicyManifest instantiates a new RetentionPolicyManifest object

@@ -16,9 +16,9 @@ import (
 
 // RunLinks struct for RunLinks
 type RunLinks struct {
-	Self  *string `json:"self,omitempty"`
-	Task  *string `json:"task,omitempty"`
-	Retry *string `json:"retry,omitempty"`
+	Self  *string `json:"self,omitempty" yaml:"self,omitempty"`
+	Task  *string `json:"task,omitempty" yaml:"task,omitempty"`
+	Retry *string `json:"retry,omitempty" yaml:"retry,omitempty"`
 }
 
 // NewRunLinks instantiates a new RunLinks object

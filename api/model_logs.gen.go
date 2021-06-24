@@ -16,7 +16,7 @@ import (
 
 // Logs struct for Logs
 type Logs struct {
-	Events *[]LogEvent `json:"events,omitempty"`
+	Events *[]LogEvent `json:"events,omitempty" yaml:"events,omitempty"`
 }
 
 // NewLogs instantiates a new Logs object

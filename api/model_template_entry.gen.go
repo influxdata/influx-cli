@@ -16,10 +16,10 @@ import (
 
 // TemplateEntry struct for TemplateEntry
 type TemplateEntry struct {
-	ApiVersion string                 `json:"apiVersion"`
-	Kind       string                 `json:"kind"`
-	Meta       TemplateEntryMeta      `json:"meta"`
-	Spec       map[string]interface{} `json:"spec"`
+	ApiVersion string                 `json:"apiVersion" yaml:"apiVersion"`
+	Kind       string                 `json:"kind" yaml:"kind"`
+	Meta       TemplateEntryMeta      `json:"meta" yaml:"meta"`
+	Spec       map[string]interface{} `json:"spec" yaml:"spec"`
 }
 
 // NewTemplateEntry instantiates a new TemplateEntry object

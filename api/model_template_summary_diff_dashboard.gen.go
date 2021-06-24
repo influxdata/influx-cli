@@ -16,12 +16,12 @@ import (
 
 // TemplateSummaryDiffDashboard struct for TemplateSummaryDiffDashboard
 type TemplateSummaryDiffDashboard struct {
-	StateStatus      string                              `json:"stateStatus"`
-	Id               string                              `json:"id"`
-	Kind             string                              `json:"kind"`
-	TemplateMetaName string                              `json:"templateMetaName"`
-	New              *TemplateSummaryDiffDashboardFields `json:"new,omitempty"`
-	Old              *TemplateSummaryDiffDashboardFields `json:"old,omitempty"`
+	StateStatus      string                              `json:"stateStatus" yaml:"stateStatus"`
+	Id               string                              `json:"id" yaml:"id"`
+	Kind             string                              `json:"kind" yaml:"kind"`
+	TemplateMetaName string                              `json:"templateMetaName" yaml:"templateMetaName"`
+	New              *TemplateSummaryDiffDashboardFields `json:"new,omitempty" yaml:"new,omitempty"`
+	Old              *TemplateSummaryDiffDashboardFields `json:"old,omitempty" yaml:"old,omitempty"`
 }
 
 // NewTemplateSummaryDiffDashboard instantiates a new TemplateSummaryDiffDashboard object

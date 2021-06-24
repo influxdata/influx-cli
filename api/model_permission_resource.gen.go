@@ -16,15 +16,15 @@ import (
 
 // PermissionResource struct for PermissionResource
 type PermissionResource struct {
-	Type string `json:"type"`
+	Type string `json:"type" yaml:"type"`
 	// If ID is set that is a permission for a specific resource. if it is not set it is a permission for all resources of that resource type.
-	Id *string `json:"id,omitempty"`
+	Id *string `json:"id,omitempty" yaml:"id,omitempty"`
 	// Optional name of the resource if the resource has a name field.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
 	// If orgID is set that is a permission for all resources owned my that org. if it is not set it is a permission for all resources of that resource type.
-	OrgID *string `json:"orgID,omitempty"`
+	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
 	// Optional name of the organization of the organization with orgID.
-	Org *string `json:"org,omitempty"`
+	Org *string `json:"org,omitempty" yaml:"org,omitempty"`
 }
 
 // NewPermissionResource instantiates a new PermissionResource object

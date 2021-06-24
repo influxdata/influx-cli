@@ -16,9 +16,9 @@ import (
 
 // TemplateSummaryTelegrafConfig struct for TemplateSummaryTelegrafConfig
 type TemplateSummaryTelegrafConfig struct {
-	Id          string  `json:"id"`
-	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
+	Id          string  `json:"id" yaml:"id"`
+	Name        string  `json:"name" yaml:"name"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewTemplateSummaryTelegrafConfig instantiates a new TemplateSummaryTelegrafConfig object

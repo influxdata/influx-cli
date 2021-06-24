@@ -16,10 +16,10 @@ import (
 
 // TemplateSummaryLabelAllOf struct for TemplateSummaryLabelAllOf
 type TemplateSummaryLabelAllOf struct {
-	Id         string                              `json:"id"`
-	OrgID      *string                             `json:"orgID,omitempty"`
-	Name       string                              `json:"name"`
-	Properties TemplateSummaryLabelAllOfProperties `json:"properties"`
+	Id         string                              `json:"id" yaml:"id"`
+	OrgID      *string                             `json:"orgID,omitempty" yaml:"orgID,omitempty"`
+	Name       string                              `json:"name" yaml:"name"`
+	Properties TemplateSummaryLabelAllOfProperties `json:"properties" yaml:"properties"`
 }
 
 // NewTemplateSummaryLabelAllOf instantiates a new TemplateSummaryLabelAllOf object

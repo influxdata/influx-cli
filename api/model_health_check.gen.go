@@ -16,12 +16,12 @@ import (
 
 // HealthCheck struct for HealthCheck
 type HealthCheck struct {
-	Name    string            `json:"name"`
-	Message *string           `json:"message,omitempty"`
-	Checks  *[]HealthCheck    `json:"checks,omitempty"`
-	Status  HealthCheckStatus `json:"status"`
-	Version *string           `json:"version,omitempty"`
-	Commit  *string           `json:"commit,omitempty"`
+	Name    string            `json:"name" yaml:"name"`
+	Message *string           `json:"message,omitempty" yaml:"message,omitempty"`
+	Checks  *[]HealthCheck    `json:"checks,omitempty" yaml:"checks,omitempty"`
+	Status  HealthCheckStatus `json:"status" yaml:"status"`
+	Version *string           `json:"version,omitempty" yaml:"version,omitempty"`
+	Commit  *string           `json:"commit,omitempty" yaml:"commit,omitempty"`
 }
 
 // NewHealthCheck instantiates a new HealthCheck object

@@ -16,8 +16,8 @@ import (
 
 // TemplateApplyTemplate struct for TemplateApplyTemplate
 type TemplateApplyTemplate struct {
-	Sources  []string        `json:"sources"`
-	Contents []TemplateEntry `json:"contents"`
+	Sources  []string        `json:"sources" yaml:"sources"`
+	Contents []TemplateEntry `json:"contents" yaml:"contents"`
 }
 
 // NewTemplateApplyTemplate instantiates a new TemplateApplyTemplate object

@@ -16,11 +16,11 @@ import (
 
 // TemplateSummary struct for TemplateSummary
 type TemplateSummary struct {
-	Sources []string                 `json:"sources"`
-	StackID string                   `json:"stackID"`
-	Summary TemplateSummaryResources `json:"summary"`
-	Diff    TemplateSummaryDiff      `json:"diff"`
-	Errors  []TemplateSummaryError   `json:"errors"`
+	Sources []string                 `json:"sources" yaml:"sources"`
+	StackID string                   `json:"stackID" yaml:"stackID"`
+	Summary TemplateSummaryResources `json:"summary" yaml:"summary"`
+	Diff    TemplateSummaryDiff      `json:"diff" yaml:"diff"`
+	Errors  []TemplateSummaryError   `json:"errors" yaml:"errors"`
 }
 
 // NewTemplateSummary instantiates a new TemplateSummary object

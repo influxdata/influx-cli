@@ -16,8 +16,8 @@ import (
 
 // Runs struct for Runs
 type Runs struct {
-	Links *Links `json:"links,omitempty"`
-	Runs  *[]Run `json:"runs,omitempty"`
+	Links *Links `json:"links,omitempty" yaml:"links,omitempty"`
+	Runs  *[]Run `json:"runs,omitempty" yaml:"runs,omitempty"`
 }
 
 // NewRuns instantiates a new Runs object

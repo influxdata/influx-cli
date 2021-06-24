@@ -18,25 +18,25 @@ import (
 // Authorization struct for Authorization
 type Authorization struct {
 	// If inactive the token is inactive and requests using the token will be rejected.
-	Status *string `json:"status,omitempty"`
+	Status *string `json:"status,omitempty" yaml:"status,omitempty"`
 	// A description of the token.
-	Description *string    `json:"description,omitempty"`
-	CreatedAt   *time.Time `json:"createdAt,omitempty"`
-	UpdatedAt   *time.Time `json:"updatedAt,omitempty"`
+	Description *string    `json:"description,omitempty" yaml:"description,omitempty"`
+	CreatedAt   *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
+	UpdatedAt   *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
 	// ID of org that authorization is scoped to.
-	OrgID string `json:"orgID"`
+	OrgID string `json:"orgID" yaml:"orgID"`
 	// List of permissions for an auth.  An auth must have at least one Permission.
-	Permissions []Permission `json:"permissions"`
-	Id          *string      `json:"id,omitempty"`
+	Permissions []Permission `json:"permissions" yaml:"permissions"`
+	Id          *string      `json:"id,omitempty" yaml:"id,omitempty"`
 	// Passed via the Authorization Header and Token Authentication type.
-	Token *string `json:"token,omitempty"`
+	Token *string `json:"token,omitempty" yaml:"token,omitempty"`
 	// ID of user that created and owns the token.
-	UserID *string `json:"userID,omitempty"`
+	UserID *string `json:"userID,omitempty" yaml:"userID,omitempty"`
 	// Name of user that created and owns the token.
-	User *string `json:"user,omitempty"`
+	User *string `json:"user,omitempty" yaml:"user,omitempty"`
 	// Name of the org token is scoped to.
-	Org   *string                  `json:"org,omitempty"`
-	Links *AuthorizationAllOfLinks `json:"links,omitempty"`
+	Org   *string                  `json:"org,omitempty" yaml:"org,omitempty"`
+	Links *AuthorizationAllOfLinks `json:"links,omitempty" yaml:"links,omitempty"`
 }
 
 // NewAuthorization instantiates a new Authorization object

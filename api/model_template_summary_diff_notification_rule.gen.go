@@ -16,12 +16,12 @@ import (
 
 // TemplateSummaryDiffNotificationRule struct for TemplateSummaryDiffNotificationRule
 type TemplateSummaryDiffNotificationRule struct {
-	Kind             string                                     `json:"kind"`
-	StateStatus      string                                     `json:"stateStatus"`
-	Id               string                                     `json:"id"`
-	TemplateMetaName string                                     `json:"templateMetaName"`
-	New              *TemplateSummaryDiffNotificationRuleFields `json:"new,omitempty"`
-	Old              *TemplateSummaryDiffNotificationRuleFields `json:"old,omitempty"`
+	Kind             string                                     `json:"kind" yaml:"kind"`
+	StateStatus      string                                     `json:"stateStatus" yaml:"stateStatus"`
+	Id               string                                     `json:"id" yaml:"id"`
+	TemplateMetaName string                                     `json:"templateMetaName" yaml:"templateMetaName"`
+	New              *TemplateSummaryDiffNotificationRuleFields `json:"new,omitempty" yaml:"new,omitempty"`
+	Old              *TemplateSummaryDiffNotificationRuleFields `json:"old,omitempty" yaml:"old,omitempty"`
 }
 
 // NewTemplateSummaryDiffNotificationRule instantiates a new TemplateSummaryDiffNotificationRule object

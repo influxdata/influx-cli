@@ -16,16 +16,16 @@ import (
 
 // TemplateSummaryTask struct for TemplateSummaryTask
 type TemplateSummaryTask struct {
-	Kind              string                 `json:"kind"`
-	TemplateMetaName  *string                `json:"templateMetaName,omitempty"`
-	EnvReferences     []TemplateEnvReference `json:"envReferences"`
-	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations"`
-	Id                string                 `json:"id"`
-	Name              string                 `json:"name"`
-	Description       *string                `json:"description,omitempty"`
-	Cron              *string                `json:"cron,omitempty"`
-	Every             *string                `json:"every,omitempty"`
-	Offset            *string                `json:"offset,omitempty"`
+	Kind              string                 `json:"kind" yaml:"kind"`
+	TemplateMetaName  *string                `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
+	EnvReferences     []TemplateEnvReference `json:"envReferences" yaml:"envReferences"`
+	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations" yaml:"labelAssociations"`
+	Id                string                 `json:"id" yaml:"id"`
+	Name              string                 `json:"name" yaml:"name"`
+	Description       *string                `json:"description,omitempty" yaml:"description,omitempty"`
+	Cron              *string                `json:"cron,omitempty" yaml:"cron,omitempty"`
+	Every             *string                `json:"every,omitempty" yaml:"every,omitempty"`
+	Offset            *string                `json:"offset,omitempty" yaml:"offset,omitempty"`
 }
 
 // NewTemplateSummaryTask instantiates a new TemplateSummaryTask object

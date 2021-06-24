@@ -17,36 +17,36 @@ import (
 
 // Task struct for Task
 type Task struct {
-	Id string `json:"id"`
+	Id string `json:"id" yaml:"id"`
 	// The type of task, this can be used for filtering tasks on list actions.
-	Type *string `json:"type,omitempty"`
+	Type *string `json:"type,omitempty" yaml:"type,omitempty"`
 	// The ID of the organization that owns this Task.
-	OrgID string `json:"orgID"`
+	OrgID string `json:"orgID" yaml:"orgID"`
 	// The name of the organization that owns this Task.
-	Org *string `json:"org,omitempty"`
+	Org *string `json:"org,omitempty" yaml:"org,omitempty"`
 	// The name of the task.
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 	// An optional description of the task.
-	Description *string         `json:"description,omitempty"`
-	Status      *TaskStatusType `json:"status,omitempty"`
-	Labels      *[]Label        `json:"labels,omitempty"`
+	Description *string         `json:"description,omitempty" yaml:"description,omitempty"`
+	Status      *TaskStatusType `json:"status,omitempty" yaml:"status,omitempty"`
+	Labels      *[]Label        `json:"labels,omitempty" yaml:"labels,omitempty"`
 	// The ID of the authorization used when this task communicates with the query engine.
-	AuthorizationID *string `json:"authorizationID,omitempty"`
+	AuthorizationID *string `json:"authorizationID,omitempty" yaml:"authorizationID,omitempty"`
 	// The Flux script to run for this task.
-	Flux string `json:"flux"`
+	Flux string `json:"flux" yaml:"flux"`
 	// A simple task repetition schedule; parsed from Flux.
-	Every *string `json:"every,omitempty"`
+	Every *string `json:"every,omitempty" yaml:"every,omitempty"`
 	// A task repetition schedule in the form '* * * * * *'; parsed from Flux.
-	Cron *string `json:"cron,omitempty"`
+	Cron *string `json:"cron,omitempty" yaml:"cron,omitempty"`
 	// Duration to delay after the schedule, before executing the task; parsed from flux, if set to zero it will remove this option and use 0 as the default.
-	Offset *string `json:"offset,omitempty"`
+	Offset *string `json:"offset,omitempty" yaml:"offset,omitempty"`
 	// Timestamp of latest scheduled, completed run, RFC3339.
-	LatestCompleted *time.Time `json:"latestCompleted,omitempty"`
-	LastRunStatus   *string    `json:"lastRunStatus,omitempty"`
-	LastRunError    *string    `json:"lastRunError,omitempty"`
-	CreatedAt       *time.Time `json:"createdAt,omitempty"`
-	UpdatedAt       *time.Time `json:"updatedAt,omitempty"`
-	Links           *TaskLinks `json:"links,omitempty"`
+	LatestCompleted *time.Time `json:"latestCompleted,omitempty" yaml:"latestCompleted,omitempty"`
+	LastRunStatus   *string    `json:"lastRunStatus,omitempty" yaml:"lastRunStatus,omitempty"`
+	LastRunError    *string    `json:"lastRunError,omitempty" yaml:"lastRunError,omitempty"`
+	CreatedAt       *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
+	UpdatedAt       *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
+	Links           *TaskLinks `json:"links,omitempty" yaml:"links,omitempty"`
 }
 
 // NewTask instantiates a new Task object

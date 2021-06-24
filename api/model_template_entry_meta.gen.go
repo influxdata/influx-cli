@@ -16,7 +16,7 @@ import (
 
 // TemplateEntryMeta struct for TemplateEntryMeta
 type TemplateEntryMeta struct {
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 }
 
 // NewTemplateEntryMeta instantiates a new TemplateEntryMeta object

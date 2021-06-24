@@ -16,8 +16,8 @@ import (
 
 // TemplateApplyRemoteRef struct for TemplateApplyRemoteRef
 type TemplateApplyRemoteRef struct {
-	Url         string  `json:"url"`
-	ContentType *string `json:"contentType,omitempty"`
+	Url         string  `json:"url" yaml:"url"`
+	ContentType *string `json:"contentType,omitempty" yaml:"contentType,omitempty"`
 }
 
 // NewTemplateApplyRemoteRef instantiates a new TemplateApplyRemoteRef object

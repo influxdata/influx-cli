@@ -16,11 +16,11 @@ import (
 
 // TemplateSummaryTelegraf struct for TemplateSummaryTelegraf
 type TemplateSummaryTelegraf struct {
-	Kind              string                        `json:"kind"`
-	TemplateMetaName  *string                       `json:"templateMetaName,omitempty"`
-	EnvReferences     []TemplateEnvReference        `json:"envReferences"`
-	LabelAssociations []TemplateSummaryLabel        `json:"labelAssociations"`
-	TelegrafConfig    TemplateSummaryTelegrafConfig `json:"telegrafConfig"`
+	Kind              string                        `json:"kind" yaml:"kind"`
+	TemplateMetaName  *string                       `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
+	EnvReferences     []TemplateEnvReference        `json:"envReferences" yaml:"envReferences"`
+	LabelAssociations []TemplateSummaryLabel        `json:"labelAssociations" yaml:"labelAssociations"`
+	TelegrafConfig    TemplateSummaryTelegrafConfig `json:"telegrafConfig" yaml:"telegrafConfig"`
 }
 
 // NewTemplateSummaryTelegraf instantiates a new TemplateSummaryTelegraf object

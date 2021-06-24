@@ -17,13 +17,13 @@ import (
 // TemplateEnvReference struct for TemplateEnvReference
 type TemplateEnvReference struct {
 	// Field the environment reference corresponds too
-	ResourceField string `json:"resourceField"`
+	ResourceField string `json:"resourceField" yaml:"resourceField"`
 	// Key identified as environment reference and is the key identified in the template
-	EnvRefKey string `json:"envRefKey"`
+	EnvRefKey string `json:"envRefKey" yaml:"envRefKey"`
 	// Value provided to fulfill reference
-	Value interface{} `json:"value,omitempty"`
+	Value interface{} `json:"value,omitempty" yaml:"value,omitempty"`
 	// Default value that will be provided for the reference when no value is provided
-	DefaultValue interface{} `json:"defaultValue,omitempty"`
+	DefaultValue interface{} `json:"defaultValue,omitempty" yaml:"defaultValue,omitempty"`
 }
 
 // NewTemplateEnvReference instantiates a new TemplateEnvReference object

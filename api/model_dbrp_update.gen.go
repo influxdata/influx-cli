@@ -17,8 +17,8 @@ import (
 // DBRPUpdate struct for DBRPUpdate
 type DBRPUpdate struct {
 	// InfluxDB v1 retention policy
-	RetentionPolicy *string `json:"retention_policy,omitempty"`
-	Default         *bool   `json:"default,omitempty"`
+	RetentionPolicy *string `json:"retention_policy,omitempty" yaml:"retention_policy,omitempty"`
+	Default         *bool   `json:"default,omitempty" yaml:"default,omitempty"`
 }
 
 // NewDBRPUpdate instantiates a new DBRPUpdate object

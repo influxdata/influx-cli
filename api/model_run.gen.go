@@ -17,20 +17,20 @@ import (
 
 // Run struct for Run
 type Run struct {
-	Id     *string `json:"id,omitempty"`
-	TaskID *string `json:"taskID,omitempty"`
-	Status *string `json:"status,omitempty"`
+	Id     *string `json:"id,omitempty" yaml:"id,omitempty"`
+	TaskID *string `json:"taskID,omitempty" yaml:"taskID,omitempty"`
+	Status *string `json:"status,omitempty" yaml:"status,omitempty"`
 	// Time used for run's \"now\" option, RFC3339.
-	ScheduledFor *time.Time `json:"scheduledFor,omitempty"`
+	ScheduledFor *time.Time `json:"scheduledFor,omitempty" yaml:"scheduledFor,omitempty"`
 	// An array of logs associated with the run.
-	Log *[]LogEvent `json:"log,omitempty"`
+	Log *[]LogEvent `json:"log,omitempty" yaml:"log,omitempty"`
 	// Time run started executing, RFC3339Nano.
-	StartedAt *time.Time `json:"startedAt,omitempty"`
+	StartedAt *time.Time `json:"startedAt,omitempty" yaml:"startedAt,omitempty"`
 	// Time run finished executing, RFC3339Nano.
-	FinishedAt *time.Time `json:"finishedAt,omitempty"`
+	FinishedAt *time.Time `json:"finishedAt,omitempty" yaml:"finishedAt,omitempty"`
 	// Time run was manually requested, RFC3339Nano.
-	RequestedAt *time.Time `json:"requestedAt,omitempty"`
-	Links       *RunLinks  `json:"links,omitempty"`
+	RequestedAt *time.Time `json:"requestedAt,omitempty" yaml:"requestedAt,omitempty"`
+	Links       *RunLinks  `json:"links,omitempty" yaml:"links,omitempty"`
 }
 
 // NewRun instantiates a new Run object

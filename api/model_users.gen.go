@@ -16,8 +16,8 @@ import (
 
 // Users struct for Users
 type Users struct {
-	Links *UsersLinks     `json:"links,omitempty"`
-	Users *[]UserResponse `json:"users,omitempty"`
+	Links *UsersLinks     `json:"links,omitempty" yaml:"links,omitempty"`
+	Users *[]UserResponse `json:"users,omitempty" yaml:"users,omitempty"`
 }
 
 // NewUsers instantiates a new Users object

@@ -16,13 +16,13 @@ import (
 
 // TemplateSummaryDiffTaskFields struct for TemplateSummaryDiffTaskFields
 type TemplateSummaryDiffTaskFields struct {
-	Name        string  `json:"name"`
-	Cron        *string `json:"cron,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Every       *string `json:"every,omitempty"`
-	Offset      *string `json:"offset,omitempty"`
-	Query       *string `json:"query,omitempty"`
-	Status      string  `json:"status"`
+	Name        string  `json:"name" yaml:"name"`
+	Cron        *string `json:"cron,omitempty" yaml:"cron,omitempty"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
+	Every       *string `json:"every,omitempty" yaml:"every,omitempty"`
+	Offset      *string `json:"offset,omitempty" yaml:"offset,omitempty"`
+	Query       *string `json:"query,omitempty" yaml:"query,omitempty"`
+	Status      string  `json:"status" yaml:"status"`
 }
 
 // NewTemplateSummaryDiffTaskFields instantiates a new TemplateSummaryDiffTaskFields object

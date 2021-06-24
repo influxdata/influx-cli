@@ -16,8 +16,8 @@ import (
 
 // ResourceMembers struct for ResourceMembers
 type ResourceMembers struct {
-	Links *UsersLinks       `json:"links,omitempty"`
-	Users *[]ResourceMember `json:"users,omitempty"`
+	Links *UsersLinks       `json:"links,omitempty" yaml:"links,omitempty"`
+	Users *[]ResourceMember `json:"users,omitempty" yaml:"users,omitempty"`
 }
 
 // NewResourceMembers instantiates a new ResourceMembers object

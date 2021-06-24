@@ -16,14 +16,14 @@ import (
 
 // Cell struct for Cell
 type Cell struct {
-	Id    *string    `json:"id,omitempty"`
-	Links *CellLinks `json:"links,omitempty"`
-	X     *int32     `json:"x,omitempty"`
-	Y     *int32     `json:"y,omitempty"`
-	W     *int32     `json:"w,omitempty"`
-	H     *int32     `json:"h,omitempty"`
+	Id    *string    `json:"id,omitempty" yaml:"id,omitempty"`
+	Links *CellLinks `json:"links,omitempty" yaml:"links,omitempty"`
+	X     *int32     `json:"x,omitempty" yaml:"x,omitempty"`
+	Y     *int32     `json:"y,omitempty" yaml:"y,omitempty"`
+	W     *int32     `json:"w,omitempty" yaml:"w,omitempty"`
+	H     *int32     `json:"h,omitempty" yaml:"h,omitempty"`
 	// The reference to a view from the views API.
-	ViewID *string `json:"viewID,omitempty"`
+	ViewID *string `json:"viewID,omitempty" yaml:"viewID,omitempty"`
 }
 
 // NewCell instantiates a new Cell object

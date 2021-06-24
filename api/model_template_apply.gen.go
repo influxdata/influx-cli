@@ -16,15 +16,15 @@ import (
 
 // TemplateApply struct for TemplateApply
 type TemplateApply struct {
-	DryRun    bool                               `json:"dryRun"`
-	OrgID     string                             `json:"orgID"`
-	StackID   *string                            `json:"stackID,omitempty"`
-	Template  *TemplateApplyTemplate             `json:"template,omitempty"`
-	Templates []TemplateApplyTemplate            `json:"templates"`
-	EnvRefs   *map[string]map[string]interface{} `json:"envRefs,omitempty"`
-	Secrets   *map[string]string                 `json:"secrets,omitempty"`
-	Remotes   []TemplateApplyRemoteRef           `json:"remotes"`
-	Actions   []TemplateApplyAction              `json:"actions"`
+	DryRun    bool                               `json:"dryRun" yaml:"dryRun"`
+	OrgID     string                             `json:"orgID" yaml:"orgID"`
+	StackID   *string                            `json:"stackID,omitempty" yaml:"stackID,omitempty"`
+	Template  *TemplateApplyTemplate             `json:"template,omitempty" yaml:"template,omitempty"`
+	Templates []TemplateApplyTemplate            `json:"templates" yaml:"templates"`
+	EnvRefs   *map[string]map[string]interface{} `json:"envRefs,omitempty" yaml:"envRefs,omitempty"`
+	Secrets   *map[string]string                 `json:"secrets,omitempty" yaml:"secrets,omitempty"`
+	Remotes   []TemplateApplyRemoteRef           `json:"remotes" yaml:"remotes"`
+	Actions   []TemplateApplyAction              `json:"actions" yaml:"actions"`
 }
 
 // NewTemplateApply instantiates a new TemplateApply object

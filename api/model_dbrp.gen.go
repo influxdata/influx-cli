@@ -17,18 +17,18 @@ import (
 // DBRP struct for DBRP
 type DBRP struct {
 	// the mapping identifier
-	Id string `json:"id"`
+	Id string `json:"id" yaml:"id"`
 	// the organization ID that owns this mapping.
-	OrgID string `json:"orgID"`
+	OrgID string `json:"orgID" yaml:"orgID"`
 	// the bucket ID used as target for the translation.
-	BucketID string `json:"bucketID"`
+	BucketID string `json:"bucketID" yaml:"bucketID"`
 	// InfluxDB v1 database
-	Database string `json:"database"`
+	Database string `json:"database" yaml:"database"`
 	// InfluxDB v1 retention policy
-	RetentionPolicy string `json:"retention_policy"`
+	RetentionPolicy string `json:"retention_policy" yaml:"retention_policy"`
 	// Specify if this mapping represents the default retention policy for the database specificed.
-	Default bool   `json:"default"`
-	Links   *Links `json:"links,omitempty"`
+	Default bool   `json:"default" yaml:"default"`
+	Links   *Links `json:"links,omitempty" yaml:"links,omitempty"`
 }
 
 // NewDBRP instantiates a new DBRP object

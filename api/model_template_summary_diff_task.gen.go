@@ -16,12 +16,12 @@ import (
 
 // TemplateSummaryDiffTask struct for TemplateSummaryDiffTask
 type TemplateSummaryDiffTask struct {
-	Kind             string                         `json:"kind"`
-	StateStatus      string                         `json:"stateStatus"`
-	Id               string                         `json:"id"`
-	TemplateMetaName string                         `json:"templateMetaName"`
-	New              *TemplateSummaryDiffTaskFields `json:"new,omitempty"`
-	Old              *TemplateSummaryDiffTaskFields `json:"old,omitempty"`
+	Kind             string                         `json:"kind" yaml:"kind"`
+	StateStatus      string                         `json:"stateStatus" yaml:"stateStatus"`
+	Id               string                         `json:"id" yaml:"id"`
+	TemplateMetaName string                         `json:"templateMetaName" yaml:"templateMetaName"`
+	New              *TemplateSummaryDiffTaskFields `json:"new,omitempty" yaml:"new,omitempty"`
+	Old              *TemplateSummaryDiffTaskFields `json:"old,omitempty" yaml:"old,omitempty"`
 }
 
 // NewTemplateSummaryDiffTask instantiates a new TemplateSummaryDiffTask object

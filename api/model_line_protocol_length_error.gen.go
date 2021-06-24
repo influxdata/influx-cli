@@ -16,11 +16,11 @@ import (
 
 // LineProtocolLengthError struct for LineProtocolLengthError
 type LineProtocolLengthError struct {
-	Code LineProtocolLengthErrorCode `json:"code"`
+	Code LineProtocolLengthErrorCode `json:"code" yaml:"code"`
 	// Message is a human-readable message.
-	Message string `json:"message"`
+	Message string `json:"message" yaml:"message"`
 	// Max length in bytes for a body of line-protocol.
-	MaxLength int32 `json:"maxLength"`
+	MaxLength int32 `json:"maxLength" yaml:"maxLength"`
 }
 
 // NewLineProtocolLengthError instantiates a new LineProtocolLengthError object

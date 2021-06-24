@@ -16,8 +16,8 @@ import (
 
 // AddResourceMemberRequestBody struct for AddResourceMemberRequestBody
 type AddResourceMemberRequestBody struct {
-	Id   string  `json:"id"`
-	Name *string `json:"name,omitempty"`
+	Id   string  `json:"id" yaml:"id"`
+	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
 }
 
 // NewAddResourceMemberRequestBody instantiates a new AddResourceMemberRequestBody object

@@ -16,10 +16,10 @@ import (
 
 // TemplateSummaryError struct for TemplateSummaryError
 type TemplateSummaryError struct {
-	Kind    string   `json:"kind"`
-	Reason  string   `json:"reason"`
-	Fields  []string `json:"fields"`
-	Indexes []int32  `json:"indexes"`
+	Kind    string   `json:"kind" yaml:"kind"`
+	Reason  string   `json:"reason" yaml:"reason"`
+	Fields  []string `json:"fields" yaml:"fields"`
+	Indexes []int32  `json:"indexes" yaml:"indexes"`
 }
 
 // NewTemplateSummaryError instantiates a new TemplateSummaryError object

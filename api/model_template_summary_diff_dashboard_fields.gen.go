@@ -16,9 +16,9 @@ import (
 
 // TemplateSummaryDiffDashboardFields struct for TemplateSummaryDiffDashboardFields
 type TemplateSummaryDiffDashboardFields struct {
-	Name        string                   `json:"name"`
-	Description *string                  `json:"description,omitempty"`
-	Charts      []map[string]interface{} `json:"charts"`
+	Name        string                   `json:"name" yaml:"name"`
+	Description *string                  `json:"description,omitempty" yaml:"description,omitempty"`
+	Charts      []map[string]interface{} `json:"charts" yaml:"charts"`
 }
 
 // NewTemplateSummaryDiffDashboardFields instantiates a new TemplateSummaryDiffDashboardFields object

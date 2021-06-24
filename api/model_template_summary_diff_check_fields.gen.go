@@ -16,8 +16,8 @@ import (
 
 // TemplateSummaryDiffCheckFields struct for TemplateSummaryDiffCheckFields
 type TemplateSummaryDiffCheckFields struct {
-	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name" yaml:"name"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewTemplateSummaryDiffCheckFields instantiates a new TemplateSummaryDiffCheckFields object

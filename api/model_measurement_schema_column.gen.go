@@ -16,9 +16,9 @@ import (
 
 // MeasurementSchemaColumn Definition of a measurement column
 type MeasurementSchemaColumn struct {
-	Name     string             `json:"name"`
-	Type     ColumnSemanticType `json:"type"`
-	DataType *ColumnDataType    `json:"dataType,omitempty"`
+	Name     string             `json:"name" yaml:"name"`
+	Type     ColumnSemanticType `json:"type" yaml:"type"`
+	DataType *ColumnDataType    `json:"dataType,omitempty" yaml:"dataType,omitempty"`
 }
 
 // NewMeasurementSchemaColumn instantiates a new MeasurementSchemaColumn object

@@ -17,9 +17,9 @@ import (
 // PatchOrganizationRequest struct for PatchOrganizationRequest
 type PatchOrganizationRequest struct {
 	// New name to set on the organization
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
 	// New description to set on the organization
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewPatchOrganizationRequest instantiates a new PatchOrganizationRequest object

@@ -16,14 +16,14 @@ import (
 
 // TemplateSummaryLabelMapping struct for TemplateSummaryLabelMapping
 type TemplateSummaryLabelMapping struct {
-	Status                   string `json:"status"`
-	ResourceTemplateMetaName string `json:"resourceTemplateMetaName"`
-	ResourceName             string `json:"resourceName"`
-	ResourceID               string `json:"resourceID"`
-	ResourceType             string `json:"resourceType"`
-	LabelTemplateMetaName    string `json:"labelTemplateMetaName"`
-	LabelName                string `json:"labelName"`
-	LabelID                  string `json:"labelID"`
+	Status                   string `json:"status" yaml:"status"`
+	ResourceTemplateMetaName string `json:"resourceTemplateMetaName" yaml:"resourceTemplateMetaName"`
+	ResourceName             string `json:"resourceName" yaml:"resourceName"`
+	ResourceID               string `json:"resourceID" yaml:"resourceID"`
+	ResourceType             string `json:"resourceType" yaml:"resourceType"`
+	LabelTemplateMetaName    string `json:"labelTemplateMetaName" yaml:"labelTemplateMetaName"`
+	LabelName                string `json:"labelName" yaml:"labelName"`
+	LabelID                  string `json:"labelID" yaml:"labelID"`
 }
 
 // NewTemplateSummaryLabelMapping instantiates a new TemplateSummaryLabelMapping object

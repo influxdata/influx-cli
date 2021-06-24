@@ -17,17 +17,17 @@ import (
 // LegacyAuthorizationPostRequest struct for LegacyAuthorizationPostRequest
 type LegacyAuthorizationPostRequest struct {
 	// If inactive the token is inactive and requests using the token will be rejected.
-	Status *string `json:"status,omitempty"`
+	Status *string `json:"status,omitempty" yaml:"status,omitempty"`
 	// A description of the token.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 	// ID of org that authorization is scoped to.
-	OrgID string `json:"orgID"`
+	OrgID string `json:"orgID" yaml:"orgID"`
 	// ID of user that authorization is scoped to.
-	UserID *string `json:"userID,omitempty"`
+	UserID *string `json:"userID,omitempty" yaml:"userID,omitempty"`
 	// Token (name) of the authorization
-	Token *string `json:"token,omitempty"`
+	Token *string `json:"token,omitempty" yaml:"token,omitempty"`
 	// List of permissions for an auth.  An auth must have at least one Permission.
-	Permissions []Permission `json:"permissions"`
+	Permissions []Permission `json:"permissions" yaml:"permissions"`
 }
 
 // NewLegacyAuthorizationPostRequest instantiates a new LegacyAuthorizationPostRequest object

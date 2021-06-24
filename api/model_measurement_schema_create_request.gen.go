@@ -16,9 +16,9 @@ import (
 
 // MeasurementSchemaCreateRequest Create a new measurement schema
 type MeasurementSchemaCreateRequest struct {
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 	// An ordered collection of column definitions
-	Columns []MeasurementSchemaColumn `json:"columns"`
+	Columns []MeasurementSchemaColumn `json:"columns" yaml:"columns"`
 }
 
 // NewMeasurementSchemaCreateRequest instantiates a new MeasurementSchemaCreateRequest object

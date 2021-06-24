@@ -17,14 +17,14 @@ import (
 
 // Query Query influx using the Flux language
 type Query struct {
-	Extern *Extern `json:"extern,omitempty"`
+	Extern *Extern `json:"extern,omitempty" yaml:"extern,omitempty"`
 	// Query script to execute.
-	Query string `json:"query"`
+	Query string `json:"query" yaml:"query"`
 	// The type of query. Must be \"flux\".
-	Type    *string  `json:"type,omitempty"`
-	Dialect *Dialect `json:"dialect,omitempty"`
+	Type    *string  `json:"type,omitempty" yaml:"type,omitempty"`
+	Dialect *Dialect `json:"dialect,omitempty" yaml:"dialect,omitempty"`
 	// Specifies the time that should be reported as \"now\" in the query. Default is the server's now time.
-	Now *time.Time `json:"now,omitempty"`
+	Now *time.Time `json:"now,omitempty" yaml:"now,omitempty"`
 }
 
 // NewQuery instantiates a new Query object

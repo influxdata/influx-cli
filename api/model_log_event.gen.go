@@ -18,11 +18,11 @@ import (
 // LogEvent struct for LogEvent
 type LogEvent struct {
 	// Time event occurred, RFC3339Nano.
-	Time *time.Time `json:"time,omitempty"`
+	Time *time.Time `json:"time,omitempty" yaml:"time,omitempty"`
 	// A description of the event that occurred.
-	Message *string `json:"message,omitempty"`
+	Message *string `json:"message,omitempty" yaml:"message,omitempty"`
 	// the ID of the task that logged
-	RunID *string `json:"runID,omitempty"`
+	RunID *string `json:"runID,omitempty" yaml:"runID,omitempty"`
 }
 
 // NewLogEvent instantiates a new LogEvent object

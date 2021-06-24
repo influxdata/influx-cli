@@ -17,15 +17,15 @@ import (
 // Dialect Dialect are options to change the default CSV output format; https://www.w3.org/TR/2015/REC-tabular-metadata-20151217/#dialect-descriptions
 type Dialect struct {
 	// If true, the results will contain a header row
-	Header *bool `json:"header,omitempty"`
+	Header *bool `json:"header,omitempty" yaml:"header,omitempty"`
 	// Separator between cells; the default is ,
-	Delimiter *string `json:"delimiter,omitempty"`
+	Delimiter *string `json:"delimiter,omitempty" yaml:"delimiter,omitempty"`
 	// https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/#columns
-	Annotations *[]string `json:"annotations,omitempty"`
+	Annotations *[]string `json:"annotations,omitempty" yaml:"annotations,omitempty"`
 	// Character prefixed to comment strings
-	CommentPrefix *string `json:"commentPrefix,omitempty"`
+	CommentPrefix *string `json:"commentPrefix,omitempty" yaml:"commentPrefix,omitempty"`
 	// Format of timestamps
-	DateTimeFormat *string `json:"dateTimeFormat,omitempty"`
+	DateTimeFormat *string `json:"dateTimeFormat,omitempty" yaml:"dateTimeFormat,omitempty"`
 }
 
 // NewDialect instantiates a new Dialect object

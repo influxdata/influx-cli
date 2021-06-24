@@ -16,11 +16,11 @@ import (
 
 // TemplateSummaryBucketAllOf struct for TemplateSummaryBucketAllOf
 type TemplateSummaryBucketAllOf struct {
-	Id              string  `json:"id"`
-	Name            string  `json:"name"`
-	Description     *string `json:"description,omitempty"`
-	RetentionPeriod int32   `json:"retentionPeriod"`
-	SchemaType      *string `json:"schemaType,omitempty"`
+	Id              string  `json:"id" yaml:"id"`
+	Name            string  `json:"name" yaml:"name"`
+	Description     *string `json:"description,omitempty" yaml:"description,omitempty"`
+	RetentionPeriod int32   `json:"retentionPeriod" yaml:"retentionPeriod"`
+	SchemaType      *string `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
 }
 
 // NewTemplateSummaryBucketAllOf instantiates a new TemplateSummaryBucketAllOf object

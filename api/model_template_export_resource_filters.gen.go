@@ -16,8 +16,8 @@ import (
 
 // TemplateExportResourceFilters struct for TemplateExportResourceFilters
 type TemplateExportResourceFilters struct {
-	ByLabel        *[]string `json:"byLabel,omitempty"`
-	ByResourceKind *[]string `json:"byResourceKind,omitempty"`
+	ByLabel        *[]string `json:"byLabel,omitempty" yaml:"byLabel,omitempty"`
+	ByResourceKind *[]string `json:"byResourceKind,omitempty" yaml:"byResourceKind,omitempty"`
 }
 
 // NewTemplateExportResourceFilters instantiates a new TemplateExportResourceFilters object

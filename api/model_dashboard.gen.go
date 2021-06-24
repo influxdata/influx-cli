@@ -17,16 +17,16 @@ import (
 // Dashboard struct for Dashboard
 type Dashboard struct {
 	// The ID of the organization that owns the dashboard.
-	OrgID string `json:"orgID"`
+	OrgID string `json:"orgID" yaml:"orgID"`
 	// The user-facing name of the dashboard.
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 	// The user-facing description of the dashboard.
-	Description *string              `json:"description,omitempty"`
-	Links       *DashboardAllOfLinks `json:"links,omitempty"`
-	Id          *string              `json:"id,omitempty"`
-	Meta        *DashboardAllOfMeta  `json:"meta,omitempty"`
-	Cells       *[]Cell              `json:"cells,omitempty"`
-	Labels      *[]Label             `json:"labels,omitempty"`
+	Description *string              `json:"description,omitempty" yaml:"description,omitempty"`
+	Links       *DashboardAllOfLinks `json:"links,omitempty" yaml:"links,omitempty"`
+	Id          *string              `json:"id,omitempty" yaml:"id,omitempty"`
+	Meta        *DashboardAllOfMeta  `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Cells       *[]Cell              `json:"cells,omitempty" yaml:"cells,omitempty"`
+	Labels      *[]Label             `json:"labels,omitempty" yaml:"labels,omitempty"`
 }
 
 // NewDashboard instantiates a new Dashboard object

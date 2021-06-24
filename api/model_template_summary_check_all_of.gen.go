@@ -16,9 +16,9 @@ import (
 
 // TemplateSummaryCheckAllOf struct for TemplateSummaryCheckAllOf
 type TemplateSummaryCheckAllOf struct {
-	Id          string  `json:"id"`
-	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
+	Id          string  `json:"id" yaml:"id"`
+	Name        string  `json:"name" yaml:"name"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewTemplateSummaryCheckAllOf instantiates a new TemplateSummaryCheckAllOf object

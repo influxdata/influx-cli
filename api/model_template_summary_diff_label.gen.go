@@ -16,12 +16,12 @@ import (
 
 // TemplateSummaryDiffLabel struct for TemplateSummaryDiffLabel
 type TemplateSummaryDiffLabel struct {
-	StateStatus      string                          `json:"stateStatus"`
-	Kind             string                          `json:"kind"`
-	Id               string                          `json:"id"`
-	TemplateMetaName string                          `json:"templateMetaName"`
-	New              *TemplateSummaryDiffLabelFields `json:"new,omitempty"`
-	Old              *TemplateSummaryDiffLabelFields `json:"old,omitempty"`
+	StateStatus      string                          `json:"stateStatus" yaml:"stateStatus"`
+	Kind             string                          `json:"kind" yaml:"kind"`
+	Id               string                          `json:"id" yaml:"id"`
+	TemplateMetaName string                          `json:"templateMetaName" yaml:"templateMetaName"`
+	New              *TemplateSummaryDiffLabelFields `json:"new,omitempty" yaml:"new,omitempty"`
+	Old              *TemplateSummaryDiffLabelFields `json:"old,omitempty" yaml:"old,omitempty"`
 }
 
 // NewTemplateSummaryDiffLabel instantiates a new TemplateSummaryDiffLabel object

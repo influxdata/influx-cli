@@ -17,8 +17,8 @@ import (
 
 // DashboardAllOfMeta struct for DashboardAllOfMeta
 type DashboardAllOfMeta struct {
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	CreatedAt *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
 }
 
 // NewDashboardAllOfMeta instantiates a new DashboardAllOfMeta object
