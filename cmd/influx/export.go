@@ -66,6 +66,7 @@ For information about exporting InfluxDB templates, see
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 		Subcommands: []*cli.Command{
 			newExportAllCmd(),
+			newExportStackCmd(),
 		},
 		Flags: append(
 			commonFlagsNoPrint(),
@@ -356,6 +357,94 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 				OrganizationsApi: apiClient.OrganizationsApi,
 			}
 			return client.ExportAll(ctx.Context, &parsedParams)
+		},
+	}
+}
+
+func  newExportStackCmd() *cli.Command {
+	return &cli.Command{
+		Name:  "stack",
+		Usage: "Export all resources associated with a stack as a template",
+		Description: `The influx export stack command exports all resources 
+	associated with a stack as a template. All metadata.name fields remain the same.
+
+Example:
+	# Export a stack as a template
+	influx export stack $STACK_ID
+
+For information about exporting InfluxDB templates, see
+https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/
+and
+https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/stack/
+`,
+		Flags: append(
+			commonFlagsNoPrint(),
+			//&cli.StringFlag{
+			//	Name:        "stack-id",
+			//	Usage:       "The ID of the stack",
+			//	EnvVars:     []string{"INFLUX_STACK_ID"},
+			//	Destination: &params.stackId,
+			//},
+			//&cli.StringFlag{
+			//	Name:        "org-id",
+			//	Usage:       "The ID of the organization",
+			//	EnvVars:     []string{"INFLUX_ORG_ID"},
+			//	Destination: &params.orgId,
+			//},
+			//&cli.StringFlag{
+			//	Name:        "org",
+			//	Usage:       "The name of the organization",
+			//	Aliases:     []string{"o"},
+			//	EnvVars:     []string{"INFLUX_ORG"},
+			//	Destination: &params.orgName,
+			//},
+			//&cli.StringFlag{
+			//	Name:        "file",
+			//	Usage:       "Output file for created template; defaults to std out if no file provided; the extension of provided file (.yml/.json) will dictate encoding",
+			//	Aliases:     []string{"f"},
+			//	Destination: &params.out,
+			//},
+		),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Action: func(ctx *cli.Context) error {
+			fmt.Println("HELLO THIS IS SHELLS STACK SUBCOMMAND");
+			return nil
+			//parsedParams := export.AllParams{
+			//	OrgId:   params.orgId,
+			//	OrgName: params.orgName,
+			//}
+			//
+			//for _, filter := range params.filters.Value() {
+			//	components := strings.Split(filter, "=")
+			//	if len(components) != 2 {
+			//		return fmt.Errorf("invalid filter %q, must have format `type=example`", filter)
+			//	}
+			//	switch key, val := components[0], components[1]; key {
+			//	case "labelName":
+			//		parsedParams.LabelFilters = append(parsedParams.LabelFilters, val)
+			//	case "kind", "resourceKind":
+			//		parsedParams.KindFilters = append(parsedParams.KindFilters, val)
+			//	default:
+			//		return fmt.Errorf("invalid filter provided %q; filter must be 1 in [labelName, resourceKind]", filter)
+			//	}
+			//}
+			//
+			//outParams, closer, err := parseOutParams(params.out)
+			//if closer != nil {
+			//	defer closer()
+			//}
+			//if err != nil {
+			//	return err
+			//}
+			//parsedParams.OutParams = outParams
+			//
+			//apiClient := getAPI(ctx)
+			//client := export.Client{
+			//	CLI:              getCLI(ctx),
+			//	TemplatesApi:     apiClient.TemplatesApi,
+			//	OrganizationsApi: apiClient.OrganizationsApi,
+			//}
+			//return client.ExportStack(ctx.Context, &parsedParams)
 		},
 	}
 }

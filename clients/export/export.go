@@ -110,3 +110,9 @@ func (c Client) ExportAll(ctx context.Context, params *AllParams) error {
 	}
 	return nil
 }
+//
+//func (c Client) ExportStack(ctx context.Context, params *AllParams) error {
+//	if ctx.NArg() != 1 {
+//		return clients.ErrMustSpecifyStack
+//	}
+//}
