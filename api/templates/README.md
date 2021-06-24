@@ -34,3 +34,6 @@ multiple locations.
 
 `model_oneof.mustache`
 * Fixed error strings to be idiomatic according to staticcheck (lowercase, no punctuation)
+
+`model_simple.mustache`
+* Added `yaml:` tags to all model fields to support unmarshalling camelCase
