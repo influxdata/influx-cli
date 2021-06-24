@@ -145,7 +145,7 @@ func NewConfiguration() *Configuration {
 			},
 			"LegacyAuthorizationsApiService.SetAuthorizationsIDPassword": {
 				{
-					URL:         "private",
+					URL:         "/private",
 					Description: "No description provided",
 				},
 			},

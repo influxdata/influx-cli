@@ -16,6 +16,24 @@ type Client struct {
 	api.OrganizationsApi
 }
 
+type AuthLookupParams struct {
+	ID       influxid.ID
+	Username string
+}
+
+func (p AuthLookupParams) Validate() (err error) {
+	if p.Username == "" && !p.ID.Valid() {
+		err = fmt.Errorf("id or username required")
+	} else if p.Username != "" && p.ID.Valid() {
+		err = fmt.Errorf("specify id or username, not both")
+	}
+	return
+}
+
+func (p AuthLookupParams) IsSet() bool {
+	return p.ID.Valid() || p.Username != ""
+}
+
 type v1PrintOpts struct {
 	deleted bool
 	token   *v1Token
@@ -61,7 +79,6 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 			return fmt.Errorf("authorization with username %q already exists", params.Username)
 		}
 	}
-	auth := auths.GetAuthorizations()[0]
 
 	password := params.Password
 	if password == "" && !params.NoPassword {
@@ -99,14 +116,14 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 			permissions = append(permissions, newPerm)
 		}
 	}
-	authReq := api.AuthorizationPostRequest{
+	authReq := api.LegacyAuthorizationPostRequest{
 		Description: &params.Desc,
 		OrgID:       orgID,
 		Permissions: permissions,
-		UserID:      auth.UserID,
+		Token:       &params.Username,
 	}
 
-	newAuth, err := c.LegacyAuthorizationsApi.PostAuthorizations(ctx).AuthorizationPostRequest(authReq).Execute()
+	newAuth, err := c.LegacyAuthorizationsApi.PostAuthorizations(ctx).LegacyAuthorizationPostRequest(authReq).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to create new authorization: %w", err)
 	}
@@ -126,8 +143,8 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		return err
 	}
 
-	ps := make([]string, 0, len(auth.Permissions))
-	for _, p := range auth.Permissions {
+	ps := make([]string, 0, len(newAuth.Permissions))
+	for _, p := range newAuth.Permissions {
 		ps = append(ps, permString(p))
 	}
 
@@ -145,7 +162,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 }
 
 type RemoveParams struct {
-	clients.AuthLookupParams
+	AuthLookupParams
 }
 
 func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
@@ -189,7 +206,7 @@ func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
 
 type ListParams struct {
 	clients.OrgParams
-	clients.AuthLookupParams
+	AuthLookupParams
 	User   string
 	UserID string
 }
@@ -248,7 +265,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 }
 
 type ActiveParams struct {
-	clients.AuthLookupParams
+	AuthLookupParams
 }
 
 func (c Client) SetActive(ctx context.Context, params *ActiveParams, active bool) error {
@@ -297,7 +314,7 @@ func (c Client) SetActive(ctx context.Context, params *ActiveParams, active bool
 }
 
 type SetPasswordParams struct {
-	clients.AuthLookupParams
+	AuthLookupParams
 	Password string
 }
 
@@ -387,7 +404,7 @@ func permString(p api.Permission) string {
 	return ret
 }
 
-func (c Client) getAuthReqID(ctx context.Context, params *clients.AuthLookupParams) (id string, err error) {
+func (c Client) getAuthReqID(ctx context.Context, params *AuthLookupParams) (id string, err error) {
 	if params.ID.Valid() {
 		id = params.ID.String()
 	} else {
@@ -403,7 +420,7 @@ func (c Client) getAuthReqID(ctx context.Context, params *clients.AuthLookupPara
 }
 
 func (c Client) getOrgID(ctx context.Context, params clients.OrgParams) (string, error) {
-	if params.OrgID.Valid() || params.OrgName != "" || c.ActiveConfig.Org != "" {
+	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return "", clients.ErrMustSpecifyOrg
 	}
 	if params.OrgID.Valid() {

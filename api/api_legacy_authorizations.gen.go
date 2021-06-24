@@ -739,18 +739,18 @@ func (a *LegacyAuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatch
 }
 
 type ApiPostAuthorizationsRequest struct {
-	ctx                      _context.Context
-	ApiService               LegacyAuthorizationsApi
-	authorizationPostRequest *AuthorizationPostRequest
-	zapTraceSpan             *string
+	ctx                            _context.Context
+	ApiService                     LegacyAuthorizationsApi
+	legacyAuthorizationPostRequest *LegacyAuthorizationPostRequest
+	zapTraceSpan                   *string
 }
 
-func (r ApiPostAuthorizationsRequest) AuthorizationPostRequest(authorizationPostRequest AuthorizationPostRequest) ApiPostAuthorizationsRequest {
-	r.authorizationPostRequest = &authorizationPostRequest
+func (r ApiPostAuthorizationsRequest) LegacyAuthorizationPostRequest(legacyAuthorizationPostRequest LegacyAuthorizationPostRequest) ApiPostAuthorizationsRequest {
+	r.legacyAuthorizationPostRequest = &legacyAuthorizationPostRequest
 	return r
 }
-func (r ApiPostAuthorizationsRequest) GetAuthorizationPostRequest() *AuthorizationPostRequest {
-	return r.authorizationPostRequest
+func (r ApiPostAuthorizationsRequest) GetLegacyAuthorizationPostRequest() *LegacyAuthorizationPostRequest {
+	return r.legacyAuthorizationPostRequest
 }
 
 func (r ApiPostAuthorizationsRequest) ZapTraceSpan(zapTraceSpan string) ApiPostAuthorizationsRequest {
@@ -801,8 +801,8 @@ func (a *LegacyAuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuth
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
-	if r.authorizationPostRequest == nil {
-		return localVarReturnValue, reportError("authorizationPostRequest is required and must be specified")
+	if r.legacyAuthorizationPostRequest == nil {
+		return localVarReturnValue, reportError("legacyAuthorizationPostRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -826,7 +826,7 @@ func (a *LegacyAuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuth
 		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
 	// body params
-	localVarPostBody = r.authorizationPostRequest
+	localVarPostBody = r.legacyAuthorizationPostRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, err

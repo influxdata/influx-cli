@@ -14,35 +14,37 @@ import (
 	"encoding/json"
 )
 
-// AuthorizationPostRequestAllOf struct for AuthorizationPostRequestAllOf
-type AuthorizationPostRequestAllOf struct {
+// LegacyAuthorizationPostRequestAllOf struct for LegacyAuthorizationPostRequestAllOf
+type LegacyAuthorizationPostRequestAllOf struct {
 	// ID of org that authorization is scoped to.
 	OrgID *string `json:"orgID,omitempty"`
 	// ID of user that authorization is scoped to.
 	UserID *string `json:"userID,omitempty"`
+	// Token (name) of the authorization
+	Token *string `json:"token,omitempty"`
 	// List of permissions for an auth.  An auth must have at least one Permission.
 	Permissions *[]Permission `json:"permissions,omitempty"`
 }
 
-// NewAuthorizationPostRequestAllOf instantiates a new AuthorizationPostRequestAllOf object
+// NewLegacyAuthorizationPostRequestAllOf instantiates a new LegacyAuthorizationPostRequestAllOf object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAuthorizationPostRequestAllOf() *AuthorizationPostRequestAllOf {
-	this := AuthorizationPostRequestAllOf{}
+func NewLegacyAuthorizationPostRequestAllOf() *LegacyAuthorizationPostRequestAllOf {
+	this := LegacyAuthorizationPostRequestAllOf{}
 	return &this
 }
 
-// NewAuthorizationPostRequestAllOfWithDefaults instantiates a new AuthorizationPostRequestAllOf object
+// NewLegacyAuthorizationPostRequestAllOfWithDefaults instantiates a new LegacyAuthorizationPostRequestAllOf object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewAuthorizationPostRequestAllOfWithDefaults() *AuthorizationPostRequestAllOf {
-	this := AuthorizationPostRequestAllOf{}
+func NewLegacyAuthorizationPostRequestAllOfWithDefaults() *LegacyAuthorizationPostRequestAllOf {
+	this := LegacyAuthorizationPostRequestAllOf{}
 	return &this
 }
 
 // GetOrgID returns the OrgID field value if set, zero value otherwise.
-func (o *AuthorizationPostRequestAllOf) GetOrgID() string {
+func (o *LegacyAuthorizationPostRequestAllOf) GetOrgID() string {
 	if o == nil || o.OrgID == nil {
 		var ret string
 		return ret
@@ -52,7 +54,7 @@ func (o *AuthorizationPostRequestAllOf) GetOrgID() string {
 
 // GetOrgIDOk returns a tuple with the OrgID field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AuthorizationPostRequestAllOf) GetOrgIDOk() (*string, bool) {
+func (o *LegacyAuthorizationPostRequestAllOf) GetOrgIDOk() (*string, bool) {
 	if o == nil || o.OrgID == nil {
 		return nil, false
 	}
@@ -60,7 +62,7 @@ func (o *AuthorizationPostRequestAllOf) GetOrgIDOk() (*string, bool) {
 }
 
 // HasOrgID returns a boolean if a field has been set.
-func (o *AuthorizationPostRequestAllOf) HasOrgID() bool {
+func (o *LegacyAuthorizationPostRequestAllOf) HasOrgID() bool {
 	if o != nil && o.OrgID != nil {
 		return true
 	}
@@ -69,12 +71,12 @@ func (o *AuthorizationPostRequestAllOf) HasOrgID() bool {
 }
 
 // SetOrgID gets a reference to the given string and assigns it to the OrgID field.
-func (o *AuthorizationPostRequestAllOf) SetOrgID(v string) {
+func (o *LegacyAuthorizationPostRequestAllOf) SetOrgID(v string) {
 	o.OrgID = &v
 }
 
 // GetUserID returns the UserID field value if set, zero value otherwise.
-func (o *AuthorizationPostRequestAllOf) GetUserID() string {
+func (o *LegacyAuthorizationPostRequestAllOf) GetUserID() string {
 	if o == nil || o.UserID == nil {
 		var ret string
 		return ret
@@ -84,7 +86,7 @@ func (o *AuthorizationPostRequestAllOf) GetUserID() string {
 
 // GetUserIDOk returns a tuple with the UserID field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AuthorizationPostRequestAllOf) GetUserIDOk() (*string, bool) {
+func (o *LegacyAuthorizationPostRequestAllOf) GetUserIDOk() (*string, bool) {
 	if o == nil || o.UserID == nil {
 		return nil, false
 	}
@@ -92,7 +94,7 @@ func (o *AuthorizationPostRequestAllOf) GetUserIDOk() (*string, bool) {
 }
 
 // HasUserID returns a boolean if a field has been set.
-func (o *AuthorizationPostRequestAllOf) HasUserID() bool {
+func (o *LegacyAuthorizationPostRequestAllOf) HasUserID() bool {
 	if o != nil && o.UserID != nil {
 		return true
 	}
@@ -101,12 +103,44 @@ func (o *AuthorizationPostRequestAllOf) HasUserID() bool {
 }
 
 // SetUserID gets a reference to the given string and assigns it to the UserID field.
-func (o *AuthorizationPostRequestAllOf) SetUserID(v string) {
+func (o *LegacyAuthorizationPostRequestAllOf) SetUserID(v string) {
 	o.UserID = &v
 }
 
+// GetToken returns the Token field value if set, zero value otherwise.
+func (o *LegacyAuthorizationPostRequestAllOf) GetToken() string {
+	if o == nil || o.Token == nil {
+		var ret string
+		return ret
+	}
+	return *o.Token
+}
+
+// GetTokenOk returns a tuple with the Token field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LegacyAuthorizationPostRequestAllOf) GetTokenOk() (*string, bool) {
+	if o == nil || o.Token == nil {
+		return nil, false
+	}
+	return o.Token, true
+}
+
+// HasToken returns a boolean if a field has been set.
+func (o *LegacyAuthorizationPostRequestAllOf) HasToken() bool {
+	if o != nil && o.Token != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetToken gets a reference to the given string and assigns it to the Token field.
+func (o *LegacyAuthorizationPostRequestAllOf) SetToken(v string) {
+	o.Token = &v
+}
+
 // GetPermissions returns the Permissions field value if set, zero value otherwise.
-func (o *AuthorizationPostRequestAllOf) GetPermissions() []Permission {
+func (o *LegacyAuthorizationPostRequestAllOf) GetPermissions() []Permission {
 	if o == nil || o.Permissions == nil {
 		var ret []Permission
 		return ret
@@ -116,7 +150,7 @@ func (o *AuthorizationPostRequestAllOf) GetPermissions() []Permission {
 
 // GetPermissionsOk returns a tuple with the Permissions field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AuthorizationPostRequestAllOf) GetPermissionsOk() (*[]Permission, bool) {
+func (o *LegacyAuthorizationPostRequestAllOf) GetPermissionsOk() (*[]Permission, bool) {
 	if o == nil || o.Permissions == nil {
 		return nil, false
 	}
@@ -124,7 +158,7 @@ func (o *AuthorizationPostRequestAllOf) GetPermissionsOk() (*[]Permission, bool)
 }
 
 // HasPermissions returns a boolean if a field has been set.
-func (o *AuthorizationPostRequestAllOf) HasPermissions() bool {
+func (o *LegacyAuthorizationPostRequestAllOf) HasPermissions() bool {
 	if o != nil && o.Permissions != nil {
 		return true
 	}
@@ -133,11 +167,11 @@ func (o *AuthorizationPostRequestAllOf) HasPermissions() bool {
 }
 
 // SetPermissions gets a reference to the given []Permission and assigns it to the Permissions field.
-func (o *AuthorizationPostRequestAllOf) SetPermissions(v []Permission) {
+func (o *LegacyAuthorizationPostRequestAllOf) SetPermissions(v []Permission) {
 	o.Permissions = &v
 }
 
-func (o AuthorizationPostRequestAllOf) MarshalJSON() ([]byte, error) {
+func (o LegacyAuthorizationPostRequestAllOf) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.OrgID != nil {
 		toSerialize["orgID"] = o.OrgID
@@ -145,44 +179,47 @@ func (o AuthorizationPostRequestAllOf) MarshalJSON() ([]byte, error) {
 	if o.UserID != nil {
 		toSerialize["userID"] = o.UserID
 	}
+	if o.Token != nil {
+		toSerialize["token"] = o.Token
+	}
 	if o.Permissions != nil {
 		toSerialize["permissions"] = o.Permissions
 	}
 	return json.Marshal(toSerialize)
 }
 
-type NullableAuthorizationPostRequestAllOf struct {
-	value *AuthorizationPostRequestAllOf
+type NullableLegacyAuthorizationPostRequestAllOf struct {
+	value *LegacyAuthorizationPostRequestAllOf
 	isSet bool
 }
 
-func (v NullableAuthorizationPostRequestAllOf) Get() *AuthorizationPostRequestAllOf {
+func (v NullableLegacyAuthorizationPostRequestAllOf) Get() *LegacyAuthorizationPostRequestAllOf {
 	return v.value
 }
 
-func (v *NullableAuthorizationPostRequestAllOf) Set(val *AuthorizationPostRequestAllOf) {
+func (v *NullableLegacyAuthorizationPostRequestAllOf) Set(val *LegacyAuthorizationPostRequestAllOf) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableAuthorizationPostRequestAllOf) IsSet() bool {
+func (v NullableLegacyAuthorizationPostRequestAllOf) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableAuthorizationPostRequestAllOf) Unset() {
+func (v *NullableLegacyAuthorizationPostRequestAllOf) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableAuthorizationPostRequestAllOf(val *AuthorizationPostRequestAllOf) *NullableAuthorizationPostRequestAllOf {
-	return &NullableAuthorizationPostRequestAllOf{value: val, isSet: true}
+func NewNullableLegacyAuthorizationPostRequestAllOf(val *LegacyAuthorizationPostRequestAllOf) *NullableLegacyAuthorizationPostRequestAllOf {
+	return &NullableLegacyAuthorizationPostRequestAllOf{value: val, isSet: true}
 }
 
-func (v NullableAuthorizationPostRequestAllOf) MarshalJSON() ([]byte, error) {
+func (v NullableLegacyAuthorizationPostRequestAllOf) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableAuthorizationPostRequestAllOf) UnmarshalJSON(src []byte) error {
+func (v *NullableLegacyAuthorizationPostRequestAllOf) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

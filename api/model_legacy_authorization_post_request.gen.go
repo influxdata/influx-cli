@@ -14,8 +14,8 @@ import (
 	"encoding/json"
 )
 
-// AuthorizationPostRequest struct for AuthorizationPostRequest
-type AuthorizationPostRequest struct {
+// LegacyAuthorizationPostRequest struct for LegacyAuthorizationPostRequest
+type LegacyAuthorizationPostRequest struct {
 	// If inactive the token is inactive and requests using the token will be rejected.
 	Status *string `json:"status,omitempty"`
 	// A description of the token.
@@ -24,16 +24,18 @@ type AuthorizationPostRequest struct {
 	OrgID string `json:"orgID"`
 	// ID of user that authorization is scoped to.
 	UserID *string `json:"userID,omitempty"`
+	// Token (name) of the authorization
+	Token *string `json:"token,omitempty"`
 	// List of permissions for an auth.  An auth must have at least one Permission.
 	Permissions []Permission `json:"permissions"`
 }
 
-// NewAuthorizationPostRequest instantiates a new AuthorizationPostRequest object
+// NewLegacyAuthorizationPostRequest instantiates a new LegacyAuthorizationPostRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAuthorizationPostRequest(orgID string, permissions []Permission) *AuthorizationPostRequest {
-	this := AuthorizationPostRequest{}
+func NewLegacyAuthorizationPostRequest(orgID string, permissions []Permission) *LegacyAuthorizationPostRequest {
+	this := LegacyAuthorizationPostRequest{}
 	var status string = "active"
 	this.Status = &status
 	this.OrgID = orgID
@@ -41,18 +43,18 @@ func NewAuthorizationPostRequest(orgID string, permissions []Permission) *Author
 	return &this
 }
 
-// NewAuthorizationPostRequestWithDefaults instantiates a new AuthorizationPostRequest object
+// NewLegacyAuthorizationPostRequestWithDefaults instantiates a new LegacyAuthorizationPostRequest object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewAuthorizationPostRequestWithDefaults() *AuthorizationPostRequest {
-	this := AuthorizationPostRequest{}
+func NewLegacyAuthorizationPostRequestWithDefaults() *LegacyAuthorizationPostRequest {
+	this := LegacyAuthorizationPostRequest{}
 	var status string = "active"
 	this.Status = &status
 	return &this
 }
 
 // GetStatus returns the Status field value if set, zero value otherwise.
-func (o *AuthorizationPostRequest) GetStatus() string {
+func (o *LegacyAuthorizationPostRequest) GetStatus() string {
 	if o == nil || o.Status == nil {
 		var ret string
 		return ret
@@ -62,7 +64,7 @@ func (o *AuthorizationPostRequest) GetStatus() string {
 
 // GetStatusOk returns a tuple with the Status field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AuthorizationPostRequest) GetStatusOk() (*string, bool) {
+func (o *LegacyAuthorizationPostRequest) GetStatusOk() (*string, bool) {
 	if o == nil || o.Status == nil {
 		return nil, false
 	}
@@ -70,7 +72,7 @@ func (o *AuthorizationPostRequest) GetStatusOk() (*string, bool) {
 }
 
 // HasStatus returns a boolean if a field has been set.
-func (o *AuthorizationPostRequest) HasStatus() bool {
+func (o *LegacyAuthorizationPostRequest) HasStatus() bool {
 	if o != nil && o.Status != nil {
 		return true
 	}
@@ -79,12 +81,12 @@ func (o *AuthorizationPostRequest) HasStatus() bool {
 }
 
 // SetStatus gets a reference to the given string and assigns it to the Status field.
-func (o *AuthorizationPostRequest) SetStatus(v string) {
+func (o *LegacyAuthorizationPostRequest) SetStatus(v string) {
 	o.Status = &v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
-func (o *AuthorizationPostRequest) GetDescription() string {
+func (o *LegacyAuthorizationPostRequest) GetDescription() string {
 	if o == nil || o.Description == nil {
 		var ret string
 		return ret
@@ -94,7 +96,7 @@ func (o *AuthorizationPostRequest) GetDescription() string {
 
 // GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AuthorizationPostRequest) GetDescriptionOk() (*string, bool) {
+func (o *LegacyAuthorizationPostRequest) GetDescriptionOk() (*string, bool) {
 	if o == nil || o.Description == nil {
 		return nil, false
 	}
@@ -102,7 +104,7 @@ func (o *AuthorizationPostRequest) GetDescriptionOk() (*string, bool) {
 }
 
 // HasDescription returns a boolean if a field has been set.
-func (o *AuthorizationPostRequest) HasDescription() bool {
+func (o *LegacyAuthorizationPostRequest) HasDescription() bool {
 	if o != nil && o.Description != nil {
 		return true
 	}
@@ -111,12 +113,12 @@ func (o *AuthorizationPostRequest) HasDescription() bool {
 }
 
 // SetDescription gets a reference to the given string and assigns it to the Description field.
-func (o *AuthorizationPostRequest) SetDescription(v string) {
+func (o *LegacyAuthorizationPostRequest) SetDescription(v string) {
 	o.Description = &v
 }
 
 // GetOrgID returns the OrgID field value
-func (o *AuthorizationPostRequest) GetOrgID() string {
+func (o *LegacyAuthorizationPostRequest) GetOrgID() string {
 	if o == nil {
 		var ret string
 		return ret
@@ -127,7 +129,7 @@ func (o *AuthorizationPostRequest) GetOrgID() string {
 
 // GetOrgIDOk returns a tuple with the OrgID field value
 // and a boolean to check if the value has been set.
-func (o *AuthorizationPostRequest) GetOrgIDOk() (*string, bool) {
+func (o *LegacyAuthorizationPostRequest) GetOrgIDOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -135,12 +137,12 @@ func (o *AuthorizationPostRequest) GetOrgIDOk() (*string, bool) {
 }
 
 // SetOrgID sets field value
-func (o *AuthorizationPostRequest) SetOrgID(v string) {
+func (o *LegacyAuthorizationPostRequest) SetOrgID(v string) {
 	o.OrgID = v
 }
 
 // GetUserID returns the UserID field value if set, zero value otherwise.
-func (o *AuthorizationPostRequest) GetUserID() string {
+func (o *LegacyAuthorizationPostRequest) GetUserID() string {
 	if o == nil || o.UserID == nil {
 		var ret string
 		return ret
@@ -150,7 +152,7 @@ func (o *AuthorizationPostRequest) GetUserID() string {
 
 // GetUserIDOk returns a tuple with the UserID field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AuthorizationPostRequest) GetUserIDOk() (*string, bool) {
+func (o *LegacyAuthorizationPostRequest) GetUserIDOk() (*string, bool) {
 	if o == nil || o.UserID == nil {
 		return nil, false
 	}
@@ -158,7 +160,7 @@ func (o *AuthorizationPostRequest) GetUserIDOk() (*string, bool) {
 }
 
 // HasUserID returns a boolean if a field has been set.
-func (o *AuthorizationPostRequest) HasUserID() bool {
+func (o *LegacyAuthorizationPostRequest) HasUserID() bool {
 	if o != nil && o.UserID != nil {
 		return true
 	}
@@ -167,12 +169,44 @@ func (o *AuthorizationPostRequest) HasUserID() bool {
 }
 
 // SetUserID gets a reference to the given string and assigns it to the UserID field.
-func (o *AuthorizationPostRequest) SetUserID(v string) {
+func (o *LegacyAuthorizationPostRequest) SetUserID(v string) {
 	o.UserID = &v
 }
 
+// GetToken returns the Token field value if set, zero value otherwise.
+func (o *LegacyAuthorizationPostRequest) GetToken() string {
+	if o == nil || o.Token == nil {
+		var ret string
+		return ret
+	}
+	return *o.Token
+}
+
+// GetTokenOk returns a tuple with the Token field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *LegacyAuthorizationPostRequest) GetTokenOk() (*string, bool) {
+	if o == nil || o.Token == nil {
+		return nil, false
+	}
+	return o.Token, true
+}
+
+// HasToken returns a boolean if a field has been set.
+func (o *LegacyAuthorizationPostRequest) HasToken() bool {
+	if o != nil && o.Token != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetToken gets a reference to the given string and assigns it to the Token field.
+func (o *LegacyAuthorizationPostRequest) SetToken(v string) {
+	o.Token = &v
+}
+
 // GetPermissions returns the Permissions field value
-func (o *AuthorizationPostRequest) GetPermissions() []Permission {
+func (o *LegacyAuthorizationPostRequest) GetPermissions() []Permission {
 	if o == nil {
 		var ret []Permission
 		return ret
@@ -183,7 +217,7 @@ func (o *AuthorizationPostRequest) GetPermissions() []Permission {
 
 // GetPermissionsOk returns a tuple with the Permissions field value
 // and a boolean to check if the value has been set.
-func (o *AuthorizationPostRequest) GetPermissionsOk() (*[]Permission, bool) {
+func (o *LegacyAuthorizationPostRequest) GetPermissionsOk() (*[]Permission, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -191,11 +225,11 @@ func (o *AuthorizationPostRequest) GetPermissionsOk() (*[]Permission, bool) {
 }
 
 // SetPermissions sets field value
-func (o *AuthorizationPostRequest) SetPermissions(v []Permission) {
+func (o *LegacyAuthorizationPostRequest) SetPermissions(v []Permission) {
 	o.Permissions = v
 }
 
-func (o AuthorizationPostRequest) MarshalJSON() ([]byte, error) {
+func (o LegacyAuthorizationPostRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Status != nil {
 		toSerialize["status"] = o.Status
@@ -209,44 +243,47 @@ func (o AuthorizationPostRequest) MarshalJSON() ([]byte, error) {
 	if o.UserID != nil {
 		toSerialize["userID"] = o.UserID
 	}
+	if o.Token != nil {
+		toSerialize["token"] = o.Token
+	}
 	if true {
 		toSerialize["permissions"] = o.Permissions
 	}
 	return json.Marshal(toSerialize)
 }
 
-type NullableAuthorizationPostRequest struct {
-	value *AuthorizationPostRequest
+type NullableLegacyAuthorizationPostRequest struct {
+	value *LegacyAuthorizationPostRequest
 	isSet bool
 }
 
-func (v NullableAuthorizationPostRequest) Get() *AuthorizationPostRequest {
+func (v NullableLegacyAuthorizationPostRequest) Get() *LegacyAuthorizationPostRequest {
 	return v.value
 }
 
-func (v *NullableAuthorizationPostRequest) Set(val *AuthorizationPostRequest) {
+func (v *NullableLegacyAuthorizationPostRequest) Set(val *LegacyAuthorizationPostRequest) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableAuthorizationPostRequest) IsSet() bool {
+func (v NullableLegacyAuthorizationPostRequest) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableAuthorizationPostRequest) Unset() {
+func (v *NullableLegacyAuthorizationPostRequest) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableAuthorizationPostRequest(val *AuthorizationPostRequest) *NullableAuthorizationPostRequest {
-	return &NullableAuthorizationPostRequest{value: val, isSet: true}
+func NewNullableLegacyAuthorizationPostRequest(val *LegacyAuthorizationPostRequest) *NullableLegacyAuthorizationPostRequest {
+	return &NullableLegacyAuthorizationPostRequest{value: val, isSet: true}
 }
 
-func (v NullableAuthorizationPostRequest) MarshalJSON() ([]byte, error) {
+func (v NullableLegacyAuthorizationPostRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableAuthorizationPostRequest) UnmarshalJSON(src []byte) error {
+func (v *NullableLegacyAuthorizationPostRequest) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

@@ -6,6 +6,23 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// getAuthLookupFlags returns flags used for authorization, requiring either an ID or Username,
+// and can specify to require one but not both.
+func getAuthLookupFlags(params *v1_auth.AuthLookupParams) []cli.Flag {
+	return []cli.Flag{
+		&cli.GenericFlag{
+			Name:  "id",
+			Usage: "The ID of the authorization",
+			Value: &params.ID,
+		},
+		&cli.StringFlag{
+			Name:        "username",
+			Usage:       "The username of the authorization",
+			Destination: &params.Username,
+		},
+	}
+}
+
 func newV1AuthCommand() *cli.Command {
 	return &cli.Command{
 		Name:    "auth",
