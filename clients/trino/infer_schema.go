@@ -178,3 +178,35 @@ func (c Client) InferSchema(ctx context.Context, params *InferSchemaParams) erro
 	enc := json.NewEncoder(c.StdIO)
 	return enc.Encode(schemas)
 }
+
+type InferExplicitBucketParams struct {
+	Name string
+	DB   string
+	RP   string
+}
+
+func (c Client) InferExplicitBucket(ctx context.Context, params *InferExplicitBucketParams) error {
+	schema := make(databaseSchema)
+	err := c.addMeasurements(ctx, params.DB, schema)
+	if err != nil {
+		return err
+	}
+
+	err = c.addTagColumns(ctx, params.DB, schema)
+	if err != nil {
+		return err
+	}
+
+	err = c.addFieldColumns(ctx, params.DB, schema)
+	if err != nil {
+		return err
+	}
+
+	schemas := make([]*tableSchema, 0, len(schema))
+	for _, table := range schema {
+		schemas = append(schemas, table)
+	}
+
+	enc := json.NewEncoder(c.StdIO)
+	return enc.Encode(schemas)
+}
