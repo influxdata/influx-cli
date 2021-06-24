@@ -110,9 +110,27 @@ func (c Client) ExportAll(ctx context.Context, params *AllParams) error {
 	}
 	return nil
 }
-//
-//func (c Client) ExportStack(ctx context.Context, params *AllParams) error {
-//	if ctx.NArg() != 1 {
-//		return clients.ErrMustSpecifyStack
-//	}
-//}
+
+type StackParams struct {
+	OutParams
+	StackId 	string
+}
+
+func (c Client) ExportStack(ctx context.Context, params *StackParams) error {
+	if params.StackId == "" {
+		return clients.ErrMustSpecifyStack
+	}
+
+	stackId := params.StackId
+
+	exportReq := api.TemplateExport{StackID: &stackId}
+	tmpl, err := c.ExportTemplate(ctx).TemplateExport(exportReq).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to export template: %w", err)
+	}
+	if err := params.OutParams.writeTemplate(tmpl); err != nil {
+		return fmt.Errorf("failed to write exported template: %w", err)
+	}
+
+	return nil
+}
