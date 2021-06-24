@@ -16,8 +16,8 @@ import (
 
 // TemplateSummaryCheckAllOf struct for TemplateSummaryCheckAllOf
 type TemplateSummaryCheckAllOf struct {
-	Id          *string `json:"id,omitempty"`
-	Name        *string `json:"name,omitempty"`
+	Id          string  `json:"id"`
+	Name        string  `json:"name"`
 	Description *string `json:"description,omitempty"`
 }
 
@@ -25,8 +25,10 @@ type TemplateSummaryCheckAllOf struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryCheckAllOf() *TemplateSummaryCheckAllOf {
+func NewTemplateSummaryCheckAllOf(id string, name string) *TemplateSummaryCheckAllOf {
 	this := TemplateSummaryCheckAllOf{}
+	this.Id = id
+	this.Name = name
 	return &this
 }
 
@@ -38,68 +40,52 @@ func NewTemplateSummaryCheckAllOfWithDefaults() *TemplateSummaryCheckAllOf {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *TemplateSummaryCheckAllOf) GetId() string {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryCheckAllOf) GetIdOk() (*string, bool) {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *TemplateSummaryCheckAllOf) HasId() bool {
-	if o != nil && o.Id != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *TemplateSummaryCheckAllOf) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryCheckAllOf) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryCheckAllOf) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryCheckAllOf) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryCheckAllOf) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -136,10 +122,10 @@ func (o *TemplateSummaryCheckAllOf) SetDescription(v string) {
 
 func (o TemplateSummaryCheckAllOf) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Id != nil {
+	if true {
 		toSerialize["id"] = o.Id
 	}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
 	if o.Description != nil {

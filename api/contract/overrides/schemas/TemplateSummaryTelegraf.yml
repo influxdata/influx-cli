@@ -4,3 +4,4 @@ allOf:
     properties:
       telegrafConfig:
         $ref: "./TemplateSummaryTelegrafConfig.yml"
+    required: [telegrafConfig]

@@ -16,24 +16,34 @@ import (
 
 // TemplateSummaryDiff struct for TemplateSummaryDiff
 type TemplateSummaryDiff struct {
-	Buckets               *[]TemplateSummaryDiffBucket               `json:"buckets,omitempty"`
-	Checks                *[]TemplateSummaryDiffCheck                `json:"checks,omitempty"`
-	Dashboards            *[]TemplateSummaryDiffDashboard            `json:"dashboards,omitempty"`
-	Labels                *[]TemplateSummaryDiffLabel                `json:"labels,omitempty"`
-	LabelMappings         *[]TemplateSummaryLabelMapping             `json:"labelMappings,omitempty"`
-	NotificationEndpoints *[]TemplateSummaryDiffNotificationEndpoint `json:"notificationEndpoints,omitempty"`
-	NotificationRules     *[]TemplateSummaryDiffNotificationRule     `json:"notificationRules,omitempty"`
-	Tasks                 *[]TemplateSummaryDiffTask                 `json:"tasks,omitempty"`
-	TelegrafConfigs       *[]TemplateSummaryDiffTelegraf             `json:"telegrafConfigs,omitempty"`
-	Variables             *[]TemplateSummaryDiffVariable             `json:"variables,omitempty"`
+	Buckets               []TemplateSummaryDiffBucket               `json:"buckets"`
+	Checks                []TemplateSummaryDiffCheck                `json:"checks"`
+	Dashboards            []TemplateSummaryDiffDashboard            `json:"dashboards"`
+	Labels                []TemplateSummaryDiffLabel                `json:"labels"`
+	LabelMappings         []TemplateSummaryLabelMapping             `json:"labelMappings"`
+	NotificationEndpoints []TemplateSummaryDiffNotificationEndpoint `json:"notificationEndpoints"`
+	NotificationRules     []TemplateSummaryDiffNotificationRule     `json:"notificationRules"`
+	Tasks                 []TemplateSummaryDiffTask                 `json:"tasks"`
+	TelegrafConfigs       []TemplateSummaryDiffTelegraf             `json:"telegrafConfigs"`
+	Variables             []TemplateSummaryDiffVariable             `json:"variables"`
 }
 
 // NewTemplateSummaryDiff instantiates a new TemplateSummaryDiff object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiff() *TemplateSummaryDiff {
+func NewTemplateSummaryDiff(buckets []TemplateSummaryDiffBucket, checks []TemplateSummaryDiffCheck, dashboards []TemplateSummaryDiffDashboard, labels []TemplateSummaryDiffLabel, labelMappings []TemplateSummaryLabelMapping, notificationEndpoints []TemplateSummaryDiffNotificationEndpoint, notificationRules []TemplateSummaryDiffNotificationRule, tasks []TemplateSummaryDiffTask, telegrafConfigs []TemplateSummaryDiffTelegraf, variables []TemplateSummaryDiffVariable) *TemplateSummaryDiff {
 	this := TemplateSummaryDiff{}
+	this.Buckets = buckets
+	this.Checks = checks
+	this.Dashboards = dashboards
+	this.Labels = labels
+	this.LabelMappings = labelMappings
+	this.NotificationEndpoints = notificationEndpoints
+	this.NotificationRules = notificationRules
+	this.Tasks = tasks
+	this.TelegrafConfigs = telegrafConfigs
+	this.Variables = variables
 	return &this
 }
 
@@ -45,356 +55,276 @@ func NewTemplateSummaryDiffWithDefaults() *TemplateSummaryDiff {
 	return &this
 }
 
-// GetBuckets returns the Buckets field value if set, zero value otherwise.
+// GetBuckets returns the Buckets field value
 func (o *TemplateSummaryDiff) GetBuckets() []TemplateSummaryDiffBucket {
-	if o == nil || o.Buckets == nil {
+	if o == nil {
 		var ret []TemplateSummaryDiffBucket
 		return ret
 	}
-	return *o.Buckets
+
+	return o.Buckets
 }
 
-// GetBucketsOk returns a tuple with the Buckets field value if set, nil otherwise
+// GetBucketsOk returns a tuple with the Buckets field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiff) GetBucketsOk() (*[]TemplateSummaryDiffBucket, bool) {
-	if o == nil || o.Buckets == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Buckets, true
+	return &o.Buckets, true
 }
 
-// HasBuckets returns a boolean if a field has been set.
-func (o *TemplateSummaryDiff) HasBuckets() bool {
-	if o != nil && o.Buckets != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetBuckets gets a reference to the given []TemplateSummaryDiffBucket and assigns it to the Buckets field.
+// SetBuckets sets field value
 func (o *TemplateSummaryDiff) SetBuckets(v []TemplateSummaryDiffBucket) {
-	o.Buckets = &v
+	o.Buckets = v
 }
 
-// GetChecks returns the Checks field value if set, zero value otherwise.
+// GetChecks returns the Checks field value
 func (o *TemplateSummaryDiff) GetChecks() []TemplateSummaryDiffCheck {
-	if o == nil || o.Checks == nil {
+	if o == nil {
 		var ret []TemplateSummaryDiffCheck
 		return ret
 	}
-	return *o.Checks
+
+	return o.Checks
 }
 
-// GetChecksOk returns a tuple with the Checks field value if set, nil otherwise
+// GetChecksOk returns a tuple with the Checks field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiff) GetChecksOk() (*[]TemplateSummaryDiffCheck, bool) {
-	if o == nil || o.Checks == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Checks, true
+	return &o.Checks, true
 }
 
-// HasChecks returns a boolean if a field has been set.
-func (o *TemplateSummaryDiff) HasChecks() bool {
-	if o != nil && o.Checks != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetChecks gets a reference to the given []TemplateSummaryDiffCheck and assigns it to the Checks field.
+// SetChecks sets field value
 func (o *TemplateSummaryDiff) SetChecks(v []TemplateSummaryDiffCheck) {
-	o.Checks = &v
+	o.Checks = v
 }
 
-// GetDashboards returns the Dashboards field value if set, zero value otherwise.
+// GetDashboards returns the Dashboards field value
 func (o *TemplateSummaryDiff) GetDashboards() []TemplateSummaryDiffDashboard {
-	if o == nil || o.Dashboards == nil {
+	if o == nil {
 		var ret []TemplateSummaryDiffDashboard
 		return ret
 	}
-	return *o.Dashboards
+
+	return o.Dashboards
 }
 
-// GetDashboardsOk returns a tuple with the Dashboards field value if set, nil otherwise
+// GetDashboardsOk returns a tuple with the Dashboards field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiff) GetDashboardsOk() (*[]TemplateSummaryDiffDashboard, bool) {
-	if o == nil || o.Dashboards == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Dashboards, true
+	return &o.Dashboards, true
 }
 
-// HasDashboards returns a boolean if a field has been set.
-func (o *TemplateSummaryDiff) HasDashboards() bool {
-	if o != nil && o.Dashboards != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetDashboards gets a reference to the given []TemplateSummaryDiffDashboard and assigns it to the Dashboards field.
+// SetDashboards sets field value
 func (o *TemplateSummaryDiff) SetDashboards(v []TemplateSummaryDiffDashboard) {
-	o.Dashboards = &v
+	o.Dashboards = v
 }
 
-// GetLabels returns the Labels field value if set, zero value otherwise.
+// GetLabels returns the Labels field value
 func (o *TemplateSummaryDiff) GetLabels() []TemplateSummaryDiffLabel {
-	if o == nil || o.Labels == nil {
+	if o == nil {
 		var ret []TemplateSummaryDiffLabel
 		return ret
 	}
-	return *o.Labels
+
+	return o.Labels
 }
 
-// GetLabelsOk returns a tuple with the Labels field value if set, nil otherwise
+// GetLabelsOk returns a tuple with the Labels field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiff) GetLabelsOk() (*[]TemplateSummaryDiffLabel, bool) {
-	if o == nil || o.Labels == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Labels, true
+	return &o.Labels, true
 }
 
-// HasLabels returns a boolean if a field has been set.
-func (o *TemplateSummaryDiff) HasLabels() bool {
-	if o != nil && o.Labels != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabels gets a reference to the given []TemplateSummaryDiffLabel and assigns it to the Labels field.
+// SetLabels sets field value
 func (o *TemplateSummaryDiff) SetLabels(v []TemplateSummaryDiffLabel) {
-	o.Labels = &v
+	o.Labels = v
 }
 
-// GetLabelMappings returns the LabelMappings field value if set, zero value otherwise.
+// GetLabelMappings returns the LabelMappings field value
 func (o *TemplateSummaryDiff) GetLabelMappings() []TemplateSummaryLabelMapping {
-	if o == nil || o.LabelMappings == nil {
+	if o == nil {
 		var ret []TemplateSummaryLabelMapping
 		return ret
 	}
-	return *o.LabelMappings
+
+	return o.LabelMappings
 }
 
-// GetLabelMappingsOk returns a tuple with the LabelMappings field value if set, nil otherwise
+// GetLabelMappingsOk returns a tuple with the LabelMappings field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiff) GetLabelMappingsOk() (*[]TemplateSummaryLabelMapping, bool) {
-	if o == nil || o.LabelMappings == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.LabelMappings, true
+	return &o.LabelMappings, true
 }
 
-// HasLabelMappings returns a boolean if a field has been set.
-func (o *TemplateSummaryDiff) HasLabelMappings() bool {
-	if o != nil && o.LabelMappings != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabelMappings gets a reference to the given []TemplateSummaryLabelMapping and assigns it to the LabelMappings field.
+// SetLabelMappings sets field value
 func (o *TemplateSummaryDiff) SetLabelMappings(v []TemplateSummaryLabelMapping) {
-	o.LabelMappings = &v
+	o.LabelMappings = v
 }
 
-// GetNotificationEndpoints returns the NotificationEndpoints field value if set, zero value otherwise.
+// GetNotificationEndpoints returns the NotificationEndpoints field value
 func (o *TemplateSummaryDiff) GetNotificationEndpoints() []TemplateSummaryDiffNotificationEndpoint {
-	if o == nil || o.NotificationEndpoints == nil {
+	if o == nil {
 		var ret []TemplateSummaryDiffNotificationEndpoint
 		return ret
 	}
-	return *o.NotificationEndpoints
+
+	return o.NotificationEndpoints
 }
 
-// GetNotificationEndpointsOk returns a tuple with the NotificationEndpoints field value if set, nil otherwise
+// GetNotificationEndpointsOk returns a tuple with the NotificationEndpoints field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiff) GetNotificationEndpointsOk() (*[]TemplateSummaryDiffNotificationEndpoint, bool) {
-	if o == nil || o.NotificationEndpoints == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.NotificationEndpoints, true
+	return &o.NotificationEndpoints, true
 }
 
-// HasNotificationEndpoints returns a boolean if a field has been set.
-func (o *TemplateSummaryDiff) HasNotificationEndpoints() bool {
-	if o != nil && o.NotificationEndpoints != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetNotificationEndpoints gets a reference to the given []TemplateSummaryDiffNotificationEndpoint and assigns it to the NotificationEndpoints field.
+// SetNotificationEndpoints sets field value
 func (o *TemplateSummaryDiff) SetNotificationEndpoints(v []TemplateSummaryDiffNotificationEndpoint) {
-	o.NotificationEndpoints = &v
+	o.NotificationEndpoints = v
 }
 
-// GetNotificationRules returns the NotificationRules field value if set, zero value otherwise.
+// GetNotificationRules returns the NotificationRules field value
 func (o *TemplateSummaryDiff) GetNotificationRules() []TemplateSummaryDiffNotificationRule {
-	if o == nil || o.NotificationRules == nil {
+	if o == nil {
 		var ret []TemplateSummaryDiffNotificationRule
 		return ret
 	}
-	return *o.NotificationRules
+
+	return o.NotificationRules
 }
 
-// GetNotificationRulesOk returns a tuple with the NotificationRules field value if set, nil otherwise
+// GetNotificationRulesOk returns a tuple with the NotificationRules field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiff) GetNotificationRulesOk() (*[]TemplateSummaryDiffNotificationRule, bool) {
-	if o == nil || o.NotificationRules == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.NotificationRules, true
+	return &o.NotificationRules, true
 }
 
-// HasNotificationRules returns a boolean if a field has been set.
-func (o *TemplateSummaryDiff) HasNotificationRules() bool {
-	if o != nil && o.NotificationRules != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetNotificationRules gets a reference to the given []TemplateSummaryDiffNotificationRule and assigns it to the NotificationRules field.
+// SetNotificationRules sets field value
 func (o *TemplateSummaryDiff) SetNotificationRules(v []TemplateSummaryDiffNotificationRule) {
-	o.NotificationRules = &v
+	o.NotificationRules = v
 }
 
-// GetTasks returns the Tasks field value if set, zero value otherwise.
+// GetTasks returns the Tasks field value
 func (o *TemplateSummaryDiff) GetTasks() []TemplateSummaryDiffTask {
-	if o == nil || o.Tasks == nil {
+	if o == nil {
 		var ret []TemplateSummaryDiffTask
 		return ret
 	}
-	return *o.Tasks
+
+	return o.Tasks
 }
 
-// GetTasksOk returns a tuple with the Tasks field value if set, nil otherwise
+// GetTasksOk returns a tuple with the Tasks field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiff) GetTasksOk() (*[]TemplateSummaryDiffTask, bool) {
-	if o == nil || o.Tasks == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Tasks, true
+	return &o.Tasks, true
 }
 
-// HasTasks returns a boolean if a field has been set.
-func (o *TemplateSummaryDiff) HasTasks() bool {
-	if o != nil && o.Tasks != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTasks gets a reference to the given []TemplateSummaryDiffTask and assigns it to the Tasks field.
+// SetTasks sets field value
 func (o *TemplateSummaryDiff) SetTasks(v []TemplateSummaryDiffTask) {
-	o.Tasks = &v
+	o.Tasks = v
 }
 
-// GetTelegrafConfigs returns the TelegrafConfigs field value if set, zero value otherwise.
+// GetTelegrafConfigs returns the TelegrafConfigs field value
 func (o *TemplateSummaryDiff) GetTelegrafConfigs() []TemplateSummaryDiffTelegraf {
-	if o == nil || o.TelegrafConfigs == nil {
+	if o == nil {
 		var ret []TemplateSummaryDiffTelegraf
 		return ret
 	}
-	return *o.TelegrafConfigs
+
+	return o.TelegrafConfigs
 }
 
-// GetTelegrafConfigsOk returns a tuple with the TelegrafConfigs field value if set, nil otherwise
+// GetTelegrafConfigsOk returns a tuple with the TelegrafConfigs field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiff) GetTelegrafConfigsOk() (*[]TemplateSummaryDiffTelegraf, bool) {
-	if o == nil || o.TelegrafConfigs == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.TelegrafConfigs, true
+	return &o.TelegrafConfigs, true
 }
 
-// HasTelegrafConfigs returns a boolean if a field has been set.
-func (o *TemplateSummaryDiff) HasTelegrafConfigs() bool {
-	if o != nil && o.TelegrafConfigs != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTelegrafConfigs gets a reference to the given []TemplateSummaryDiffTelegraf and assigns it to the TelegrafConfigs field.
+// SetTelegrafConfigs sets field value
 func (o *TemplateSummaryDiff) SetTelegrafConfigs(v []TemplateSummaryDiffTelegraf) {
-	o.TelegrafConfigs = &v
+	o.TelegrafConfigs = v
 }
 
-// GetVariables returns the Variables field value if set, zero value otherwise.
+// GetVariables returns the Variables field value
 func (o *TemplateSummaryDiff) GetVariables() []TemplateSummaryDiffVariable {
-	if o == nil || o.Variables == nil {
+	if o == nil {
 		var ret []TemplateSummaryDiffVariable
 		return ret
 	}
-	return *o.Variables
+
+	return o.Variables
 }
 
-// GetVariablesOk returns a tuple with the Variables field value if set, nil otherwise
+// GetVariablesOk returns a tuple with the Variables field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiff) GetVariablesOk() (*[]TemplateSummaryDiffVariable, bool) {
-	if o == nil || o.Variables == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Variables, true
+	return &o.Variables, true
 }
 
-// HasVariables returns a boolean if a field has been set.
-func (o *TemplateSummaryDiff) HasVariables() bool {
-	if o != nil && o.Variables != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetVariables gets a reference to the given []TemplateSummaryDiffVariable and assigns it to the Variables field.
+// SetVariables sets field value
 func (o *TemplateSummaryDiff) SetVariables(v []TemplateSummaryDiffVariable) {
-	o.Variables = &v
+	o.Variables = v
 }
 
 func (o TemplateSummaryDiff) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Buckets != nil {
+	if true {
 		toSerialize["buckets"] = o.Buckets
 	}
-	if o.Checks != nil {
+	if true {
 		toSerialize["checks"] = o.Checks
 	}
-	if o.Dashboards != nil {
+	if true {
 		toSerialize["dashboards"] = o.Dashboards
 	}
-	if o.Labels != nil {
+	if true {
 		toSerialize["labels"] = o.Labels
 	}
-	if o.LabelMappings != nil {
+	if true {
 		toSerialize["labelMappings"] = o.LabelMappings
 	}
-	if o.NotificationEndpoints != nil {
+	if true {
 		toSerialize["notificationEndpoints"] = o.NotificationEndpoints
 	}
-	if o.NotificationRules != nil {
+	if true {
 		toSerialize["notificationRules"] = o.NotificationRules
 	}
-	if o.Tasks != nil {
+	if true {
 		toSerialize["tasks"] = o.Tasks
 	}
-	if o.TelegrafConfigs != nil {
+	if true {
 		toSerialize["telegrafConfigs"] = o.TelegrafConfigs
 	}
-	if o.Variables != nil {
+	if true {
 		toSerialize["variables"] = o.Variables
 	}
 	return json.Marshal(toSerialize)

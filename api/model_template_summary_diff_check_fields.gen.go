@@ -16,7 +16,7 @@ import (
 
 // TemplateSummaryDiffCheckFields struct for TemplateSummaryDiffCheckFields
 type TemplateSummaryDiffCheckFields struct {
-	Name        *string `json:"name,omitempty"`
+	Name        string  `json:"name"`
 	Description *string `json:"description,omitempty"`
 }
 
@@ -24,8 +24,9 @@ type TemplateSummaryDiffCheckFields struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffCheckFields() *TemplateSummaryDiffCheckFields {
+func NewTemplateSummaryDiffCheckFields(name string) *TemplateSummaryDiffCheckFields {
 	this := TemplateSummaryDiffCheckFields{}
+	this.Name = name
 	return &this
 }
 
@@ -37,36 +38,28 @@ func NewTemplateSummaryDiffCheckFieldsWithDefaults() *TemplateSummaryDiffCheckFi
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryDiffCheckFields) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffCheckFields) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffCheckFields) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryDiffCheckFields) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -103,7 +96,7 @@ func (o *TemplateSummaryDiffCheckFields) SetDescription(v string) {
 
 func (o TemplateSummaryDiffCheckFields) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
 	if o.Description != nil {

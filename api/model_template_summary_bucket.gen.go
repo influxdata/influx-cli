@@ -16,23 +16,29 @@ import (
 
 // TemplateSummaryBucket struct for TemplateSummaryBucket
 type TemplateSummaryBucket struct {
-	Kind              *string                 `json:"kind,omitempty"`
-	TemplateMetaName  *string                 `json:"templateMetaName,omitempty"`
-	EnvReferences     *[]TemplateEnvReference `json:"envReferences,omitempty"`
-	LabelAssociations *[]TemplateSummaryLabel `json:"labelAssociations,omitempty"`
-	Id                *string                 `json:"id,omitempty"`
-	Name              *string                 `json:"name,omitempty"`
-	Description       *string                 `json:"description,omitempty"`
-	RetentionPeriod   *int32                  `json:"retentionPeriod,omitempty"`
-	SchemaType        *string                 `json:"schemaType,omitempty"`
+	Kind              string                 `json:"kind"`
+	TemplateMetaName  *string                `json:"templateMetaName,omitempty"`
+	EnvReferences     []TemplateEnvReference `json:"envReferences"`
+	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations"`
+	Id                string                 `json:"id"`
+	Name              string                 `json:"name"`
+	Description       *string                `json:"description,omitempty"`
+	RetentionPeriod   int32                  `json:"retentionPeriod"`
+	SchemaType        *string                `json:"schemaType,omitempty"`
 }
 
 // NewTemplateSummaryBucket instantiates a new TemplateSummaryBucket object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryBucket() *TemplateSummaryBucket {
+func NewTemplateSummaryBucket(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id string, name string, retentionPeriod int32) *TemplateSummaryBucket {
 	this := TemplateSummaryBucket{}
+	this.Kind = kind
+	this.EnvReferences = envReferences
+	this.LabelAssociations = labelAssociations
+	this.Id = id
+	this.Name = name
+	this.RetentionPeriod = retentionPeriod
 	return &this
 }
 
@@ -44,36 +50,28 @@ func NewTemplateSummaryBucketWithDefaults() *TemplateSummaryBucket {
 	return &this
 }
 
-// GetKind returns the Kind field value if set, zero value otherwise.
+// GetKind returns the Kind field value
 func (o *TemplateSummaryBucket) GetKind() string {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Kind
+
+	return o.Kind
 }
 
-// GetKindOk returns a tuple with the Kind field value if set, nil otherwise
+// GetKindOk returns a tuple with the Kind field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryBucket) GetKindOk() (*string, bool) {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Kind, true
+	return &o.Kind, true
 }
 
-// HasKind returns a boolean if a field has been set.
-func (o *TemplateSummaryBucket) HasKind() bool {
-	if o != nil && o.Kind != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetKind gets a reference to the given string and assigns it to the Kind field.
+// SetKind sets field value
 func (o *TemplateSummaryBucket) SetKind(v string) {
-	o.Kind = &v
+	o.Kind = v
 }
 
 // GetTemplateMetaName returns the TemplateMetaName field value if set, zero value otherwise.
@@ -108,132 +106,100 @@ func (o *TemplateSummaryBucket) SetTemplateMetaName(v string) {
 	o.TemplateMetaName = &v
 }
 
-// GetEnvReferences returns the EnvReferences field value if set, zero value otherwise.
+// GetEnvReferences returns the EnvReferences field value
 func (o *TemplateSummaryBucket) GetEnvReferences() []TemplateEnvReference {
-	if o == nil || o.EnvReferences == nil {
+	if o == nil {
 		var ret []TemplateEnvReference
 		return ret
 	}
-	return *o.EnvReferences
+
+	return o.EnvReferences
 }
 
-// GetEnvReferencesOk returns a tuple with the EnvReferences field value if set, nil otherwise
+// GetEnvReferencesOk returns a tuple with the EnvReferences field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryBucket) GetEnvReferencesOk() (*[]TemplateEnvReference, bool) {
-	if o == nil || o.EnvReferences == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EnvReferences, true
+	return &o.EnvReferences, true
 }
 
-// HasEnvReferences returns a boolean if a field has been set.
-func (o *TemplateSummaryBucket) HasEnvReferences() bool {
-	if o != nil && o.EnvReferences != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEnvReferences gets a reference to the given []TemplateEnvReference and assigns it to the EnvReferences field.
+// SetEnvReferences sets field value
 func (o *TemplateSummaryBucket) SetEnvReferences(v []TemplateEnvReference) {
-	o.EnvReferences = &v
+	o.EnvReferences = v
 }
 
-// GetLabelAssociations returns the LabelAssociations field value if set, zero value otherwise.
+// GetLabelAssociations returns the LabelAssociations field value
 func (o *TemplateSummaryBucket) GetLabelAssociations() []TemplateSummaryLabel {
-	if o == nil || o.LabelAssociations == nil {
+	if o == nil {
 		var ret []TemplateSummaryLabel
 		return ret
 	}
-	return *o.LabelAssociations
+
+	return o.LabelAssociations
 }
 
-// GetLabelAssociationsOk returns a tuple with the LabelAssociations field value if set, nil otherwise
+// GetLabelAssociationsOk returns a tuple with the LabelAssociations field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryBucket) GetLabelAssociationsOk() (*[]TemplateSummaryLabel, bool) {
-	if o == nil || o.LabelAssociations == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.LabelAssociations, true
+	return &o.LabelAssociations, true
 }
 
-// HasLabelAssociations returns a boolean if a field has been set.
-func (o *TemplateSummaryBucket) HasLabelAssociations() bool {
-	if o != nil && o.LabelAssociations != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabelAssociations gets a reference to the given []TemplateSummaryLabel and assigns it to the LabelAssociations field.
+// SetLabelAssociations sets field value
 func (o *TemplateSummaryBucket) SetLabelAssociations(v []TemplateSummaryLabel) {
-	o.LabelAssociations = &v
+	o.LabelAssociations = v
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *TemplateSummaryBucket) GetId() string {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryBucket) GetIdOk() (*string, bool) {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *TemplateSummaryBucket) HasId() bool {
-	if o != nil && o.Id != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *TemplateSummaryBucket) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryBucket) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryBucket) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryBucket) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryBucket) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -268,36 +234,28 @@ func (o *TemplateSummaryBucket) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetRetentionPeriod returns the RetentionPeriod field value if set, zero value otherwise.
+// GetRetentionPeriod returns the RetentionPeriod field value
 func (o *TemplateSummaryBucket) GetRetentionPeriod() int32 {
-	if o == nil || o.RetentionPeriod == nil {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.RetentionPeriod
+
+	return o.RetentionPeriod
 }
 
-// GetRetentionPeriodOk returns a tuple with the RetentionPeriod field value if set, nil otherwise
+// GetRetentionPeriodOk returns a tuple with the RetentionPeriod field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryBucket) GetRetentionPeriodOk() (*int32, bool) {
-	if o == nil || o.RetentionPeriod == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.RetentionPeriod, true
+	return &o.RetentionPeriod, true
 }
 
-// HasRetentionPeriod returns a boolean if a field has been set.
-func (o *TemplateSummaryBucket) HasRetentionPeriod() bool {
-	if o != nil && o.RetentionPeriod != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetRetentionPeriod gets a reference to the given int32 and assigns it to the RetentionPeriod field.
+// SetRetentionPeriod sets field value
 func (o *TemplateSummaryBucket) SetRetentionPeriod(v int32) {
-	o.RetentionPeriod = &v
+	o.RetentionPeriod = v
 }
 
 // GetSchemaType returns the SchemaType field value if set, zero value otherwise.
@@ -334,28 +292,28 @@ func (o *TemplateSummaryBucket) SetSchemaType(v string) {
 
 func (o TemplateSummaryBucket) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Kind != nil {
+	if true {
 		toSerialize["kind"] = o.Kind
 	}
 	if o.TemplateMetaName != nil {
 		toSerialize["templateMetaName"] = o.TemplateMetaName
 	}
-	if o.EnvReferences != nil {
+	if true {
 		toSerialize["envReferences"] = o.EnvReferences
 	}
-	if o.LabelAssociations != nil {
+	if true {
 		toSerialize["labelAssociations"] = o.LabelAssociations
 	}
-	if o.Id != nil {
+	if true {
 		toSerialize["id"] = o.Id
 	}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}
-	if o.RetentionPeriod != nil {
+	if true {
 		toSerialize["retentionPeriod"] = o.RetentionPeriod
 	}
 	if o.SchemaType != nil {

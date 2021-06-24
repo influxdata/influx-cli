@@ -14,3 +14,4 @@ properties:
     type: string
   status:
     type: string
+required: [name, status]

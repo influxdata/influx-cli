@@ -16,15 +16,16 @@ import (
 
 // TemplateSummaryTelegrafAllOf struct for TemplateSummaryTelegrafAllOf
 type TemplateSummaryTelegrafAllOf struct {
-	TelegrafConfig *TemplateSummaryTelegrafConfig `json:"telegrafConfig,omitempty"`
+	TelegrafConfig TemplateSummaryTelegrafConfig `json:"telegrafConfig"`
 }
 
 // NewTemplateSummaryTelegrafAllOf instantiates a new TemplateSummaryTelegrafAllOf object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryTelegrafAllOf() *TemplateSummaryTelegrafAllOf {
+func NewTemplateSummaryTelegrafAllOf(telegrafConfig TemplateSummaryTelegrafConfig) *TemplateSummaryTelegrafAllOf {
 	this := TemplateSummaryTelegrafAllOf{}
+	this.TelegrafConfig = telegrafConfig
 	return &this
 }
 
@@ -36,41 +37,33 @@ func NewTemplateSummaryTelegrafAllOfWithDefaults() *TemplateSummaryTelegrafAllOf
 	return &this
 }
 
-// GetTelegrafConfig returns the TelegrafConfig field value if set, zero value otherwise.
+// GetTelegrafConfig returns the TelegrafConfig field value
 func (o *TemplateSummaryTelegrafAllOf) GetTelegrafConfig() TemplateSummaryTelegrafConfig {
-	if o == nil || o.TelegrafConfig == nil {
+	if o == nil {
 		var ret TemplateSummaryTelegrafConfig
 		return ret
 	}
-	return *o.TelegrafConfig
+
+	return o.TelegrafConfig
 }
 
-// GetTelegrafConfigOk returns a tuple with the TelegrafConfig field value if set, nil otherwise
+// GetTelegrafConfigOk returns a tuple with the TelegrafConfig field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryTelegrafAllOf) GetTelegrafConfigOk() (*TemplateSummaryTelegrafConfig, bool) {
-	if o == nil || o.TelegrafConfig == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.TelegrafConfig, true
+	return &o.TelegrafConfig, true
 }
 
-// HasTelegrafConfig returns a boolean if a field has been set.
-func (o *TemplateSummaryTelegrafAllOf) HasTelegrafConfig() bool {
-	if o != nil && o.TelegrafConfig != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTelegrafConfig gets a reference to the given TemplateSummaryTelegrafConfig and assigns it to the TelegrafConfig field.
+// SetTelegrafConfig sets field value
 func (o *TemplateSummaryTelegrafAllOf) SetTelegrafConfig(v TemplateSummaryTelegrafConfig) {
-	o.TelegrafConfig = &v
+	o.TelegrafConfig = v
 }
 
 func (o TemplateSummaryTelegrafAllOf) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.TelegrafConfig != nil {
+	if true {
 		toSerialize["telegrafConfig"] = o.TelegrafConfig
 	}
 	return json.Marshal(toSerialize)

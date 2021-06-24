@@ -6,3 +6,4 @@ properties:
     type: string
   args:
     $ref: "./TemplateSummaryVariableArgs.yml"
+required: [name, args]

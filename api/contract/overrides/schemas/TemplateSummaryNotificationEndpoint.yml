@@ -10,3 +10,4 @@ allOf:
         type: string
       status:
         type: string
+    required: [id, name, status]

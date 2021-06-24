@@ -16,3 +16,4 @@ allOf:
         type: string
       offset:
         type: string
+    required: [name, endpointTemplateMetaName, endpointID, endpointType, every, offset]

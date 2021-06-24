@@ -12,3 +12,4 @@ properties:
     $ref: "./TemplateSummaryDiffNotificationRuleFields.yml"
   old:
     $ref: "./TemplateSummaryDiffNotificationRuleFields.yml"
+required: [kind, stateStatus, id, templateMetaName]

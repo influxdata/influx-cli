@@ -16,19 +16,23 @@ import (
 
 // TemplateSummaryTelegraf struct for TemplateSummaryTelegraf
 type TemplateSummaryTelegraf struct {
-	Kind              *string                        `json:"kind,omitempty"`
-	TemplateMetaName  *string                        `json:"templateMetaName,omitempty"`
-	EnvReferences     *[]TemplateEnvReference        `json:"envReferences,omitempty"`
-	LabelAssociations *[]TemplateSummaryLabel        `json:"labelAssociations,omitempty"`
-	TelegrafConfig    *TemplateSummaryTelegrafConfig `json:"telegrafConfig,omitempty"`
+	Kind              string                        `json:"kind"`
+	TemplateMetaName  *string                       `json:"templateMetaName,omitempty"`
+	EnvReferences     []TemplateEnvReference        `json:"envReferences"`
+	LabelAssociations []TemplateSummaryLabel        `json:"labelAssociations"`
+	TelegrafConfig    TemplateSummaryTelegrafConfig `json:"telegrafConfig"`
 }
 
 // NewTemplateSummaryTelegraf instantiates a new TemplateSummaryTelegraf object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryTelegraf() *TemplateSummaryTelegraf {
+func NewTemplateSummaryTelegraf(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, telegrafConfig TemplateSummaryTelegrafConfig) *TemplateSummaryTelegraf {
 	this := TemplateSummaryTelegraf{}
+	this.Kind = kind
+	this.EnvReferences = envReferences
+	this.LabelAssociations = labelAssociations
+	this.TelegrafConfig = telegrafConfig
 	return &this
 }
 
@@ -40,36 +44,28 @@ func NewTemplateSummaryTelegrafWithDefaults() *TemplateSummaryTelegraf {
 	return &this
 }
 
-// GetKind returns the Kind field value if set, zero value otherwise.
+// GetKind returns the Kind field value
 func (o *TemplateSummaryTelegraf) GetKind() string {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Kind
+
+	return o.Kind
 }
 
-// GetKindOk returns a tuple with the Kind field value if set, nil otherwise
+// GetKindOk returns a tuple with the Kind field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryTelegraf) GetKindOk() (*string, bool) {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Kind, true
+	return &o.Kind, true
 }
 
-// HasKind returns a boolean if a field has been set.
-func (o *TemplateSummaryTelegraf) HasKind() bool {
-	if o != nil && o.Kind != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetKind gets a reference to the given string and assigns it to the Kind field.
+// SetKind sets field value
 func (o *TemplateSummaryTelegraf) SetKind(v string) {
-	o.Kind = &v
+	o.Kind = v
 }
 
 // GetTemplateMetaName returns the TemplateMetaName field value if set, zero value otherwise.
@@ -104,117 +100,93 @@ func (o *TemplateSummaryTelegraf) SetTemplateMetaName(v string) {
 	o.TemplateMetaName = &v
 }
 
-// GetEnvReferences returns the EnvReferences field value if set, zero value otherwise.
+// GetEnvReferences returns the EnvReferences field value
 func (o *TemplateSummaryTelegraf) GetEnvReferences() []TemplateEnvReference {
-	if o == nil || o.EnvReferences == nil {
+	if o == nil {
 		var ret []TemplateEnvReference
 		return ret
 	}
-	return *o.EnvReferences
+
+	return o.EnvReferences
 }
 
-// GetEnvReferencesOk returns a tuple with the EnvReferences field value if set, nil otherwise
+// GetEnvReferencesOk returns a tuple with the EnvReferences field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryTelegraf) GetEnvReferencesOk() (*[]TemplateEnvReference, bool) {
-	if o == nil || o.EnvReferences == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EnvReferences, true
+	return &o.EnvReferences, true
 }
 
-// HasEnvReferences returns a boolean if a field has been set.
-func (o *TemplateSummaryTelegraf) HasEnvReferences() bool {
-	if o != nil && o.EnvReferences != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEnvReferences gets a reference to the given []TemplateEnvReference and assigns it to the EnvReferences field.
+// SetEnvReferences sets field value
 func (o *TemplateSummaryTelegraf) SetEnvReferences(v []TemplateEnvReference) {
-	o.EnvReferences = &v
+	o.EnvReferences = v
 }
 
-// GetLabelAssociations returns the LabelAssociations field value if set, zero value otherwise.
+// GetLabelAssociations returns the LabelAssociations field value
 func (o *TemplateSummaryTelegraf) GetLabelAssociations() []TemplateSummaryLabel {
-	if o == nil || o.LabelAssociations == nil {
+	if o == nil {
 		var ret []TemplateSummaryLabel
 		return ret
 	}
-	return *o.LabelAssociations
+
+	return o.LabelAssociations
 }
 
-// GetLabelAssociationsOk returns a tuple with the LabelAssociations field value if set, nil otherwise
+// GetLabelAssociationsOk returns a tuple with the LabelAssociations field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryTelegraf) GetLabelAssociationsOk() (*[]TemplateSummaryLabel, bool) {
-	if o == nil || o.LabelAssociations == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.LabelAssociations, true
+	return &o.LabelAssociations, true
 }
 
-// HasLabelAssociations returns a boolean if a field has been set.
-func (o *TemplateSummaryTelegraf) HasLabelAssociations() bool {
-	if o != nil && o.LabelAssociations != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabelAssociations gets a reference to the given []TemplateSummaryLabel and assigns it to the LabelAssociations field.
+// SetLabelAssociations sets field value
 func (o *TemplateSummaryTelegraf) SetLabelAssociations(v []TemplateSummaryLabel) {
-	o.LabelAssociations = &v
+	o.LabelAssociations = v
 }
 
-// GetTelegrafConfig returns the TelegrafConfig field value if set, zero value otherwise.
+// GetTelegrafConfig returns the TelegrafConfig field value
 func (o *TemplateSummaryTelegraf) GetTelegrafConfig() TemplateSummaryTelegrafConfig {
-	if o == nil || o.TelegrafConfig == nil {
+	if o == nil {
 		var ret TemplateSummaryTelegrafConfig
 		return ret
 	}
-	return *o.TelegrafConfig
+
+	return o.TelegrafConfig
 }
 
-// GetTelegrafConfigOk returns a tuple with the TelegrafConfig field value if set, nil otherwise
+// GetTelegrafConfigOk returns a tuple with the TelegrafConfig field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryTelegraf) GetTelegrafConfigOk() (*TemplateSummaryTelegrafConfig, bool) {
-	if o == nil || o.TelegrafConfig == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.TelegrafConfig, true
+	return &o.TelegrafConfig, true
 }
 
-// HasTelegrafConfig returns a boolean if a field has been set.
-func (o *TemplateSummaryTelegraf) HasTelegrafConfig() bool {
-	if o != nil && o.TelegrafConfig != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTelegrafConfig gets a reference to the given TemplateSummaryTelegrafConfig and assigns it to the TelegrafConfig field.
+// SetTelegrafConfig sets field value
 func (o *TemplateSummaryTelegraf) SetTelegrafConfig(v TemplateSummaryTelegrafConfig) {
-	o.TelegrafConfig = &v
+	o.TelegrafConfig = v
 }
 
 func (o TemplateSummaryTelegraf) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Kind != nil {
+	if true {
 		toSerialize["kind"] = o.Kind
 	}
 	if o.TemplateMetaName != nil {
 		toSerialize["templateMetaName"] = o.TemplateMetaName
 	}
-	if o.EnvReferences != nil {
+	if true {
 		toSerialize["envReferences"] = o.EnvReferences
 	}
-	if o.LabelAssociations != nil {
+	if true {
 		toSerialize["labelAssociations"] = o.LabelAssociations
 	}
-	if o.TelegrafConfig != nil {
+	if true {
 		toSerialize["telegrafConfig"] = o.TelegrafConfig
 	}
 	return json.Marshal(toSerialize)

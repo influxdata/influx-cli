@@ -16,16 +16,18 @@ import (
 
 // TemplateApplyTemplate struct for TemplateApplyTemplate
 type TemplateApplyTemplate struct {
-	Sources  *[]string        `json:"sources,omitempty"`
-	Contents *[]TemplateEntry `json:"contents,omitempty"`
+	Sources  []string        `json:"sources"`
+	Contents []TemplateEntry `json:"contents"`
 }
 
 // NewTemplateApplyTemplate instantiates a new TemplateApplyTemplate object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateApplyTemplate() *TemplateApplyTemplate {
+func NewTemplateApplyTemplate(sources []string, contents []TemplateEntry) *TemplateApplyTemplate {
 	this := TemplateApplyTemplate{}
+	this.Sources = sources
+	this.Contents = contents
 	return &this
 }
 
@@ -37,76 +39,60 @@ func NewTemplateApplyTemplateWithDefaults() *TemplateApplyTemplate {
 	return &this
 }
 
-// GetSources returns the Sources field value if set, zero value otherwise.
+// GetSources returns the Sources field value
 func (o *TemplateApplyTemplate) GetSources() []string {
-	if o == nil || o.Sources == nil {
+	if o == nil {
 		var ret []string
 		return ret
 	}
-	return *o.Sources
+
+	return o.Sources
 }
 
-// GetSourcesOk returns a tuple with the Sources field value if set, nil otherwise
+// GetSourcesOk returns a tuple with the Sources field value
 // and a boolean to check if the value has been set.
 func (o *TemplateApplyTemplate) GetSourcesOk() (*[]string, bool) {
-	if o == nil || o.Sources == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Sources, true
+	return &o.Sources, true
 }
 
-// HasSources returns a boolean if a field has been set.
-func (o *TemplateApplyTemplate) HasSources() bool {
-	if o != nil && o.Sources != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetSources gets a reference to the given []string and assigns it to the Sources field.
+// SetSources sets field value
 func (o *TemplateApplyTemplate) SetSources(v []string) {
-	o.Sources = &v
+	o.Sources = v
 }
 
-// GetContents returns the Contents field value if set, zero value otherwise.
+// GetContents returns the Contents field value
 func (o *TemplateApplyTemplate) GetContents() []TemplateEntry {
-	if o == nil || o.Contents == nil {
+	if o == nil {
 		var ret []TemplateEntry
 		return ret
 	}
-	return *o.Contents
+
+	return o.Contents
 }
 
-// GetContentsOk returns a tuple with the Contents field value if set, nil otherwise
+// GetContentsOk returns a tuple with the Contents field value
 // and a boolean to check if the value has been set.
 func (o *TemplateApplyTemplate) GetContentsOk() (*[]TemplateEntry, bool) {
-	if o == nil || o.Contents == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Contents, true
+	return &o.Contents, true
 }
 
-// HasContents returns a boolean if a field has been set.
-func (o *TemplateApplyTemplate) HasContents() bool {
-	if o != nil && o.Contents != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetContents gets a reference to the given []TemplateEntry and assigns it to the Contents field.
+// SetContents sets field value
 func (o *TemplateApplyTemplate) SetContents(v []TemplateEntry) {
-	o.Contents = &v
+	o.Contents = v
 }
 
 func (o TemplateApplyTemplate) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Sources != nil {
+	if true {
 		toSerialize["sources"] = o.Sources
 	}
-	if o.Contents != nil {
+	if true {
 		toSerialize["contents"] = o.Contents
 	}
 	return json.Marshal(toSerialize)

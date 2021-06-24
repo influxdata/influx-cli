@@ -16,3 +16,4 @@ properties:
     type: string
   messageTemplate:
     type: string
+required: [name, endpointName, endpointID, endpointType, every, offset]

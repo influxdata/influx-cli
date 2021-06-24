@@ -16,26 +16,38 @@ import (
 
 // TemplateSummaryResources struct for TemplateSummaryResources
 type TemplateSummaryResources struct {
-	Buckets               *[]TemplateSummaryBucket               `json:"buckets,omitempty"`
-	Checks                *[]TemplateSummaryCheck                `json:"checks,omitempty"`
-	Dashboards            *[]TemplateSummaryDashboard            `json:"dashboards,omitempty"`
-	Labels                *[]TemplateSummaryLabel                `json:"labels,omitempty"`
-	LabelMappings         *[]TemplateSummaryLabelMapping         `json:"labelMappings,omitempty"`
-	MissingEnvRefs        *[]string                              `json:"missingEnvRefs,omitempty"`
-	MissingSecrets        *[]string                              `json:"missingSecrets,omitempty"`
-	NotificationEndpoints *[]TemplateSummaryNotificationEndpoint `json:"notificationEndpoints,omitempty"`
-	NotificationRules     *[]TemplateSummaryNotificationRule     `json:"notificationRules,omitempty"`
-	Tasks                 *[]TemplateSummaryTask                 `json:"tasks,omitempty"`
-	TelegrafConfigs       *[]TemplateSummaryTelegraf             `json:"telegrafConfigs,omitempty"`
-	Variables             *[]TemplateSummaryVariable             `json:"variables,omitempty"`
+	Buckets               []TemplateSummaryBucket               `json:"buckets"`
+	Checks                []TemplateSummaryCheck                `json:"checks"`
+	Dashboards            []TemplateSummaryDashboard            `json:"dashboards"`
+	Labels                []TemplateSummaryLabel                `json:"labels"`
+	LabelMappings         []TemplateSummaryLabelMapping         `json:"labelMappings"`
+	MissingEnvRefs        []string                              `json:"missingEnvRefs"`
+	MissingSecrets        []string                              `json:"missingSecrets"`
+	NotificationEndpoints []TemplateSummaryNotificationEndpoint `json:"notificationEndpoints"`
+	NotificationRules     []TemplateSummaryNotificationRule     `json:"notificationRules"`
+	Tasks                 []TemplateSummaryTask                 `json:"tasks"`
+	TelegrafConfigs       []TemplateSummaryTelegraf             `json:"telegrafConfigs"`
+	Variables             []TemplateSummaryVariable             `json:"variables"`
 }
 
 // NewTemplateSummaryResources instantiates a new TemplateSummaryResources object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryResources() *TemplateSummaryResources {
+func NewTemplateSummaryResources(buckets []TemplateSummaryBucket, checks []TemplateSummaryCheck, dashboards []TemplateSummaryDashboard, labels []TemplateSummaryLabel, labelMappings []TemplateSummaryLabelMapping, missingEnvRefs []string, missingSecrets []string, notificationEndpoints []TemplateSummaryNotificationEndpoint, notificationRules []TemplateSummaryNotificationRule, tasks []TemplateSummaryTask, telegrafConfigs []TemplateSummaryTelegraf, variables []TemplateSummaryVariable) *TemplateSummaryResources {
 	this := TemplateSummaryResources{}
+	this.Buckets = buckets
+	this.Checks = checks
+	this.Dashboards = dashboards
+	this.Labels = labels
+	this.LabelMappings = labelMappings
+	this.MissingEnvRefs = missingEnvRefs
+	this.MissingSecrets = missingSecrets
+	this.NotificationEndpoints = notificationEndpoints
+	this.NotificationRules = notificationRules
+	this.Tasks = tasks
+	this.TelegrafConfigs = telegrafConfigs
+	this.Variables = variables
 	return &this
 }
 
@@ -47,426 +59,330 @@ func NewTemplateSummaryResourcesWithDefaults() *TemplateSummaryResources {
 	return &this
 }
 
-// GetBuckets returns the Buckets field value if set, zero value otherwise.
+// GetBuckets returns the Buckets field value
 func (o *TemplateSummaryResources) GetBuckets() []TemplateSummaryBucket {
-	if o == nil || o.Buckets == nil {
+	if o == nil {
 		var ret []TemplateSummaryBucket
 		return ret
 	}
-	return *o.Buckets
+
+	return o.Buckets
 }
 
-// GetBucketsOk returns a tuple with the Buckets field value if set, nil otherwise
+// GetBucketsOk returns a tuple with the Buckets field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetBucketsOk() (*[]TemplateSummaryBucket, bool) {
-	if o == nil || o.Buckets == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Buckets, true
+	return &o.Buckets, true
 }
 
-// HasBuckets returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasBuckets() bool {
-	if o != nil && o.Buckets != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetBuckets gets a reference to the given []TemplateSummaryBucket and assigns it to the Buckets field.
+// SetBuckets sets field value
 func (o *TemplateSummaryResources) SetBuckets(v []TemplateSummaryBucket) {
-	o.Buckets = &v
+	o.Buckets = v
 }
 
-// GetChecks returns the Checks field value if set, zero value otherwise.
+// GetChecks returns the Checks field value
 func (o *TemplateSummaryResources) GetChecks() []TemplateSummaryCheck {
-	if o == nil || o.Checks == nil {
+	if o == nil {
 		var ret []TemplateSummaryCheck
 		return ret
 	}
-	return *o.Checks
+
+	return o.Checks
 }
 
-// GetChecksOk returns a tuple with the Checks field value if set, nil otherwise
+// GetChecksOk returns a tuple with the Checks field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetChecksOk() (*[]TemplateSummaryCheck, bool) {
-	if o == nil || o.Checks == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Checks, true
+	return &o.Checks, true
 }
 
-// HasChecks returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasChecks() bool {
-	if o != nil && o.Checks != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetChecks gets a reference to the given []TemplateSummaryCheck and assigns it to the Checks field.
+// SetChecks sets field value
 func (o *TemplateSummaryResources) SetChecks(v []TemplateSummaryCheck) {
-	o.Checks = &v
+	o.Checks = v
 }
 
-// GetDashboards returns the Dashboards field value if set, zero value otherwise.
+// GetDashboards returns the Dashboards field value
 func (o *TemplateSummaryResources) GetDashboards() []TemplateSummaryDashboard {
-	if o == nil || o.Dashboards == nil {
+	if o == nil {
 		var ret []TemplateSummaryDashboard
 		return ret
 	}
-	return *o.Dashboards
+
+	return o.Dashboards
 }
 
-// GetDashboardsOk returns a tuple with the Dashboards field value if set, nil otherwise
+// GetDashboardsOk returns a tuple with the Dashboards field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetDashboardsOk() (*[]TemplateSummaryDashboard, bool) {
-	if o == nil || o.Dashboards == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Dashboards, true
+	return &o.Dashboards, true
 }
 
-// HasDashboards returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasDashboards() bool {
-	if o != nil && o.Dashboards != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetDashboards gets a reference to the given []TemplateSummaryDashboard and assigns it to the Dashboards field.
+// SetDashboards sets field value
 func (o *TemplateSummaryResources) SetDashboards(v []TemplateSummaryDashboard) {
-	o.Dashboards = &v
+	o.Dashboards = v
 }
 
-// GetLabels returns the Labels field value if set, zero value otherwise.
+// GetLabels returns the Labels field value
 func (o *TemplateSummaryResources) GetLabels() []TemplateSummaryLabel {
-	if o == nil || o.Labels == nil {
+	if o == nil {
 		var ret []TemplateSummaryLabel
 		return ret
 	}
-	return *o.Labels
+
+	return o.Labels
 }
 
-// GetLabelsOk returns a tuple with the Labels field value if set, nil otherwise
+// GetLabelsOk returns a tuple with the Labels field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetLabelsOk() (*[]TemplateSummaryLabel, bool) {
-	if o == nil || o.Labels == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Labels, true
+	return &o.Labels, true
 }
 
-// HasLabels returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasLabels() bool {
-	if o != nil && o.Labels != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabels gets a reference to the given []TemplateSummaryLabel and assigns it to the Labels field.
+// SetLabels sets field value
 func (o *TemplateSummaryResources) SetLabels(v []TemplateSummaryLabel) {
-	o.Labels = &v
+	o.Labels = v
 }
 
-// GetLabelMappings returns the LabelMappings field value if set, zero value otherwise.
+// GetLabelMappings returns the LabelMappings field value
 func (o *TemplateSummaryResources) GetLabelMappings() []TemplateSummaryLabelMapping {
-	if o == nil || o.LabelMappings == nil {
+	if o == nil {
 		var ret []TemplateSummaryLabelMapping
 		return ret
 	}
-	return *o.LabelMappings
+
+	return o.LabelMappings
 }
 
-// GetLabelMappingsOk returns a tuple with the LabelMappings field value if set, nil otherwise
+// GetLabelMappingsOk returns a tuple with the LabelMappings field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetLabelMappingsOk() (*[]TemplateSummaryLabelMapping, bool) {
-	if o == nil || o.LabelMappings == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.LabelMappings, true
+	return &o.LabelMappings, true
 }
 
-// HasLabelMappings returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasLabelMappings() bool {
-	if o != nil && o.LabelMappings != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabelMappings gets a reference to the given []TemplateSummaryLabelMapping and assigns it to the LabelMappings field.
+// SetLabelMappings sets field value
 func (o *TemplateSummaryResources) SetLabelMappings(v []TemplateSummaryLabelMapping) {
-	o.LabelMappings = &v
+	o.LabelMappings = v
 }
 
-// GetMissingEnvRefs returns the MissingEnvRefs field value if set, zero value otherwise.
+// GetMissingEnvRefs returns the MissingEnvRefs field value
 func (o *TemplateSummaryResources) GetMissingEnvRefs() []string {
-	if o == nil || o.MissingEnvRefs == nil {
+	if o == nil {
 		var ret []string
 		return ret
 	}
-	return *o.MissingEnvRefs
+
+	return o.MissingEnvRefs
 }
 
-// GetMissingEnvRefsOk returns a tuple with the MissingEnvRefs field value if set, nil otherwise
+// GetMissingEnvRefsOk returns a tuple with the MissingEnvRefs field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetMissingEnvRefsOk() (*[]string, bool) {
-	if o == nil || o.MissingEnvRefs == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.MissingEnvRefs, true
+	return &o.MissingEnvRefs, true
 }
 
-// HasMissingEnvRefs returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasMissingEnvRefs() bool {
-	if o != nil && o.MissingEnvRefs != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetMissingEnvRefs gets a reference to the given []string and assigns it to the MissingEnvRefs field.
+// SetMissingEnvRefs sets field value
 func (o *TemplateSummaryResources) SetMissingEnvRefs(v []string) {
-	o.MissingEnvRefs = &v
+	o.MissingEnvRefs = v
 }
 
-// GetMissingSecrets returns the MissingSecrets field value if set, zero value otherwise.
+// GetMissingSecrets returns the MissingSecrets field value
 func (o *TemplateSummaryResources) GetMissingSecrets() []string {
-	if o == nil || o.MissingSecrets == nil {
+	if o == nil {
 		var ret []string
 		return ret
 	}
-	return *o.MissingSecrets
+
+	return o.MissingSecrets
 }
 
-// GetMissingSecretsOk returns a tuple with the MissingSecrets field value if set, nil otherwise
+// GetMissingSecretsOk returns a tuple with the MissingSecrets field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetMissingSecretsOk() (*[]string, bool) {
-	if o == nil || o.MissingSecrets == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.MissingSecrets, true
+	return &o.MissingSecrets, true
 }
 
-// HasMissingSecrets returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasMissingSecrets() bool {
-	if o != nil && o.MissingSecrets != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetMissingSecrets gets a reference to the given []string and assigns it to the MissingSecrets field.
+// SetMissingSecrets sets field value
 func (o *TemplateSummaryResources) SetMissingSecrets(v []string) {
-	o.MissingSecrets = &v
+	o.MissingSecrets = v
 }
 
-// GetNotificationEndpoints returns the NotificationEndpoints field value if set, zero value otherwise.
+// GetNotificationEndpoints returns the NotificationEndpoints field value
 func (o *TemplateSummaryResources) GetNotificationEndpoints() []TemplateSummaryNotificationEndpoint {
-	if o == nil || o.NotificationEndpoints == nil {
+	if o == nil {
 		var ret []TemplateSummaryNotificationEndpoint
 		return ret
 	}
-	return *o.NotificationEndpoints
+
+	return o.NotificationEndpoints
 }
 
-// GetNotificationEndpointsOk returns a tuple with the NotificationEndpoints field value if set, nil otherwise
+// GetNotificationEndpointsOk returns a tuple with the NotificationEndpoints field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetNotificationEndpointsOk() (*[]TemplateSummaryNotificationEndpoint, bool) {
-	if o == nil || o.NotificationEndpoints == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.NotificationEndpoints, true
+	return &o.NotificationEndpoints, true
 }
 
-// HasNotificationEndpoints returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasNotificationEndpoints() bool {
-	if o != nil && o.NotificationEndpoints != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetNotificationEndpoints gets a reference to the given []TemplateSummaryNotificationEndpoint and assigns it to the NotificationEndpoints field.
+// SetNotificationEndpoints sets field value
 func (o *TemplateSummaryResources) SetNotificationEndpoints(v []TemplateSummaryNotificationEndpoint) {
-	o.NotificationEndpoints = &v
+	o.NotificationEndpoints = v
 }
 
-// GetNotificationRules returns the NotificationRules field value if set, zero value otherwise.
+// GetNotificationRules returns the NotificationRules field value
 func (o *TemplateSummaryResources) GetNotificationRules() []TemplateSummaryNotificationRule {
-	if o == nil || o.NotificationRules == nil {
+	if o == nil {
 		var ret []TemplateSummaryNotificationRule
 		return ret
 	}
-	return *o.NotificationRules
+
+	return o.NotificationRules
 }
 
-// GetNotificationRulesOk returns a tuple with the NotificationRules field value if set, nil otherwise
+// GetNotificationRulesOk returns a tuple with the NotificationRules field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetNotificationRulesOk() (*[]TemplateSummaryNotificationRule, bool) {
-	if o == nil || o.NotificationRules == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.NotificationRules, true
+	return &o.NotificationRules, true
 }
 
-// HasNotificationRules returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasNotificationRules() bool {
-	if o != nil && o.NotificationRules != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetNotificationRules gets a reference to the given []TemplateSummaryNotificationRule and assigns it to the NotificationRules field.
+// SetNotificationRules sets field value
 func (o *TemplateSummaryResources) SetNotificationRules(v []TemplateSummaryNotificationRule) {
-	o.NotificationRules = &v
+	o.NotificationRules = v
 }
 
-// GetTasks returns the Tasks field value if set, zero value otherwise.
+// GetTasks returns the Tasks field value
 func (o *TemplateSummaryResources) GetTasks() []TemplateSummaryTask {
-	if o == nil || o.Tasks == nil {
+	if o == nil {
 		var ret []TemplateSummaryTask
 		return ret
 	}
-	return *o.Tasks
+
+	return o.Tasks
 }
 
-// GetTasksOk returns a tuple with the Tasks field value if set, nil otherwise
+// GetTasksOk returns a tuple with the Tasks field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetTasksOk() (*[]TemplateSummaryTask, bool) {
-	if o == nil || o.Tasks == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Tasks, true
+	return &o.Tasks, true
 }
 
-// HasTasks returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasTasks() bool {
-	if o != nil && o.Tasks != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTasks gets a reference to the given []TemplateSummaryTask and assigns it to the Tasks field.
+// SetTasks sets field value
 func (o *TemplateSummaryResources) SetTasks(v []TemplateSummaryTask) {
-	o.Tasks = &v
+	o.Tasks = v
 }
 
-// GetTelegrafConfigs returns the TelegrafConfigs field value if set, zero value otherwise.
+// GetTelegrafConfigs returns the TelegrafConfigs field value
 func (o *TemplateSummaryResources) GetTelegrafConfigs() []TemplateSummaryTelegraf {
-	if o == nil || o.TelegrafConfigs == nil {
+	if o == nil {
 		var ret []TemplateSummaryTelegraf
 		return ret
 	}
-	return *o.TelegrafConfigs
+
+	return o.TelegrafConfigs
 }
 
-// GetTelegrafConfigsOk returns a tuple with the TelegrafConfigs field value if set, nil otherwise
+// GetTelegrafConfigsOk returns a tuple with the TelegrafConfigs field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetTelegrafConfigsOk() (*[]TemplateSummaryTelegraf, bool) {
-	if o == nil || o.TelegrafConfigs == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.TelegrafConfigs, true
+	return &o.TelegrafConfigs, true
 }
 
-// HasTelegrafConfigs returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasTelegrafConfigs() bool {
-	if o != nil && o.TelegrafConfigs != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTelegrafConfigs gets a reference to the given []TemplateSummaryTelegraf and assigns it to the TelegrafConfigs field.
+// SetTelegrafConfigs sets field value
 func (o *TemplateSummaryResources) SetTelegrafConfigs(v []TemplateSummaryTelegraf) {
-	o.TelegrafConfigs = &v
+	o.TelegrafConfigs = v
 }
 
-// GetVariables returns the Variables field value if set, zero value otherwise.
+// GetVariables returns the Variables field value
 func (o *TemplateSummaryResources) GetVariables() []TemplateSummaryVariable {
-	if o == nil || o.Variables == nil {
+	if o == nil {
 		var ret []TemplateSummaryVariable
 		return ret
 	}
-	return *o.Variables
+
+	return o.Variables
 }
 
-// GetVariablesOk returns a tuple with the Variables field value if set, nil otherwise
+// GetVariablesOk returns a tuple with the Variables field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryResources) GetVariablesOk() (*[]TemplateSummaryVariable, bool) {
-	if o == nil || o.Variables == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Variables, true
+	return &o.Variables, true
 }
 
-// HasVariables returns a boolean if a field has been set.
-func (o *TemplateSummaryResources) HasVariables() bool {
-	if o != nil && o.Variables != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetVariables gets a reference to the given []TemplateSummaryVariable and assigns it to the Variables field.
+// SetVariables sets field value
 func (o *TemplateSummaryResources) SetVariables(v []TemplateSummaryVariable) {
-	o.Variables = &v
+	o.Variables = v
 }
 
 func (o TemplateSummaryResources) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Buckets != nil {
+	if true {
 		toSerialize["buckets"] = o.Buckets
 	}
-	if o.Checks != nil {
+	if true {
 		toSerialize["checks"] = o.Checks
 	}
-	if o.Dashboards != nil {
+	if true {
 		toSerialize["dashboards"] = o.Dashboards
 	}
-	if o.Labels != nil {
+	if true {
 		toSerialize["labels"] = o.Labels
 	}
-	if o.LabelMappings != nil {
+	if true {
 		toSerialize["labelMappings"] = o.LabelMappings
 	}
-	if o.MissingEnvRefs != nil {
+	if true {
 		toSerialize["missingEnvRefs"] = o.MissingEnvRefs
 	}
-	if o.MissingSecrets != nil {
+	if true {
 		toSerialize["missingSecrets"] = o.MissingSecrets
 	}
-	if o.NotificationEndpoints != nil {
+	if true {
 		toSerialize["notificationEndpoints"] = o.NotificationEndpoints
 	}
-	if o.NotificationRules != nil {
+	if true {
 		toSerialize["notificationRules"] = o.NotificationRules
 	}
-	if o.Tasks != nil {
+	if true {
 		toSerialize["tasks"] = o.Tasks
 	}
-	if o.TelegrafConfigs != nil {
+	if true {
 		toSerialize["telegrafConfigs"] = o.TelegrafConfigs
 	}
-	if o.Variables != nil {
+	if true {
 		toSerialize["variables"] = o.Variables
 	}
 	return json.Marshal(toSerialize)

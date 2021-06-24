@@ -16,17 +16,19 @@ import (
 
 // TemplateSummaryCore struct for TemplateSummaryCore
 type TemplateSummaryCore struct {
-	Kind             *string                 `json:"kind,omitempty"`
-	TemplateMetaName *string                 `json:"templateMetaName,omitempty"`
-	EnvReferences    *[]TemplateEnvReference `json:"envReferences,omitempty"`
+	Kind             string                 `json:"kind"`
+	TemplateMetaName *string                `json:"templateMetaName,omitempty"`
+	EnvReferences    []TemplateEnvReference `json:"envReferences"`
 }
 
 // NewTemplateSummaryCore instantiates a new TemplateSummaryCore object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryCore() *TemplateSummaryCore {
+func NewTemplateSummaryCore(kind string, envReferences []TemplateEnvReference) *TemplateSummaryCore {
 	this := TemplateSummaryCore{}
+	this.Kind = kind
+	this.EnvReferences = envReferences
 	return &this
 }
 
@@ -38,36 +40,28 @@ func NewTemplateSummaryCoreWithDefaults() *TemplateSummaryCore {
 	return &this
 }
 
-// GetKind returns the Kind field value if set, zero value otherwise.
+// GetKind returns the Kind field value
 func (o *TemplateSummaryCore) GetKind() string {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Kind
+
+	return o.Kind
 }
 
-// GetKindOk returns a tuple with the Kind field value if set, nil otherwise
+// GetKindOk returns a tuple with the Kind field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryCore) GetKindOk() (*string, bool) {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Kind, true
+	return &o.Kind, true
 }
 
-// HasKind returns a boolean if a field has been set.
-func (o *TemplateSummaryCore) HasKind() bool {
-	if o != nil && o.Kind != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetKind gets a reference to the given string and assigns it to the Kind field.
+// SetKind sets field value
 func (o *TemplateSummaryCore) SetKind(v string) {
-	o.Kind = &v
+	o.Kind = v
 }
 
 // GetTemplateMetaName returns the TemplateMetaName field value if set, zero value otherwise.
@@ -102,47 +96,39 @@ func (o *TemplateSummaryCore) SetTemplateMetaName(v string) {
 	o.TemplateMetaName = &v
 }
 
-// GetEnvReferences returns the EnvReferences field value if set, zero value otherwise.
+// GetEnvReferences returns the EnvReferences field value
 func (o *TemplateSummaryCore) GetEnvReferences() []TemplateEnvReference {
-	if o == nil || o.EnvReferences == nil {
+	if o == nil {
 		var ret []TemplateEnvReference
 		return ret
 	}
-	return *o.EnvReferences
+
+	return o.EnvReferences
 }
 
-// GetEnvReferencesOk returns a tuple with the EnvReferences field value if set, nil otherwise
+// GetEnvReferencesOk returns a tuple with the EnvReferences field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryCore) GetEnvReferencesOk() (*[]TemplateEnvReference, bool) {
-	if o == nil || o.EnvReferences == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EnvReferences, true
+	return &o.EnvReferences, true
 }
 
-// HasEnvReferences returns a boolean if a field has been set.
-func (o *TemplateSummaryCore) HasEnvReferences() bool {
-	if o != nil && o.EnvReferences != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEnvReferences gets a reference to the given []TemplateEnvReference and assigns it to the EnvReferences field.
+// SetEnvReferences sets field value
 func (o *TemplateSummaryCore) SetEnvReferences(v []TemplateEnvReference) {
-	o.EnvReferences = &v
+	o.EnvReferences = v
 }
 
 func (o TemplateSummaryCore) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Kind != nil {
+	if true {
 		toSerialize["kind"] = o.Kind
 	}
 	if o.TemplateMetaName != nil {
 		toSerialize["templateMetaName"] = o.TemplateMetaName
 	}
-	if o.EnvReferences != nil {
+	if true {
 		toSerialize["envReferences"] = o.EnvReferences
 	}
 	return json.Marshal(toSerialize)

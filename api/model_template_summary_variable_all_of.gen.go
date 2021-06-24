@@ -16,18 +16,21 @@ import (
 
 // TemplateSummaryVariableAllOf struct for TemplateSummaryVariableAllOf
 type TemplateSummaryVariableAllOf struct {
-	Id          *string                      `json:"id,omitempty"`
-	Name        *string                      `json:"name,omitempty"`
-	Description *string                      `json:"description,omitempty"`
-	Arguments   *TemplateSummaryVariableArgs `json:"arguments,omitempty"`
+	Id          string                      `json:"id"`
+	Name        string                      `json:"name"`
+	Description *string                     `json:"description,omitempty"`
+	Arguments   TemplateSummaryVariableArgs `json:"arguments"`
 }
 
 // NewTemplateSummaryVariableAllOf instantiates a new TemplateSummaryVariableAllOf object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryVariableAllOf() *TemplateSummaryVariableAllOf {
+func NewTemplateSummaryVariableAllOf(id string, name string, arguments TemplateSummaryVariableArgs) *TemplateSummaryVariableAllOf {
 	this := TemplateSummaryVariableAllOf{}
+	this.Id = id
+	this.Name = name
+	this.Arguments = arguments
 	return &this
 }
 
@@ -39,68 +42,52 @@ func NewTemplateSummaryVariableAllOfWithDefaults() *TemplateSummaryVariableAllOf
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *TemplateSummaryVariableAllOf) GetId() string {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryVariableAllOf) GetIdOk() (*string, bool) {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *TemplateSummaryVariableAllOf) HasId() bool {
-	if o != nil && o.Id != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *TemplateSummaryVariableAllOf) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryVariableAllOf) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryVariableAllOf) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryVariableAllOf) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryVariableAllOf) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -135,50 +122,42 @@ func (o *TemplateSummaryVariableAllOf) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetArguments returns the Arguments field value if set, zero value otherwise.
+// GetArguments returns the Arguments field value
 func (o *TemplateSummaryVariableAllOf) GetArguments() TemplateSummaryVariableArgs {
-	if o == nil || o.Arguments == nil {
+	if o == nil {
 		var ret TemplateSummaryVariableArgs
 		return ret
 	}
-	return *o.Arguments
+
+	return o.Arguments
 }
 
-// GetArgumentsOk returns a tuple with the Arguments field value if set, nil otherwise
+// GetArgumentsOk returns a tuple with the Arguments field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryVariableAllOf) GetArgumentsOk() (*TemplateSummaryVariableArgs, bool) {
-	if o == nil || o.Arguments == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Arguments, true
+	return &o.Arguments, true
 }
 
-// HasArguments returns a boolean if a field has been set.
-func (o *TemplateSummaryVariableAllOf) HasArguments() bool {
-	if o != nil && o.Arguments != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetArguments gets a reference to the given TemplateSummaryVariableArgs and assigns it to the Arguments field.
+// SetArguments sets field value
 func (o *TemplateSummaryVariableAllOf) SetArguments(v TemplateSummaryVariableArgs) {
-	o.Arguments = &v
+	o.Arguments = v
 }
 
 func (o TemplateSummaryVariableAllOf) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Id != nil {
+	if true {
 		toSerialize["id"] = o.Id
 	}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}
-	if o.Arguments != nil {
+	if true {
 		toSerialize["arguments"] = o.Arguments
 	}
 	return json.Marshal(toSerialize)

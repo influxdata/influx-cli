@@ -6,3 +6,4 @@ properties:
     type: string
   retentionRules:
     $ref: "../../openapi/src/common/schemas/RetentionRules.yml"
+required: [name, retentionRules]

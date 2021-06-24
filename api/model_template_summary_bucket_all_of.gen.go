@@ -16,10 +16,10 @@ import (
 
 // TemplateSummaryBucketAllOf struct for TemplateSummaryBucketAllOf
 type TemplateSummaryBucketAllOf struct {
-	Id              *string `json:"id,omitempty"`
-	Name            *string `json:"name,omitempty"`
+	Id              string  `json:"id"`
+	Name            string  `json:"name"`
 	Description     *string `json:"description,omitempty"`
-	RetentionPeriod *int32  `json:"retentionPeriod,omitempty"`
+	RetentionPeriod int32   `json:"retentionPeriod"`
 	SchemaType      *string `json:"schemaType,omitempty"`
 }
 
@@ -27,8 +27,11 @@ type TemplateSummaryBucketAllOf struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryBucketAllOf() *TemplateSummaryBucketAllOf {
+func NewTemplateSummaryBucketAllOf(id string, name string, retentionPeriod int32) *TemplateSummaryBucketAllOf {
 	this := TemplateSummaryBucketAllOf{}
+	this.Id = id
+	this.Name = name
+	this.RetentionPeriod = retentionPeriod
 	return &this
 }
 
@@ -40,68 +43,52 @@ func NewTemplateSummaryBucketAllOfWithDefaults() *TemplateSummaryBucketAllOf {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *TemplateSummaryBucketAllOf) GetId() string {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryBucketAllOf) GetIdOk() (*string, bool) {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *TemplateSummaryBucketAllOf) HasId() bool {
-	if o != nil && o.Id != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *TemplateSummaryBucketAllOf) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryBucketAllOf) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryBucketAllOf) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryBucketAllOf) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryBucketAllOf) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -136,36 +123,28 @@ func (o *TemplateSummaryBucketAllOf) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetRetentionPeriod returns the RetentionPeriod field value if set, zero value otherwise.
+// GetRetentionPeriod returns the RetentionPeriod field value
 func (o *TemplateSummaryBucketAllOf) GetRetentionPeriod() int32 {
-	if o == nil || o.RetentionPeriod == nil {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.RetentionPeriod
+
+	return o.RetentionPeriod
 }
 
-// GetRetentionPeriodOk returns a tuple with the RetentionPeriod field value if set, nil otherwise
+// GetRetentionPeriodOk returns a tuple with the RetentionPeriod field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryBucketAllOf) GetRetentionPeriodOk() (*int32, bool) {
-	if o == nil || o.RetentionPeriod == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.RetentionPeriod, true
+	return &o.RetentionPeriod, true
 }
 
-// HasRetentionPeriod returns a boolean if a field has been set.
-func (o *TemplateSummaryBucketAllOf) HasRetentionPeriod() bool {
-	if o != nil && o.RetentionPeriod != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetRetentionPeriod gets a reference to the given int32 and assigns it to the RetentionPeriod field.
+// SetRetentionPeriod sets field value
 func (o *TemplateSummaryBucketAllOf) SetRetentionPeriod(v int32) {
-	o.RetentionPeriod = &v
+	o.RetentionPeriod = v
 }
 
 // GetSchemaType returns the SchemaType field value if set, zero value otherwise.
@@ -202,16 +181,16 @@ func (o *TemplateSummaryBucketAllOf) SetSchemaType(v string) {
 
 func (o TemplateSummaryBucketAllOf) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Id != nil {
+	if true {
 		toSerialize["id"] = o.Id
 	}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}
-	if o.RetentionPeriod != nil {
+	if true {
 		toSerialize["retentionPeriod"] = o.RetentionPeriod
 	}
 	if o.SchemaType != nil {

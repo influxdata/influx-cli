@@ -12,3 +12,4 @@ properties:
     $ref: "./TemplateSummaryDiffLabelFields.yml"
   old:
     $ref: "./TemplateSummaryDiffLabelFields.yml"
+required: [kind, stateStatus, id, templateMetaName]

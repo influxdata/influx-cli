@@ -6,3 +6,4 @@ allOf:
         type: array
         items:
           $ref: "./TemplateSummaryLabel.yml"
+    required: [labelAssociations]

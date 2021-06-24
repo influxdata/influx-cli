@@ -12,3 +12,4 @@ properties:
     $ref: "./TemplateSummaryTelegrafConfig.yml"
   old:
     $ref: "./TemplateSummaryTelegrafConfig.yml"
+required: [kind, stateStatus, id, templateMetaName]

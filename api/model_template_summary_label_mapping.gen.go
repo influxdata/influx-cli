@@ -16,22 +16,30 @@ import (
 
 // TemplateSummaryLabelMapping struct for TemplateSummaryLabelMapping
 type TemplateSummaryLabelMapping struct {
-	Status                   *string `json:"status,omitempty"`
-	ResourceTemplateMetaName *string `json:"resourceTemplateMetaName,omitempty"`
-	ResourceName             *string `json:"resourceName,omitempty"`
-	ResourceID               *string `json:"resourceID,omitempty"`
-	ResourceType             *string `json:"resourceType,omitempty"`
-	LabelTemplateMetaName    *string `json:"labelTemplateMetaName,omitempty"`
-	LabelName                *string `json:"labelName,omitempty"`
-	LabelID                  *string `json:"labelID,omitempty"`
+	Status                   string `json:"status"`
+	ResourceTemplateMetaName string `json:"resourceTemplateMetaName"`
+	ResourceName             string `json:"resourceName"`
+	ResourceID               string `json:"resourceID"`
+	ResourceType             string `json:"resourceType"`
+	LabelTemplateMetaName    string `json:"labelTemplateMetaName"`
+	LabelName                string `json:"labelName"`
+	LabelID                  string `json:"labelID"`
 }
 
 // NewTemplateSummaryLabelMapping instantiates a new TemplateSummaryLabelMapping object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryLabelMapping() *TemplateSummaryLabelMapping {
+func NewTemplateSummaryLabelMapping(status string, resourceTemplateMetaName string, resourceName string, resourceID string, resourceType string, labelTemplateMetaName string, labelName string, labelID string) *TemplateSummaryLabelMapping {
 	this := TemplateSummaryLabelMapping{}
+	this.Status = status
+	this.ResourceTemplateMetaName = resourceTemplateMetaName
+	this.ResourceName = resourceName
+	this.ResourceID = resourceID
+	this.ResourceType = resourceType
+	this.LabelTemplateMetaName = labelTemplateMetaName
+	this.LabelName = labelName
+	this.LabelID = labelID
 	return &this
 }
 
@@ -43,286 +51,222 @@ func NewTemplateSummaryLabelMappingWithDefaults() *TemplateSummaryLabelMapping {
 	return &this
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *TemplateSummaryLabelMapping) GetStatus() string {
-	if o == nil || o.Status == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryLabelMapping) GetStatusOk() (*string, bool) {
-	if o == nil || o.Status == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *TemplateSummaryLabelMapping) HasStatus() bool {
-	if o != nil && o.Status != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *TemplateSummaryLabelMapping) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
-// GetResourceTemplateMetaName returns the ResourceTemplateMetaName field value if set, zero value otherwise.
+// GetResourceTemplateMetaName returns the ResourceTemplateMetaName field value
 func (o *TemplateSummaryLabelMapping) GetResourceTemplateMetaName() string {
-	if o == nil || o.ResourceTemplateMetaName == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ResourceTemplateMetaName
+
+	return o.ResourceTemplateMetaName
 }
 
-// GetResourceTemplateMetaNameOk returns a tuple with the ResourceTemplateMetaName field value if set, nil otherwise
+// GetResourceTemplateMetaNameOk returns a tuple with the ResourceTemplateMetaName field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryLabelMapping) GetResourceTemplateMetaNameOk() (*string, bool) {
-	if o == nil || o.ResourceTemplateMetaName == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.ResourceTemplateMetaName, true
+	return &o.ResourceTemplateMetaName, true
 }
 
-// HasResourceTemplateMetaName returns a boolean if a field has been set.
-func (o *TemplateSummaryLabelMapping) HasResourceTemplateMetaName() bool {
-	if o != nil && o.ResourceTemplateMetaName != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetResourceTemplateMetaName gets a reference to the given string and assigns it to the ResourceTemplateMetaName field.
+// SetResourceTemplateMetaName sets field value
 func (o *TemplateSummaryLabelMapping) SetResourceTemplateMetaName(v string) {
-	o.ResourceTemplateMetaName = &v
+	o.ResourceTemplateMetaName = v
 }
 
-// GetResourceName returns the ResourceName field value if set, zero value otherwise.
+// GetResourceName returns the ResourceName field value
 func (o *TemplateSummaryLabelMapping) GetResourceName() string {
-	if o == nil || o.ResourceName == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ResourceName
+
+	return o.ResourceName
 }
 
-// GetResourceNameOk returns a tuple with the ResourceName field value if set, nil otherwise
+// GetResourceNameOk returns a tuple with the ResourceName field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryLabelMapping) GetResourceNameOk() (*string, bool) {
-	if o == nil || o.ResourceName == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.ResourceName, true
+	return &o.ResourceName, true
 }
 
-// HasResourceName returns a boolean if a field has been set.
-func (o *TemplateSummaryLabelMapping) HasResourceName() bool {
-	if o != nil && o.ResourceName != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetResourceName gets a reference to the given string and assigns it to the ResourceName field.
+// SetResourceName sets field value
 func (o *TemplateSummaryLabelMapping) SetResourceName(v string) {
-	o.ResourceName = &v
+	o.ResourceName = v
 }
 
-// GetResourceID returns the ResourceID field value if set, zero value otherwise.
+// GetResourceID returns the ResourceID field value
 func (o *TemplateSummaryLabelMapping) GetResourceID() string {
-	if o == nil || o.ResourceID == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ResourceID
+
+	return o.ResourceID
 }
 
-// GetResourceIDOk returns a tuple with the ResourceID field value if set, nil otherwise
+// GetResourceIDOk returns a tuple with the ResourceID field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryLabelMapping) GetResourceIDOk() (*string, bool) {
-	if o == nil || o.ResourceID == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.ResourceID, true
+	return &o.ResourceID, true
 }
 
-// HasResourceID returns a boolean if a field has been set.
-func (o *TemplateSummaryLabelMapping) HasResourceID() bool {
-	if o != nil && o.ResourceID != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetResourceID gets a reference to the given string and assigns it to the ResourceID field.
+// SetResourceID sets field value
 func (o *TemplateSummaryLabelMapping) SetResourceID(v string) {
-	o.ResourceID = &v
+	o.ResourceID = v
 }
 
-// GetResourceType returns the ResourceType field value if set, zero value otherwise.
+// GetResourceType returns the ResourceType field value
 func (o *TemplateSummaryLabelMapping) GetResourceType() string {
-	if o == nil || o.ResourceType == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ResourceType
+
+	return o.ResourceType
 }
 
-// GetResourceTypeOk returns a tuple with the ResourceType field value if set, nil otherwise
+// GetResourceTypeOk returns a tuple with the ResourceType field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryLabelMapping) GetResourceTypeOk() (*string, bool) {
-	if o == nil || o.ResourceType == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.ResourceType, true
+	return &o.ResourceType, true
 }
 
-// HasResourceType returns a boolean if a field has been set.
-func (o *TemplateSummaryLabelMapping) HasResourceType() bool {
-	if o != nil && o.ResourceType != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetResourceType gets a reference to the given string and assigns it to the ResourceType field.
+// SetResourceType sets field value
 func (o *TemplateSummaryLabelMapping) SetResourceType(v string) {
-	o.ResourceType = &v
+	o.ResourceType = v
 }
 
-// GetLabelTemplateMetaName returns the LabelTemplateMetaName field value if set, zero value otherwise.
+// GetLabelTemplateMetaName returns the LabelTemplateMetaName field value
 func (o *TemplateSummaryLabelMapping) GetLabelTemplateMetaName() string {
-	if o == nil || o.LabelTemplateMetaName == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.LabelTemplateMetaName
+
+	return o.LabelTemplateMetaName
 }
 
-// GetLabelTemplateMetaNameOk returns a tuple with the LabelTemplateMetaName field value if set, nil otherwise
+// GetLabelTemplateMetaNameOk returns a tuple with the LabelTemplateMetaName field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryLabelMapping) GetLabelTemplateMetaNameOk() (*string, bool) {
-	if o == nil || o.LabelTemplateMetaName == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.LabelTemplateMetaName, true
+	return &o.LabelTemplateMetaName, true
 }
 
-// HasLabelTemplateMetaName returns a boolean if a field has been set.
-func (o *TemplateSummaryLabelMapping) HasLabelTemplateMetaName() bool {
-	if o != nil && o.LabelTemplateMetaName != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabelTemplateMetaName gets a reference to the given string and assigns it to the LabelTemplateMetaName field.
+// SetLabelTemplateMetaName sets field value
 func (o *TemplateSummaryLabelMapping) SetLabelTemplateMetaName(v string) {
-	o.LabelTemplateMetaName = &v
+	o.LabelTemplateMetaName = v
 }
 
-// GetLabelName returns the LabelName field value if set, zero value otherwise.
+// GetLabelName returns the LabelName field value
 func (o *TemplateSummaryLabelMapping) GetLabelName() string {
-	if o == nil || o.LabelName == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.LabelName
+
+	return o.LabelName
 }
 
-// GetLabelNameOk returns a tuple with the LabelName field value if set, nil otherwise
+// GetLabelNameOk returns a tuple with the LabelName field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryLabelMapping) GetLabelNameOk() (*string, bool) {
-	if o == nil || o.LabelName == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.LabelName, true
+	return &o.LabelName, true
 }
 
-// HasLabelName returns a boolean if a field has been set.
-func (o *TemplateSummaryLabelMapping) HasLabelName() bool {
-	if o != nil && o.LabelName != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabelName gets a reference to the given string and assigns it to the LabelName field.
+// SetLabelName sets field value
 func (o *TemplateSummaryLabelMapping) SetLabelName(v string) {
-	o.LabelName = &v
+	o.LabelName = v
 }
 
-// GetLabelID returns the LabelID field value if set, zero value otherwise.
+// GetLabelID returns the LabelID field value
 func (o *TemplateSummaryLabelMapping) GetLabelID() string {
-	if o == nil || o.LabelID == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.LabelID
+
+	return o.LabelID
 }
 
-// GetLabelIDOk returns a tuple with the LabelID field value if set, nil otherwise
+// GetLabelIDOk returns a tuple with the LabelID field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryLabelMapping) GetLabelIDOk() (*string, bool) {
-	if o == nil || o.LabelID == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.LabelID, true
+	return &o.LabelID, true
 }
 
-// HasLabelID returns a boolean if a field has been set.
-func (o *TemplateSummaryLabelMapping) HasLabelID() bool {
-	if o != nil && o.LabelID != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabelID gets a reference to the given string and assigns it to the LabelID field.
+// SetLabelID sets field value
 func (o *TemplateSummaryLabelMapping) SetLabelID(v string) {
-	o.LabelID = &v
+	o.LabelID = v
 }
 
 func (o TemplateSummaryLabelMapping) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Status != nil {
+	if true {
 		toSerialize["status"] = o.Status
 	}
-	if o.ResourceTemplateMetaName != nil {
+	if true {
 		toSerialize["resourceTemplateMetaName"] = o.ResourceTemplateMetaName
 	}
-	if o.ResourceName != nil {
+	if true {
 		toSerialize["resourceName"] = o.ResourceName
 	}
-	if o.ResourceID != nil {
+	if true {
 		toSerialize["resourceID"] = o.ResourceID
 	}
-	if o.ResourceType != nil {
+	if true {
 		toSerialize["resourceType"] = o.ResourceType
 	}
-	if o.LabelTemplateMetaName != nil {
+	if true {
 		toSerialize["labelTemplateMetaName"] = o.LabelTemplateMetaName
 	}
-	if o.LabelName != nil {
+	if true {
 		toSerialize["labelName"] = o.LabelName
 	}
-	if o.LabelID != nil {
+	if true {
 		toSerialize["labelID"] = o.LabelID
 	}
 	return json.Marshal(toSerialize)

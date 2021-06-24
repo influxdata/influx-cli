@@ -16,21 +16,26 @@ import (
 
 // TemplateSummaryCheck struct for TemplateSummaryCheck
 type TemplateSummaryCheck struct {
-	Kind              *string                 `json:"kind,omitempty"`
-	TemplateMetaName  *string                 `json:"templateMetaName,omitempty"`
-	EnvReferences     *[]TemplateEnvReference `json:"envReferences,omitempty"`
-	LabelAssociations *[]TemplateSummaryLabel `json:"labelAssociations,omitempty"`
-	Id                *string                 `json:"id,omitempty"`
-	Name              *string                 `json:"name,omitempty"`
-	Description       *string                 `json:"description,omitempty"`
+	Kind              string                 `json:"kind"`
+	TemplateMetaName  *string                `json:"templateMetaName,omitempty"`
+	EnvReferences     []TemplateEnvReference `json:"envReferences"`
+	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations"`
+	Id                string                 `json:"id"`
+	Name              string                 `json:"name"`
+	Description       *string                `json:"description,omitempty"`
 }
 
 // NewTemplateSummaryCheck instantiates a new TemplateSummaryCheck object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryCheck() *TemplateSummaryCheck {
+func NewTemplateSummaryCheck(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id string, name string) *TemplateSummaryCheck {
 	this := TemplateSummaryCheck{}
+	this.Kind = kind
+	this.EnvReferences = envReferences
+	this.LabelAssociations = labelAssociations
+	this.Id = id
+	this.Name = name
 	return &this
 }
 
@@ -42,36 +47,28 @@ func NewTemplateSummaryCheckWithDefaults() *TemplateSummaryCheck {
 	return &this
 }
 
-// GetKind returns the Kind field value if set, zero value otherwise.
+// GetKind returns the Kind field value
 func (o *TemplateSummaryCheck) GetKind() string {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Kind
+
+	return o.Kind
 }
 
-// GetKindOk returns a tuple with the Kind field value if set, nil otherwise
+// GetKindOk returns a tuple with the Kind field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryCheck) GetKindOk() (*string, bool) {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Kind, true
+	return &o.Kind, true
 }
 
-// HasKind returns a boolean if a field has been set.
-func (o *TemplateSummaryCheck) HasKind() bool {
-	if o != nil && o.Kind != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetKind gets a reference to the given string and assigns it to the Kind field.
+// SetKind sets field value
 func (o *TemplateSummaryCheck) SetKind(v string) {
-	o.Kind = &v
+	o.Kind = v
 }
 
 // GetTemplateMetaName returns the TemplateMetaName field value if set, zero value otherwise.
@@ -106,132 +103,100 @@ func (o *TemplateSummaryCheck) SetTemplateMetaName(v string) {
 	o.TemplateMetaName = &v
 }
 
-// GetEnvReferences returns the EnvReferences field value if set, zero value otherwise.
+// GetEnvReferences returns the EnvReferences field value
 func (o *TemplateSummaryCheck) GetEnvReferences() []TemplateEnvReference {
-	if o == nil || o.EnvReferences == nil {
+	if o == nil {
 		var ret []TemplateEnvReference
 		return ret
 	}
-	return *o.EnvReferences
+
+	return o.EnvReferences
 }
 
-// GetEnvReferencesOk returns a tuple with the EnvReferences field value if set, nil otherwise
+// GetEnvReferencesOk returns a tuple with the EnvReferences field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryCheck) GetEnvReferencesOk() (*[]TemplateEnvReference, bool) {
-	if o == nil || o.EnvReferences == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EnvReferences, true
+	return &o.EnvReferences, true
 }
 
-// HasEnvReferences returns a boolean if a field has been set.
-func (o *TemplateSummaryCheck) HasEnvReferences() bool {
-	if o != nil && o.EnvReferences != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEnvReferences gets a reference to the given []TemplateEnvReference and assigns it to the EnvReferences field.
+// SetEnvReferences sets field value
 func (o *TemplateSummaryCheck) SetEnvReferences(v []TemplateEnvReference) {
-	o.EnvReferences = &v
+	o.EnvReferences = v
 }
 
-// GetLabelAssociations returns the LabelAssociations field value if set, zero value otherwise.
+// GetLabelAssociations returns the LabelAssociations field value
 func (o *TemplateSummaryCheck) GetLabelAssociations() []TemplateSummaryLabel {
-	if o == nil || o.LabelAssociations == nil {
+	if o == nil {
 		var ret []TemplateSummaryLabel
 		return ret
 	}
-	return *o.LabelAssociations
+
+	return o.LabelAssociations
 }
 
-// GetLabelAssociationsOk returns a tuple with the LabelAssociations field value if set, nil otherwise
+// GetLabelAssociationsOk returns a tuple with the LabelAssociations field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryCheck) GetLabelAssociationsOk() (*[]TemplateSummaryLabel, bool) {
-	if o == nil || o.LabelAssociations == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.LabelAssociations, true
+	return &o.LabelAssociations, true
 }
 
-// HasLabelAssociations returns a boolean if a field has been set.
-func (o *TemplateSummaryCheck) HasLabelAssociations() bool {
-	if o != nil && o.LabelAssociations != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabelAssociations gets a reference to the given []TemplateSummaryLabel and assigns it to the LabelAssociations field.
+// SetLabelAssociations sets field value
 func (o *TemplateSummaryCheck) SetLabelAssociations(v []TemplateSummaryLabel) {
-	o.LabelAssociations = &v
+	o.LabelAssociations = v
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *TemplateSummaryCheck) GetId() string {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryCheck) GetIdOk() (*string, bool) {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *TemplateSummaryCheck) HasId() bool {
-	if o != nil && o.Id != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *TemplateSummaryCheck) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryCheck) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryCheck) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryCheck) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryCheck) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -268,22 +233,22 @@ func (o *TemplateSummaryCheck) SetDescription(v string) {
 
 func (o TemplateSummaryCheck) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Kind != nil {
+	if true {
 		toSerialize["kind"] = o.Kind
 	}
 	if o.TemplateMetaName != nil {
 		toSerialize["templateMetaName"] = o.TemplateMetaName
 	}
-	if o.EnvReferences != nil {
+	if true {
 		toSerialize["envReferences"] = o.EnvReferences
 	}
-	if o.LabelAssociations != nil {
+	if true {
 		toSerialize["labelAssociations"] = o.LabelAssociations
 	}
-	if o.Id != nil {
+	if true {
 		toSerialize["id"] = o.Id
 	}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
 	if o.Description != nil {

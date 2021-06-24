@@ -16,17 +16,19 @@ import (
 
 // TemplateSummaryDiffDashboardFields struct for TemplateSummaryDiffDashboardFields
 type TemplateSummaryDiffDashboardFields struct {
-	Name        *string                   `json:"name,omitempty"`
-	Description *string                   `json:"description,omitempty"`
-	Charts      *[]map[string]interface{} `json:"charts,omitempty"`
+	Name        string                   `json:"name"`
+	Description *string                  `json:"description,omitempty"`
+	Charts      []map[string]interface{} `json:"charts"`
 }
 
 // NewTemplateSummaryDiffDashboardFields instantiates a new TemplateSummaryDiffDashboardFields object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffDashboardFields() *TemplateSummaryDiffDashboardFields {
+func NewTemplateSummaryDiffDashboardFields(name string, charts []map[string]interface{}) *TemplateSummaryDiffDashboardFields {
 	this := TemplateSummaryDiffDashboardFields{}
+	this.Name = name
+	this.Charts = charts
 	return &this
 }
 
@@ -38,36 +40,28 @@ func NewTemplateSummaryDiffDashboardFieldsWithDefaults() *TemplateSummaryDiffDas
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryDiffDashboardFields) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffDashboardFields) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffDashboardFields) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryDiffDashboardFields) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -102,47 +96,39 @@ func (o *TemplateSummaryDiffDashboardFields) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetCharts returns the Charts field value if set, zero value otherwise.
+// GetCharts returns the Charts field value
 func (o *TemplateSummaryDiffDashboardFields) GetCharts() []map[string]interface{} {
-	if o == nil || o.Charts == nil {
+	if o == nil {
 		var ret []map[string]interface{}
 		return ret
 	}
-	return *o.Charts
+
+	return o.Charts
 }
 
-// GetChartsOk returns a tuple with the Charts field value if set, nil otherwise
+// GetChartsOk returns a tuple with the Charts field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffDashboardFields) GetChartsOk() (*[]map[string]interface{}, bool) {
-	if o == nil || o.Charts == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Charts, true
+	return &o.Charts, true
 }
 
-// HasCharts returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffDashboardFields) HasCharts() bool {
-	if o != nil && o.Charts != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetCharts gets a reference to the given []map[string]interface{} and assigns it to the Charts field.
+// SetCharts sets field value
 func (o *TemplateSummaryDiffDashboardFields) SetCharts(v []map[string]interface{}) {
-	o.Charts = &v
+	o.Charts = v
 }
 
 func (o TemplateSummaryDiffDashboardFields) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}
-	if o.Charts != nil {
+	if true {
 		toSerialize["charts"] = o.Charts
 	}
 	return json.Marshal(toSerialize)

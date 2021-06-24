@@ -40,3 +40,14 @@ properties:
     type: array
     items:
       $ref: "./TemplateSummaryDiffVariable.yml"
+required:
+  - buckets
+  - checks
+  - dashboards
+  - labels
+  - labelMappings
+  - notificationEndpoints
+  - notificationRules
+  - tasks
+  - telegrafConfigs
+  - variables

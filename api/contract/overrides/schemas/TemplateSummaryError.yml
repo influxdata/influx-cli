@@ -12,3 +12,4 @@ properties:
     type: array
     items:
       type: integer
+required: [kind, reason, fields, indexes]

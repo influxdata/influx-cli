@@ -16,18 +16,20 @@ import (
 
 // TemplateSummaryDiffBucketFields struct for TemplateSummaryDiffBucketFields
 type TemplateSummaryDiffBucketFields struct {
-	Name        *string `json:"name,omitempty"`
+	Name        string  `json:"name"`
 	Description *string `json:"description,omitempty"`
 	// Rules to expire or retain data.  No rules means data never expires.
-	RetentionRules *[]RetentionRule `json:"retentionRules,omitempty"`
+	RetentionRules []RetentionRule `json:"retentionRules"`
 }
 
 // NewTemplateSummaryDiffBucketFields instantiates a new TemplateSummaryDiffBucketFields object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffBucketFields() *TemplateSummaryDiffBucketFields {
+func NewTemplateSummaryDiffBucketFields(name string, retentionRules []RetentionRule) *TemplateSummaryDiffBucketFields {
 	this := TemplateSummaryDiffBucketFields{}
+	this.Name = name
+	this.RetentionRules = retentionRules
 	return &this
 }
 
@@ -39,36 +41,28 @@ func NewTemplateSummaryDiffBucketFieldsWithDefaults() *TemplateSummaryDiffBucket
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryDiffBucketFields) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffBucketFields) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffBucketFields) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryDiffBucketFields) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -103,47 +97,39 @@ func (o *TemplateSummaryDiffBucketFields) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetRetentionRules returns the RetentionRules field value if set, zero value otherwise.
+// GetRetentionRules returns the RetentionRules field value
 func (o *TemplateSummaryDiffBucketFields) GetRetentionRules() []RetentionRule {
-	if o == nil || o.RetentionRules == nil {
+	if o == nil {
 		var ret []RetentionRule
 		return ret
 	}
-	return *o.RetentionRules
+
+	return o.RetentionRules
 }
 
-// GetRetentionRulesOk returns a tuple with the RetentionRules field value if set, nil otherwise
+// GetRetentionRulesOk returns a tuple with the RetentionRules field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffBucketFields) GetRetentionRulesOk() (*[]RetentionRule, bool) {
-	if o == nil || o.RetentionRules == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.RetentionRules, true
+	return &o.RetentionRules, true
 }
 
-// HasRetentionRules returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffBucketFields) HasRetentionRules() bool {
-	if o != nil && o.RetentionRules != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetRetentionRules gets a reference to the given []RetentionRule and assigns it to the RetentionRules field.
+// SetRetentionRules sets field value
 func (o *TemplateSummaryDiffBucketFields) SetRetentionRules(v []RetentionRule) {
-	o.RetentionRules = &v
+	o.RetentionRules = v
 }
 
 func (o TemplateSummaryDiffBucketFields) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}
-	if o.RetentionRules != nil {
+	if true {
 		toSerialize["retentionRules"] = o.RetentionRules
 	}
 	return json.Marshal(toSerialize)

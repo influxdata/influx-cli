@@ -16,3 +16,12 @@ properties:
     type: string
   labelID:
     type: string
+required:
+  - status
+  - resourceTemplateMetaName
+  - resourceName
+  - resourceID
+  - resourceType
+  - labelTemplateMetaName
+  - labelName
+  - labelID

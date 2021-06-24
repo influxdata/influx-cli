@@ -13,3 +13,4 @@ allOf:
       schemaType:
         type: string
 
+    required: [id, name, retentionPeriod]

@@ -16,25 +16,34 @@ import (
 
 // TemplateSummaryNotificationRule struct for TemplateSummaryNotificationRule
 type TemplateSummaryNotificationRule struct {
-	Kind                     *string                 `json:"kind,omitempty"`
-	TemplateMetaName         *string                 `json:"templateMetaName,omitempty"`
-	EnvReferences            *[]TemplateEnvReference `json:"envReferences,omitempty"`
-	LabelAssociations        *[]TemplateSummaryLabel `json:"labelAssociations,omitempty"`
-	Name                     *string                 `json:"name,omitempty"`
-	Description              *string                 `json:"description,omitempty"`
-	EndpointTemplateMetaName *string                 `json:"endpointTemplateMetaName,omitempty"`
-	EndpointID               *string                 `json:"endpointID,omitempty"`
-	EndpointType             *string                 `json:"endpointType,omitempty"`
-	Every                    *string                 `json:"every,omitempty"`
-	Offset                   *string                 `json:"offset,omitempty"`
+	Kind                     string                 `json:"kind"`
+	TemplateMetaName         *string                `json:"templateMetaName,omitempty"`
+	EnvReferences            []TemplateEnvReference `json:"envReferences"`
+	LabelAssociations        []TemplateSummaryLabel `json:"labelAssociations"`
+	Name                     string                 `json:"name"`
+	Description              *string                `json:"description,omitempty"`
+	EndpointTemplateMetaName string                 `json:"endpointTemplateMetaName"`
+	EndpointID               string                 `json:"endpointID"`
+	EndpointType             string                 `json:"endpointType"`
+	Every                    string                 `json:"every"`
+	Offset                   string                 `json:"offset"`
 }
 
 // NewTemplateSummaryNotificationRule instantiates a new TemplateSummaryNotificationRule object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryNotificationRule() *TemplateSummaryNotificationRule {
+func NewTemplateSummaryNotificationRule(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, name string, endpointTemplateMetaName string, endpointID string, endpointType string, every string, offset string) *TemplateSummaryNotificationRule {
 	this := TemplateSummaryNotificationRule{}
+	this.Kind = kind
+	this.EnvReferences = envReferences
+	this.LabelAssociations = labelAssociations
+	this.Name = name
+	this.EndpointTemplateMetaName = endpointTemplateMetaName
+	this.EndpointID = endpointID
+	this.EndpointType = endpointType
+	this.Every = every
+	this.Offset = offset
 	return &this
 }
 
@@ -46,36 +55,28 @@ func NewTemplateSummaryNotificationRuleWithDefaults() *TemplateSummaryNotificati
 	return &this
 }
 
-// GetKind returns the Kind field value if set, zero value otherwise.
+// GetKind returns the Kind field value
 func (o *TemplateSummaryNotificationRule) GetKind() string {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Kind
+
+	return o.Kind
 }
 
-// GetKindOk returns a tuple with the Kind field value if set, nil otherwise
+// GetKindOk returns a tuple with the Kind field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryNotificationRule) GetKindOk() (*string, bool) {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Kind, true
+	return &o.Kind, true
 }
 
-// HasKind returns a boolean if a field has been set.
-func (o *TemplateSummaryNotificationRule) HasKind() bool {
-	if o != nil && o.Kind != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetKind gets a reference to the given string and assigns it to the Kind field.
+// SetKind sets field value
 func (o *TemplateSummaryNotificationRule) SetKind(v string) {
-	o.Kind = &v
+	o.Kind = v
 }
 
 // GetTemplateMetaName returns the TemplateMetaName field value if set, zero value otherwise.
@@ -110,100 +111,76 @@ func (o *TemplateSummaryNotificationRule) SetTemplateMetaName(v string) {
 	o.TemplateMetaName = &v
 }
 
-// GetEnvReferences returns the EnvReferences field value if set, zero value otherwise.
+// GetEnvReferences returns the EnvReferences field value
 func (o *TemplateSummaryNotificationRule) GetEnvReferences() []TemplateEnvReference {
-	if o == nil || o.EnvReferences == nil {
+	if o == nil {
 		var ret []TemplateEnvReference
 		return ret
 	}
-	return *o.EnvReferences
+
+	return o.EnvReferences
 }
 
-// GetEnvReferencesOk returns a tuple with the EnvReferences field value if set, nil otherwise
+// GetEnvReferencesOk returns a tuple with the EnvReferences field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryNotificationRule) GetEnvReferencesOk() (*[]TemplateEnvReference, bool) {
-	if o == nil || o.EnvReferences == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EnvReferences, true
+	return &o.EnvReferences, true
 }
 
-// HasEnvReferences returns a boolean if a field has been set.
-func (o *TemplateSummaryNotificationRule) HasEnvReferences() bool {
-	if o != nil && o.EnvReferences != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEnvReferences gets a reference to the given []TemplateEnvReference and assigns it to the EnvReferences field.
+// SetEnvReferences sets field value
 func (o *TemplateSummaryNotificationRule) SetEnvReferences(v []TemplateEnvReference) {
-	o.EnvReferences = &v
+	o.EnvReferences = v
 }
 
-// GetLabelAssociations returns the LabelAssociations field value if set, zero value otherwise.
+// GetLabelAssociations returns the LabelAssociations field value
 func (o *TemplateSummaryNotificationRule) GetLabelAssociations() []TemplateSummaryLabel {
-	if o == nil || o.LabelAssociations == nil {
+	if o == nil {
 		var ret []TemplateSummaryLabel
 		return ret
 	}
-	return *o.LabelAssociations
+
+	return o.LabelAssociations
 }
 
-// GetLabelAssociationsOk returns a tuple with the LabelAssociations field value if set, nil otherwise
+// GetLabelAssociationsOk returns a tuple with the LabelAssociations field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryNotificationRule) GetLabelAssociationsOk() (*[]TemplateSummaryLabel, bool) {
-	if o == nil || o.LabelAssociations == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.LabelAssociations, true
+	return &o.LabelAssociations, true
 }
 
-// HasLabelAssociations returns a boolean if a field has been set.
-func (o *TemplateSummaryNotificationRule) HasLabelAssociations() bool {
-	if o != nil && o.LabelAssociations != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabelAssociations gets a reference to the given []TemplateSummaryLabel and assigns it to the LabelAssociations field.
+// SetLabelAssociations sets field value
 func (o *TemplateSummaryNotificationRule) SetLabelAssociations(v []TemplateSummaryLabel) {
-	o.LabelAssociations = &v
+	o.LabelAssociations = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryNotificationRule) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryNotificationRule) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryNotificationRule) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryNotificationRule) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -238,199 +215,159 @@ func (o *TemplateSummaryNotificationRule) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetEndpointTemplateMetaName returns the EndpointTemplateMetaName field value if set, zero value otherwise.
+// GetEndpointTemplateMetaName returns the EndpointTemplateMetaName field value
 func (o *TemplateSummaryNotificationRule) GetEndpointTemplateMetaName() string {
-	if o == nil || o.EndpointTemplateMetaName == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.EndpointTemplateMetaName
+
+	return o.EndpointTemplateMetaName
 }
 
-// GetEndpointTemplateMetaNameOk returns a tuple with the EndpointTemplateMetaName field value if set, nil otherwise
+// GetEndpointTemplateMetaNameOk returns a tuple with the EndpointTemplateMetaName field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryNotificationRule) GetEndpointTemplateMetaNameOk() (*string, bool) {
-	if o == nil || o.EndpointTemplateMetaName == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EndpointTemplateMetaName, true
+	return &o.EndpointTemplateMetaName, true
 }
 
-// HasEndpointTemplateMetaName returns a boolean if a field has been set.
-func (o *TemplateSummaryNotificationRule) HasEndpointTemplateMetaName() bool {
-	if o != nil && o.EndpointTemplateMetaName != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEndpointTemplateMetaName gets a reference to the given string and assigns it to the EndpointTemplateMetaName field.
+// SetEndpointTemplateMetaName sets field value
 func (o *TemplateSummaryNotificationRule) SetEndpointTemplateMetaName(v string) {
-	o.EndpointTemplateMetaName = &v
+	o.EndpointTemplateMetaName = v
 }
 
-// GetEndpointID returns the EndpointID field value if set, zero value otherwise.
+// GetEndpointID returns the EndpointID field value
 func (o *TemplateSummaryNotificationRule) GetEndpointID() string {
-	if o == nil || o.EndpointID == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.EndpointID
+
+	return o.EndpointID
 }
 
-// GetEndpointIDOk returns a tuple with the EndpointID field value if set, nil otherwise
+// GetEndpointIDOk returns a tuple with the EndpointID field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryNotificationRule) GetEndpointIDOk() (*string, bool) {
-	if o == nil || o.EndpointID == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EndpointID, true
+	return &o.EndpointID, true
 }
 
-// HasEndpointID returns a boolean if a field has been set.
-func (o *TemplateSummaryNotificationRule) HasEndpointID() bool {
-	if o != nil && o.EndpointID != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEndpointID gets a reference to the given string and assigns it to the EndpointID field.
+// SetEndpointID sets field value
 func (o *TemplateSummaryNotificationRule) SetEndpointID(v string) {
-	o.EndpointID = &v
+	o.EndpointID = v
 }
 
-// GetEndpointType returns the EndpointType field value if set, zero value otherwise.
+// GetEndpointType returns the EndpointType field value
 func (o *TemplateSummaryNotificationRule) GetEndpointType() string {
-	if o == nil || o.EndpointType == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.EndpointType
+
+	return o.EndpointType
 }
 
-// GetEndpointTypeOk returns a tuple with the EndpointType field value if set, nil otherwise
+// GetEndpointTypeOk returns a tuple with the EndpointType field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryNotificationRule) GetEndpointTypeOk() (*string, bool) {
-	if o == nil || o.EndpointType == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EndpointType, true
+	return &o.EndpointType, true
 }
 
-// HasEndpointType returns a boolean if a field has been set.
-func (o *TemplateSummaryNotificationRule) HasEndpointType() bool {
-	if o != nil && o.EndpointType != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEndpointType gets a reference to the given string and assigns it to the EndpointType field.
+// SetEndpointType sets field value
 func (o *TemplateSummaryNotificationRule) SetEndpointType(v string) {
-	o.EndpointType = &v
+	o.EndpointType = v
 }
 
-// GetEvery returns the Every field value if set, zero value otherwise.
+// GetEvery returns the Every field value
 func (o *TemplateSummaryNotificationRule) GetEvery() string {
-	if o == nil || o.Every == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Every
+
+	return o.Every
 }
 
-// GetEveryOk returns a tuple with the Every field value if set, nil otherwise
+// GetEveryOk returns a tuple with the Every field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryNotificationRule) GetEveryOk() (*string, bool) {
-	if o == nil || o.Every == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Every, true
+	return &o.Every, true
 }
 
-// HasEvery returns a boolean if a field has been set.
-func (o *TemplateSummaryNotificationRule) HasEvery() bool {
-	if o != nil && o.Every != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEvery gets a reference to the given string and assigns it to the Every field.
+// SetEvery sets field value
 func (o *TemplateSummaryNotificationRule) SetEvery(v string) {
-	o.Every = &v
+	o.Every = v
 }
 
-// GetOffset returns the Offset field value if set, zero value otherwise.
+// GetOffset returns the Offset field value
 func (o *TemplateSummaryNotificationRule) GetOffset() string {
-	if o == nil || o.Offset == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Offset
+
+	return o.Offset
 }
 
-// GetOffsetOk returns a tuple with the Offset field value if set, nil otherwise
+// GetOffsetOk returns a tuple with the Offset field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryNotificationRule) GetOffsetOk() (*string, bool) {
-	if o == nil || o.Offset == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Offset, true
+	return &o.Offset, true
 }
 
-// HasOffset returns a boolean if a field has been set.
-func (o *TemplateSummaryNotificationRule) HasOffset() bool {
-	if o != nil && o.Offset != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetOffset gets a reference to the given string and assigns it to the Offset field.
+// SetOffset sets field value
 func (o *TemplateSummaryNotificationRule) SetOffset(v string) {
-	o.Offset = &v
+	o.Offset = v
 }
 
 func (o TemplateSummaryNotificationRule) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Kind != nil {
+	if true {
 		toSerialize["kind"] = o.Kind
 	}
 	if o.TemplateMetaName != nil {
 		toSerialize["templateMetaName"] = o.TemplateMetaName
 	}
-	if o.EnvReferences != nil {
+	if true {
 		toSerialize["envReferences"] = o.EnvReferences
 	}
-	if o.LabelAssociations != nil {
+	if true {
 		toSerialize["labelAssociations"] = o.LabelAssociations
 	}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}
-	if o.EndpointTemplateMetaName != nil {
+	if true {
 		toSerialize["endpointTemplateMetaName"] = o.EndpointTemplateMetaName
 	}
-	if o.EndpointID != nil {
+	if true {
 		toSerialize["endpointID"] = o.EndpointID
 	}
-	if o.EndpointType != nil {
+	if true {
 		toSerialize["endpointType"] = o.EndpointType
 	}
-	if o.Every != nil {
+	if true {
 		toSerialize["every"] = o.Every
 	}
-	if o.Offset != nil {
+	if true {
 		toSerialize["offset"] = o.Offset
 	}
 	return json.Marshal(toSerialize)

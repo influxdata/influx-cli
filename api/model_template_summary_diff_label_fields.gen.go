@@ -16,8 +16,8 @@ import (
 
 // TemplateSummaryDiffLabelFields struct for TemplateSummaryDiffLabelFields
 type TemplateSummaryDiffLabelFields struct {
-	Name        *string `json:"name,omitempty"`
-	Color       *string `json:"color,omitempty"`
+	Name        string  `json:"name"`
+	Color       string  `json:"color"`
 	Description *string `json:"description,omitempty"`
 }
 
@@ -25,8 +25,10 @@ type TemplateSummaryDiffLabelFields struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffLabelFields() *TemplateSummaryDiffLabelFields {
+func NewTemplateSummaryDiffLabelFields(name string, color string) *TemplateSummaryDiffLabelFields {
 	this := TemplateSummaryDiffLabelFields{}
+	this.Name = name
+	this.Color = color
 	return &this
 }
 
@@ -38,68 +40,52 @@ func NewTemplateSummaryDiffLabelFieldsWithDefaults() *TemplateSummaryDiffLabelFi
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryDiffLabelFields) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffLabelFields) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffLabelFields) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryDiffLabelFields) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetColor returns the Color field value if set, zero value otherwise.
+// GetColor returns the Color field value
 func (o *TemplateSummaryDiffLabelFields) GetColor() string {
-	if o == nil || o.Color == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Color
+
+	return o.Color
 }
 
-// GetColorOk returns a tuple with the Color field value if set, nil otherwise
+// GetColorOk returns a tuple with the Color field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffLabelFields) GetColorOk() (*string, bool) {
-	if o == nil || o.Color == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Color, true
+	return &o.Color, true
 }
 
-// HasColor returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffLabelFields) HasColor() bool {
-	if o != nil && o.Color != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetColor gets a reference to the given string and assigns it to the Color field.
+// SetColor sets field value
 func (o *TemplateSummaryDiffLabelFields) SetColor(v string) {
-	o.Color = &v
+	o.Color = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -136,10 +122,10 @@ func (o *TemplateSummaryDiffLabelFields) SetDescription(v string) {
 
 func (o TemplateSummaryDiffLabelFields) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
-	if o.Color != nil {
+	if true {
 		toSerialize["color"] = o.Color
 	}
 	if o.Description != nil {

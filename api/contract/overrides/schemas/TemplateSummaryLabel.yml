@@ -15,3 +15,5 @@ allOf:
             type: string
           description:
             type: string
+        required: [color]
+    required: [id, name, properties]

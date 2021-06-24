@@ -48,3 +48,16 @@ properties:
     type: array
     items:
       $ref: "./TemplateSummaryVariable.yml"
+required:
+  - buckets
+  - checks
+  - dashboards
+  - labels
+  - labelMappings
+  - missingEnvRefs
+  - missingSecrets
+  - notificationEndpoints
+  - notificationRules
+  - tasks
+  - telegrafConfigs
+  - variables

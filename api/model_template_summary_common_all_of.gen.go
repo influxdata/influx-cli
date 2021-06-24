@@ -16,15 +16,16 @@ import (
 
 // TemplateSummaryCommonAllOf struct for TemplateSummaryCommonAllOf
 type TemplateSummaryCommonAllOf struct {
-	LabelAssociations *[]TemplateSummaryLabel `json:"labelAssociations,omitempty"`
+	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations"`
 }
 
 // NewTemplateSummaryCommonAllOf instantiates a new TemplateSummaryCommonAllOf object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryCommonAllOf() *TemplateSummaryCommonAllOf {
+func NewTemplateSummaryCommonAllOf(labelAssociations []TemplateSummaryLabel) *TemplateSummaryCommonAllOf {
 	this := TemplateSummaryCommonAllOf{}
+	this.LabelAssociations = labelAssociations
 	return &this
 }
 
@@ -36,41 +37,33 @@ func NewTemplateSummaryCommonAllOfWithDefaults() *TemplateSummaryCommonAllOf {
 	return &this
 }
 
-// GetLabelAssociations returns the LabelAssociations field value if set, zero value otherwise.
+// GetLabelAssociations returns the LabelAssociations field value
 func (o *TemplateSummaryCommonAllOf) GetLabelAssociations() []TemplateSummaryLabel {
-	if o == nil || o.LabelAssociations == nil {
+	if o == nil {
 		var ret []TemplateSummaryLabel
 		return ret
 	}
-	return *o.LabelAssociations
+
+	return o.LabelAssociations
 }
 
-// GetLabelAssociationsOk returns a tuple with the LabelAssociations field value if set, nil otherwise
+// GetLabelAssociationsOk returns a tuple with the LabelAssociations field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryCommonAllOf) GetLabelAssociationsOk() (*[]TemplateSummaryLabel, bool) {
-	if o == nil || o.LabelAssociations == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.LabelAssociations, true
+	return &o.LabelAssociations, true
 }
 
-// HasLabelAssociations returns a boolean if a field has been set.
-func (o *TemplateSummaryCommonAllOf) HasLabelAssociations() bool {
-	if o != nil && o.LabelAssociations != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabelAssociations gets a reference to the given []TemplateSummaryLabel and assigns it to the LabelAssociations field.
+// SetLabelAssociations sets field value
 func (o *TemplateSummaryCommonAllOf) SetLabelAssociations(v []TemplateSummaryLabel) {
-	o.LabelAssociations = &v
+	o.LabelAssociations = v
 }
 
 func (o TemplateSummaryCommonAllOf) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.LabelAssociations != nil {
+	if true {
 		toSerialize["labelAssociations"] = o.LabelAssociations
 	}
 	return json.Marshal(toSerialize)

@@ -16,19 +16,24 @@ import (
 
 // TemplateSummary struct for TemplateSummary
 type TemplateSummary struct {
-	Sources *[]string                 `json:"sources,omitempty"`
-	StackID *string                   `json:"stackID,omitempty"`
-	Summary *TemplateSummaryResources `json:"summary,omitempty"`
-	Diff    *TemplateSummaryDiff      `json:"diff,omitempty"`
-	Errors  *[]TemplateSummaryError   `json:"errors,omitempty"`
+	Sources []string                 `json:"sources"`
+	StackID string                   `json:"stackID"`
+	Summary TemplateSummaryResources `json:"summary"`
+	Diff    TemplateSummaryDiff      `json:"diff"`
+	Errors  []TemplateSummaryError   `json:"errors"`
 }
 
 // NewTemplateSummary instantiates a new TemplateSummary object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummary() *TemplateSummary {
+func NewTemplateSummary(sources []string, stackID string, summary TemplateSummaryResources, diff TemplateSummaryDiff, errors []TemplateSummaryError) *TemplateSummary {
 	this := TemplateSummary{}
+	this.Sources = sources
+	this.StackID = stackID
+	this.Summary = summary
+	this.Diff = diff
+	this.Errors = errors
 	return &this
 }
 
@@ -40,181 +45,141 @@ func NewTemplateSummaryWithDefaults() *TemplateSummary {
 	return &this
 }
 
-// GetSources returns the Sources field value if set, zero value otherwise.
+// GetSources returns the Sources field value
 func (o *TemplateSummary) GetSources() []string {
-	if o == nil || o.Sources == nil {
+	if o == nil {
 		var ret []string
 		return ret
 	}
-	return *o.Sources
+
+	return o.Sources
 }
 
-// GetSourcesOk returns a tuple with the Sources field value if set, nil otherwise
+// GetSourcesOk returns a tuple with the Sources field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummary) GetSourcesOk() (*[]string, bool) {
-	if o == nil || o.Sources == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Sources, true
+	return &o.Sources, true
 }
 
-// HasSources returns a boolean if a field has been set.
-func (o *TemplateSummary) HasSources() bool {
-	if o != nil && o.Sources != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetSources gets a reference to the given []string and assigns it to the Sources field.
+// SetSources sets field value
 func (o *TemplateSummary) SetSources(v []string) {
-	o.Sources = &v
+	o.Sources = v
 }
 
-// GetStackID returns the StackID field value if set, zero value otherwise.
+// GetStackID returns the StackID field value
 func (o *TemplateSummary) GetStackID() string {
-	if o == nil || o.StackID == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.StackID
+
+	return o.StackID
 }
 
-// GetStackIDOk returns a tuple with the StackID field value if set, nil otherwise
+// GetStackIDOk returns a tuple with the StackID field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummary) GetStackIDOk() (*string, bool) {
-	if o == nil || o.StackID == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.StackID, true
+	return &o.StackID, true
 }
 
-// HasStackID returns a boolean if a field has been set.
-func (o *TemplateSummary) HasStackID() bool {
-	if o != nil && o.StackID != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetStackID gets a reference to the given string and assigns it to the StackID field.
+// SetStackID sets field value
 func (o *TemplateSummary) SetStackID(v string) {
-	o.StackID = &v
+	o.StackID = v
 }
 
-// GetSummary returns the Summary field value if set, zero value otherwise.
+// GetSummary returns the Summary field value
 func (o *TemplateSummary) GetSummary() TemplateSummaryResources {
-	if o == nil || o.Summary == nil {
+	if o == nil {
 		var ret TemplateSummaryResources
 		return ret
 	}
-	return *o.Summary
+
+	return o.Summary
 }
 
-// GetSummaryOk returns a tuple with the Summary field value if set, nil otherwise
+// GetSummaryOk returns a tuple with the Summary field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummary) GetSummaryOk() (*TemplateSummaryResources, bool) {
-	if o == nil || o.Summary == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Summary, true
+	return &o.Summary, true
 }
 
-// HasSummary returns a boolean if a field has been set.
-func (o *TemplateSummary) HasSummary() bool {
-	if o != nil && o.Summary != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetSummary gets a reference to the given TemplateSummaryResources and assigns it to the Summary field.
+// SetSummary sets field value
 func (o *TemplateSummary) SetSummary(v TemplateSummaryResources) {
-	o.Summary = &v
+	o.Summary = v
 }
 
-// GetDiff returns the Diff field value if set, zero value otherwise.
+// GetDiff returns the Diff field value
 func (o *TemplateSummary) GetDiff() TemplateSummaryDiff {
-	if o == nil || o.Diff == nil {
+	if o == nil {
 		var ret TemplateSummaryDiff
 		return ret
 	}
-	return *o.Diff
+
+	return o.Diff
 }
 
-// GetDiffOk returns a tuple with the Diff field value if set, nil otherwise
+// GetDiffOk returns a tuple with the Diff field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummary) GetDiffOk() (*TemplateSummaryDiff, bool) {
-	if o == nil || o.Diff == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Diff, true
+	return &o.Diff, true
 }
 
-// HasDiff returns a boolean if a field has been set.
-func (o *TemplateSummary) HasDiff() bool {
-	if o != nil && o.Diff != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetDiff gets a reference to the given TemplateSummaryDiff and assigns it to the Diff field.
+// SetDiff sets field value
 func (o *TemplateSummary) SetDiff(v TemplateSummaryDiff) {
-	o.Diff = &v
+	o.Diff = v
 }
 
-// GetErrors returns the Errors field value if set, zero value otherwise.
+// GetErrors returns the Errors field value
 func (o *TemplateSummary) GetErrors() []TemplateSummaryError {
-	if o == nil || o.Errors == nil {
+	if o == nil {
 		var ret []TemplateSummaryError
 		return ret
 	}
-	return *o.Errors
+
+	return o.Errors
 }
 
-// GetErrorsOk returns a tuple with the Errors field value if set, nil otherwise
+// GetErrorsOk returns a tuple with the Errors field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummary) GetErrorsOk() (*[]TemplateSummaryError, bool) {
-	if o == nil || o.Errors == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Errors, true
+	return &o.Errors, true
 }
 
-// HasErrors returns a boolean if a field has been set.
-func (o *TemplateSummary) HasErrors() bool {
-	if o != nil && o.Errors != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetErrors gets a reference to the given []TemplateSummaryError and assigns it to the Errors field.
+// SetErrors sets field value
 func (o *TemplateSummary) SetErrors(v []TemplateSummaryError) {
-	o.Errors = &v
+	o.Errors = v
 }
 
 func (o TemplateSummary) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Sources != nil {
+	if true {
 		toSerialize["sources"] = o.Sources
 	}
-	if o.StackID != nil {
+	if true {
 		toSerialize["stackID"] = o.StackID
 	}
-	if o.Summary != nil {
+	if true {
 		toSerialize["summary"] = o.Summary
 	}
-	if o.Diff != nil {
+	if true {
 		toSerialize["diff"] = o.Diff
 	}
-	if o.Errors != nil {
+	if true {
 		toSerialize["errors"] = o.Errors
 	}
 	return json.Marshal(toSerialize)

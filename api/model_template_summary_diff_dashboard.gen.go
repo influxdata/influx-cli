@@ -16,10 +16,10 @@ import (
 
 // TemplateSummaryDiffDashboard struct for TemplateSummaryDiffDashboard
 type TemplateSummaryDiffDashboard struct {
-	StateStatus      *string                             `json:"stateStatus,omitempty"`
-	Id               *string                             `json:"id,omitempty"`
-	Kind             *string                             `json:"kind,omitempty"`
-	TemplateMetaName *string                             `json:"templateMetaName,omitempty"`
+	StateStatus      string                              `json:"stateStatus"`
+	Id               string                              `json:"id"`
+	Kind             string                              `json:"kind"`
+	TemplateMetaName string                              `json:"templateMetaName"`
 	New              *TemplateSummaryDiffDashboardFields `json:"new,omitempty"`
 	Old              *TemplateSummaryDiffDashboardFields `json:"old,omitempty"`
 }
@@ -28,8 +28,12 @@ type TemplateSummaryDiffDashboard struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffDashboard() *TemplateSummaryDiffDashboard {
+func NewTemplateSummaryDiffDashboard(stateStatus string, id string, kind string, templateMetaName string) *TemplateSummaryDiffDashboard {
 	this := TemplateSummaryDiffDashboard{}
+	this.StateStatus = stateStatus
+	this.Id = id
+	this.Kind = kind
+	this.TemplateMetaName = templateMetaName
 	return &this
 }
 
@@ -41,132 +45,100 @@ func NewTemplateSummaryDiffDashboardWithDefaults() *TemplateSummaryDiffDashboard
 	return &this
 }
 
-// GetStateStatus returns the StateStatus field value if set, zero value otherwise.
+// GetStateStatus returns the StateStatus field value
 func (o *TemplateSummaryDiffDashboard) GetStateStatus() string {
-	if o == nil || o.StateStatus == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.StateStatus
+
+	return o.StateStatus
 }
 
-// GetStateStatusOk returns a tuple with the StateStatus field value if set, nil otherwise
+// GetStateStatusOk returns a tuple with the StateStatus field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffDashboard) GetStateStatusOk() (*string, bool) {
-	if o == nil || o.StateStatus == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.StateStatus, true
+	return &o.StateStatus, true
 }
 
-// HasStateStatus returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffDashboard) HasStateStatus() bool {
-	if o != nil && o.StateStatus != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetStateStatus gets a reference to the given string and assigns it to the StateStatus field.
+// SetStateStatus sets field value
 func (o *TemplateSummaryDiffDashboard) SetStateStatus(v string) {
-	o.StateStatus = &v
+	o.StateStatus = v
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *TemplateSummaryDiffDashboard) GetId() string {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffDashboard) GetIdOk() (*string, bool) {
-	if o == nil || o.Id == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffDashboard) HasId() bool {
-	if o != nil && o.Id != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *TemplateSummaryDiffDashboard) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetKind returns the Kind field value if set, zero value otherwise.
+// GetKind returns the Kind field value
 func (o *TemplateSummaryDiffDashboard) GetKind() string {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Kind
+
+	return o.Kind
 }
 
-// GetKindOk returns a tuple with the Kind field value if set, nil otherwise
+// GetKindOk returns a tuple with the Kind field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffDashboard) GetKindOk() (*string, bool) {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Kind, true
+	return &o.Kind, true
 }
 
-// HasKind returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffDashboard) HasKind() bool {
-	if o != nil && o.Kind != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetKind gets a reference to the given string and assigns it to the Kind field.
+// SetKind sets field value
 func (o *TemplateSummaryDiffDashboard) SetKind(v string) {
-	o.Kind = &v
+	o.Kind = v
 }
 
-// GetTemplateMetaName returns the TemplateMetaName field value if set, zero value otherwise.
+// GetTemplateMetaName returns the TemplateMetaName field value
 func (o *TemplateSummaryDiffDashboard) GetTemplateMetaName() string {
-	if o == nil || o.TemplateMetaName == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.TemplateMetaName
+
+	return o.TemplateMetaName
 }
 
-// GetTemplateMetaNameOk returns a tuple with the TemplateMetaName field value if set, nil otherwise
+// GetTemplateMetaNameOk returns a tuple with the TemplateMetaName field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffDashboard) GetTemplateMetaNameOk() (*string, bool) {
-	if o == nil || o.TemplateMetaName == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.TemplateMetaName, true
+	return &o.TemplateMetaName, true
 }
 
-// HasTemplateMetaName returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffDashboard) HasTemplateMetaName() bool {
-	if o != nil && o.TemplateMetaName != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTemplateMetaName gets a reference to the given string and assigns it to the TemplateMetaName field.
+// SetTemplateMetaName sets field value
 func (o *TemplateSummaryDiffDashboard) SetTemplateMetaName(v string) {
-	o.TemplateMetaName = &v
+	o.TemplateMetaName = v
 }
 
 // GetNew returns the New field value if set, zero value otherwise.
@@ -235,16 +207,16 @@ func (o *TemplateSummaryDiffDashboard) SetOld(v TemplateSummaryDiffDashboardFiel
 
 func (o TemplateSummaryDiffDashboard) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.StateStatus != nil {
+	if true {
 		toSerialize["stateStatus"] = o.StateStatus
 	}
-	if o.Id != nil {
+	if true {
 		toSerialize["id"] = o.Id
 	}
-	if o.Kind != nil {
+	if true {
 		toSerialize["kind"] = o.Kind
 	}
-	if o.TemplateMetaName != nil {
+	if true {
 		toSerialize["templateMetaName"] = o.TemplateMetaName
 	}
 	if o.New != nil {

@@ -8,3 +8,4 @@ allOf:
         type: string
       description:
         type: string
+    required: [id, name]

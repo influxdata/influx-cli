@@ -16,7 +16,7 @@ import (
 
 // TemplateSummaryLabelAllOfProperties struct for TemplateSummaryLabelAllOfProperties
 type TemplateSummaryLabelAllOfProperties struct {
-	Color       *string `json:"color,omitempty"`
+	Color       string  `json:"color"`
 	Description *string `json:"description,omitempty"`
 }
 
@@ -24,8 +24,9 @@ type TemplateSummaryLabelAllOfProperties struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryLabelAllOfProperties() *TemplateSummaryLabelAllOfProperties {
+func NewTemplateSummaryLabelAllOfProperties(color string) *TemplateSummaryLabelAllOfProperties {
 	this := TemplateSummaryLabelAllOfProperties{}
+	this.Color = color
 	return &this
 }
 
@@ -37,36 +38,28 @@ func NewTemplateSummaryLabelAllOfPropertiesWithDefaults() *TemplateSummaryLabelA
 	return &this
 }
 
-// GetColor returns the Color field value if set, zero value otherwise.
+// GetColor returns the Color field value
 func (o *TemplateSummaryLabelAllOfProperties) GetColor() string {
-	if o == nil || o.Color == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Color
+
+	return o.Color
 }
 
-// GetColorOk returns a tuple with the Color field value if set, nil otherwise
+// GetColorOk returns a tuple with the Color field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryLabelAllOfProperties) GetColorOk() (*string, bool) {
-	if o == nil || o.Color == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Color, true
+	return &o.Color, true
 }
 
-// HasColor returns a boolean if a field has been set.
-func (o *TemplateSummaryLabelAllOfProperties) HasColor() bool {
-	if o != nil && o.Color != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetColor gets a reference to the given string and assigns it to the Color field.
+// SetColor sets field value
 func (o *TemplateSummaryLabelAllOfProperties) SetColor(v string) {
-	o.Color = &v
+	o.Color = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -103,7 +96,7 @@ func (o *TemplateSummaryLabelAllOfProperties) SetDescription(v string) {
 
 func (o TemplateSummaryLabelAllOfProperties) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Color != nil {
+	if true {
 		toSerialize["color"] = o.Color
 	}
 	if o.Description != nil {

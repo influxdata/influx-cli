@@ -16,13 +16,13 @@ import (
 
 // TemplateSummaryDiffNotificationRuleFields struct for TemplateSummaryDiffNotificationRuleFields
 type TemplateSummaryDiffNotificationRuleFields struct {
-	Name            *string `json:"name,omitempty"`
+	Name            string  `json:"name"`
 	Description     *string `json:"description,omitempty"`
-	EndpointName    *string `json:"endpointName,omitempty"`
-	EndpointID      *string `json:"endpointID,omitempty"`
-	EndpointType    *string `json:"endpointType,omitempty"`
-	Every           *string `json:"every,omitempty"`
-	Offset          *string `json:"offset,omitempty"`
+	EndpointName    string  `json:"endpointName"`
+	EndpointID      string  `json:"endpointID"`
+	EndpointType    string  `json:"endpointType"`
+	Every           string  `json:"every"`
+	Offset          string  `json:"offset"`
 	MessageTemplate *string `json:"messageTemplate,omitempty"`
 }
 
@@ -30,8 +30,14 @@ type TemplateSummaryDiffNotificationRuleFields struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffNotificationRuleFields() *TemplateSummaryDiffNotificationRuleFields {
+func NewTemplateSummaryDiffNotificationRuleFields(name string, endpointName string, endpointID string, endpointType string, every string, offset string) *TemplateSummaryDiffNotificationRuleFields {
 	this := TemplateSummaryDiffNotificationRuleFields{}
+	this.Name = name
+	this.EndpointName = endpointName
+	this.EndpointID = endpointID
+	this.EndpointType = endpointType
+	this.Every = every
+	this.Offset = offset
 	return &this
 }
 
@@ -43,36 +49,28 @@ func NewTemplateSummaryDiffNotificationRuleFieldsWithDefaults() *TemplateSummary
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *TemplateSummaryDiffNotificationRuleFields) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffNotificationRuleFields) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffNotificationRuleFields) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *TemplateSummaryDiffNotificationRuleFields) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -107,164 +105,124 @@ func (o *TemplateSummaryDiffNotificationRuleFields) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetEndpointName returns the EndpointName field value if set, zero value otherwise.
+// GetEndpointName returns the EndpointName field value
 func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointName() string {
-	if o == nil || o.EndpointName == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.EndpointName
+
+	return o.EndpointName
 }
 
-// GetEndpointNameOk returns a tuple with the EndpointName field value if set, nil otherwise
+// GetEndpointNameOk returns a tuple with the EndpointName field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointNameOk() (*string, bool) {
-	if o == nil || o.EndpointName == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EndpointName, true
+	return &o.EndpointName, true
 }
 
-// HasEndpointName returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffNotificationRuleFields) HasEndpointName() bool {
-	if o != nil && o.EndpointName != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEndpointName gets a reference to the given string and assigns it to the EndpointName field.
+// SetEndpointName sets field value
 func (o *TemplateSummaryDiffNotificationRuleFields) SetEndpointName(v string) {
-	o.EndpointName = &v
+	o.EndpointName = v
 }
 
-// GetEndpointID returns the EndpointID field value if set, zero value otherwise.
+// GetEndpointID returns the EndpointID field value
 func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointID() string {
-	if o == nil || o.EndpointID == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.EndpointID
+
+	return o.EndpointID
 }
 
-// GetEndpointIDOk returns a tuple with the EndpointID field value if set, nil otherwise
+// GetEndpointIDOk returns a tuple with the EndpointID field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointIDOk() (*string, bool) {
-	if o == nil || o.EndpointID == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EndpointID, true
+	return &o.EndpointID, true
 }
 
-// HasEndpointID returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffNotificationRuleFields) HasEndpointID() bool {
-	if o != nil && o.EndpointID != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEndpointID gets a reference to the given string and assigns it to the EndpointID field.
+// SetEndpointID sets field value
 func (o *TemplateSummaryDiffNotificationRuleFields) SetEndpointID(v string) {
-	o.EndpointID = &v
+	o.EndpointID = v
 }
 
-// GetEndpointType returns the EndpointType field value if set, zero value otherwise.
+// GetEndpointType returns the EndpointType field value
 func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointType() string {
-	if o == nil || o.EndpointType == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.EndpointType
+
+	return o.EndpointType
 }
 
-// GetEndpointTypeOk returns a tuple with the EndpointType field value if set, nil otherwise
+// GetEndpointTypeOk returns a tuple with the EndpointType field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointTypeOk() (*string, bool) {
-	if o == nil || o.EndpointType == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.EndpointType, true
+	return &o.EndpointType, true
 }
 
-// HasEndpointType returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffNotificationRuleFields) HasEndpointType() bool {
-	if o != nil && o.EndpointType != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEndpointType gets a reference to the given string and assigns it to the EndpointType field.
+// SetEndpointType sets field value
 func (o *TemplateSummaryDiffNotificationRuleFields) SetEndpointType(v string) {
-	o.EndpointType = &v
+	o.EndpointType = v
 }
 
-// GetEvery returns the Every field value if set, zero value otherwise.
+// GetEvery returns the Every field value
 func (o *TemplateSummaryDiffNotificationRuleFields) GetEvery() string {
-	if o == nil || o.Every == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Every
+
+	return o.Every
 }
 
-// GetEveryOk returns a tuple with the Every field value if set, nil otherwise
+// GetEveryOk returns a tuple with the Every field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffNotificationRuleFields) GetEveryOk() (*string, bool) {
-	if o == nil || o.Every == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Every, true
+	return &o.Every, true
 }
 
-// HasEvery returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffNotificationRuleFields) HasEvery() bool {
-	if o != nil && o.Every != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEvery gets a reference to the given string and assigns it to the Every field.
+// SetEvery sets field value
 func (o *TemplateSummaryDiffNotificationRuleFields) SetEvery(v string) {
-	o.Every = &v
+	o.Every = v
 }
 
-// GetOffset returns the Offset field value if set, zero value otherwise.
+// GetOffset returns the Offset field value
 func (o *TemplateSummaryDiffNotificationRuleFields) GetOffset() string {
-	if o == nil || o.Offset == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Offset
+
+	return o.Offset
 }
 
-// GetOffsetOk returns a tuple with the Offset field value if set, nil otherwise
+// GetOffsetOk returns a tuple with the Offset field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffNotificationRuleFields) GetOffsetOk() (*string, bool) {
-	if o == nil || o.Offset == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Offset, true
+	return &o.Offset, true
 }
 
-// HasOffset returns a boolean if a field has been set.
-func (o *TemplateSummaryDiffNotificationRuleFields) HasOffset() bool {
-	if o != nil && o.Offset != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetOffset gets a reference to the given string and assigns it to the Offset field.
+// SetOffset sets field value
 func (o *TemplateSummaryDiffNotificationRuleFields) SetOffset(v string) {
-	o.Offset = &v
+	o.Offset = v
 }
 
 // GetMessageTemplate returns the MessageTemplate field value if set, zero value otherwise.
@@ -301,25 +259,25 @@ func (o *TemplateSummaryDiffNotificationRuleFields) SetMessageTemplate(v string)
 
 func (o TemplateSummaryDiffNotificationRuleFields) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}
-	if o.EndpointName != nil {
+	if true {
 		toSerialize["endpointName"] = o.EndpointName
 	}
-	if o.EndpointID != nil {
+	if true {
 		toSerialize["endpointID"] = o.EndpointID
 	}
-	if o.EndpointType != nil {
+	if true {
 		toSerialize["endpointType"] = o.EndpointType
 	}
-	if o.Every != nil {
+	if true {
 		toSerialize["every"] = o.Every
 	}
-	if o.Offset != nil {
+	if true {
 		toSerialize["offset"] = o.Offset
 	}
 	if o.MessageTemplate != nil {
