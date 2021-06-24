@@ -391,7 +391,8 @@ func (c Client) getAuthReqID(ctx context.Context, params *clients.AuthLookupPara
 	if params.ID.Valid() {
 		id = params.ID.String()
 	} else {
-		auths, err := c.LegacyAuthorizationsApi.GetAuthorizations(ctx).Token(params.Username).Execute()
+		var auths api.Authorizations
+		auths, err = c.LegacyAuthorizationsApi.GetAuthorizations(ctx).Token(params.Username).Execute()
 		if err != nil || len(auths.GetAuthorizations()) == 0 {
 			err = fmt.Errorf("could not find v1 auth with token (username) %q: %w", params.Username, err)
 		} else {
