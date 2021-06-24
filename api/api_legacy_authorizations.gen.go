@@ -54,10 +54,9 @@ type LegacyAuthorizationsApi interface {
 	/*
 	 * GetAuthorizationsID Retrieve an authorization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param authID The ID of the authorization to get.
 	 * @return ApiGetAuthorizationsIDRequest
 	 */
-	GetAuthorizationsID(ctx _context.Context, authID string) ApiGetAuthorizationsIDRequest
+	GetAuthorizationsID(ctx _context.Context) ApiGetAuthorizationsIDRequest
 
 	/*
 	 * GetAuthorizationsIDExecute executes the request
@@ -415,16 +414,9 @@ func (a *LegacyAuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthor
 type ApiGetAuthorizationsIDRequest struct {
 	ctx          _context.Context
 	ApiService   LegacyAuthorizationsApi
-	authID       string
 	zapTraceSpan *string
-}
-
-func (r ApiGetAuthorizationsIDRequest) AuthID(authID string) ApiGetAuthorizationsIDRequest {
-	r.authID = authID
-	return r
-}
-func (r ApiGetAuthorizationsIDRequest) GetAuthID() string {
-	return r.authID
+	authID       *string
+	token        *string
 }
 
 func (r ApiGetAuthorizationsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiGetAuthorizationsIDRequest {
@@ -435,6 +427,22 @@ func (r ApiGetAuthorizationsIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
+func (r ApiGetAuthorizationsIDRequest) AuthID(authID string) ApiGetAuthorizationsIDRequest {
+	r.authID = &authID
+	return r
+}
+func (r ApiGetAuthorizationsIDRequest) GetAuthID() *string {
+	return r.authID
+}
+
+func (r ApiGetAuthorizationsIDRequest) Token(token string) ApiGetAuthorizationsIDRequest {
+	r.token = &token
+	return r
+}
+func (r ApiGetAuthorizationsIDRequest) GetToken() *string {
+	return r.token
+}
+
 func (r ApiGetAuthorizationsIDRequest) Execute() (Authorization, error) {
 	return r.ApiService.GetAuthorizationsIDExecute(r)
 }
@@ -442,14 +450,12 @@ func (r ApiGetAuthorizationsIDRequest) Execute() (Authorization, error) {
 /*
  * GetAuthorizationsID Retrieve an authorization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param authID The ID of the authorization to get.
  * @return ApiGetAuthorizationsIDRequest
  */
-func (a *LegacyAuthorizationsApiService) GetAuthorizationsID(ctx _context.Context, authID string) ApiGetAuthorizationsIDRequest {
+func (a *LegacyAuthorizationsApiService) GetAuthorizationsID(ctx _context.Context) ApiGetAuthorizationsIDRequest {
 	return ApiGetAuthorizationsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
-		authID:     authID,
 	}
 }
 
@@ -473,12 +479,17 @@ func (a *LegacyAuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuth
 	}
 
 	localVarPath := localBasePath + "/legacy/authorizations/{authID}"
-	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 
+	if r.authID != nil {
+		localVarQueryParams.Add("authID", parameterToString(*r.authID, ""))
+	}
+	if r.token != nil {
+		localVarQueryParams.Add("token", parameterToString(*r.token, ""))
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
