@@ -1,0 +1,17 @@
+allOf:
+  - $ref: "./TemplateSummaryCommon.yml"
+  - type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      cron:
+        type: string
+      every:
+        type: string
+      offset:
+        type: string
+    required: [id, name]

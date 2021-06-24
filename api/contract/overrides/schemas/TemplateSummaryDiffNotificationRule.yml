@@ -1,0 +1,15 @@
+type: object
+properties:
+  kind:
+    type: string
+  stateStatus:
+    type: string
+  id:
+    type: string
+  templateMetaName:
+    type: string
+  new:
+    $ref: "./TemplateSummaryDiffNotificationRuleFields.yml"
+  old:
+    $ref: "./TemplateSummaryDiffNotificationRuleFields.yml"
+required: [kind, stateStatus, id, templateMetaName]

@@ -1,0 +1,17 @@
+type: object
+properties:
+  name:
+    type: string
+  cron:
+    type: string
+  description:
+    type: string
+  every:
+    type: string
+  offset:
+    type: string
+  query:
+    type: string
+  status:
+    type: string
+required: [name, status]

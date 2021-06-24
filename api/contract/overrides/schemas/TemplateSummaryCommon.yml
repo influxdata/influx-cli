@@ -1,0 +1,9 @@
+allOf:
+  - $ref: "./TemplateSummaryCore.yml"
+  - type: object
+    properties:
+      labelAssociations:
+        type: array
+        items:
+          $ref: "./TemplateSummaryLabel.yml"
+    required: [labelAssociations]

@@ -1,0 +1,13 @@
+allOf:
+  - $ref: "./TemplateSummaryCommon.yml"
+  - type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      arguments:
+        $ref: "./TemplateSummaryVariableArgs.yml"
+    required: [id, name, arguments]

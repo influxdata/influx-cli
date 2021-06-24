@@ -9,5 +9,7 @@ properties:
     properties:
       name:
         type: string
+    required: [name]
   spec:
     type: object
+required: [apiVersion, kind, meta, spec]

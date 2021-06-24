@@ -1,0 +1,17 @@
+type: object
+properties:
+  sources:
+    type: array
+    items:
+      type: string
+  stackID:
+    type: string
+  summary:
+    $ref: "./TemplateSummaryResources.yml"
+  diff:
+    $ref: "./TemplateSummaryDiff.yml"
+  errors:
+    type: array
+    items:
+      $ref: "./TemplateSummaryError.yml"
+required: [sources, stackID, summary, diff, errors]

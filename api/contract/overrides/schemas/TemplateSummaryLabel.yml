@@ -1,0 +1,19 @@
+allOf:
+  - $ref: "./TemplateSummaryCore.yml"
+  - type: object
+    properties:
+      id:
+        type: string
+      orgID:
+        type: string
+      name:
+        type: string
+      properties:
+        type: object
+        properties:
+          color:
+            type: string
+          description:
+            type: string
+        required: [color]
+    required: [id, name, properties]

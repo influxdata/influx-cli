@@ -16,18 +16,22 @@ import (
 
 // TemplateEntry struct for TemplateEntry
 type TemplateEntry struct {
-	ApiVersion *string                 `json:"apiVersion,omitempty"`
-	Kind       *string                 `json:"kind,omitempty"`
-	Meta       *TemplateEntryMeta      `json:"meta,omitempty"`
-	Spec       *map[string]interface{} `json:"spec,omitempty"`
+	ApiVersion string                 `json:"apiVersion"`
+	Kind       string                 `json:"kind"`
+	Meta       TemplateEntryMeta      `json:"meta"`
+	Spec       map[string]interface{} `json:"spec"`
 }
 
 // NewTemplateEntry instantiates a new TemplateEntry object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateEntry() *TemplateEntry {
+func NewTemplateEntry(apiVersion string, kind string, meta TemplateEntryMeta, spec map[string]interface{}) *TemplateEntry {
 	this := TemplateEntry{}
+	this.ApiVersion = apiVersion
+	this.Kind = kind
+	this.Meta = meta
+	this.Spec = spec
 	return &this
 }
 
@@ -39,146 +43,114 @@ func NewTemplateEntryWithDefaults() *TemplateEntry {
 	return &this
 }
 
-// GetApiVersion returns the ApiVersion field value if set, zero value otherwise.
+// GetApiVersion returns the ApiVersion field value
 func (o *TemplateEntry) GetApiVersion() string {
-	if o == nil || o.ApiVersion == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ApiVersion
+
+	return o.ApiVersion
 }
 
-// GetApiVersionOk returns a tuple with the ApiVersion field value if set, nil otherwise
+// GetApiVersionOk returns a tuple with the ApiVersion field value
 // and a boolean to check if the value has been set.
 func (o *TemplateEntry) GetApiVersionOk() (*string, bool) {
-	if o == nil || o.ApiVersion == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.ApiVersion, true
+	return &o.ApiVersion, true
 }
 
-// HasApiVersion returns a boolean if a field has been set.
-func (o *TemplateEntry) HasApiVersion() bool {
-	if o != nil && o.ApiVersion != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetApiVersion gets a reference to the given string and assigns it to the ApiVersion field.
+// SetApiVersion sets field value
 func (o *TemplateEntry) SetApiVersion(v string) {
-	o.ApiVersion = &v
+	o.ApiVersion = v
 }
 
-// GetKind returns the Kind field value if set, zero value otherwise.
+// GetKind returns the Kind field value
 func (o *TemplateEntry) GetKind() string {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Kind
+
+	return o.Kind
 }
 
-// GetKindOk returns a tuple with the Kind field value if set, nil otherwise
+// GetKindOk returns a tuple with the Kind field value
 // and a boolean to check if the value has been set.
 func (o *TemplateEntry) GetKindOk() (*string, bool) {
-	if o == nil || o.Kind == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Kind, true
+	return &o.Kind, true
 }
 
-// HasKind returns a boolean if a field has been set.
-func (o *TemplateEntry) HasKind() bool {
-	if o != nil && o.Kind != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetKind gets a reference to the given string and assigns it to the Kind field.
+// SetKind sets field value
 func (o *TemplateEntry) SetKind(v string) {
-	o.Kind = &v
+	o.Kind = v
 }
 
-// GetMeta returns the Meta field value if set, zero value otherwise.
+// GetMeta returns the Meta field value
 func (o *TemplateEntry) GetMeta() TemplateEntryMeta {
-	if o == nil || o.Meta == nil {
+	if o == nil {
 		var ret TemplateEntryMeta
 		return ret
 	}
-	return *o.Meta
+
+	return o.Meta
 }
 
-// GetMetaOk returns a tuple with the Meta field value if set, nil otherwise
+// GetMetaOk returns a tuple with the Meta field value
 // and a boolean to check if the value has been set.
 func (o *TemplateEntry) GetMetaOk() (*TemplateEntryMeta, bool) {
-	if o == nil || o.Meta == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Meta, true
+	return &o.Meta, true
 }
 
-// HasMeta returns a boolean if a field has been set.
-func (o *TemplateEntry) HasMeta() bool {
-	if o != nil && o.Meta != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetMeta gets a reference to the given TemplateEntryMeta and assigns it to the Meta field.
+// SetMeta sets field value
 func (o *TemplateEntry) SetMeta(v TemplateEntryMeta) {
-	o.Meta = &v
+	o.Meta = v
 }
 
-// GetSpec returns the Spec field value if set, zero value otherwise.
+// GetSpec returns the Spec field value
 func (o *TemplateEntry) GetSpec() map[string]interface{} {
-	if o == nil || o.Spec == nil {
+	if o == nil {
 		var ret map[string]interface{}
 		return ret
 	}
-	return *o.Spec
+
+	return o.Spec
 }
 
-// GetSpecOk returns a tuple with the Spec field value if set, nil otherwise
+// GetSpecOk returns a tuple with the Spec field value
 // and a boolean to check if the value has been set.
 func (o *TemplateEntry) GetSpecOk() (*map[string]interface{}, bool) {
-	if o == nil || o.Spec == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.Spec, true
+	return &o.Spec, true
 }
 
-// HasSpec returns a boolean if a field has been set.
-func (o *TemplateEntry) HasSpec() bool {
-	if o != nil && o.Spec != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetSpec gets a reference to the given map[string]interface{} and assigns it to the Spec field.
+// SetSpec sets field value
 func (o *TemplateEntry) SetSpec(v map[string]interface{}) {
-	o.Spec = &v
+	o.Spec = v
 }
 
 func (o TemplateEntry) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.ApiVersion != nil {
+	if true {
 		toSerialize["apiVersion"] = o.ApiVersion
 	}
-	if o.Kind != nil {
+	if true {
 		toSerialize["kind"] = o.Kind
 	}
-	if o.Meta != nil {
+	if true {
 		toSerialize["meta"] = o.Meta
 	}
-	if o.Spec != nil {
+	if true {
 		toSerialize["spec"] = o.Spec
 	}
 	return json.Marshal(toSerialize)

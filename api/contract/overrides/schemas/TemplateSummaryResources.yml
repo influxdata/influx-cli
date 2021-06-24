@@ -1,0 +1,63 @@
+type: object
+properties:
+  buckets:
+    type: array
+    items:
+      $ref: "./TemplateSummaryBucket.yml"
+  checks:
+    type: array
+    items:
+      $ref: "./TemplateSummaryCheck.yml"
+  dashboards:
+    type: array
+    items:
+      $ref: "./TemplateSummaryDashboard.yml"
+  labels:
+    type: array
+    items:
+      $ref: "./TemplateSummaryLabel.yml"
+  labelMappings:
+    type: array
+    items:
+      $ref: "./TemplateSummaryLabelMapping.yml"
+  missingEnvRefs:
+    type: array
+    items:
+      type: string
+  missingSecrets:
+    type: array
+    items:
+      type: string
+  notificationEndpoints:
+    type: array
+    items:
+      $ref: "./TemplateSummaryNotificationEndpoint.yml"
+  notificationRules:
+    type: array
+    items:
+      $ref: "./TemplateSummaryNotificationRule.yml"
+  tasks:
+    type: array
+    items:
+      $ref: "./TemplateSummaryTask.yml"
+  telegrafConfigs:
+    type: array
+    items:
+      $ref: "./TemplateSummaryTelegraf.yml"
+  variables:
+    type: array
+    items:
+      $ref: "./TemplateSummaryVariable.yml"
+required:
+  - buckets
+  - checks
+  - dashboards
+  - labels
+  - labelMappings
+  - missingEnvRefs
+  - missingSecrets
+  - notificationEndpoints
+  - notificationRules
+  - tasks
+  - telegrafConfigs
+  - variables

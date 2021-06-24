@@ -1,0 +1,53 @@
+type: object
+properties:
+  buckets:
+    type: array
+    items:
+      $ref: "./TemplateSummaryDiffBucket.yml"
+  checks:
+    type: array
+    items:
+      $ref: "./TemplateSummaryDiffCheck.yml"
+  dashboards:
+    type: array
+    items:
+      $ref: "./TemplateSummaryDiffDashboard.yml"
+  labels:
+    type: array
+    items:
+      $ref: "./TemplateSummaryDiffLabel.yml"
+  labelMappings:
+    type: array
+    items:
+      $ref: "./TemplateSummaryLabelMapping.yml"
+  notificationEndpoints:
+    type: array
+    items:
+      $ref: "./TemplateSummaryDiffNotificationEndpoint.yml"
+  notificationRules:
+    type: array
+    items:
+      $ref: "./TemplateSummaryDiffNotificationRule.yml"
+  tasks:
+    type: array
+    items:
+      $ref: "./TemplateSummaryDiffTask.yml"
+  telegrafConfigs:
+    type: array
+    items:
+      $ref: "./TemplateSummaryDiffTelegraf.yml"
+  variables:
+    type: array
+    items:
+      $ref: "./TemplateSummaryDiffVariable.yml"
+required:
+  - buckets
+  - checks
+  - dashboards
+  - labels
+  - labelMappings
+  - notificationEndpoints
+  - notificationRules
+  - tasks
+  - telegrafConfigs
+  - variables

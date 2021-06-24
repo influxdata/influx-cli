@@ -1,0 +1,15 @@
+type: object
+properties:
+  stateStatus:
+    type: string
+  id:
+    type: string
+  kind:
+    type: string
+  templateMetaName:
+    type: string
+  new:
+    $ref: "./TemplateSummaryDiffDashboardFields.yml"
+  old:
+    $ref: "./TemplateSummaryDiffDashboardFields.yml"
+required: [kind, stateStatus, id, templateMetaName]

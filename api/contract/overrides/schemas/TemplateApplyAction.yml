@@ -1,0 +1,13 @@
+type: object
+properties:
+  action:
+    $ref: "./TemplateApplyActionKind.yml"
+  properties:
+    type: object
+    properties:
+      kind:
+        type: string
+      resourceTemplateName:
+        type: string
+    required: [kind]
+required: [action, properties]
