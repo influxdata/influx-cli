@@ -73,13 +73,14 @@ func SourcesFromPath(path string, recur bool, encoding TemplateEncoding) ([]Temp
 		path := paths[i] // Local var for the `Open` closure to capture.
 		encoding := encoding
 		if encoding == TemplateEncodingUnknown {
-			ext := filepath.Ext(path)
-			switch {
-			case strings.HasPrefix(ext, ".jsonnet"):
+			switch filepath.Ext(path) {
+			case ".jsonnet":
 				encoding = TemplateEncodingJsonnet
-			case strings.HasPrefix(ext, ".json"):
+			case ".json":
 				encoding = TemplateEncodingJson
-			case strings.HasPrefix(ext, ".yml") || strings.HasPrefix(ext, ".yaml"):
+			case ".yml":
+				fallthrough
+			case ".yaml":
 				encoding = TemplateEncodingYaml
 			default:
 			}
@@ -128,13 +129,14 @@ func findPaths(path string, recur bool) ([]string, error) {
 
 func SourceFromURL(u *url.URL, encoding TemplateEncoding) TemplateSource {
 	if encoding == TemplateEncodingUnknown {
-		ext := path.Ext(u.Path)
-		switch {
-		case strings.HasPrefix(ext, ".jsonnet"):
+		switch path.Ext(u.Path) {
+		case ".jsonnet":
 			encoding = TemplateEncodingJsonnet
-		case strings.HasPrefix(ext, ".json"):
+		case ".json":
 			encoding = TemplateEncodingJson
-		case strings.HasPrefix(ext, ".yml") || strings.HasPrefix(ext, ".yaml"):
+		case ".yml":
+			fallthrough
+		case ".yaml":
 			encoding = TemplateEncodingYaml
 		default:
 		}

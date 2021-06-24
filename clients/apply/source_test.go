@@ -371,9 +371,9 @@ spec:
 
 	parsed := []api.TemplateEntry{
 		{
-			ApiVersion: api.PtrString("influxdata.com/v2alpha1"),
-			Kind:       api.PtrString("Bucket"),
-			Spec: &map[string]interface{}{
+			ApiVersion: "influxdata.com/v2alpha1",
+			Kind:       "Bucket",
+			Spec: map[string]interface{}{
 				"name": "test",
 				"retentionRules": []interface{}{
 					map[string]interface{}{
@@ -383,9 +383,9 @@ spec:
 			},
 		},
 		{
-			ApiVersion: api.PtrString("influxdata.com/v2alpha1"),
-			Kind:       api.PtrString("Bucket"),
-			Spec: &map[string]interface{}{
+			ApiVersion: "influxdata.com/v2alpha1",
+			Kind:       "Bucket",
+			Spec: map[string]interface{}{
 				"name": "test2",
 				"retentionRules": []interface{}{
 					map[string]interface{}{
