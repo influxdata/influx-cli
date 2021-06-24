@@ -285,7 +285,6 @@ func TestSourceFromURL(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 				rw.WriteHeader(tc.resStatus)
 				rw.Write([]byte(tc.resBody))
-				return
 			}))
 			defer server.Close()
 
