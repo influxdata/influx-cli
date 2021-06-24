@@ -93,17 +93,17 @@ type LegacyAuthorizationsApi interface {
 	PostAuthorizationsExecute(r ApiPostAuthorizationsRequest) (Authorization, error)
 
 	/*
-	 * SetAuthorizationsIDPassword Set an authorization password
+	 * PostAuthorizationsIDPassword Set an authorization password
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param authID The ID of the authorization to update.
-	 * @return ApiSetAuthorizationsIDPasswordRequest
+	 * @return ApiPostAuthorizationsIDPasswordRequest
 	 */
-	SetAuthorizationsIDPassword(ctx _context.Context, authID string) ApiSetAuthorizationsIDPasswordRequest
+	PostAuthorizationsIDPassword(ctx _context.Context, authID string) ApiPostAuthorizationsIDPasswordRequest
 
 	/*
-	 * SetAuthorizationsIDPasswordExecute executes the request
+	 * PostAuthorizationsIDPasswordExecute executes the request
 	 */
-	SetAuthorizationsIDPasswordExecute(r ApiSetAuthorizationsIDPasswordRequest) error
+	PostAuthorizationsIDPasswordExecute(r ApiPostAuthorizationsIDPasswordRequest) error
 }
 
 // LegacyAuthorizationsApiService LegacyAuthorizationsApi service
@@ -894,50 +894,50 @@ func (a *LegacyAuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuth
 	return localVarReturnValue, nil
 }
 
-type ApiSetAuthorizationsIDPasswordRequest struct {
-	ctx          _context.Context
-	ApiService   LegacyAuthorizationsApi
-	authID       string
-	password     *string
-	zapTraceSpan *string
+type ApiPostAuthorizationsIDPasswordRequest struct {
+	ctx               _context.Context
+	ApiService        LegacyAuthorizationsApi
+	authID            string
+	passwordResetBody *PasswordResetBody
+	zapTraceSpan      *string
 }
 
-func (r ApiSetAuthorizationsIDPasswordRequest) AuthID(authID string) ApiSetAuthorizationsIDPasswordRequest {
+func (r ApiPostAuthorizationsIDPasswordRequest) AuthID(authID string) ApiPostAuthorizationsIDPasswordRequest {
 	r.authID = authID
 	return r
 }
-func (r ApiSetAuthorizationsIDPasswordRequest) GetAuthID() string {
+func (r ApiPostAuthorizationsIDPasswordRequest) GetAuthID() string {
 	return r.authID
 }
 
-func (r ApiSetAuthorizationsIDPasswordRequest) Password(password string) ApiSetAuthorizationsIDPasswordRequest {
-	r.password = &password
+func (r ApiPostAuthorizationsIDPasswordRequest) PasswordResetBody(passwordResetBody PasswordResetBody) ApiPostAuthorizationsIDPasswordRequest {
+	r.passwordResetBody = &passwordResetBody
 	return r
 }
-func (r ApiSetAuthorizationsIDPasswordRequest) GetPassword() *string {
-	return r.password
+func (r ApiPostAuthorizationsIDPasswordRequest) GetPasswordResetBody() *PasswordResetBody {
+	return r.passwordResetBody
 }
 
-func (r ApiSetAuthorizationsIDPasswordRequest) ZapTraceSpan(zapTraceSpan string) ApiSetAuthorizationsIDPasswordRequest {
+func (r ApiPostAuthorizationsIDPasswordRequest) ZapTraceSpan(zapTraceSpan string) ApiPostAuthorizationsIDPasswordRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiSetAuthorizationsIDPasswordRequest) GetZapTraceSpan() *string {
+func (r ApiPostAuthorizationsIDPasswordRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiSetAuthorizationsIDPasswordRequest) Execute() error {
-	return r.ApiService.SetAuthorizationsIDPasswordExecute(r)
+func (r ApiPostAuthorizationsIDPasswordRequest) Execute() error {
+	return r.ApiService.PostAuthorizationsIDPasswordExecute(r)
 }
 
 /*
- * SetAuthorizationsIDPassword Set an authorization password
+ * PostAuthorizationsIDPassword Set an authorization password
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param authID The ID of the authorization to update.
- * @return ApiSetAuthorizationsIDPasswordRequest
+ * @return ApiPostAuthorizationsIDPasswordRequest
  */
-func (a *LegacyAuthorizationsApiService) SetAuthorizationsIDPassword(ctx _context.Context, authID string) ApiSetAuthorizationsIDPasswordRequest {
-	return ApiSetAuthorizationsIDPasswordRequest{
+func (a *LegacyAuthorizationsApiService) PostAuthorizationsIDPassword(ctx _context.Context, authID string) ApiPostAuthorizationsIDPasswordRequest {
+	return ApiPostAuthorizationsIDPasswordRequest{
 		ApiService: a,
 		ctx:        ctx,
 		authID:     authID,
@@ -947,16 +947,16 @@ func (a *LegacyAuthorizationsApiService) SetAuthorizationsIDPassword(ctx _contex
 /*
  * Execute executes the request
  */
-func (a *LegacyAuthorizationsApiService) SetAuthorizationsIDPasswordExecute(r ApiSetAuthorizationsIDPasswordRequest) error {
+func (a *LegacyAuthorizationsApiService) PostAuthorizationsIDPasswordExecute(r ApiPostAuthorizationsIDPasswordRequest) error {
 	var (
-		localVarHTTPMethod   = _nethttp.MethodPatch
+		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.SetAuthorizationsIDPassword")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.PostAuthorizationsIDPassword")
 	if err != nil {
 		return GenericOpenAPIError{error: err.Error()}
 	}
@@ -967,13 +967,12 @@ func (a *LegacyAuthorizationsApiService) SetAuthorizationsIDPasswordExecute(r Ap
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
-	if r.password == nil {
-		return reportError("password is required and must be specified")
+	if r.passwordResetBody == nil {
+		return reportError("passwordResetBody is required and must be specified")
 	}
 
-	localVarQueryParams.Add("password", parameterToString(*r.password, ""))
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
+	localVarHTTPContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -992,6 +991,8 @@ func (a *LegacyAuthorizationsApiService) SetAuthorizationsIDPasswordExecute(r Ap
 	if r.zapTraceSpan != nil {
 		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
+	// body params
+	localVarPostBody = r.passwordResetBody
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return err

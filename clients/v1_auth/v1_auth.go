@@ -129,8 +129,8 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	}
 
 	if password != "" {
-		err := c.LegacyAuthorizationsApi.SetAuthorizationsIDPassword(ctx, newAuth.GetId()).
-			Password(password).
+		err := c.LegacyAuthorizationsApi.PostAuthorizationsIDPassword(ctx, newAuth.GetId()).
+			PasswordResetBody(api.PasswordResetBody{Password: password}).
 			Execute()
 		if err != nil {
 			_ = c.LegacyAuthorizationsApi.DeleteAuthorizationsID(ctx, newAuth.GetId()).Execute()
@@ -338,7 +338,9 @@ func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) erro
 		password = pass
 	}
 
-	err = c.LegacyAuthorizationsApi.SetAuthorizationsIDPassword(ctx, auth.GetId()).Password(password).Execute()
+	err = c.LegacyAuthorizationsApi.PostAuthorizationsIDPassword(ctx, auth.GetId()).
+		PasswordResetBody(api.PasswordResetBody{Password: password}).
+		Execute()
 	if err != nil {
 		return fmt.Errorf("error setting password: %w", err)
 	}
