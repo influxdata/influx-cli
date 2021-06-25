@@ -134,7 +134,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 			Execute()
 		if err != nil {
 			_ = c.LegacyAuthorizationsApi.DeleteAuthorizationsID(ctx, newAuth.GetId()).Execute()
-			return fmt.Errorf("failed to update password for user ID %q: %w", newAuth.GetUserID(), err)
+			return fmt.Errorf("failed to set password for %q: %w", params.Username, err)
 		}
 	}
 
@@ -235,7 +235,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 
 	auths, err := req.Execute()
 	if err != nil {
-		return fmt.Errorf("could not find Authorizations for specified arguments %w", err)
+		return fmt.Errorf("could not find Authorizations for specified arguments: %w", err)
 	}
 
 	var tokens []v1Token
@@ -281,7 +281,7 @@ func (c Client) SetActive(ctx context.Context, params *ActiveParams, active bool
 	} else {
 		status = "inactive"
 	}
-	req.AuthorizationUpdateRequest(api.AuthorizationUpdateRequest{
+	req = req.AuthorizationUpdateRequest(api.AuthorizationUpdateRequest{
 		Status: &status,
 	})
 
@@ -322,11 +322,6 @@ func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) erro
 	id, err := c.getAuthReqID(ctx, &params.AuthLookupParams)
 	if err != nil {
 		return err
-	}
-
-	auth, err := c.LegacyAuthorizationsApi.GetAuthorizationsID(ctx, id).Execute()
-	if err != nil {
-		return fmt.Errorf("could not find authorization with User ID %q: %w", id, err)
 	}
 
 	password := params.Password
