@@ -40,11 +40,7 @@ func (c Client) resolveMeasurement(ctx context.Context, ids orgBucketID, name st
 }
 
 func (c Client) resolveOrgBucketIds(ctx context.Context, params clients.OrgBucketParams) (*orgBucketID, error) {
-	if params.OrgID.Valid() && params.BucketID.Valid() {
-		return &orgBucketID{OrgID: params.OrgID.String(), BucketID: params.BucketID.String()}, nil
-	}
-
-	if params.BucketName == "" {
+	if params.BucketName == "" && !params.BucketID.Valid() {
 		return nil, errors.New("bucket missing: specify bucket ID or bucket name")
 	}
 
@@ -52,7 +48,12 @@ func (c Client) resolveOrgBucketIds(ctx context.Context, params clients.OrgBucke
 		return nil, errors.New("org missing: specify org ID or org name")
 	}
 
-	req := c.GetBuckets(ctx).Name(params.BucketName)
+	req := c.GetBuckets(ctx)
+	if params.BucketName != "" {
+		req = req.Name(params.BucketName)
+	} else {
+		req = req.Id(params.BucketID.String())
+	}
 	if params.OrgID.Valid() {
 		req = req.OrgID(params.OrgID.String())
 	} else if params.OrgName != "" {
