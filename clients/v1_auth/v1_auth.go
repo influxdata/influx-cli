@@ -333,7 +333,7 @@ func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) erro
 		password = pass
 	}
 
-	err = c.LegacyAuthorizationsApi.PostAuthorizationsIDPassword(ctx, auth.GetId()).
+	err = c.LegacyAuthorizationsApi.PostAuthorizationsIDPassword(ctx, id).
 		PasswordResetBody(api.PasswordResetBody{Password: password}).
 		Execute()
 	if err != nil {
