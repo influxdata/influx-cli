@@ -118,15 +118,14 @@ type StackParams struct {
 
 func (c Client) ExportStack(ctx context.Context, params *StackParams) error {
 	if params.StackId == "" {
-		return clients.ErrMustSpecifyStack
+		return fmt.Errorf("no stack id provided")
 	}
 
-	stackId := params.StackId
-
-	exportReq := api.TemplateExport{StackID: &stackId}
+	exportReq := api.TemplateExport{StackID: &params.StackId}
 	tmpl, err := c.ExportTemplate(ctx).TemplateExport(exportReq).Execute()
+
 	if err != nil {
-		return fmt.Errorf("failed to export template: %w", err)
+		return fmt.Errorf("failed to export stack %q: %w", params.StackId, err)
 	}
 	if err := params.OutParams.writeTemplate(tmpl); err != nil {
 		return fmt.Errorf("failed to write exported template: %w", err)

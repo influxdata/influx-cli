@@ -364,14 +364,13 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 func  newExportStackCmd() *cli.Command {
 	var params struct {
 		out     string
-		stackId string
 	}
 
 	return &cli.Command{
 		Name:  "stack",
 		Usage: "Export all resources associated with a stack as a template",
 		Description: `The influx export stack command exports all resources 
-	associated with a stack as a template. All metadata.name fields remain the same.
+associated with a stack as a template. All metadata.name fields remain the same.
 
 Example:
 	# Export a stack as a template
