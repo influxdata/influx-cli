@@ -361,9 +361,9 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 	}
 }
 
-func  newExportStackCmd() *cli.Command {
+func newExportStackCmd() *cli.Command {
 	var params struct {
-		out     string
+		out string
 	}
 
 	return &cli.Command{

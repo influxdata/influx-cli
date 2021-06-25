@@ -113,7 +113,7 @@ func (c Client) ExportAll(ctx context.Context, params *AllParams) error {
 
 type StackParams struct {
 	OutParams
-	StackId 	string
+	StackId string
 }
 
 func (c Client) ExportStack(ctx context.Context, params *StackParams) error {
