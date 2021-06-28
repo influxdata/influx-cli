@@ -16,7 +16,7 @@ require (
 	github.com/mattn/go-isatty v0.0.13
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/stretchr/testify v1.7.0
-	github.com/urfave/cli/v2 v2.3.0
+	github.com/urfave/cli v1.22.5
 	golang.org/x/text v0.3.3
 	golang.org/x/tools v0.1.0
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c

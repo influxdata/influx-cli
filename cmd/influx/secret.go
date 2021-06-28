@@ -3,14 +3,14 @@ package main
 import (
 	"github.com/influxdata/influx-cli/v2/clients/secret"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newSecretCommand() *cli.Command {
-	return &cli.Command{
+func newSecretCommand() cli.Command {
+	return cli.Command{
 		Name:  "secret",
 		Usage: "Secret management commands",
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newDeleteSecretCmd(),
 			newListSecretCmd(),
 			newUpdateSecretCmd(),
@@ -18,17 +18,16 @@ func newSecretCommand() *cli.Command {
 	}
 }
 
-func newDeleteSecretCmd() *cli.Command {
+func newDeleteSecretCmd() cli.Command {
 	var params secret.DeleteParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, &cli.StringFlag{
-		Name:        "key",
+		Name:        "key, k",
 		Usage:       "The secret key (required)",
 		Required:    true,
-		Aliases:     []string{"k"},
 		Destination: &params.Key,
 	})
-	return &cli.Command{
+	return cli.Command{
 		Name:   "delete",
 		Usage:  "Delete secret",
 		Flags:  flags,
@@ -40,15 +39,15 @@ func newDeleteSecretCmd() *cli.Command {
 				SecretsApi:       api.SecretsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.Delete(ctx.Context, &params)
+			return client.Delete(getContext(ctx), &params)
 		},
 	}
 }
 
-func newListSecretCmd() *cli.Command {
+func newListSecretCmd() cli.Command {
 	var params secret.ListParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
-	return &cli.Command{
+	return cli.Command{
 		Name:    "list",
 		Usage:   "List secrets",
 		Aliases: []string{"find", "ls"},
@@ -61,30 +60,28 @@ func newListSecretCmd() *cli.Command {
 				SecretsApi:       api.SecretsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.List(ctx.Context, &params)
+			return client.List(getContext(ctx), &params)
 		},
 	}
 }
 
-func newUpdateSecretCmd() *cli.Command {
+func newUpdateSecretCmd() cli.Command {
 	var params secret.UpdateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags,
 		&cli.StringFlag{
-			Name:        "key",
+			Name:        "key, k",
 			Usage:       "The secret key (required)",
 			Required:    true,
-			Aliases:     []string{"k"},
 			Destination: &params.Key,
 		},
 		&cli.StringFlag{
-			Name:        "value",
+			Name:        "value, v",
 			Usage:       "Optional secret value for scripting convenience, using this might expose the secret to your local history",
-			Aliases:     []string{"v"},
 			Destination: &params.Value,
 		},
 	)
-	return &cli.Command{
+	return cli.Command{
 		Name:   "update",
 		Usage:  "Update secret",
 		Flags:  flags,
@@ -96,7 +93,7 @@ func newUpdateSecretCmd() *cli.Command {
 				SecretsApi:       api.SecretsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.Update(ctx.Context, &params)
+			return client.Update(getContext(ctx), &params)
 		},
 	}
 }

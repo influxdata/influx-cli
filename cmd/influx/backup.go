@@ -6,15 +6,15 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients/backup"
 	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newBackupCmd() *cli.Command {
+func newBackupCmd() cli.Command {
 	var params backup.Params
 	// Default to gzipping local files.
 	params.Compression = br.GzipCompression
 
-	return &cli.Command{
+	return cli.Command{
 		Name:  "backup",
 		Usage: "Backup database",
 		Description: `Backs up InfluxDB to a directory
@@ -30,14 +30,13 @@ Examples:
 			&cli.StringFlag{
 				Name:        "org-id",
 				Usage:       "The ID of the organization",
-				EnvVars:     []string{"INFLUX_ORG_ID"},
+				EnvVar:      "INFLUX_ORG_ID",
 				Destination: &params.OrgID,
 			},
 			&cli.StringFlag{
-				Name:        "org",
+				Name:        "org, o",
 				Usage:       "The name of the organization",
-				Aliases:     []string{"o"},
-				EnvVars:     []string{"INFLUX_ORG"},
+				EnvVar:      "INFLUX_ORG",
 				Destination: &params.Org,
 			},
 			&cli.StringFlag{
@@ -46,9 +45,8 @@ Examples:
 				Destination: &params.BucketID,
 			},
 			&cli.StringFlag{
-				Name:        "bucket",
+				Name:        "bucket, b",
 				Usage:       "The name of the bucket to backup",
-				Aliases:     []string{"b"},
 				Destination: &params.Bucket,
 			},
 			&cli.GenericFlag{
@@ -67,7 +65,7 @@ Examples:
 				CLI:       getCLI(ctx),
 				BackupApi: getAPI(ctx).BackupApi.OnlyOSS(),
 			}
-			return client.Backup(ctx.Context, &params)
+			return client.Backup(getContext(ctx), &params)
 		},
 	}
 }

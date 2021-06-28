@@ -1,13 +1,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"time"
 
-	"github.com/influxdata/influx-cli/v2/pkg/signals"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 // Fields set via ldflags at build time.
@@ -30,7 +28,7 @@ var app = cli.App{
 	Usage:                "Influx Client",
 	UsageText:            "influx [command]",
 	EnableBashCompletion: true,
-	Commands: []*cli.Command{
+	Commands: []cli.Command{
 		newVersionCmd(),
 		newPingCmd(),
 		newSetupCmd(),
@@ -53,11 +51,11 @@ var app = cli.App{
 		newV1SubCommand(),
 		newAuthCommand(),
 	},
+	Before: withContext(),
 }
 
 func main() {
-	ctx := signals.WithStandardSignals(context.Background())
-	if err := app.RunContext(ctx, os.Args); err != nil {
+	if err := app.Run(os.Args); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}

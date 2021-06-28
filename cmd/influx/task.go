@@ -4,16 +4,16 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/task"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 const TaskMaxPageSize = 500
 
-func newTaskCommand() *cli.Command {
-	return &cli.Command{
+func newTaskCommand() cli.Command {
+	return cli.Command{
 		Name:  "task",
 		Usage: "Task management commands",
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newTaskLogCmd(),
 			newTaskRunCmd(),
 			newTaskCreateCmd(),
@@ -25,16 +25,15 @@ func newTaskCommand() *cli.Command {
 	}
 }
 
-func newTaskCreateCmd() *cli.Command {
+func newTaskCreateCmd() cli.Command {
 	var params task.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, &cli.StringFlag{
-		Name:      "file",
+		Name:      "file, f",
 		Usage:     "Path to Flux script file",
-		Aliases:   []string{"f"},
 		TakesFile: true,
 	})
-	return &cli.Command{
+	return cli.Command{
 		Name:      "create",
 		Usage:     "Create a task with a Flux script provided via the first argument or a file or stdin.",
 		ArgsUsage: "[flux script or '-' for stdin]",
@@ -47,29 +46,27 @@ func newTaskCreateCmd() *cli.Command {
 				TasksApi: api.TasksApi,
 			}
 			var err error
-			params.FluxQuery, err = clients.ReadQuery(ctx)
+			params.FluxQuery, err = clients.ReadQuery(ctx.String("file"), ctx.Args())
 			if err != nil {
 				return err
 			}
-			return client.Create(ctx.Context, &params)
+			return client.Create(getContext(ctx), &params)
 		},
 	}
 }
 
-func newTaskFindCmd() *cli.Command {
+func newTaskFindCmd() cli.Command {
 	var params task.FindParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
-			Name:        "id",
+			Name:        "id, i",
 			Usage:       "task ID",
-			Aliases:     []string{"i"},
 			Destination: &params.TaskID,
 		},
 		&cli.StringFlag{
-			Name:        "user-id",
+			Name:        "user-id, n",
 			Usage:       "task owner ID",
-			Aliases:     []string{"n"},
 			Destination: &params.UserID,
 		},
 		&cli.IntFlag{
@@ -79,7 +76,7 @@ func newTaskFindCmd() *cli.Command {
 			Value:       TaskMaxPageSize,
 		},
 	}...)
-	return &cli.Command{
+	return cli.Command{
 		Name:    "list",
 		Usage:   "List tasks",
 		Aliases: []string{"find", "ls"},
@@ -91,19 +88,18 @@ func newTaskFindCmd() *cli.Command {
 				CLI:      getCLI(ctx),
 				TasksApi: api.TasksApi,
 			}
-			return client.Find(ctx.Context, &params)
+			return client.Find(getContext(ctx), &params)
 		},
 	}
 }
 
-func newTaskRetryFailedCmd() *cli.Command {
+func newTaskRetryFailedCmd() cli.Command {
 	var params task.RetryFailedParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
-			Name:        "id",
+			Name:        "id, i",
 			Usage:       "task ID",
-			Aliases:     []string{"i"},
 			Destination: &params.TaskID,
 		},
 		&cli.StringFlag{
@@ -134,7 +130,7 @@ func newTaskRetryFailedCmd() *cli.Command {
 			Value:       100,
 		},
 	}...)
-	return &cli.Command{
+	return cli.Command{
 		Name:    "retry-failed",
 		Usage:   "Retry failed runs",
 		Aliases: []string{"rtf"},
@@ -146,19 +142,18 @@ func newTaskRetryFailedCmd() *cli.Command {
 				CLI:      getCLI(ctx),
 				TasksApi: api.TasksApi,
 			}
-			return client.RetryFailed(ctx.Context, &params)
+			return client.RetryFailed(getContext(ctx), &params)
 		},
 	}
 }
 
-func newTaskUpdateCmd() *cli.Command {
+func newTaskUpdateCmd() cli.Command {
 	var params task.UpdateParams
 	flags := commonFlags()
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
-			Name:        "id",
+			Name:        "id, i",
 			Usage:       "task ID (required)",
-			Aliases:     []string{"i"},
 			Destination: &params.TaskID,
 			Required:    true,
 		},
@@ -168,13 +163,12 @@ func newTaskUpdateCmd() *cli.Command {
 			Destination: &params.Status,
 		},
 		&cli.StringFlag{
-			Name:      "file",
+			Name:      "file, f",
 			Usage:     "Path to Flux script file",
-			Aliases:   []string{"f"},
 			TakesFile: true,
 		},
 	}...)
-	return &cli.Command{
+	return cli.Command{
 		Name:      "update",
 		Usage:     "Update task status or script. Provide a Flux script via the first argument or a file.",
 		ArgsUsage: "[flux script or '-' for stdin]",
@@ -188,29 +182,28 @@ func newTaskUpdateCmd() *cli.Command {
 			}
 			var err error
 			if ctx.String("file") != "" || ctx.NArg() != 0 {
-				params.FluxQuery, err = clients.ReadQuery(ctx)
+				params.FluxQuery, err = clients.ReadQuery(ctx.String("file"), ctx.Args())
 				if err != nil {
 					return err
 				}
 			}
-			return client.Update(ctx.Context, &params)
+			return client.Update(getContext(ctx), &params)
 		},
 	}
 }
 
-func newTaskDeleteCmd() *cli.Command {
+func newTaskDeleteCmd() cli.Command {
 	var params task.DeleteParams
 	flags := commonFlags()
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
-			Name:        "id",
+			Name:        "id, i",
 			Usage:       "task ID (required)",
-			Aliases:     []string{"i"},
 			Destination: &params.TaskID,
 			Required:    true,
 		},
 	}...)
-	return &cli.Command{
+	return cli.Command{
 		Name:   "delete",
 		Usage:  "Delete tasks",
 		Flags:  flags,
@@ -221,22 +214,22 @@ func newTaskDeleteCmd() *cli.Command {
 				CLI:      getCLI(ctx),
 				TasksApi: api.TasksApi,
 			}
-			return client.Delete(ctx.Context, &params)
+			return client.Delete(getContext(ctx), &params)
 		},
 	}
 }
 
-func newTaskLogCmd() *cli.Command {
-	return &cli.Command{
+func newTaskLogCmd() cli.Command {
+	return cli.Command{
 		Name:  "log",
 		Usage: "Log related commands",
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newTaskLogFindCmd(),
 		},
 	}
 }
 
-func newTaskLogFindCmd() *cli.Command {
+func newTaskLogFindCmd() cli.Command {
 	var params task.LogFindParams
 	flags := commonFlags()
 	flags = append(flags, []cli.Flag{
@@ -252,7 +245,7 @@ func newTaskLogFindCmd() *cli.Command {
 			Destination: &params.RunID,
 		},
 	}...)
-	return &cli.Command{
+	return cli.Command{
 		Name:    "list",
 		Usage:   "List logs for a task",
 		Aliases: []string{"find", "ls"},
@@ -264,23 +257,23 @@ func newTaskLogFindCmd() *cli.Command {
 				CLI:      getCLI(ctx),
 				TasksApi: api.TasksApi,
 			}
-			return client.FindLogs(ctx.Context, &params)
+			return client.FindLogs(getContext(ctx), &params)
 		},
 	}
 }
 
-func newTaskRunCmd() *cli.Command {
-	return &cli.Command{
+func newTaskRunCmd() cli.Command {
+	return cli.Command{
 		Name:  "run",
 		Usage: "Run related commands",
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newTaskRunFindCmd(),
 			newTaskRunRetryCmd(),
 		},
 	}
 }
 
-func newTaskRunFindCmd() *cli.Command {
+func newTaskRunFindCmd() cli.Command {
 	var params task.RunFindParams
 	flags := commonFlags()
 	flags = append(flags, []cli.Flag{
@@ -312,7 +305,7 @@ func newTaskRunFindCmd() *cli.Command {
 			Value:       100,
 		},
 	}...)
-	return &cli.Command{
+	return cli.Command{
 		Name:    "list",
 		Usage:   "List runs for a tasks",
 		Aliases: []string{"find", "ls"},
@@ -324,31 +317,29 @@ func newTaskRunFindCmd() *cli.Command {
 				CLI:      getCLI(ctx),
 				TasksApi: api.TasksApi,
 			}
-			return client.FindRuns(ctx.Context, &params)
+			return client.FindRuns(getContext(ctx), &params)
 		},
 	}
 }
 
-func newTaskRunRetryCmd() *cli.Command {
+func newTaskRunRetryCmd() cli.Command {
 	var params task.RunRetryParams
 	flags := commonFlags()
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
-			Name:        "task-id",
+			Name:        "task-id, i",
 			Usage:       "task ID (required)",
-			Aliases:     []string{"i"},
 			Destination: &params.TaskID,
 			Required:    true,
 		},
 		&cli.StringFlag{
-			Name:        "run-id",
+			Name:        "run-id, r",
 			Usage:       "run ID (required)",
-			Aliases:     []string{"r"},
 			Destination: &params.RunID,
 			Required:    true,
 		},
 	}...)
-	return &cli.Command{
+	return cli.Command{
 		Name:   "retry",
 		Usage:  "Retry a run",
 		Flags:  flags,
@@ -359,7 +350,7 @@ func newTaskRunRetryCmd() *cli.Command {
 				CLI:      getCLI(ctx),
 				TasksApi: api.TasksApi,
 			}
-			return client.RetryRun(ctx.Context, &params)
+			return client.RetryRun(getContext(ctx), &params)
 		},
 	}
 }

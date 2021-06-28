@@ -10,10 +10,10 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients/export"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/mattn/go-isatty"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newExportCmd() *cli.Command {
+func newExportCmd() cli.Command {
 	var params struct {
 		out            string
 		stackId        string
@@ -37,7 +37,7 @@ func newExportCmd() *cli.Command {
 		variableIds    string
 		variableNames  string
 	}
-	return &cli.Command{
+	return cli.Command{
 		Name:  "export",
 		Usage: "Export existing resources as a template",
 		Description: `The export command provides a mechanism to export existing resources to a
@@ -64,15 +64,15 @@ resource flag and then provide the IDs.
 
 For information about exporting InfluxDB templates, see
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newExportAllCmd(),
+			newExportStackCmd(),
 		},
 		Flags: append(
 			commonFlagsNoPrint(),
 			&cli.StringFlag{
-				Name:        "file",
+				Name:        "file, f",
 				Usage:       "Output file for created template; defaults to std out if no file provided; the extension of provided file (.yml/.json) will dictate encoding",
-				Aliases:     []string{"f"},
 				Destination: &params.out,
 			},
 			&cli.StringFlag{
@@ -215,7 +215,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 			parsedParams.OutParams = outParams
 
 			if params.resourceType != "" {
-				ids := ctx.Args().Slice()
+				ids := ctx.Args()
 
 				// Read any IDs from stdin.
 				// !IsTerminal detects when some other process is piping into this command.
@@ -244,19 +244,19 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 				CLI:          getCLI(ctx),
 				TemplatesApi: getAPI(ctx).TemplatesApi,
 			}
-			return client.Export(ctx.Context, &parsedParams)
+			return client.Export(getContext(ctx), &parsedParams)
 		},
 	}
 }
 
-func newExportAllCmd() *cli.Command {
+func newExportAllCmd() cli.Command {
 	var params struct {
 		out     string
 		orgId   string
 		orgName string
 		filters cli.StringSlice
 	}
-	return &cli.Command{
+	return cli.Command{
 		Name:  "all",
 		Usage: "Export all existing resources for an organization as a template",
 		Description: `The export all command will export all resources for an organization. The
@@ -296,26 +296,24 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 			&cli.StringFlag{
 				Name:        "org-id",
 				Usage:       "The ID of the organization",
-				EnvVars:     []string{"INFLUX_ORG_ID"},
+				EnvVar:      "INFLUX_ORG_ID",
 				Destination: &params.orgId,
 			},
 			&cli.StringFlag{
-				Name:        "org",
+				Name:        "org, o",
 				Usage:       "The name of the organization",
-				Aliases:     []string{"o"},
-				EnvVars:     []string{"INFLUX_ORG"},
+				EnvVar:      "INFLUX_ORG",
 				Destination: &params.orgName,
 			},
 			&cli.StringFlag{
-				Name:        "file",
+				Name:        "file, f",
 				Usage:       "Output file for created template; defaults to std out if no file provided; the extension of provided file (.yml/.json) will dictate encoding",
-				Aliases:     []string{"f"},
 				Destination: &params.out,
 			},
 			&cli.StringSliceFlag{
-				Name:        "filter",
-				Usage:       "Filter exported resources by labelName or resourceKind (format: labelName=example)",
-				Destination: &params.filters,
+				Name:  "filter",
+				Usage: "Filter exported resources by labelName or resourceKind (format: labelName=example)",
+				Value: &params.filters,
 			},
 		),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
@@ -355,7 +353,65 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 				TemplatesApi:     apiClient.TemplatesApi,
 				OrganizationsApi: apiClient.OrganizationsApi,
 			}
-			return client.ExportAll(ctx.Context, &parsedParams)
+			return client.ExportAll(getContext(ctx), &parsedParams)
+		},
+	}
+}
+
+func newExportStackCmd() cli.Command {
+	var params struct {
+		out string
+	}
+
+	return cli.Command{
+		Name:  "stack",
+		Usage: "Export all resources associated with a stack as a template",
+		Description: `The influx export stack command exports all resources 
+associated with a stack as a template. All metadata.name fields remain the same.
+
+Example:
+	# Export a stack as a template
+	influx export stack $STACK_ID
+
+For information about exporting InfluxDB templates, see
+https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/
+and
+https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/stack/
+`,
+		Flags: append(
+			commonFlagsNoPrint(),
+			&cli.StringFlag{
+				Name:        "file, f",
+				Usage:       "Output file for created template; defaults to std out if no file provided; the extension of provided file (.yml/.json) will dictate encoding",
+				Destination: &params.out,
+			},
+		),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Action: func(ctx *cli.Context) error {
+			if ctx.NArg() != 1 {
+				return fmt.Errorf("incorrect number of arguments, expected one for <stack-id>")
+			}
+
+			parsedParams := export.StackParams{
+				StackId: ctx.Args().Get(0),
+			}
+
+			outParams, closer, err := parseOutParams(params.out)
+			if closer != nil {
+				defer closer()
+			}
+			if err != nil {
+				return err
+			}
+			parsedParams.OutParams = outParams
+
+			apiClient := getAPI(ctx)
+			client := export.Client{
+				CLI:              getCLI(ctx),
+				TemplatesApi:     apiClient.TemplatesApi,
+				OrganizationsApi: apiClient.OrganizationsApi,
+			}
+			return client.ExportStack(getContext(ctx), &parsedParams)
 		},
 	}
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/influxdata/influx-cli/v2/clients/v1_auth"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 // getAuthLookupFlags returns flags used for authorization, requiring either an ID or Username,
@@ -23,12 +23,12 @@ func getAuthLookupFlags(params *v1_auth.AuthLookupParams) []cli.Flag {
 	}
 }
 
-func newV1AuthCommand() *cli.Command {
-	return &cli.Command{
+func newV1AuthCommand() cli.Command {
+	return cli.Command{
 		Name:    "auth",
 		Usage:   "Authorization management commands for v1 APIs",
 		Aliases: []string{"authorization"},
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newCreateV1AuthCmd(),
 			newRemoveV1AuthCmd(),
 			newListV1AuthCmd(),
@@ -39,14 +39,13 @@ func newV1AuthCommand() *cli.Command {
 	}
 }
 
-func newCreateV1AuthCmd() *cli.Command {
+func newCreateV1AuthCmd() cli.Command {
 	var params v1_auth.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags,
-		&cli.StringFlag{
-			Name:        "description",
+		cli.StringFlag{
+			Name:        "description, d",
 			Usage:       "Token description",
-			Aliases:     []string{"d"},
 			Destination: &params.Desc,
 		},
 		&cli.StringFlag{
@@ -74,7 +73,7 @@ func newCreateV1AuthCmd() *cli.Command {
 			Usage: "The bucket id",
 		},
 	)
-	return &cli.Command{
+	return cli.Command{
 		Name:   "create",
 		Usage:  "Create authorization",
 		Flags:  flags,
@@ -89,15 +88,15 @@ func newCreateV1AuthCmd() *cli.Command {
 				UsersApi:                api.UsersApi,
 				OrganizationsApi:        api.OrganizationsApi,
 			}
-			return client.Create(ctx.Context, &params)
+			return client.Create(getContext(ctx), &params)
 		},
 	}
 }
 
-func newRemoveV1AuthCmd() *cli.Command {
+func newRemoveV1AuthCmd() cli.Command {
 	var params v1_auth.RemoveParams
 	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams)...)
-	return &cli.Command{
+	return cli.Command{
 		Name:   "delete",
 		Usage:  "Delete authorization",
 		Flags:  flags,
@@ -114,20 +113,19 @@ func newRemoveV1AuthCmd() *cli.Command {
 				UsersApi:                api.UsersApi,
 				OrganizationsApi:        api.OrganizationsApi,
 			}
-			return client.Remove(ctx.Context, &params)
+			return client.Remove(getContext(ctx), &params)
 		},
 	}
 }
 
-func newListV1AuthCmd() *cli.Command {
+func newListV1AuthCmd() cli.Command {
 	var params v1_auth.ListParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, getAuthLookupFlags(&params.AuthLookupParams)...)
 	flags = append(flags,
 		&cli.StringFlag{
-			Name:        "user",
+			Name:        "user, u",
 			Usage:       "The user",
-			Aliases:     []string{"u"},
 			Destination: &params.User,
 		},
 		&cli.StringFlag{
@@ -136,7 +134,7 @@ func newListV1AuthCmd() *cli.Command {
 			Destination: &params.UserID,
 		},
 	)
-	return &cli.Command{
+	return cli.Command{
 		Name:    "list",
 		Usage:   "List authorizations",
 		Aliases: []string{"ls", "find"},
@@ -150,15 +148,15 @@ func newListV1AuthCmd() *cli.Command {
 				UsersApi:                api.UsersApi,
 				OrganizationsApi:        api.OrganizationsApi,
 			}
-			return client.List(ctx.Context, &params)
+			return client.List(getContext(ctx), &params)
 		},
 	}
 }
 
-func newSetActiveV1AuthCmd() *cli.Command {
+func newSetActiveV1AuthCmd() cli.Command {
 	var params v1_auth.ActiveParams
 	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams)...)
-	return &cli.Command{
+	return cli.Command{
 		Name:   "set-active",
 		Usage:  "Change the status of an authorization to active",
 		Flags:  flags,
@@ -175,15 +173,15 @@ func newSetActiveV1AuthCmd() *cli.Command {
 				UsersApi:                api.UsersApi,
 				OrganizationsApi:        api.OrganizationsApi,
 			}
-			return client.SetActive(ctx.Context, &params, true)
+			return client.SetActive(getContext(ctx), &params, true)
 		},
 	}
 }
 
-func newSetInactiveV1AuthCmd() *cli.Command {
+func newSetInactiveV1AuthCmd() cli.Command {
 	var params v1_auth.ActiveParams
 	flags := append(commonFlags(), getAuthLookupFlags(&params.AuthLookupParams)...)
-	return &cli.Command{
+	return cli.Command{
 		Name:   "set-inactive",
 		Usage:  "Change the status of an authorization to inactive",
 		Flags:  flags,
@@ -200,12 +198,12 @@ func newSetInactiveV1AuthCmd() *cli.Command {
 				UsersApi:                api.UsersApi,
 				OrganizationsApi:        api.OrganizationsApi,
 			}
-			return client.SetActive(ctx.Context, &params, false)
+			return client.SetActive(getContext(ctx), &params, false)
 		},
 	}
 }
 
-func newSetPswdV1AuthCmd() *cli.Command {
+func newSetPswdV1AuthCmd() cli.Command {
 	var params v1_auth.SetPasswordParams
 	flags := append(coreFlags(), commonTokenFlag())
 	flags = append(flags, getAuthLookupFlags(&params.AuthLookupParams)...)
@@ -216,7 +214,7 @@ func newSetPswdV1AuthCmd() *cli.Command {
 			Destination: &params.Password,
 		},
 	)
-	return &cli.Command{
+	return cli.Command{
 		Name:   "set-password",
 		Usage:  "Set a password for an existing authorization",
 		Flags:  flags,
@@ -227,7 +225,7 @@ func newSetPswdV1AuthCmd() *cli.Command {
 				CLI:                     getCLI(ctx),
 				LegacyAuthorizationsApi: api.LegacyAuthorizationsApi,
 			}
-			return client.SetPassword(ctx.Context, &params)
+			return client.SetPassword(getContext(ctx), &params)
 		},
 	}
 }

@@ -4,14 +4,14 @@ import (
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients/bucket"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newBucketCmd() *cli.Command {
-	return &cli.Command{
+func newBucketCmd() cli.Command {
+	return cli.Command{
 		Name:  "bucket",
 		Usage: "Bucket management commands",
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newBucketCreateCmd(),
 			newBucketDeleteCmd(),
 			newBucketListCmd(),
@@ -20,11 +20,11 @@ func newBucketCmd() *cli.Command {
 	}
 }
 
-func newBucketCreateCmd() *cli.Command {
+func newBucketCreateCmd() cli.Command {
 	params := bucket.BucketsCreateParams{
 		SchemaType: api.SCHEMATYPE_IMPLICIT,
 	}
-	return &cli.Command{
+	return cli.Command{
 		Name:  "create",
 		Usage: "Create bucket",
 		Before: middleware.WithBeforeFns(
@@ -34,50 +34,43 @@ func newBucketCreateCmd() *cli.Command {
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
-				Name:        "name",
+				Name:        "name, n",
 				Usage:       "New bucket name",
-				Aliases:     []string{"n"},
-				EnvVars:     []string{"INFLUX_BUCKET_NAME"},
+				EnvVar:      "INFLUX_BUCKET_NAME",
 				Destination: &params.Name,
 				Required:    true,
 			},
 			&cli.StringFlag{
-				Name:        "description",
+				Name:        "description, d",
 				Usage:       "Description of the bucket that will be created",
-				Aliases:     []string{"d"},
 				Destination: &params.Description,
 			},
 			&cli.StringFlag{
-				Name:        "retention",
+				Name:        "retention, r",
 				Usage:       "Duration bucket will retain data, or 0 for infinite",
-				Aliases:     []string{"r"},
-				DefaultText: "infinite",
 				Destination: &params.Retention,
 			},
 			&cli.StringFlag{
 				Name:        "shard-group-duration",
 				Usage:       "Shard group duration used internally by the storage engine",
-				DefaultText: "calculated from retention",
 				Destination: &params.ShardGroupDuration,
 			},
 			&cli.StringFlag{
 				Name:        "org-id",
 				Usage:       "The ID of the organization",
-				EnvVars:     []string{"INFLUX_ORG_ID"},
+				EnvVar:      "INFLUX_ORG_ID",
 				Destination: &params.OrgID,
 			},
 			&cli.StringFlag{
-				Name:        "org",
+				Name:        "org, o",
 				Usage:       "The name of the organization",
-				Aliases:     []string{"o"},
-				EnvVars:     []string{"INFLUX_ORG"},
+				EnvVar:      "INFLUX_ORG",
 				Destination: &params.OrgName,
 			},
 			&cli.GenericFlag{
-				Name:        "schema-type",
-				Usage:       "The schema type (implicit, explicit)",
-				DefaultText: "implicit",
-				Value:       &params.SchemaType,
+				Name:  "schema-type",
+				Usage: "The schema type (implicit, explicit)",
+				Value: &params.SchemaType,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
@@ -87,42 +80,39 @@ func newBucketCreateCmd() *cli.Command {
 				BucketsApi:       api.BucketsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.Create(ctx.Context, &params)
+			return client.Create(getContext(ctx), &params)
 		},
 	}
 }
 
-func newBucketDeleteCmd() *cli.Command {
+func newBucketDeleteCmd() cli.Command {
 	var params bucket.BucketsDeleteParams
-	return &cli.Command{
+	return cli.Command{
 		Name:   "delete",
 		Usage:  "Delete bucket",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
-				Name:        "id",
+				Name:        "id, i",
 				Usage:       "The bucket ID, required if name isn't provided",
-				Aliases:     []string{"i"},
 				Destination: &params.ID,
 			},
 			&cli.StringFlag{
-				Name:        "name",
+				Name:        "name, n",
 				Usage:       "The bucket name, org or org-id will be required by choosing this",
-				Aliases:     []string{"n"},
 				Destination: &params.Name,
 			},
 			&cli.StringFlag{
 				Name:        "org-id",
 				Usage:       "The ID of the organization",
-				EnvVars:     []string{"INFLUX_ORG_ID"},
+				EnvVar:      "INFLUX_ORG_ID",
 				Destination: &params.OrgID,
 			},
 			&cli.StringFlag{
-				Name:        "org",
+				Name:        "org, o",
 				Usage:       "The name of the organization",
-				Aliases:     []string{"o"},
-				EnvVars:     []string{"INFLUX_ORG"},
+				EnvVar:      "INFLUX_ORG",
 				Destination: &params.OrgName,
 			},
 		),
@@ -133,14 +123,14 @@ func newBucketDeleteCmd() *cli.Command {
 				BucketsApi:       api.BucketsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.Delete(ctx.Context, &params)
+			return client.Delete(getContext(ctx), &params)
 		},
 	}
 }
 
-func newBucketListCmd() *cli.Command {
+func newBucketListCmd() cli.Command {
 	var params bucket.BucketsListParams
-	return &cli.Command{
+	return cli.Command{
 		Name:    "list",
 		Usage:   "List buckets",
 		Aliases: []string{"find", "ls"},
@@ -148,28 +138,25 @@ func newBucketListCmd() *cli.Command {
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
-				Name:        "id",
+				Name:        "id, i",
 				Usage:       "The bucket ID, required if name isn't provided",
-				Aliases:     []string{"i"},
 				Destination: &params.ID,
 			},
 			&cli.StringFlag{
-				Name:        "name",
+				Name:        "name, n",
 				Usage:       "The bucket name, org or org-id will be required by choosing this",
-				Aliases:     []string{"n"},
 				Destination: &params.Name,
 			},
 			&cli.StringFlag{
 				Name:        "org-id",
 				Usage:       "The ID of the organization",
-				EnvVars:     []string{"INFLUX_ORG_ID"},
+				EnvVar:      "INFLUX_ORG_ID",
 				Destination: &params.OrgID,
 			},
 			&cli.StringFlag{
-				Name:        "org",
+				Name:        "org, o",
 				Usage:       "The name of the organization",
-				Aliases:     []string{"o"},
-				EnvVars:     []string{"INFLUX_ORG"},
+				EnvVar:      "INFLUX_ORG",
 				Destination: &params.OrgName,
 			},
 		),
@@ -180,14 +167,14 @@ func newBucketListCmd() *cli.Command {
 				BucketsApi:       api.BucketsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.List(ctx.Context, &params)
+			return client.List(getContext(ctx), &params)
 		},
 	}
 }
 
-func newBucketUpdateCmd() *cli.Command {
+func newBucketUpdateCmd() cli.Command {
 	var params bucket.BucketsUpdateParams
-	return &cli.Command{
+	return cli.Command{
 		Name:    "update",
 		Usage:   "Update bucket",
 		Aliases: []string{"find", "ls"},
@@ -195,29 +182,25 @@ func newBucketUpdateCmd() *cli.Command {
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
-				Name:        "name",
+				Name:        "name, n",
 				Usage:       "New name to set on the bucket",
-				Aliases:     []string{"n"},
-				EnvVars:     []string{"INFLUX_BUCKET_NAME"},
+				EnvVar:      "INFLUX_BUCKET_NAME",
 				Destination: &params.Name,
 			},
 			&cli.StringFlag{
-				Name:        "id",
+				Name:        "id, i",
 				Usage:       "The bucket ID",
-				Aliases:     []string{"i"},
 				Required:    true,
 				Destination: &params.ID,
 			},
 			&cli.StringFlag{
-				Name:        "description",
+				Name:        "description, d",
 				Usage:       "New description to set on the bucket",
-				Aliases:     []string{"d"},
 				Destination: &params.Description,
 			},
 			&cli.StringFlag{
-				Name:        "retention",
+				Name:        "retention, r",
 				Usage:       "New retention duration to set on the bucket, or 0 for infinite",
-				Aliases:     []string{"r"},
 				Destination: &params.Retention,
 			},
 			&cli.StringFlag{
@@ -233,7 +216,7 @@ func newBucketUpdateCmd() *cli.Command {
 				BucketsApi:       api.BucketsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.Update(ctx.Context, &params)
+			return client.Update(getContext(ctx), &params)
 		},
 	}
 }
