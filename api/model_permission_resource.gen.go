@@ -18,13 +18,13 @@ import (
 type PermissionResource struct {
 	Type string `json:"type"`
 	// If ID is set that is a permission for a specific resource. if it is not set it is a permission for all resources of that resource type.
-	Id NullableString `json:"id,omitempty"`
+	Id *string `json:"id,omitempty"`
 	// Optional name of the resource if the resource has a name field.
-	Name NullableString `json:"name,omitempty"`
+	Name *string `json:"name,omitempty"`
 	// If orgID is set that is a permission for all resources owned my that org. if it is not set it is a permission for all resources of that resource type.
-	OrgID NullableString `json:"orgID,omitempty"`
+	OrgID *string `json:"orgID,omitempty"`
 	// Optional name of the organization of the organization with orgID.
-	Org NullableString `json:"org,omitempty"`
+	Org *string `json:"org,omitempty"`
 }
 
 // NewPermissionResource instantiates a new PermissionResource object
@@ -69,176 +69,132 @@ func (o *PermissionResource) SetType(v string) {
 	o.Type = v
 }
 
-// GetId returns the Id field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetId returns the Id field value if set, zero value otherwise.
 func (o *PermissionResource) GetId() string {
-	if o == nil || o.Id.Get() == nil {
+	if o == nil || o.Id == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id.Get()
+	return *o.Id
 }
 
 // GetIdOk returns a tuple with the Id field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *PermissionResource) GetIdOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Id == nil {
 		return nil, false
 	}
-	return o.Id.Get(), o.Id.IsSet()
+	return o.Id, true
 }
 
 // HasId returns a boolean if a field has been set.
 func (o *PermissionResource) HasId() bool {
-	if o != nil && o.Id.IsSet() {
+	if o != nil && o.Id != nil {
 		return true
 	}
 
 	return false
 }
 
-// SetId gets a reference to the given NullableString and assigns it to the Id field.
+// SetId gets a reference to the given string and assigns it to the Id field.
 func (o *PermissionResource) SetId(v string) {
-	o.Id.Set(&v)
+	o.Id = &v
 }
 
-// SetIdNil sets the value for Id to be an explicit nil
-func (o *PermissionResource) SetIdNil() {
-	o.Id.Set(nil)
-}
-
-// UnsetId ensures that no value is present for Id, not even an explicit nil
-func (o *PermissionResource) UnsetId() {
-	o.Id.Unset()
-}
-
-// GetName returns the Name field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetName returns the Name field value if set, zero value otherwise.
 func (o *PermissionResource) GetName() string {
-	if o == nil || o.Name.Get() == nil {
+	if o == nil || o.Name == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name.Get()
+	return *o.Name
 }
 
 // GetNameOk returns a tuple with the Name field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *PermissionResource) GetNameOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Name == nil {
 		return nil, false
 	}
-	return o.Name.Get(), o.Name.IsSet()
+	return o.Name, true
 }
 
 // HasName returns a boolean if a field has been set.
 func (o *PermissionResource) HasName() bool {
-	if o != nil && o.Name.IsSet() {
+	if o != nil && o.Name != nil {
 		return true
 	}
 
 	return false
 }
 
-// SetName gets a reference to the given NullableString and assigns it to the Name field.
+// SetName gets a reference to the given string and assigns it to the Name field.
 func (o *PermissionResource) SetName(v string) {
-	o.Name.Set(&v)
+	o.Name = &v
 }
 
-// SetNameNil sets the value for Name to be an explicit nil
-func (o *PermissionResource) SetNameNil() {
-	o.Name.Set(nil)
-}
-
-// UnsetName ensures that no value is present for Name, not even an explicit nil
-func (o *PermissionResource) UnsetName() {
-	o.Name.Unset()
-}
-
-// GetOrgID returns the OrgID field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetOrgID returns the OrgID field value if set, zero value otherwise.
 func (o *PermissionResource) GetOrgID() string {
-	if o == nil || o.OrgID.Get() == nil {
+	if o == nil || o.OrgID == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrgID.Get()
+	return *o.OrgID
 }
 
 // GetOrgIDOk returns a tuple with the OrgID field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *PermissionResource) GetOrgIDOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.OrgID == nil {
 		return nil, false
 	}
-	return o.OrgID.Get(), o.OrgID.IsSet()
+	return o.OrgID, true
 }
 
 // HasOrgID returns a boolean if a field has been set.
 func (o *PermissionResource) HasOrgID() bool {
-	if o != nil && o.OrgID.IsSet() {
+	if o != nil && o.OrgID != nil {
 		return true
 	}
 
 	return false
 }
 
-// SetOrgID gets a reference to the given NullableString and assigns it to the OrgID field.
+// SetOrgID gets a reference to the given string and assigns it to the OrgID field.
 func (o *PermissionResource) SetOrgID(v string) {
-	o.OrgID.Set(&v)
+	o.OrgID = &v
 }
 
-// SetOrgIDNil sets the value for OrgID to be an explicit nil
-func (o *PermissionResource) SetOrgIDNil() {
-	o.OrgID.Set(nil)
-}
-
-// UnsetOrgID ensures that no value is present for OrgID, not even an explicit nil
-func (o *PermissionResource) UnsetOrgID() {
-	o.OrgID.Unset()
-}
-
-// GetOrg returns the Org field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetOrg returns the Org field value if set, zero value otherwise.
 func (o *PermissionResource) GetOrg() string {
-	if o == nil || o.Org.Get() == nil {
+	if o == nil || o.Org == nil {
 		var ret string
 		return ret
 	}
-	return *o.Org.Get()
+	return *o.Org
 }
 
 // GetOrgOk returns a tuple with the Org field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *PermissionResource) GetOrgOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Org == nil {
 		return nil, false
 	}
-	return o.Org.Get(), o.Org.IsSet()
+	return o.Org, true
 }
 
 // HasOrg returns a boolean if a field has been set.
 func (o *PermissionResource) HasOrg() bool {
-	if o != nil && o.Org.IsSet() {
+	if o != nil && o.Org != nil {
 		return true
 	}
 
 	return false
 }
 
-// SetOrg gets a reference to the given NullableString and assigns it to the Org field.
+// SetOrg gets a reference to the given string and assigns it to the Org field.
 func (o *PermissionResource) SetOrg(v string) {
-	o.Org.Set(&v)
-}
-
-// SetOrgNil sets the value for Org to be an explicit nil
-func (o *PermissionResource) SetOrgNil() {
-	o.Org.Set(nil)
-}
-
-// UnsetOrg ensures that no value is present for Org, not even an explicit nil
-func (o *PermissionResource) UnsetOrg() {
-	o.Org.Unset()
+	o.Org = &v
 }
 
 func (o PermissionResource) MarshalJSON() ([]byte, error) {
@@ -246,17 +202,17 @@ func (o PermissionResource) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["type"] = o.Type
 	}
-	if o.Id.IsSet() {
-		toSerialize["id"] = o.Id.Get()
+	if o.Id != nil {
+		toSerialize["id"] = o.Id
 	}
-	if o.Name.IsSet() {
-		toSerialize["name"] = o.Name.Get()
+	if o.Name != nil {
+		toSerialize["name"] = o.Name
 	}
-	if o.OrgID.IsSet() {
-		toSerialize["orgID"] = o.OrgID.Get()
+	if o.OrgID != nil {
+		toSerialize["orgID"] = o.OrgID
 	}
-	if o.Org.IsSet() {
-		toSerialize["org"] = o.Org.Get()
+	if o.Org != nil {
+		toSerialize["org"] = o.Org
 	}
 	return json.Marshal(toSerialize)
 }

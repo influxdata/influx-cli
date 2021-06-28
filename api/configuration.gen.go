@@ -113,6 +113,42 @@ func NewConfiguration() *Configuration {
 					Description: "No description provided",
 				},
 			},
+			"LegacyAuthorizationsApiService.DeleteAuthorizationsID": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.GetAuthorizations": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.GetAuthorizationsID": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.PatchAuthorizationsID": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.PostAuthorizations": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
+			"LegacyAuthorizationsApiService.PostAuthorizationsIDPassword": {
+				{
+					URL:         "/private",
+					Description: "No description provided",
+				},
+			},
 		},
 	}
 	return cfg
