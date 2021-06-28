@@ -47,8 +47,8 @@ type CreateParams struct {
 	WriteBucketsPermission bool
 	ReadBucketsPermission  bool
 
-	WriteBucketPermissions []string
-	ReadBucketPermissions  []string
+	WriteBucketIds []string
+	ReadBucketIds  []string
 
 	WriteTasksPermission bool
 	ReadTasksPermission  bool
@@ -83,8 +83,8 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		action string
 		perms  []string
 	}{
-		{action: ReadAction, perms: params.ReadBucketPermissions},
-		{action: WriteAction, perms: params.WriteBucketPermissions},
+		{action: ReadAction, perms: params.ReadBucketIds},
+		{action: WriteAction, perms: params.WriteBucketIds},
 	}
 
 	var permissions []api.Permission
@@ -105,57 +105,57 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 	providedPerm := []struct {
 		readPerm, writePerm bool
-		ResourceType        string
+		resourceType        string
 	}{
 		{
 			readPerm:     params.ReadBucketsPermission,
 			writePerm:    params.WriteBucketsPermission,
-			ResourceType: "buckets",
+			resourceType: "buckets",
 		},
 		{
 			readPerm:     params.ReadCheckPermission,
 			writePerm:    params.WriteCheckPermission,
-			ResourceType: "checks",
+			resourceType: "checks",
 		},
 		{
 			readPerm:     params.ReadDashboardsPermission,
 			writePerm:    params.WriteDashboardsPermission,
-			ResourceType: "dashboards",
+			resourceType: "dashboards",
 		},
 		{
 			readPerm:     params.ReadNotificationEndpointPermission,
 			writePerm:    params.WriteNotificationEndpointPermission,
-			ResourceType: "notificationEndpoints",
+			resourceType: "notificationEndpoints",
 		},
 		{
 			readPerm:     params.ReadNotificationRulePermission,
 			writePerm:    params.WriteNotificationRulePermission,
-			ResourceType: "notificationRules",
+			resourceType: "notificationRules",
 		},
 		{
 			readPerm:     params.ReadOrganizationsPermission,
 			writePerm:    params.WriteOrganizationsPermission,
-			ResourceType: "orgs",
+			resourceType: "orgs",
 		},
 		{
 			readPerm:     params.ReadTasksPermission,
 			writePerm:    params.WriteTasksPermission,
-			ResourceType: "tasks",
+			resourceType: "tasks",
 		},
 		{
 			readPerm:     params.ReadTelegrafsPermission,
 			writePerm:    params.WriteTelegrafsPermission,
-			ResourceType: "telegrafs",
+			resourceType: "telegrafs",
 		},
 		{
 			readPerm:     params.ReadUserPermission,
 			writePerm:    params.WriteUserPermission,
-			ResourceType: "users",
+			resourceType: "users",
 		},
 		{
 			readPerm:     params.ReadDBRPPermission,
 			writePerm:    params.WriteDBRPPermission,
-			ResourceType: "dbrp",
+			resourceType: "dbrp",
 		},
 	}
 
@@ -171,7 +171,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		for _, action := range actions {
 			p := api.Permission{
 				Action:   action,
-				Resource: makePermResource(provided.ResourceType, "", orgID, orgName),
+				Resource: makePermResource(provided.resourceType, "", orgID, orgName),
 			}
 			permissions = append(permissions, p)
 		}
@@ -180,15 +180,17 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	// Get the user ID because the command only takes a username, not ID
 	users, err := c.UsersApi.GetUsers(ctx).Name(params.User).Execute()
 	if err != nil || len(users.GetUsers()) == 0 {
-		return fmt.Errorf("could not find user with name %q: %q", params.User, err)
+		return fmt.Errorf("could not find user with name %q: %w", params.User, err)
 	}
 	userID := users.GetUsers()[0].GetId()
 
 	authReq := api.AuthorizationPostRequest{
-		Description: &params.Description,
 		OrgID:       orgID,
 		UserID:      &userID,
 		Permissions: permissions,
+	}
+	if params.Description != "" {
+		authReq.SetDescription(params.Description)
 	}
 
 	auth, err := c.PostAuthorizations(ctx).AuthorizationPostRequest(authReq).Execute()
@@ -198,7 +200,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 	ps := make([]string, 0, len(auth.GetPermissions()))
 	for _, p := range auth.GetPermissions() {
-		ps = append(ps, permString(p))
+		ps = append(ps, p.String())
 	}
 
 	return c.printAuth(printParams{
@@ -229,7 +231,7 @@ func (c Client) Remove(ctx context.Context, authID string) error {
 
 	ps := make([]string, 0, len(a.Permissions))
 	for _, p := range a.Permissions {
-		ps = append(ps, permString(p))
+		ps = append(ps, p.String())
 	}
 
 	return c.printAuth(printParams{
@@ -283,7 +285,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	for _, a := range auths.GetAuthorizations() {
 		var ps []string
 		for _, p := range a.GetPermissions() {
-			ps = append(ps, permString(p))
+			ps = append(ps, p.String())
 		}
 
 		tokens = append(tokens, token{
@@ -308,7 +310,7 @@ func (c Client) findAuthorization(ctx context.Context, authID string) error {
 
 	ps := make([]string, 0, len(a.GetPermissions()))
 	for _, p := range a.GetPermissions() {
-		ps = append(ps, permString(p))
+		ps = append(ps, p.String())
 	}
 
 	return c.printAuth(printParams{
@@ -346,7 +348,7 @@ func (c Client) SetActive(ctx context.Context, authID string, active bool) error
 
 	ps := make([]string, 0, len(a.GetPermissions()))
 	for _, p := range a.GetPermissions() {
-		ps = append(ps, permString(p))
+		ps = append(ps, p.String())
 	}
 
 	return c.printAuth(printParams{
@@ -405,20 +407,6 @@ func (c Client) printAuth(opts printParams) error {
 		rows = append(rows, row)
 	}
 	return c.PrintTable(headers, rows...)
-}
-
-func permString(p api.Permission) string {
-	ret := p.GetAction() + ":"
-	r := p.GetResource()
-
-	if r.GetOrgID() != "" {
-		ret += "orgs/" + r.GetOrgID()
-	}
-	ret += "/" + r.GetType()
-	if r.GetId() != "" {
-		ret += "/" + r.GetId()
-	}
-	return ret
 }
 
 func makePermResource(permType string, id string, orgId string, org string) api.PermissionResource {

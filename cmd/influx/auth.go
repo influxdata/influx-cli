@@ -8,9 +8,9 @@ import (
 
 func newAuthCommand() *cli.Command {
 	return &cli.Command{
-		Name:    "authorization",
+		Name:    "auth",
 		Usage:   "Authorization management commands",
-		Aliases: []string{"auth"},
+		Aliases: []string{"authorization"},
 		Subcommands: []*cli.Command{
 			newCreateCommand(),
 			newDeleteCommand(),
@@ -153,8 +153,8 @@ func newCreateCommand() *cli.Command {
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
-			params.WriteBucketPermissions = ctx.StringSlice("write-bucket")
-			params.ReadBucketPermissions = ctx.StringSlice("read-bucket")
+			params.WriteBucketIds = ctx.StringSlice("write-bucket")
+			params.ReadBucketIds = ctx.StringSlice("read-bucket")
 
 			api := getAPI(ctx)
 			client := auth.Client{

@@ -145,7 +145,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 	ps := make([]string, 0, len(newAuth.Permissions))
 	for _, p := range newAuth.Permissions {
-		ps = append(ps, permString(p))
+		ps = append(ps, p.String())
 	}
 
 	return c.printV1Tokens(&v1PrintOpts{
@@ -187,7 +187,7 @@ func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
 
 	ps := make([]string, 0, len(auth.GetPermissions()))
 	for _, p := range auth.GetPermissions() {
-		ps = append(ps, permString(p))
+		ps = append(ps, p.String())
 	}
 
 	return c.printV1Tokens(&v1PrintOpts{
@@ -242,7 +242,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	for _, a := range auths.GetAuthorizations() {
 		var permissions []string
 		for _, p := range a.GetPermissions() {
-			permissions = append(permissions, permString(p))
+			permissions = append(permissions, p.String())
 		}
 
 		usr, err := c.UsersApi.GetUsersID(ctx, a.GetUserID()).Execute()
@@ -297,7 +297,7 @@ func (c Client) SetActive(ctx context.Context, params *ActiveParams, active bool
 
 	ps := make([]string, 0, len(auth.GetPermissions()))
 	for _, p := range auth.GetPermissions() {
-		ps = append(ps, permString(p))
+		ps = append(ps, p.String())
 	}
 
 	return c.printV1Tokens(&v1PrintOpts{
@@ -385,20 +385,6 @@ func (c Client) printV1Tokens(params *v1PrintOpts) error {
 		rows = append(rows, row)
 	}
 	return c.PrintTable(headers, rows...)
-}
-
-func permString(p api.Permission) string {
-	ret := p.GetAction() + ":"
-	r := p.GetResource()
-
-	if r.GetOrgID() != "" {
-		ret += "orgs/" + r.GetOrgID()
-	}
-	ret += "/" + r.GetType()
-	if r.GetId() != "" {
-		ret += "/" + r.GetId()
-	}
-	return ret
 }
 
 func (c Client) getAuthReqID(ctx context.Context, params *AuthLookupParams) (id string, err error) {
