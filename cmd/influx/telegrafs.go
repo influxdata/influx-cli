@@ -7,19 +7,18 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/clients/telegrafs"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newTelegrafsCommand() *cli.Command {
+func newTelegrafsCommand() cli.Command {
 	var params telegrafs.ListParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, &cli.StringFlag{
-		Name:        "id",
+		Name:        "id, i",
 		Usage:       "Telegraf configuration ID to retrieve",
-		Aliases:     []string{"i"},
 		Destination: &params.Id,
 	})
-	return &cli.Command{
+	return cli.Command{
 		Name:  "telegrafs",
 		Usage: "List Telegraf configuration(s). Subcommands manage Telegraf configurations.",
 		Description: `List Telegraf configuration(s). Subcommands manage Telegraf configurations.
@@ -34,7 +33,7 @@ Examples:
 	# list Telegraf configuration corresponding to specific ID shorts
 	influx telegrafs -i $ID
 `,
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newCreateTelegrafCmd(),
 			newRemoveTelegrafCmd(),
 			newUpdateTelegrafCmd(),
@@ -48,34 +47,31 @@ Examples:
 				TelegrafsApi:     api.TelegrafsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.List(ctx.Context, &params)
+			return client.List(getContext(ctx), &params)
 		},
 	}
 }
 
-func newCreateTelegrafCmd() *cli.Command {
+func newCreateTelegrafCmd() cli.Command {
 	var params telegrafs.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags,
 		&cli.StringFlag{
-			Name:        "description",
+			Name:        "description, d",
 			Usage:       "Description for Telegraf configuration",
-			Aliases:     []string{"d"},
 			Destination: &params.Desc,
 		},
 		&cli.StringFlag{
-			Name:    "file",
-			Usage:   "Path to Telegraf configuration",
-			Aliases: []string{"f"},
+			Name:  "file, f",
+			Usage: "Path to Telegraf configuration",
 		},
 		&cli.StringFlag{
-			Name:        "name",
+			Name:        "name, n",
 			Usage:       "Name of Telegraf configuration",
-			Aliases:     []string{"n"},
 			Destination: &params.Name,
 		},
 	)
-	return &cli.Command{
+	return cli.Command{
 		Name:  "create",
 		Usage: "The telegrafs create command creates a new Telegraf configuration.",
 		Description: `The telegrafs create command creates a new Telegraf configuration.
@@ -104,24 +100,23 @@ Examples:
 				TelegrafsApi:     api.TelegrafsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.Create(ctx.Context, &params)
+			return client.Create(getContext(ctx), &params)
 		},
 	}
 }
 
-func newRemoveTelegrafCmd() *cli.Command {
+func newRemoveTelegrafCmd() cli.Command {
 	var params telegrafs.RemoveParams
 	flags := commonFlags()
 	flags = append(flags,
 		&cli.StringSliceFlag{
-			Name:    "id",
-			Usage:   "Telegraf configuration ID(s) to remove",
-			Aliases: []string{"i"},
+			Name:  "id, i",
+			Usage: "Telegraf configuration ID(s) to remove",
 		},
 		&cli.StringFlag{Name: "org", Hidden: true},
 		&cli.StringFlag{Name: "org-id", Hidden: true},
 	)
-	return &cli.Command{
+	return cli.Command{
 		Name:  "rm",
 		Usage: "The telegrafs rm command removes Telegraf configuration(s).",
 		Description: `The telegrafs rm command removes Telegraf configuration(s).
@@ -149,42 +144,38 @@ Examples:
 				TelegrafsApi:     api.TelegrafsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.Remove(ctx.Context, &params)
+			return client.Remove(getContext(ctx), &params)
 		},
 	}
 }
 
-func newUpdateTelegrafCmd() *cli.Command {
+func newUpdateTelegrafCmd() cli.Command {
 	var params telegrafs.UpdateParams
 	flags := commonFlags()
 	flags = append(flags,
 		&cli.StringFlag{
-			Name:        "description",
+			Name:        "description, d",
 			Usage:       "Description for Telegraf configuration",
-			Aliases:     []string{"d"},
 			Destination: &params.Desc,
 		},
 		&cli.StringFlag{
-			Name:    "file",
-			Usage:   "Path to Telegraf configuration",
-			Aliases: []string{"f"},
+			Name:  "file, f",
+			Usage: "Path to Telegraf configuration",
 		},
 		&cli.StringFlag{
-			Name:        "name",
+			Name:        "name, n",
 			Usage:       "Name of Telegraf configuration",
-			Aliases:     []string{"n"},
 			Destination: &params.Name,
 		},
 		&cli.StringFlag{
-			Name:        "id",
+			Name:        "id, i",
 			Usage:       "Telegraf configuration ID to retrieve",
-			Aliases:     []string{"i"},
 			Destination: &params.Id,
 		},
 		&cli.StringFlag{Name: "org", Hidden: true},
 		&cli.StringFlag{Name: "org-id", Hidden: true},
 	)
-	return &cli.Command{
+	return cli.Command{
 		Name:  "update",
 		Usage: "Update a Telegraf configuration.",
 		Description: `The telegrafs update command updates a Telegraf configuration to match the
@@ -215,7 +206,7 @@ Examples:
 				TelegrafsApi:     api.TelegrafsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.Update(ctx.Context, &params)
+			return client.Update(getContext(ctx), &params)
 		},
 	}
 }

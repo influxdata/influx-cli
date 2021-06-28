@@ -1,12 +1,12 @@
 package main
 
-import "github.com/urfave/cli/v2"
+import "github.com/urfave/cli"
 
-func newV1SubCommand() *cli.Command {
-	return &cli.Command{
+func newV1SubCommand() cli.Command {
+	return cli.Command{
 		Name:  "v1",
 		Usage: "InfluxDB v1 management commands",
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newV1DBRPCmd(),
 			newV1AuthCommand(),
 		},

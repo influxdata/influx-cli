@@ -7,12 +7,12 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/query"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newQueryCmd() *cli.Command {
+func newQueryCmd() cli.Command {
 	var orgParams clients.OrgParams
-	return &cli.Command{
+	return cli.Command{
 		Name:        "query",
 		Usage:       "Execute a Flux query",
 		Description: "Execute a Flux query provided via the first argument, a file, or stdin",
@@ -21,36 +21,33 @@ func newQueryCmd() *cli.Command {
 		Flags: append(
 			commonFlagsNoPrint(),
 			&cli.GenericFlag{
-				Name:    "org-id",
-				Usage:   "The ID of the organization",
-				EnvVars: []string{"INFLUX_ORG_ID"},
-				Value:   &orgParams.OrgID,
+				Name:   "org-id",
+				Usage:  "The ID of the organization",
+				EnvVar: "INFLUX_ORG_ID",
+				Value:  &orgParams.OrgID,
 			},
 			&cli.StringFlag{
-				Name:        "org",
+				Name:        "org, o",
 				Usage:       "The name of the organization",
-				Aliases:     []string{"o"},
-				EnvVars:     []string{"INFLUX_ORG"},
+				EnvVar:      "INFLUX_ORG",
 				Destination: &orgParams.OrgName,
 			},
 			&cli.StringFlag{
-				Name:    "file",
-				Usage:   "Path to Flux query file",
-				Aliases: []string{"f"},
+				Name:      "file, f",
+				Usage:     "Path to Flux query file",
+				TakesFile: true,
 			},
 			&cli.BoolFlag{
-				Name:    "raw",
-				Usage:   "Display raw query results",
-				Aliases: []string{"r"},
+				Name:  "raw, r",
+				Usage: "Display raw query results",
 			},
 			&cli.StringSliceFlag{
-				Name:    "profilers",
-				Usage:   "Names of Flux profilers to enable",
-				Aliases: []string{"p"},
+				Name:  "profilers, p",
+				Usage: "Names of Flux profilers to enable",
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			queryString, err := clients.ReadQuery(ctx)
+			queryString, err := clients.ReadQuery(ctx.String("file"), ctx.Args())
 			if err != nil {
 				return err
 			}
@@ -85,7 +82,7 @@ func newQueryCmd() *cli.Command {
 				QueryApi:      getAPI(ctx).QueryApi,
 				ResultPrinter: printer,
 			}
-			return client.Query(ctx.Context, &params)
+			return client.Query(getContext(ctx), &params)
 		},
 	}
 }

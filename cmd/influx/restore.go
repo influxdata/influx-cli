@@ -5,13 +5,13 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/clients/restore"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newRestoreCmd() *cli.Command {
+func newRestoreCmd() cli.Command {
 	var params restore.Params
 
-	return &cli.Command{
+	return cli.Command{
 		Name:  "restore",
 		Usage: "Restores a backup directory to InfluxDB",
 		Description: `Restore influxdb.
@@ -32,14 +32,13 @@ Examples:
 			&cli.StringFlag{
 				Name:        "org-id",
 				Usage:       "The original ID of the organization to restore",
-				EnvVars:     []string{"INFLUX_ORG_ID"},
+				EnvVar:      "INFLUX_ORG_ID",
 				Destination: &params.OrgID,
 			},
 			&cli.StringFlag{
-				Name:        "org",
+				Name:        "org, o",
 				Usage:       "The original name of the organization to restore",
-				Aliases:     []string{"o"},
-				EnvVars:     []string{"INFLUX_ORG"},
+				EnvVar:      "INFLUX_ORG",
 				Destination: &params.Org,
 			},
 			&cli.StringFlag{
@@ -48,9 +47,8 @@ Examples:
 				Destination: &params.BucketID,
 			},
 			&cli.StringFlag{
-				Name:        "bucket",
+				Name:        "bucket, b",
 				Usage:       "The original name of the bucket to restore",
-				Aliases:     []string{"b"},
 				Destination: &params.Bucket,
 			},
 			&cli.StringFlag{
@@ -92,7 +90,7 @@ Examples:
 				RestoreApi:       api.RestoreApi.OnlyOSS(),
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.Restore(ctx.Context, &params)
+			return client.Restore(getContext(ctx), &params)
 		},
 	}
 }

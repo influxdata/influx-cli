@@ -3,11 +3,11 @@ package main
 import (
 	"github.com/influxdata/influx-cli/v2/clients/ping"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newPingCmd() *cli.Command {
-	return &cli.Command{
+func newPingCmd() cli.Command {
+	return cli.Command{
 		Name:   "ping",
 		Usage:  "Check the InfluxDB /health endpoint",
 		Before: middleware.WithBeforeFns(withCli(), withApi(false)),
@@ -17,7 +17,7 @@ func newPingCmd() *cli.Command {
 				CLI:       getCLI(ctx),
 				HealthApi: getAPINoToken(ctx).HealthApi.OnlyOSS(),
 			}
-			return client.Ping(ctx.Context)
+			return client.Ping(getContext(ctx))
 		},
 	}
 }

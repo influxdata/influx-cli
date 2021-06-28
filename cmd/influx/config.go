@@ -7,13 +7,13 @@ import (
 
 	cmd "github.com/influxdata/influx-cli/v2/clients/config"
 	"github.com/influxdata/influx-cli/v2/config"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 var configPathAndPrintFlags = append([]cli.Flag{configPathFlag()}, printFlags()...)
 
-func newConfigCmd() *cli.Command {
-	return &cli.Command{
+func newConfigCmd() cli.Command {
+	return cli.Command{
 		Name:      "config",
 		Usage:     "Config management commands",
 		ArgsUsage: "[config name]",
@@ -54,7 +54,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/
 			}
 			return client.PrintActive()
 		},
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newConfigCreateCmd(),
 			newConfigDeleteCmd(),
 			newConfigUpdateCmd(),
@@ -63,9 +63,9 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/
 	}
 }
 
-func newConfigCreateCmd() *cli.Command {
+func newConfigCreateCmd() cli.Command {
 	var cfg config.Config
-	return &cli.Command{
+	return cli.Command{
 		Name:  "create",
 		Usage: "Create config",
 		Description: `
@@ -88,36 +88,31 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/create/
 		Flags: append(
 			configPathAndPrintFlags,
 			&cli.StringFlag{
-				Name:        "config-name",
+				Name:        "config-name, n",
 				Usage:       "Name for the new config",
-				Aliases:     []string{"n"},
 				Required:    true,
 				Destination: &cfg.Name,
 			},
 			&cli.StringFlag{
-				Name:        "host-url",
+				Name:        "host-url, u",
 				Usage:       "Base URL of the InfluxDB server the new config should target",
-				Aliases:     []string{"u"},
 				Required:    true,
 				Destination: &cfg.Host,
 			},
 			&cli.StringFlag{
-				Name:        "token",
+				Name:        "token, t",
 				Usage:       "Auth token to use when communicating with the InfluxDB server",
-				Aliases:     []string{"t"},
 				Required:    true,
 				Destination: &cfg.Token,
 			},
 			&cli.StringFlag{
-				Name:        "org",
+				Name:        "org, o",
 				Usage:       "Default organization name to use in the new config",
-				Aliases:     []string{"o"},
 				Destination: &cfg.Org,
 			},
 			&cli.BoolFlag{
-				Name:        "active",
+				Name:        "active, a",
 				Usage:       "Set the new config as active",
-				Aliases:     []string{"a"},
 				Destination: &cfg.Active,
 			},
 		),
@@ -128,8 +123,8 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/create/
 	}
 }
 
-func newConfigDeleteCmd() *cli.Command {
-	return &cli.Command{
+func newConfigDeleteCmd() cli.Command {
+	return cli.Command{
 		Name:      "rm",
 		Aliases:   []string{"delete", "remove"},
 		Usage:     "Delete config",
@@ -154,14 +149,14 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/rm/
 		Flags:  append([]cli.Flag{configPathFlag()}, printFlags()...),
 		Action: func(ctx *cli.Context) error {
 			client := cmd.Client{CLI: getCLI(ctx)}
-			return client.Delete(ctx.Args().Slice())
+			return client.Delete(ctx.Args())
 		},
 	}
 }
 
-func newConfigUpdateCmd() *cli.Command {
+func newConfigUpdateCmd() cli.Command {
 	var cfg config.Config
-	return &cli.Command{
+	return cli.Command{
 		Name:    "set",
 		Aliases: []string{"update"},
 		Usage:   "Update config",
@@ -185,34 +180,29 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/set/
 		Flags: append(
 			configPathAndPrintFlags,
 			&cli.StringFlag{
-				Name:        "config-name",
+				Name:        "config-name, n",
 				Usage:       "Name of the config to update",
-				Aliases:     []string{"n"},
 				Required:    true,
 				Destination: &cfg.Name,
 			},
 			&cli.StringFlag{
-				Name:        "host-url",
+				Name:        "host-url, u",
 				Usage:       "New URL to set on the config",
-				Aliases:     []string{"u"},
 				Destination: &cfg.Host,
 			},
 			&cli.StringFlag{
-				Name:        "token",
+				Name:        "token, t",
 				Usage:       "New auth token to set on the config",
-				Aliases:     []string{"t"},
 				Destination: &cfg.Token,
 			},
 			&cli.StringFlag{
-				Name:        "org",
+				Name:        "org, o",
 				Usage:       "New default organization to set on the config",
-				Aliases:     []string{"o"},
 				Destination: &cfg.Org,
 			},
 			&cli.BoolFlag{
-				Name:        "active",
+				Name:        "active, a",
 				Usage:       "Set the config as active",
-				Aliases:     []string{"a"},
 				Destination: &cfg.Active,
 			},
 		),
@@ -223,8 +213,8 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/set/
 	}
 }
 
-func newConfigListCmd() *cli.Command {
-	return &cli.Command{
+func newConfigListCmd() cli.Command {
+	return cli.Command{
 		Name:    "ls",
 		Aliases: []string{"list"},
 		Usage:   "List configs",

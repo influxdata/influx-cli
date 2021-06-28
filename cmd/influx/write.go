@@ -9,7 +9,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients/write"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 type writeParams struct {
@@ -68,59 +68,53 @@ func (p *writeParams) Flags() []cli.Flag {
 		&cli.StringFlag{
 			Name:        "bucket-id",
 			Usage:       "The ID of destination bucket",
-			EnvVars:     []string{"INFLUX_BUCKET_ID"},
+			EnvVar:      "INFLUX_BUCKET_ID",
 			Destination: &p.BucketID,
 		},
 		&cli.StringFlag{
-			Name:        "bucket",
+			Name:        "bucket, b",
 			Usage:       "The name of destination bucket",
-			Aliases:     []string{"b"},
-			EnvVars:     []string{"INFLUX_BUCKET_NAME"},
+			EnvVar:      "INFLUX_BUCKET_NAME",
 			Destination: &p.BucketName,
 		},
 		&cli.StringFlag{
 			Name:        "org-id",
 			Usage:       "The ID of the organization",
-			EnvVars:     []string{"INFLUX_ORG_ID"},
+			EnvVar:      "INFLUX_ORG_ID",
 			Destination: &p.OrgID,
 		},
 		&cli.StringFlag{
-			Name:        "org",
+			Name:        "org, o",
 			Usage:       "The name of the organization",
-			Aliases:     []string{"o"},
-			EnvVars:     []string{"INFLUX_ORG"},
+			EnvVar:      "INFLUX_ORG",
 			Destination: &p.OrgName,
 		},
 		&cli.GenericFlag{
-			Name:    "precision",
-			Usage:   "Precision of the timestamps of the lines",
-			Aliases: []string{"p"},
-			EnvVars: []string{"INFLUX_PRECISION"},
-			Value:   &p.Precision,
+			Name:   "precision, p",
+			Usage:  "Precision of the timestamps of the lines",
+			EnvVar: "INFLUX_PRECISION",
+			Value:  &p.Precision,
 		},
 		&cli.GenericFlag{
-			Name:        "format",
-			Usage:       "Input format, either 'lp' (Line Protocol) or 'csv' (Comma Separated Values)",
-			DefaultText: "'lp' unless '.csv' extension",
-			Value:       &p.Format,
+			Name:  "format",
+			Usage: "Input format, either 'lp' (Line Protocol) or 'csv' (Comma Separated Values)",
+			Value: &p.Format,
 		},
 		&cli.StringSliceFlag{
-			Name:        "header",
-			Usage:       "Header prepends lines to input data",
-			Destination: &p.Headers,
+			Name:  "header",
+			Usage: "Header prepends lines to input data",
+			Value: &p.Headers,
 		},
 		&cli.StringSliceFlag{
-			Name:        "file",
-			Usage:       "The path to the file to import",
-			Aliases:     []string{"f"},
-			TakesFile:   true,
-			Destination: &p.Files,
+			Name:      "file, f",
+			Usage:     "The path to the file to import",
+			TakesFile: true,
+			Value:     &p.Files,
 		},
 		&cli.StringSliceFlag{
-			Name:        "url",
-			Usage:       "The URL to import data from",
-			Aliases:     []string{"u"},
-			Destination: &p.URLs,
+			Name:  "url, u",
+			Usage: "The URL to import data from",
+			Value: &p.URLs,
 		},
 		&cli.BoolFlag{
 			Name:        "debug",
@@ -164,27 +158,25 @@ func (p *writeParams) Flags() []cli.Flag {
 			Destination: &p.ErrorsFile,
 		},
 		&cli.GenericFlag{
-			Name:        "rate-limit",
-			Usage:       `Throttles write, examples: "5 MB / 5 min" , "17kBs"`,
-			DefaultText: "no throttling",
-			Value:       &p.RateLimit,
+			Name:  "rate-limit",
+			Usage: `Throttles write, examples: "5 MB / 5 min" , "17kBs"`,
+			Value: &p.RateLimit,
 		},
 		&cli.GenericFlag{
-			Name:        "compression",
-			Usage:       "Input compression, either 'none' or 'gzip'",
-			DefaultText: "'none' unless an input has a '.gz' extension",
-			Value:       &p.Compression,
+			Name:  "compression",
+			Usage: "Input compression, either 'none' or 'gzip'",
+			Value: &p.Compression,
 		},
 	}
 }
 
-func newWriteCmd() *cli.Command {
+func newWriteCmd() cli.Command {
 	params := writeParams{
 		Params: write.Params{
 			Precision: api.WRITEPRECISION_NS,
 		},
 	}
-	return &cli.Command{
+	return cli.Command{
 		Name:        "write",
 		Usage:       "Write points to InfluxDB",
 		Description: "Write data to InfluxDB via stdin, or add an entire file specified with the -f flag",
@@ -200,7 +192,7 @@ func newWriteCmd() *cli.Command {
 			client := &write.Client{
 				CLI:         getCLI(ctx),
 				WriteApi:    getAPI(ctx).WriteApi,
-				LineReader:  params.makeLineReader(ctx.Args().Slice(), errorFile),
+				LineReader:  params.makeLineReader(ctx.Args(), errorFile),
 				RateLimiter: write.NewThrottler(params.RateLimit),
 				BatchWriter: &write.BufferBatcher{
 					MaxFlushBytes:    write.DefaultMaxBytes,
@@ -209,22 +201,22 @@ func newWriteCmd() *cli.Command {
 				},
 			}
 
-			return client.Write(ctx.Context, &params.Params)
+			return client.Write(getContext(ctx), &params.Params)
 		},
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newWriteDryRun(),
 		},
 	}
 }
 
-func newWriteDryRun() *cli.Command {
+func newWriteDryRun() cli.Command {
 	params := writeParams{
 		Params: write.Params{
 			Precision: api.WRITEPRECISION_NS,
 		},
 	}
 
-	return &cli.Command{
+	return cli.Command{
 		Name:        "dryrun",
 		Usage:       "Write to stdout instead of InfluxDB",
 		Description: "Write protocol lines to stdout instead of InfluxDB. Troubleshoot conversion from CSV to line protocol",
@@ -239,9 +231,9 @@ func newWriteDryRun() *cli.Command {
 
 			client := write.DryRunClient{
 				CLI:        getCLI(ctx),
-				LineReader: params.makeLineReader(ctx.Args().Slice(), errorFile),
+				LineReader: params.makeLineReader(ctx.Args(), errorFile),
 			}
-			return client.WriteDryRun(ctx.Context)
+			return client.WriteDryRun(getContext(ctx))
 		},
 	}
 }

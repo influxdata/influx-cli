@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 // WithBeforeFns returns a cli.BeforeFunc that calls each of the provided
