@@ -3,15 +3,15 @@ package main
 import (
 	"github.com/influxdata/influx-cli/v2/clients/auth"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newAuthCommand() *cli.Command {
-	return &cli.Command{
+func newAuthCommand() cli.Command {
+	return cli.Command{
 		Name:    "auth",
 		Usage:   "Authorization management commands",
 		Aliases: []string{"authorization"},
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newCreateCommand(),
 			newDeleteCommand(),
 			newListCommand(),
@@ -21,20 +21,18 @@ func newAuthCommand() *cli.Command {
 	}
 }
 
-func newCreateCommand() *cli.Command {
+func newCreateCommand() cli.Command {
 	var params auth.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags,
 		&cli.StringFlag{
-			Name:        "user",
+			Name:        "user, u",
 			Usage:       "The user name",
-			Aliases:     []string{"u"},
 			Destination: &params.User,
 		},
 		&cli.StringFlag{
-			Name:        "description",
+			Name:        "description, d",
 			Usage:       "Token description",
-			Aliases:     []string{"d"},
 			Destination: &params.Description,
 		},
 
@@ -147,7 +145,7 @@ func newCreateCommand() *cli.Command {
 			Destination: &params.ReadDBRPPermission,
 		},
 	)
-	return &cli.Command{
+	return cli.Command{
 		Name:   "create",
 		Usage:  "Create authorization",
 		Flags:  flags,
@@ -163,22 +161,21 @@ func newCreateCommand() *cli.Command {
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
 			}
-			return client.Create(ctx.Context, &params)
+			return client.Create(getContext(ctx), &params)
 		},
 	}
 }
 
-func newDeleteCommand() *cli.Command {
-	return &cli.Command{
+func newDeleteCommand() cli.Command {
+	return cli.Command{
 		Name:  "delete",
 		Usage: "Delete authorization",
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
-				Name:     "id",
+				Name:     "id, i",
 				Usage:    "The authorization ID (required)",
 				Required: true,
-				Aliases:  []string{"i"},
 			},
 		),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
@@ -190,25 +187,23 @@ func newDeleteCommand() *cli.Command {
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
 			}
-			return client.Remove(ctx.Context, ctx.String("id"))
+			return client.Remove(getContext(ctx), ctx.String("id"))
 		},
 	}
 }
 
-func newListCommand() *cli.Command {
+func newListCommand() cli.Command {
 	var params auth.ListParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags,
 		&cli.StringFlag{
-			Name:        "id",
+			Name:        "id, i",
 			Usage:       "The authorization ID",
-			Aliases:     []string{"i"},
 			Destination: &params.Id,
 		},
 		&cli.StringFlag{
-			Name:        "user",
+			Name:        "user, u",
 			Usage:       "The user",
-			Aliases:     []string{"u"},
 			Destination: &params.User,
 		},
 		&cli.StringFlag{
@@ -217,7 +212,7 @@ func newListCommand() *cli.Command {
 			Destination: &params.UserID,
 		},
 	)
-	return &cli.Command{
+	return cli.Command{
 		Name:    "list",
 		Usage:   "List authorizations",
 		Aliases: []string{"find", "ls"},
@@ -231,21 +226,20 @@ func newListCommand() *cli.Command {
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
 			}
-			return client.List(ctx.Context, &params)
+			return client.List(getContext(ctx), &params)
 		},
 	}
 }
 
-func newSetActiveCommand() *cli.Command {
-	return &cli.Command{
+func newSetActiveCommand() cli.Command {
+	return cli.Command{
 		Name:  "active",
 		Usage: "Active authorization",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:     "id",
+				Name:     "id, i",
 				Usage:    "The authorization ID (required)",
 				Required: true,
-				Aliases:  []string{"i"},
 			},
 		},
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
@@ -257,21 +251,20 @@ func newSetActiveCommand() *cli.Command {
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
 			}
-			return client.SetActive(ctx.Context, ctx.String("id"), true)
+			return client.SetActive(getContext(ctx), ctx.String("id"), true)
 		},
 	}
 }
 
-func newSetInactiveCommand() *cli.Command {
-	return &cli.Command{
+func newSetInactiveCommand() cli.Command {
+	return cli.Command{
 		Name:  "inactive",
 		Usage: "Inactive authorization",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:     "id",
+				Name:     "id, i",
 				Usage:    "The authorization ID (required)",
 				Required: true,
-				Aliases:  []string{"i"},
 			},
 		},
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
@@ -283,7 +276,7 @@ func newSetInactiveCommand() *cli.Command {
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
 			}
-			return client.SetActive(ctx.Context, ctx.String("id"), false)
+			return client.SetActive(getContext(ctx), ctx.String("id"), false)
 		},
 	}
 }
