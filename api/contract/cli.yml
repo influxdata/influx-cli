@@ -97,7 +97,7 @@ paths:
     $ref: "./openapi/src/oss/paths/legacy_authorizations_authID_password.yml"
   /authorizations:
     $ref: "./openapi/src/common/paths/authorizations.yml"
-  "/authorizations/{authID}":
+  /authorizations/{authID}:
     $ref: "./openapi/src/common/paths/authorizations_authID.yml"
 components:
   parameters:

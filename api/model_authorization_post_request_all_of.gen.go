@@ -17,11 +17,11 @@ import (
 // AuthorizationPostRequestAllOf struct for AuthorizationPostRequestAllOf
 type AuthorizationPostRequestAllOf struct {
 	// ID of org that authorization is scoped to.
-	OrgID *string `json:"orgID,omitempty"`
+	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
 	// ID of user that authorization is scoped to.
-	UserID *string `json:"userID,omitempty"`
+	UserID *string `json:"userID,omitempty" yaml:"userID,omitempty"`
 	// List of permissions for an auth.  An auth must have at least one Permission.
-	Permissions *[]Permission `json:"permissions,omitempty"`
+	Permissions *[]Permission `json:"permissions,omitempty" yaml:"permissions,omitempty"`
 }
 
 // NewAuthorizationPostRequestAllOf instantiates a new AuthorizationPostRequestAllOf object

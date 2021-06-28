@@ -113,37 +113,37 @@ func NewConfiguration() *Configuration {
 					Description: "No description provided",
 				},
 			},
-			"LegacyAuthorizationsApiService.DeleteAuthorizationsID": {
+			"LegacyAuthorizationsApiService.DeleteLegacyAuthorizationsID": {
 				{
 					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
-			"LegacyAuthorizationsApiService.GetAuthorizations": {
+			"LegacyAuthorizationsApiService.GetLegacyAuthorizations": {
 				{
 					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
-			"LegacyAuthorizationsApiService.GetAuthorizationsID": {
+			"LegacyAuthorizationsApiService.GetLegacyAuthorizationsID": {
 				{
 					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
-			"LegacyAuthorizationsApiService.PatchAuthorizationsID": {
+			"LegacyAuthorizationsApiService.PatchLegacyAuthorizationsID": {
 				{
 					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
-			"LegacyAuthorizationsApiService.PostAuthorizations": {
+			"LegacyAuthorizationsApiService.PostLegacyAuthorizations": {
 				{
 					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
-			"LegacyAuthorizationsApiService.PostAuthorizationsIDPassword": {
+			"LegacyAuthorizationsApiService.PostLegacyAuthorizationsIDPassword": {
 				{
 					URL:         "/private",
 					Description: "No description provided",
