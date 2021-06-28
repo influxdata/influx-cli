@@ -175,6 +175,14 @@ func TestClient_List(t *testing.T) {
 			expErr: `bucket "my-bucket" not found`,
 		},
 		{
+			name: "bucket not found by id",
+			opts: opts(
+				withArgs(args{OrgName: "my-org", BucketID: influxid.MustIDFromString("baadf00d7777deed")}),
+				expGetBuckets(),
+			),
+			expErr: `bucket "baadf00d7777deed" not found`,
+		},
+		{
 			name: "list succeeds with org name and bucket name",
 			opts: opts(
 				withArgs(args{OrgName: "my-org", BucketName: "my-bucket", Name: "cpu"}),

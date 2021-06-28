@@ -49,10 +49,13 @@ func (c Client) resolveOrgBucketIds(ctx context.Context, params clients.OrgBucke
 	}
 
 	req := c.GetBuckets(ctx)
+	var nameID string
 	if params.BucketID.Valid() {
 		req = req.Id(params.BucketID.String())
+		nameID = params.BucketID.String()
 	} else {
 		req = req.Name(params.BucketName)
+		nameID = params.BucketName
 	}
 	if params.OrgID.Valid() {
 		req = req.OrgID(params.OrgID.String())
@@ -64,11 +67,11 @@ func (c Client) resolveOrgBucketIds(ctx context.Context, params clients.OrgBucke
 
 	resp, err := req.Execute()
 	if err != nil {
-		return nil, fmt.Errorf("failed to find bucket %q: %w", params.BucketName, err)
+		return nil, fmt.Errorf("failed to find bucket %q: %w", nameID, err)
 	}
 	buckets := resp.GetBuckets()
 	if len(buckets) == 0 {
-		return nil, fmt.Errorf("bucket %q not found", params.BucketName)
+		return nil, fmt.Errorf("bucket %q not found", nameID)
 	}
 
 	return &orgBucketID{OrgID: buckets[0].GetOrgID(), BucketID: buckets[0].GetId()}, nil
