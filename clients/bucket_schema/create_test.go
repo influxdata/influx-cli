@@ -3,6 +3,7 @@ package bucket_schema_test
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,6 +17,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients/bucket_schema"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
+	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -25,9 +27,9 @@ func TestClient_Create(t *testing.T) {
 	t.Parallel()
 
 	var (
-		orgID         = "dead"
-		bucketID      = "f00d"
-		measurementID = "1010"
+		orgID         = influxid.MustIDFromString("deadf00dbaadf00d")
+		bucketID      = influxid.MustIDFromString("f00ddeadf00dbaad")
+		measurementID = influxid.MustIDFromString("1010f00ddeedfeed")
 		createdAt     = time.Date(2004, 4, 9, 2, 15, 0, 0, time.UTC)
 	)
 
@@ -44,7 +46,9 @@ func TestClient_Create(t *testing.T) {
 
 	type args struct {
 		OrgName        string
+		OrgID          influxid.ID
 		BucketName     string
+		BucketID       influxid.ID
 		Name           string
 		ColumnsFile    string
 		ExtendedOutput bool
@@ -60,8 +64,8 @@ func TestClient_Create(t *testing.T) {
 
 			a.params = bucket_schema.CreateParams{
 				OrgBucketParams: clients.OrgBucketParams{
-					OrgParams:    clients.OrgParams{OrgName: args.OrgName},
-					BucketParams: clients.BucketParams{BucketName: args.BucketName},
+					OrgParams:    clients.OrgParams{OrgName: args.OrgName, OrgID: args.OrgID},
+					BucketParams: clients.BucketParams{BucketName: args.BucketName, BucketID: args.BucketID},
 				},
 				Name:           args.Name,
 				ColumnsFile:    colFile,
@@ -77,8 +81,8 @@ func TestClient_Create(t *testing.T) {
 			var buckets []api.Bucket
 			if len(n) == 1 {
 				bucket := api.NewBucket(n[0], nil)
-				bucket.SetOrgID(orgID)
-				bucket.SetId(bucketID)
+				bucket.SetOrgID(orgID.String())
+				bucket.SetId(bucketID.String())
 				bucket.SetName(n[0])
 				buckets = []api.Bucket{*bucket}
 			}
@@ -91,7 +95,11 @@ func TestClient_Create(t *testing.T) {
 
 			a.buckets.EXPECT().
 				GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
-					return cmp.Equal(in.GetOrg(), &a.params.OrgName) && cmp.Equal(in.GetName(), &a.params.BucketName)
+					matchOrg := (in.GetOrg() != nil && *in.GetOrg() == a.params.OrgName) ||
+						(in.GetOrgID() != nil && a.params.OrgID.Valid() && *in.GetOrgID() == a.params.OrgID.String())
+					matchBucket := (in.GetName() != nil && *in.GetName() == a.params.BucketName) ||
+						(in.GetId() != nil && a.params.BucketID.Valid() && *in.GetId() == a.params.BucketID.String())
+					return matchOrg && matchBucket
 				})).
 				Return(api.Buckets{Buckets: &buckets}, nil)
 		}
@@ -115,18 +123,19 @@ func TestClient_Create(t *testing.T) {
 		return func(t *testing.T, a *setupArgs) {
 			t.Helper()
 
-			req := api.ApiCreateMeasurementSchemaRequest{ApiService: a.schemas}.BucketID(bucketID)
+			req := api.ApiCreateMeasurementSchemaRequest{ApiService: a.schemas}.BucketID(bucketID.String())
 
 			a.schemas.EXPECT().
-				CreateMeasurementSchema(gomock.Any(), bucketID).
+				CreateMeasurementSchema(gomock.Any(), bucketID.String()).
 				Return(req)
 
 			a.schemas.EXPECT().
 				CreateMeasurementSchemaExecute(tmock.MatchedBy(func(in api.ApiCreateMeasurementSchemaRequest) bool {
-					return cmp.Equal(in.GetOrgID(), &orgID) && cmp.Equal(in.GetBucketID(), bucketID)
+					orgIDPtr := orgID.String()
+					return cmp.Equal(in.GetOrgID(), &orgIDPtr) && cmp.Equal(in.GetBucketID(), bucketID.String())
 				})).
 				Return(api.MeasurementSchema{
-					Id:        measurementID,
+					Id:        measurementID.String(),
 					Name:      a.params.Name,
 					Columns:   a.cols,
 					CreatedAt: createdAt,
@@ -172,7 +181,7 @@ func TestClient_Create(t *testing.T) {
 			expErr: `bucket "my-bucket" not found`,
 		},
 		{
-			name: "create succeeds with csv",
+			name: "create succeeds with csv using org name and bucket name",
 			opts: opts(
 				withArgs(args{OrgName: "my-org", BucketName: "my-bucket", Name: "cpu", ColumnsFile: "columns.csv"}),
 				withCols("columns.csv"),
@@ -181,7 +190,46 @@ func TestClient_Create(t *testing.T) {
 			),
 			expLines: lines(
 				`^ID\s+Measurement Name\s+Bucket ID$`,
-				`^1010\s+cpu\s+f00d$`,
+				fmt.Sprintf(`^%s\s+cpu\s+%s`, measurementID, bucketID),
+			),
+		},
+		{
+			name: "create succeeds with csv using org id and bucket name",
+			opts: opts(
+				withArgs(args{OrgID: orgID, BucketName: "my-bucket", Name: "cpu", ColumnsFile: "columns.csv"}),
+				withCols("columns.csv"),
+				expGetBuckets("my-bucket"),
+				expCreate(),
+			),
+			expLines: lines(
+				`^ID\s+Measurement Name\s+Bucket ID$`,
+				fmt.Sprintf(`^%s\s+cpu\s+%s`, measurementID, bucketID),
+			),
+		},
+		{
+			name: "create succeeds with csv using org name and bucket id",
+			opts: opts(
+				withArgs(args{OrgName: "my-org", BucketID: bucketID, Name: "cpu", ColumnsFile: "columns.csv"}),
+				withCols("columns.csv"),
+				expGetBuckets("my-bucket"),
+				expCreate(),
+			),
+			expLines: lines(
+				`^ID\s+Measurement Name\s+Bucket ID$`,
+				fmt.Sprintf(`^%s\s+cpu\s+%s`, measurementID, bucketID),
+			),
+		},
+		{
+			name: "create succeeds with csv using org id and bucket id",
+			opts: opts(
+				withArgs(args{OrgID: orgID, BucketID: bucketID, Name: "cpu", ColumnsFile: "columns.csv"}),
+				withCols("columns.csv"),
+				expGetBuckets("my-bucket"),
+				expCreate(),
+			),
+			expLines: lines(
+				`^ID\s+Measurement Name\s+Bucket ID$`,
+				fmt.Sprintf(`^%s\s+cpu\s+%s`, measurementID, bucketID),
 			),
 		},
 		{
@@ -194,7 +242,7 @@ func TestClient_Create(t *testing.T) {
 			),
 			expLines: lines(
 				`^ID\s+Measurement Name\s+Bucket ID$`,
-				`^1010\s+cpu\s+f00d$`,
+				fmt.Sprintf(`^%s\s+cpu\s+%s`, measurementID, bucketID),
 			),
 		},
 		{
@@ -207,7 +255,7 @@ func TestClient_Create(t *testing.T) {
 			),
 			expLines: lines(
 				`^ID\s+Measurement Name\s+Bucket ID$`,
-				`^1010\s+cpu\s+f00d$`,
+				fmt.Sprintf(`^%s\s+cpu\s+%s`, measurementID, bucketID),
 			),
 		},
 		{
@@ -220,9 +268,9 @@ func TestClient_Create(t *testing.T) {
 			),
 			expLines: lines(
 				`^ID\s+Measurement Name\s+Column Name\s+Column Type\s+Column Data Type\s+Bucket ID$`,
-				`^1010\s+cpu\s+time\s+timestamp\s+f00d$`,
-				`^1010\s+cpu\s+host\s+tag\s+f00d$`,
-				`^1010\s+cpu\s+usage_user\s+field\s+float\s+f00d$`,
+				fmt.Sprintf(`^%s\s+cpu\s+time\s+timestamp\s+%s$`, measurementID, bucketID),
+				fmt.Sprintf(`^%s\s+cpu\s+host\s+tag\s+%s$`, measurementID, bucketID),
+				fmt.Sprintf(`^%s\s+cpu\s+usage_user\s+field\s+float\s+%s$`, measurementID, bucketID),
 			),
 		},
 	}

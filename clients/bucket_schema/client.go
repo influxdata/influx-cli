@@ -40,11 +40,7 @@ func (c Client) resolveMeasurement(ctx context.Context, ids orgBucketID, name st
 }
 
 func (c Client) resolveOrgBucketIds(ctx context.Context, params clients.OrgBucketParams) (*orgBucketID, error) {
-	if params.OrgID.Valid() && params.BucketID.Valid() {
-		return &orgBucketID{OrgID: params.OrgID.String(), BucketID: params.BucketID.String()}, nil
-	}
-
-	if params.BucketName == "" {
+	if params.BucketName == "" && !params.BucketID.Valid() {
 		return nil, errors.New("bucket missing: specify bucket ID or bucket name")
 	}
 
@@ -52,7 +48,15 @@ func (c Client) resolveOrgBucketIds(ctx context.Context, params clients.OrgBucke
 		return nil, errors.New("org missing: specify org ID or org name")
 	}
 
-	req := c.GetBuckets(ctx).Name(params.BucketName)
+	req := c.GetBuckets(ctx)
+	var nameID string
+	if params.BucketID.Valid() {
+		req = req.Id(params.BucketID.String())
+		nameID = params.BucketID.String()
+	} else {
+		req = req.Name(params.BucketName)
+		nameID = params.BucketName
+	}
 	if params.OrgID.Valid() {
 		req = req.OrgID(params.OrgID.String())
 	} else if params.OrgName != "" {
@@ -63,11 +67,11 @@ func (c Client) resolveOrgBucketIds(ctx context.Context, params clients.OrgBucke
 
 	resp, err := req.Execute()
 	if err != nil {
-		return nil, fmt.Errorf("failed to find bucket %q: %w", params.BucketName, err)
+		return nil, fmt.Errorf("failed to find bucket %q: %w", nameID, err)
 	}
 	buckets := resp.GetBuckets()
 	if len(buckets) == 0 {
-		return nil, fmt.Errorf("bucket %q not found", params.BucketName)
+		return nil, fmt.Errorf("bucket %q not found", nameID)
 	}
 
 	return &orgBucketID{OrgID: buckets[0].GetOrgID(), BucketID: buckets[0].GetId()}, nil
