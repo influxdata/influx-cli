@@ -358,12 +358,12 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 	}
 }
 
-func newExportStackCmd() *cli.Command {
+func newExportStackCmd() cli.Command {
 	var params struct {
 		out string
 	}
 
-	return &cli.Command{
+	return cli.Command{
 		Name:  "stack",
 		Usage: "Export all resources associated with a stack as a template",
 		Description: `The influx export stack command exports all resources 
@@ -381,9 +381,8 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/stack/
 		Flags: append(
 			commonFlagsNoPrint(),
 			&cli.StringFlag{
-				Name:        "file",
+				Name:        "file, f",
 				Usage:       "Output file for created template; defaults to std out if no file provided; the extension of provided file (.yml/.json) will dictate encoding",
-				Aliases:     []string{"f"},
 				Destination: &params.out,
 			},
 		),
@@ -412,7 +411,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/stack/
 				TemplatesApi:     apiClient.TemplatesApi,
 				OrganizationsApi: apiClient.OrganizationsApi,
 			}
-			return client.ExportStack(ctx.Context, &parsedParams)
+			return client.ExportStack(getContext(ctx), &parsedParams)
 		},
 	}
 }
