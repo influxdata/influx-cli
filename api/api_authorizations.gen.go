@@ -24,147 +24,134 @@ var (
 	_ _context.Context
 )
 
-type LegacyAuthorizationsApi interface {
+type AuthorizationsApi interface {
 
 	/*
-	 * DeleteLegacyAuthorizationsID Delete a legacy authorization
+	 * DeleteAuthorizationsID Delete an authorization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param authID The ID of the legacy authorization to delete.
-	 * @return ApiDeleteLegacyAuthorizationsIDRequest
+	 * @param authID The ID of the authorization to delete.
+	 * @return ApiDeleteAuthorizationsIDRequest
 	 */
-	DeleteLegacyAuthorizationsID(ctx _context.Context, authID string) ApiDeleteLegacyAuthorizationsIDRequest
+	DeleteAuthorizationsID(ctx _context.Context, authID string) ApiDeleteAuthorizationsIDRequest
 
 	/*
-	 * DeleteLegacyAuthorizationsIDExecute executes the request
+	 * DeleteAuthorizationsIDExecute executes the request
 	 */
-	DeleteLegacyAuthorizationsIDExecute(r ApiDeleteLegacyAuthorizationsIDRequest) error
+	DeleteAuthorizationsIDExecute(r ApiDeleteAuthorizationsIDRequest) error
 
 	/*
-	 * GetLegacyAuthorizations List all legacy authorizations
+	 * GetAuthorizations List all authorizations
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiGetLegacyAuthorizationsRequest
+	 * @return ApiGetAuthorizationsRequest
 	 */
-	GetLegacyAuthorizations(ctx _context.Context) ApiGetLegacyAuthorizationsRequest
+	GetAuthorizations(ctx _context.Context) ApiGetAuthorizationsRequest
 
 	/*
-	 * GetLegacyAuthorizationsExecute executes the request
+	 * GetAuthorizationsExecute executes the request
 	 * @return Authorizations
 	 */
-	GetLegacyAuthorizationsExecute(r ApiGetLegacyAuthorizationsRequest) (Authorizations, error)
+	GetAuthorizationsExecute(r ApiGetAuthorizationsRequest) (Authorizations, error)
 
 	/*
-	 * GetLegacyAuthorizationsID Retrieve a legacy authorization
+	 * GetAuthorizationsID Retrieve an authorization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param authID The ID of the legacy authorization to get.
-	 * @return ApiGetLegacyAuthorizationsIDRequest
+	 * @param authID The ID of the authorization to get.
+	 * @return ApiGetAuthorizationsIDRequest
 	 */
-	GetLegacyAuthorizationsID(ctx _context.Context, authID string) ApiGetLegacyAuthorizationsIDRequest
+	GetAuthorizationsID(ctx _context.Context, authID string) ApiGetAuthorizationsIDRequest
 
 	/*
-	 * GetLegacyAuthorizationsIDExecute executes the request
+	 * GetAuthorizationsIDExecute executes the request
 	 * @return Authorization
 	 */
-	GetLegacyAuthorizationsIDExecute(r ApiGetLegacyAuthorizationsIDRequest) (Authorization, error)
+	GetAuthorizationsIDExecute(r ApiGetAuthorizationsIDRequest) (Authorization, error)
 
 	/*
-	 * PatchLegacyAuthorizationsID Update a legacy authorization to be active or inactive
+	 * PatchAuthorizationsID Update an authorization to be active or inactive
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param authID The ID of the legacy authorization to update.
-	 * @return ApiPatchLegacyAuthorizationsIDRequest
+	 * @param authID The ID of the authorization to update.
+	 * @return ApiPatchAuthorizationsIDRequest
 	 */
-	PatchLegacyAuthorizationsID(ctx _context.Context, authID string) ApiPatchLegacyAuthorizationsIDRequest
+	PatchAuthorizationsID(ctx _context.Context, authID string) ApiPatchAuthorizationsIDRequest
 
 	/*
-	 * PatchLegacyAuthorizationsIDExecute executes the request
+	 * PatchAuthorizationsIDExecute executes the request
 	 * @return Authorization
 	 */
-	PatchLegacyAuthorizationsIDExecute(r ApiPatchLegacyAuthorizationsIDRequest) (Authorization, error)
+	PatchAuthorizationsIDExecute(r ApiPatchAuthorizationsIDRequest) (Authorization, error)
 
 	/*
-	 * PostLegacyAuthorizations Create a legacy authorization
+	 * PostAuthorizations Create an authorization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostLegacyAuthorizationsRequest
+	 * @return ApiPostAuthorizationsRequest
 	 */
-	PostLegacyAuthorizations(ctx _context.Context) ApiPostLegacyAuthorizationsRequest
+	PostAuthorizations(ctx _context.Context) ApiPostAuthorizationsRequest
 
 	/*
-	 * PostLegacyAuthorizationsExecute executes the request
+	 * PostAuthorizationsExecute executes the request
 	 * @return Authorization
 	 */
-	PostLegacyAuthorizationsExecute(r ApiPostLegacyAuthorizationsRequest) (Authorization, error)
-
-	/*
-	 * PostLegacyAuthorizationsIDPassword Set a legacy authorization password
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param authID The ID of the legacy authorization to update.
-	 * @return ApiPostLegacyAuthorizationsIDPasswordRequest
-	 */
-	PostLegacyAuthorizationsIDPassword(ctx _context.Context, authID string) ApiPostLegacyAuthorizationsIDPasswordRequest
-
-	/*
-	 * PostLegacyAuthorizationsIDPasswordExecute executes the request
-	 */
-	PostLegacyAuthorizationsIDPasswordExecute(r ApiPostLegacyAuthorizationsIDPasswordRequest) error
+	PostAuthorizationsExecute(r ApiPostAuthorizationsRequest) (Authorization, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
 	// servers.
-	OnlyOSS() LegacyAuthorizationsApi
+	OnlyOSS() AuthorizationsApi
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on cloud
 	// servers.
-	OnlyCloud() LegacyAuthorizationsApi
+	OnlyCloud() AuthorizationsApi
 }
 
-// LegacyAuthorizationsApiService LegacyAuthorizationsApi service
-type LegacyAuthorizationsApiService service
+// AuthorizationsApiService AuthorizationsApi service
+type AuthorizationsApiService service
 
-func (a *LegacyAuthorizationsApiService) OnlyOSS() LegacyAuthorizationsApi {
+func (a *AuthorizationsApiService) OnlyOSS() AuthorizationsApi {
 	a.isOnlyOSS = true
 	return a
 }
 
-func (a *LegacyAuthorizationsApiService) OnlyCloud() LegacyAuthorizationsApi {
+func (a *AuthorizationsApiService) OnlyCloud() AuthorizationsApi {
 	a.isOnlyCloud = true
 	return a
 }
 
-type ApiDeleteLegacyAuthorizationsIDRequest struct {
+type ApiDeleteAuthorizationsIDRequest struct {
 	ctx          _context.Context
-	ApiService   LegacyAuthorizationsApi
+	ApiService   AuthorizationsApi
 	authID       string
 	zapTraceSpan *string
 }
 
-func (r ApiDeleteLegacyAuthorizationsIDRequest) AuthID(authID string) ApiDeleteLegacyAuthorizationsIDRequest {
+func (r ApiDeleteAuthorizationsIDRequest) AuthID(authID string) ApiDeleteAuthorizationsIDRequest {
 	r.authID = authID
 	return r
 }
-func (r ApiDeleteLegacyAuthorizationsIDRequest) GetAuthID() string {
+func (r ApiDeleteAuthorizationsIDRequest) GetAuthID() string {
 	return r.authID
 }
 
-func (r ApiDeleteLegacyAuthorizationsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiDeleteLegacyAuthorizationsIDRequest {
+func (r ApiDeleteAuthorizationsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiDeleteAuthorizationsIDRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiDeleteLegacyAuthorizationsIDRequest) GetZapTraceSpan() *string {
+func (r ApiDeleteAuthorizationsIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiDeleteLegacyAuthorizationsIDRequest) Execute() error {
-	return r.ApiService.DeleteLegacyAuthorizationsIDExecute(r)
+func (r ApiDeleteAuthorizationsIDRequest) Execute() error {
+	return r.ApiService.DeleteAuthorizationsIDExecute(r)
 }
 
 /*
- * DeleteLegacyAuthorizationsID Delete a legacy authorization
+ * DeleteAuthorizationsID Delete an authorization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param authID The ID of the legacy authorization to delete.
- * @return ApiDeleteLegacyAuthorizationsIDRequest
+ * @param authID The ID of the authorization to delete.
+ * @return ApiDeleteAuthorizationsIDRequest
  */
-func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsID(ctx _context.Context, authID string) ApiDeleteLegacyAuthorizationsIDRequest {
-	return ApiDeleteLegacyAuthorizationsIDRequest{
+func (a *AuthorizationsApiService) DeleteAuthorizationsID(ctx _context.Context, authID string) ApiDeleteAuthorizationsIDRequest {
+	return ApiDeleteAuthorizationsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
 		authID:     authID,
@@ -174,7 +161,7 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsID(ctx _conte
 /*
  * Execute executes the request
  */
-func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecute(r ApiDeleteLegacyAuthorizationsIDRequest) error {
+func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuthorizationsIDRequest) error {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -183,12 +170,12 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecute(r A
 		localVarFileBytes    []byte
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.DeleteLegacyAuthorizationsID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.DeleteAuthorizationsID")
 	if err != nil {
 		return GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations/{authID}"
+	localVarPath := localBasePath + "/authorizations/{authID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -261,85 +248,67 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecute(r A
 	return nil
 }
 
-type ApiGetLegacyAuthorizationsRequest struct {
+type ApiGetAuthorizationsRequest struct {
 	ctx          _context.Context
-	ApiService   LegacyAuthorizationsApi
+	ApiService   AuthorizationsApi
 	zapTraceSpan *string
 	userID       *string
 	user         *string
 	orgID        *string
 	org          *string
-	token        *string
-	authID       *string
 }
 
-func (r ApiGetLegacyAuthorizationsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetLegacyAuthorizationsRequest {
+func (r ApiGetAuthorizationsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetAuthorizationsRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiGetLegacyAuthorizationsRequest) GetZapTraceSpan() *string {
+func (r ApiGetAuthorizationsRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetLegacyAuthorizationsRequest) UserID(userID string) ApiGetLegacyAuthorizationsRequest {
+func (r ApiGetAuthorizationsRequest) UserID(userID string) ApiGetAuthorizationsRequest {
 	r.userID = &userID
 	return r
 }
-func (r ApiGetLegacyAuthorizationsRequest) GetUserID() *string {
+func (r ApiGetAuthorizationsRequest) GetUserID() *string {
 	return r.userID
 }
 
-func (r ApiGetLegacyAuthorizationsRequest) User(user string) ApiGetLegacyAuthorizationsRequest {
+func (r ApiGetAuthorizationsRequest) User(user string) ApiGetAuthorizationsRequest {
 	r.user = &user
 	return r
 }
-func (r ApiGetLegacyAuthorizationsRequest) GetUser() *string {
+func (r ApiGetAuthorizationsRequest) GetUser() *string {
 	return r.user
 }
 
-func (r ApiGetLegacyAuthorizationsRequest) OrgID(orgID string) ApiGetLegacyAuthorizationsRequest {
+func (r ApiGetAuthorizationsRequest) OrgID(orgID string) ApiGetAuthorizationsRequest {
 	r.orgID = &orgID
 	return r
 }
-func (r ApiGetLegacyAuthorizationsRequest) GetOrgID() *string {
+func (r ApiGetAuthorizationsRequest) GetOrgID() *string {
 	return r.orgID
 }
 
-func (r ApiGetLegacyAuthorizationsRequest) Org(org string) ApiGetLegacyAuthorizationsRequest {
+func (r ApiGetAuthorizationsRequest) Org(org string) ApiGetAuthorizationsRequest {
 	r.org = &org
 	return r
 }
-func (r ApiGetLegacyAuthorizationsRequest) GetOrg() *string {
+func (r ApiGetAuthorizationsRequest) GetOrg() *string {
 	return r.org
 }
 
-func (r ApiGetLegacyAuthorizationsRequest) Token(token string) ApiGetLegacyAuthorizationsRequest {
-	r.token = &token
-	return r
-}
-func (r ApiGetLegacyAuthorizationsRequest) GetToken() *string {
-	return r.token
-}
-
-func (r ApiGetLegacyAuthorizationsRequest) AuthID(authID string) ApiGetLegacyAuthorizationsRequest {
-	r.authID = &authID
-	return r
-}
-func (r ApiGetLegacyAuthorizationsRequest) GetAuthID() *string {
-	return r.authID
-}
-
-func (r ApiGetLegacyAuthorizationsRequest) Execute() (Authorizations, error) {
-	return r.ApiService.GetLegacyAuthorizationsExecute(r)
+func (r ApiGetAuthorizationsRequest) Execute() (Authorizations, error) {
+	return r.ApiService.GetAuthorizationsExecute(r)
 }
 
 /*
- * GetLegacyAuthorizations List all legacy authorizations
+ * GetAuthorizations List all authorizations
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiGetLegacyAuthorizationsRequest
+ * @return ApiGetAuthorizationsRequest
  */
-func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizations(ctx _context.Context) ApiGetLegacyAuthorizationsRequest {
-	return ApiGetLegacyAuthorizationsRequest{
+func (a *AuthorizationsApiService) GetAuthorizations(ctx _context.Context) ApiGetAuthorizationsRequest {
+	return ApiGetAuthorizationsRequest{
 		ApiService: a,
 		ctx:        ctx,
 	}
@@ -349,7 +318,7 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizations(ctx _context.Co
  * Execute executes the request
  * @return Authorizations
  */
-func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGetLegacyAuthorizationsRequest) (Authorizations, error) {
+func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizationsRequest) (Authorizations, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -359,12 +328,12 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 		localVarReturnValue  Authorizations
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.GetLegacyAuthorizations")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.GetAuthorizations")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations"
+	localVarPath := localBasePath + "/authorizations"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -381,12 +350,6 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 	}
 	if r.org != nil {
 		localVarQueryParams.Add("org", parameterToString(*r.org, ""))
-	}
-	if r.token != nil {
-		localVarQueryParams.Add("token", parameterToString(*r.token, ""))
-	}
-	if r.authID != nil {
-		localVarQueryParams.Add("authID", parameterToString(*r.authID, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -473,41 +436,41 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 	return localVarReturnValue, nil
 }
 
-type ApiGetLegacyAuthorizationsIDRequest struct {
+type ApiGetAuthorizationsIDRequest struct {
 	ctx          _context.Context
-	ApiService   LegacyAuthorizationsApi
+	ApiService   AuthorizationsApi
 	authID       string
 	zapTraceSpan *string
 }
 
-func (r ApiGetLegacyAuthorizationsIDRequest) AuthID(authID string) ApiGetLegacyAuthorizationsIDRequest {
+func (r ApiGetAuthorizationsIDRequest) AuthID(authID string) ApiGetAuthorizationsIDRequest {
 	r.authID = authID
 	return r
 }
-func (r ApiGetLegacyAuthorizationsIDRequest) GetAuthID() string {
+func (r ApiGetAuthorizationsIDRequest) GetAuthID() string {
 	return r.authID
 }
 
-func (r ApiGetLegacyAuthorizationsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiGetLegacyAuthorizationsIDRequest {
+func (r ApiGetAuthorizationsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiGetAuthorizationsIDRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiGetLegacyAuthorizationsIDRequest) GetZapTraceSpan() *string {
+func (r ApiGetAuthorizationsIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetLegacyAuthorizationsIDRequest) Execute() (Authorization, error) {
-	return r.ApiService.GetLegacyAuthorizationsIDExecute(r)
+func (r ApiGetAuthorizationsIDRequest) Execute() (Authorization, error) {
+	return r.ApiService.GetAuthorizationsIDExecute(r)
 }
 
 /*
- * GetLegacyAuthorizationsID Retrieve a legacy authorization
+ * GetAuthorizationsID Retrieve an authorization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param authID The ID of the legacy authorization to get.
- * @return ApiGetLegacyAuthorizationsIDRequest
+ * @param authID The ID of the authorization to get.
+ * @return ApiGetAuthorizationsIDRequest
  */
-func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsID(ctx _context.Context, authID string) ApiGetLegacyAuthorizationsIDRequest {
-	return ApiGetLegacyAuthorizationsIDRequest{
+func (a *AuthorizationsApiService) GetAuthorizationsID(ctx _context.Context, authID string) ApiGetAuthorizationsIDRequest {
+	return ApiGetAuthorizationsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
 		authID:     authID,
@@ -518,7 +481,7 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsID(ctx _context.
  * Execute executes the request
  * @return Authorization
  */
-func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiGetLegacyAuthorizationsIDRequest) (Authorization, error) {
+func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizationsIDRequest) (Authorization, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -528,12 +491,12 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiG
 		localVarReturnValue  Authorization
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.GetLegacyAuthorizationsID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.GetAuthorizationsID")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations/{authID}"
+	localVarPath := localBasePath + "/authorizations/{authID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -625,50 +588,50 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiG
 	return localVarReturnValue, nil
 }
 
-type ApiPatchLegacyAuthorizationsIDRequest struct {
+type ApiPatchAuthorizationsIDRequest struct {
 	ctx                        _context.Context
-	ApiService                 LegacyAuthorizationsApi
+	ApiService                 AuthorizationsApi
 	authID                     string
 	authorizationUpdateRequest *AuthorizationUpdateRequest
 	zapTraceSpan               *string
 }
 
-func (r ApiPatchLegacyAuthorizationsIDRequest) AuthID(authID string) ApiPatchLegacyAuthorizationsIDRequest {
+func (r ApiPatchAuthorizationsIDRequest) AuthID(authID string) ApiPatchAuthorizationsIDRequest {
 	r.authID = authID
 	return r
 }
-func (r ApiPatchLegacyAuthorizationsIDRequest) GetAuthID() string {
+func (r ApiPatchAuthorizationsIDRequest) GetAuthID() string {
 	return r.authID
 }
 
-func (r ApiPatchLegacyAuthorizationsIDRequest) AuthorizationUpdateRequest(authorizationUpdateRequest AuthorizationUpdateRequest) ApiPatchLegacyAuthorizationsIDRequest {
+func (r ApiPatchAuthorizationsIDRequest) AuthorizationUpdateRequest(authorizationUpdateRequest AuthorizationUpdateRequest) ApiPatchAuthorizationsIDRequest {
 	r.authorizationUpdateRequest = &authorizationUpdateRequest
 	return r
 }
-func (r ApiPatchLegacyAuthorizationsIDRequest) GetAuthorizationUpdateRequest() *AuthorizationUpdateRequest {
+func (r ApiPatchAuthorizationsIDRequest) GetAuthorizationUpdateRequest() *AuthorizationUpdateRequest {
 	return r.authorizationUpdateRequest
 }
 
-func (r ApiPatchLegacyAuthorizationsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiPatchLegacyAuthorizationsIDRequest {
+func (r ApiPatchAuthorizationsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiPatchAuthorizationsIDRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiPatchLegacyAuthorizationsIDRequest) GetZapTraceSpan() *string {
+func (r ApiPatchAuthorizationsIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiPatchLegacyAuthorizationsIDRequest) Execute() (Authorization, error) {
-	return r.ApiService.PatchLegacyAuthorizationsIDExecute(r)
+func (r ApiPatchAuthorizationsIDRequest) Execute() (Authorization, error) {
+	return r.ApiService.PatchAuthorizationsIDExecute(r)
 }
 
 /*
- * PatchLegacyAuthorizationsID Update a legacy authorization to be active or inactive
+ * PatchAuthorizationsID Update an authorization to be active or inactive
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param authID The ID of the legacy authorization to update.
- * @return ApiPatchLegacyAuthorizationsIDRequest
+ * @param authID The ID of the authorization to update.
+ * @return ApiPatchAuthorizationsIDRequest
  */
-func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsID(ctx _context.Context, authID string) ApiPatchLegacyAuthorizationsIDRequest {
-	return ApiPatchLegacyAuthorizationsIDRequest{
+func (a *AuthorizationsApiService) PatchAuthorizationsID(ctx _context.Context, authID string) ApiPatchAuthorizationsIDRequest {
+	return ApiPatchAuthorizationsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
 		authID:     authID,
@@ -679,7 +642,7 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsID(ctx _contex
  * Execute executes the request
  * @return Authorization
  */
-func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r ApiPatchLegacyAuthorizationsIDRequest) (Authorization, error) {
+func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthorizationsIDRequest) (Authorization, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -689,12 +652,12 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 		localVarReturnValue  Authorization
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.PatchLegacyAuthorizationsID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.PatchAuthorizationsID")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations/{authID}"
+	localVarPath := localBasePath + "/authorizations/{authID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -791,40 +754,40 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 	return localVarReturnValue, nil
 }
 
-type ApiPostLegacyAuthorizationsRequest struct {
-	ctx                            _context.Context
-	ApiService                     LegacyAuthorizationsApi
-	legacyAuthorizationPostRequest *LegacyAuthorizationPostRequest
-	zapTraceSpan                   *string
+type ApiPostAuthorizationsRequest struct {
+	ctx                      _context.Context
+	ApiService               AuthorizationsApi
+	authorizationPostRequest *AuthorizationPostRequest
+	zapTraceSpan             *string
 }
 
-func (r ApiPostLegacyAuthorizationsRequest) LegacyAuthorizationPostRequest(legacyAuthorizationPostRequest LegacyAuthorizationPostRequest) ApiPostLegacyAuthorizationsRequest {
-	r.legacyAuthorizationPostRequest = &legacyAuthorizationPostRequest
+func (r ApiPostAuthorizationsRequest) AuthorizationPostRequest(authorizationPostRequest AuthorizationPostRequest) ApiPostAuthorizationsRequest {
+	r.authorizationPostRequest = &authorizationPostRequest
 	return r
 }
-func (r ApiPostLegacyAuthorizationsRequest) GetLegacyAuthorizationPostRequest() *LegacyAuthorizationPostRequest {
-	return r.legacyAuthorizationPostRequest
+func (r ApiPostAuthorizationsRequest) GetAuthorizationPostRequest() *AuthorizationPostRequest {
+	return r.authorizationPostRequest
 }
 
-func (r ApiPostLegacyAuthorizationsRequest) ZapTraceSpan(zapTraceSpan string) ApiPostLegacyAuthorizationsRequest {
+func (r ApiPostAuthorizationsRequest) ZapTraceSpan(zapTraceSpan string) ApiPostAuthorizationsRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiPostLegacyAuthorizationsRequest) GetZapTraceSpan() *string {
+func (r ApiPostAuthorizationsRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiPostLegacyAuthorizationsRequest) Execute() (Authorization, error) {
-	return r.ApiService.PostLegacyAuthorizationsExecute(r)
+func (r ApiPostAuthorizationsRequest) Execute() (Authorization, error) {
+	return r.ApiService.PostAuthorizationsExecute(r)
 }
 
 /*
- * PostLegacyAuthorizations Create a legacy authorization
+ * PostAuthorizations Create an authorization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiPostLegacyAuthorizationsRequest
+ * @return ApiPostAuthorizationsRequest
  */
-func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizations(ctx _context.Context) ApiPostLegacyAuthorizationsRequest {
-	return ApiPostLegacyAuthorizationsRequest{
+func (a *AuthorizationsApiService) PostAuthorizations(ctx _context.Context) ApiPostAuthorizationsRequest {
+	return ApiPostAuthorizationsRequest{
 		ApiService: a,
 		ctx:        ctx,
 	}
@@ -834,7 +797,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizations(ctx _context.C
  * Execute executes the request
  * @return Authorization
  */
-func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPostLegacyAuthorizationsRequest) (Authorization, error) {
+func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizationsRequest) (Authorization, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -844,18 +807,18 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 		localVarReturnValue  Authorization
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.PostLegacyAuthorizations")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.PostAuthorizations")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations"
+	localVarPath := localBasePath + "/authorizations"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
-	if r.legacyAuthorizationPostRequest == nil {
-		return localVarReturnValue, reportError("legacyAuthorizationPostRequest is required and must be specified")
+	if r.authorizationPostRequest == nil {
+		return localVarReturnValue, reportError("authorizationPostRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -879,7 +842,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
 	// body params
-	localVarPostBody = r.legacyAuthorizationPostRequest
+	localVarPostBody = r.authorizationPostRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, err
@@ -954,149 +917,4 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 	}
 
 	return localVarReturnValue, nil
-}
-
-type ApiPostLegacyAuthorizationsIDPasswordRequest struct {
-	ctx               _context.Context
-	ApiService        LegacyAuthorizationsApi
-	authID            string
-	passwordResetBody *PasswordResetBody
-	zapTraceSpan      *string
-}
-
-func (r ApiPostLegacyAuthorizationsIDPasswordRequest) AuthID(authID string) ApiPostLegacyAuthorizationsIDPasswordRequest {
-	r.authID = authID
-	return r
-}
-func (r ApiPostLegacyAuthorizationsIDPasswordRequest) GetAuthID() string {
-	return r.authID
-}
-
-func (r ApiPostLegacyAuthorizationsIDPasswordRequest) PasswordResetBody(passwordResetBody PasswordResetBody) ApiPostLegacyAuthorizationsIDPasswordRequest {
-	r.passwordResetBody = &passwordResetBody
-	return r
-}
-func (r ApiPostLegacyAuthorizationsIDPasswordRequest) GetPasswordResetBody() *PasswordResetBody {
-	return r.passwordResetBody
-}
-
-func (r ApiPostLegacyAuthorizationsIDPasswordRequest) ZapTraceSpan(zapTraceSpan string) ApiPostLegacyAuthorizationsIDPasswordRequest {
-	r.zapTraceSpan = &zapTraceSpan
-	return r
-}
-func (r ApiPostLegacyAuthorizationsIDPasswordRequest) GetZapTraceSpan() *string {
-	return r.zapTraceSpan
-}
-
-func (r ApiPostLegacyAuthorizationsIDPasswordRequest) Execute() error {
-	return r.ApiService.PostLegacyAuthorizationsIDPasswordExecute(r)
-}
-
-/*
- * PostLegacyAuthorizationsIDPassword Set a legacy authorization password
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param authID The ID of the legacy authorization to update.
- * @return ApiPostLegacyAuthorizationsIDPasswordRequest
- */
-func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPassword(ctx _context.Context, authID string) ApiPostLegacyAuthorizationsIDPasswordRequest {
-	return ApiPostLegacyAuthorizationsIDPasswordRequest{
-		ApiService: a,
-		ctx:        ctx,
-		authID:     authID,
-	}
-}
-
-/*
- * Execute executes the request
- */
-func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecute(r ApiPostLegacyAuthorizationsIDPasswordRequest) error {
-	var (
-		localVarHTTPMethod   = _nethttp.MethodPost
-		localVarPostBody     interface{}
-		localVarFormFileName string
-		localVarFileName     string
-		localVarFileBytes    []byte
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.PostLegacyAuthorizationsIDPassword")
-	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/legacy/authorizations/{authID}/password"
-	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := _neturl.Values{}
-	localVarFormParams := _neturl.Values{}
-	if r.passwordResetBody == nil {
-		return reportError("passwordResetBody is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.zapTraceSpan != nil {
-		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
-	}
-	// body params
-	localVarPostBody = r.passwordResetBody
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return err
-	}
-
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		body, err := GunzipIfNeeded(localVarHTTPResponse)
-		if err != nil {
-			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
-		}
-		localVarBody, err := _ioutil.ReadAll(body)
-		body.Close()
-		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
-		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
-		var v Error
-		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-		if err != nil {
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
-			return newErr
-		}
-		newErr.model = &v
-		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
-		return newErr
-	}
-
-	return nil
 }

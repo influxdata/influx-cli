@@ -49,6 +49,7 @@ var app = cli.App{
 		newExportCmd(),
 		newSecretCommand(),
 		newV1SubCommand(),
+		newAuthCommand(),
 	},
 	Before: withContext(),
 }

@@ -95,6 +95,10 @@ paths:
     servers:
       - url: "/private"
     $ref: "./openapi/src/oss/paths/legacy_authorizations_authID_password.yml"
+  /authorizations:
+    $ref: "./openapi/src/common/paths/authorizations.yml"
+  /authorizations/{authID}:
+    $ref: "./openapi/src/common/paths/authorizations_authID.yml"
 components:
   parameters:
     TraceSpan:
@@ -385,3 +389,5 @@ components:
       $ref: "./openapi/src/common/schemas/Authorizations.yml"
     LegacyAuthorizationPostRequest:
       $ref: "./openapi/src/oss/schemas/LegacyAuthorizationPostRequest.yml"
+    AuthorizationPostRequest:
+      $ref: "./openapi/src/common/schemas/AuthorizationPostRequest.yml"
