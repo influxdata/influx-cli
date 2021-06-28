@@ -252,15 +252,15 @@ func commonFlags() []cli.Flag {
 func getOrgFlags(params *clients.OrgParams) []cli.Flag {
 	return []cli.Flag{
 		&cli.GenericFlag{
-			Name:    "org-id",
-			Usage:   "The ID of the organization",
+			Name:   "org-id",
+			Usage:  "The ID of the organization",
 			EnvVar: "INFLUX_ORG_ID",
-			Value:   &params.OrgID,
+			Value:  &params.OrgID,
 		},
 		&cli.StringFlag{
 			Name:        "org, o",
 			Usage:       "The name of the organization",
-			EnvVar:     "INFLUX_ORG",
+			EnvVar:      "INFLUX_ORG",
 			Destination: &params.OrgName,
 		},
 	}
@@ -271,9 +271,9 @@ func getOrgFlags(params *clients.OrgParams) []cli.Flag {
 func getBucketFlags(params *clients.BucketParams) []cli.Flag {
 	return []cli.Flag{
 		&cli.GenericFlag{
-			Name:    "bucket-id, i",
-			Usage:   "The bucket ID, required if name isn't provided",
-			Value:   &params.BucketID,
+			Name:  "bucket-id, i",
+			Usage: "The bucket ID, required if name isn't provided",
+			Value: &params.BucketID,
 		},
 		&cli.StringFlag{
 			Name:        "bucket, n",
