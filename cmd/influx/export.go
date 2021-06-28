@@ -66,6 +66,7 @@ For information about exporting InfluxDB templates, see
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 		Subcommands: []*cli.Command{
 			newExportAllCmd(),
+			newExportStackCmd(),
 		},
 		Flags: append(
 			commonFlagsNoPrint(),
@@ -356,6 +357,65 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 				OrganizationsApi: apiClient.OrganizationsApi,
 			}
 			return client.ExportAll(ctx.Context, &parsedParams)
+		},
+	}
+}
+
+func newExportStackCmd() *cli.Command {
+	var params struct {
+		out string
+	}
+
+	return &cli.Command{
+		Name:  "stack",
+		Usage: "Export all resources associated with a stack as a template",
+		Description: `The influx export stack command exports all resources 
+associated with a stack as a template. All metadata.name fields remain the same.
+
+Example:
+	# Export a stack as a template
+	influx export stack $STACK_ID
+
+For information about exporting InfluxDB templates, see
+https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/
+and
+https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/stack/
+`,
+		Flags: append(
+			commonFlagsNoPrint(),
+			&cli.StringFlag{
+				Name:        "file",
+				Usage:       "Output file for created template; defaults to std out if no file provided; the extension of provided file (.yml/.json) will dictate encoding",
+				Aliases:     []string{"f"},
+				Destination: &params.out,
+			},
+		),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Action: func(ctx *cli.Context) error {
+			if ctx.NArg() != 1 {
+				return fmt.Errorf("incorrect number of arguments, expected one for <stack-id>")
+			}
+
+			parsedParams := export.StackParams{
+				StackId: ctx.Args().Get(0),
+			}
+
+			outParams, closer, err := parseOutParams(params.out)
+			if closer != nil {
+				defer closer()
+			}
+			if err != nil {
+				return err
+			}
+			parsedParams.OutParams = outParams
+
+			apiClient := getAPI(ctx)
+			client := export.Client{
+				CLI:              getCLI(ctx),
+				TemplatesApi:     apiClient.TemplatesApi,
+				OrganizationsApi: apiClient.OrganizationsApi,
+			}
+			return client.ExportStack(ctx.Context, &parsedParams)
 		},
 	}
 }
