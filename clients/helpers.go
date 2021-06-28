@@ -5,20 +5,17 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
-
-	"github.com/urfave/cli"
 )
 
 // ReadQuery reads a Flux query into memory from a --file argument, args, or stdin
-func ReadQuery(ctx *cli.Context) (string, error) {
-	nargs := ctx.NArg()
-	file := ctx.String("file")
+func ReadQuery(filepath string, args []string) (string, error) {
+	nargs := len(args)
 
 	if nargs > 1 {
-		return "", fmt.Errorf("at most 1 query string can be specified over the CLI, got %d", ctx.NArg())
+		return "", fmt.Errorf("at most 1 query string can be specified as an argument, got %d", nargs)
 	}
-	if nargs == 1 && file != "" {
-		return "", fmt.Errorf("query can be specified via --file or over the CLI, not both")
+	if nargs == 1 && filepath != "" {
+		return "", fmt.Errorf("query can be specified as a CLI arg or passed in a file via flag, not both")
 	}
 
 	readFile := func(path string) (string, error) {
@@ -37,14 +34,14 @@ func ReadQuery(ctx *cli.Context) (string, error) {
 		return string(queryBytes), err
 	}
 
-	if file != "" {
-		return readFile(file)
+	if filepath != "" {
+		return readFile(filepath)
 	}
 	if nargs == 0 {
 		return readStdin()
 	}
 
-	arg := ctx.Args().Get(0)
+	arg := args[0]
 	// Backwards compatibility.
 	if strings.HasPrefix(arg, "@") {
 		return readFile(arg[1:])

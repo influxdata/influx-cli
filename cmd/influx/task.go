@@ -46,7 +46,7 @@ func newTaskCreateCmd() cli.Command {
 				TasksApi: api.TasksApi,
 			}
 			var err error
-			params.FluxQuery, err = clients.ReadQuery(ctx)
+			params.FluxQuery, err = clients.ReadQuery(ctx.String("file"), ctx.Args())
 			if err != nil {
 				return err
 			}
@@ -182,7 +182,7 @@ func newTaskUpdateCmd() cli.Command {
 			}
 			var err error
 			if ctx.String("file") != "" || ctx.NArg() != 0 {
-				params.FluxQuery, err = clients.ReadQuery(ctx)
+				params.FluxQuery, err = clients.ReadQuery(ctx.String("file"), ctx.Args())
 				if err != nil {
 					return err
 				}

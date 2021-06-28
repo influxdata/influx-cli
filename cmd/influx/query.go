@@ -33,8 +33,9 @@ func newQueryCmd() cli.Command {
 				Destination: &orgParams.OrgName,
 			},
 			&cli.StringFlag{
-				Name:  "file, f",
-				Usage: "Path to Flux query file",
+				Name:      "file, f",
+				Usage:     "Path to Flux query file",
+				TakesFile: true,
 			},
 			&cli.BoolFlag{
 				Name:  "raw, r",
@@ -46,7 +47,7 @@ func newQueryCmd() cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			queryString, err := clients.ReadQuery(ctx)
+			queryString, err := clients.ReadQuery(ctx.String("file"), ctx.Args())
 			if err != nil {
 				return err
 			}
