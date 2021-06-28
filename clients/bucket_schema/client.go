@@ -49,10 +49,10 @@ func (c Client) resolveOrgBucketIds(ctx context.Context, params clients.OrgBucke
 	}
 
 	req := c.GetBuckets(ctx)
-	if params.BucketName != "" {
-		req = req.Name(params.BucketName)
-	} else {
+	if params.BucketID.Valid() {
 		req = req.Id(params.BucketID.String())
+	} else {
+		req = req.Name(params.BucketName)
 	}
 	if params.OrgID.Valid() {
 		req = req.OrgID(params.OrgID.String())
