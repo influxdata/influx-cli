@@ -161,6 +161,7 @@ func newCreateCommand() *cli.Command {
 				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
 				UsersApi:          api.UsersApi,
+				OrganizationsApi:  api.OrganizationsApi,
 			}
 			return client.Create(ctx.Context, &params)
 		},
@@ -187,6 +188,7 @@ func newDeleteCommand() *cli.Command {
 				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
 				UsersApi:          api.UsersApi,
+				OrganizationsApi:  api.OrganizationsApi,
 			}
 			return client.Remove(ctx.Context, ctx.String("id"))
 		},
@@ -227,6 +229,7 @@ func newListCommand() *cli.Command {
 				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
 				UsersApi:          api.UsersApi,
+				OrganizationsApi:  api.OrganizationsApi,
 			}
 			return client.List(ctx.Context, &params)
 		},
@@ -252,6 +255,7 @@ func newSetActiveCommand() *cli.Command {
 				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
 				UsersApi:          api.UsersApi,
+				OrganizationsApi:  api.OrganizationsApi,
 			}
 			return client.SetActive(ctx.Context, ctx.String("id"), true)
 		},
@@ -277,6 +281,7 @@ func newSetInactiveCommand() *cli.Command {
 				CLI:               getCLI(ctx),
 				AuthorizationsApi: api.AuthorizationsApi,
 				UsersApi:          api.UsersApi,
+				OrganizationsApi:  api.OrganizationsApi,
 			}
 			return client.SetActive(ctx.Context, ctx.String("id"), false)
 		},

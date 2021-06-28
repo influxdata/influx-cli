@@ -13,6 +13,7 @@ type Client struct {
 	clients.CLI
 	api.AuthorizationsApi
 	api.UsersApi
+	api.OrganizationsApi
 }
 
 const (
@@ -77,8 +78,10 @@ type CreateParams struct {
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
-	orgID := params.OrgID.String()
-	orgName := params.OrgName
+	orgID, err := c.getOrgID(ctx, params.OrgParams)
+	if err != nil {
+		return err
+	}
 	bucketPerms := []struct {
 		action string
 		perms  []string
@@ -97,7 +100,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 			newPerm := api.Permission{
 				Action:   bp.action,
-				Resource: makePermResource("buckets", p, orgID, orgName),
+				Resource: makePermResource("buckets", p, orgID),
 			}
 			permissions = append(permissions, newPerm)
 		}
@@ -171,7 +174,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		for _, action := range actions {
 			p := api.Permission{
 				Action:   action,
-				Resource: makePermResource(provided.resourceType, "", orgID, orgName),
+				Resource: makePermResource(provided.resourceType, "", orgID),
 			}
 			permissions = append(permissions, p)
 		}
@@ -409,11 +412,31 @@ func (c Client) printAuth(opts printParams) error {
 	return c.PrintTable(headers, rows...)
 }
 
-func makePermResource(permType string, id string, orgId string, org string) api.PermissionResource {
+func makePermResource(permType string, id string, orgId string) api.PermissionResource {
 	return api.PermissionResource{
 		Type:  permType,
 		Id:    &id,
 		OrgID: &orgId,
-		Org:   &org,
 	}
+}
+
+func (c Client) getOrgID(ctx context.Context, params clients.OrgParams) (string, error) {
+	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
+		return "", clients.ErrMustSpecifyOrg
+	}
+	if params.OrgID.Valid() {
+		return params.OrgID.String(), nil
+	}
+	name := params.OrgName
+	if name == "" {
+		name = c.ActiveConfig.Org
+	}
+	org, err := c.GetOrgs(ctx).Org(name).Execute()
+	if err != nil {
+		return "", fmt.Errorf("failed to lookup org with name %q: %w", name, err)
+	}
+	if len(org.GetOrgs()) == 0 {
+		return "", fmt.Errorf("no organization with name %q: %w", name, err)
+	}
+	return org.GetOrgs()[0].GetId(), nil
 }
