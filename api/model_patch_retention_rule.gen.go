@@ -16,11 +16,11 @@ import (
 
 // PatchRetentionRule Updates to a rule to expire or retain data.
 type PatchRetentionRule struct {
-	Type string `json:"type"`
+	Type string `json:"type" yaml:"type"`
 	// Duration in seconds for how long data will be kept in the database. 0 means infinite.
-	EverySeconds *int64 `json:"everySeconds,omitempty"`
+	EverySeconds *int64 `json:"everySeconds,omitempty" yaml:"everySeconds,omitempty"`
 	// Shard duration measured in seconds.
-	ShardGroupDurationSeconds *int64 `json:"shardGroupDurationSeconds,omitempty"`
+	ShardGroupDurationSeconds *int64 `json:"shardGroupDurationSeconds,omitempty" yaml:"shardGroupDurationSeconds,omitempty"`
 }
 
 // NewPatchRetentionRule instantiates a new PatchRetentionRule object

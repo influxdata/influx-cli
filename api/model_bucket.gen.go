@@ -17,19 +17,19 @@ import (
 
 // Bucket struct for Bucket
 type Bucket struct {
-	Links       *BucketLinks `json:"links,omitempty"`
-	Id          *string      `json:"id,omitempty"`
-	Type        *string      `json:"type,omitempty"`
-	Name        string       `json:"name"`
-	Description *string      `json:"description,omitempty"`
-	OrgID       *string      `json:"orgID,omitempty"`
-	Rp          *string      `json:"rp,omitempty"`
-	SchemaType  *SchemaType  `json:"schemaType,omitempty"`
-	CreatedAt   *time.Time   `json:"createdAt,omitempty"`
-	UpdatedAt   *time.Time   `json:"updatedAt,omitempty"`
+	Links       *BucketLinks `json:"links,omitempty" yaml:"links,omitempty"`
+	Id          *string      `json:"id,omitempty" yaml:"id,omitempty"`
+	Type        *string      `json:"type,omitempty" yaml:"type,omitempty"`
+	Name        string       `json:"name" yaml:"name"`
+	Description *string      `json:"description,omitempty" yaml:"description,omitempty"`
+	OrgID       *string      `json:"orgID,omitempty" yaml:"orgID,omitempty"`
+	Rp          *string      `json:"rp,omitempty" yaml:"rp,omitempty"`
+	SchemaType  *SchemaType  `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
+	CreatedAt   *time.Time   `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
+	UpdatedAt   *time.Time   `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
 	// Rules to expire or retain data.  No rules means data never expires.
-	RetentionRules []RetentionRule `json:"retentionRules"`
-	Labels         *[]Label        `json:"labels,omitempty"`
+	RetentionRules []RetentionRule `json:"retentionRules" yaml:"retentionRules"`
+	Labels         *[]Label        `json:"labels,omitempty" yaml:"labels,omitempty"`
 }
 
 // NewBucket instantiates a new Bucket object

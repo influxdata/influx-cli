@@ -16,9 +16,9 @@ import (
 
 // TemplateSummaryDiffLabelFields struct for TemplateSummaryDiffLabelFields
 type TemplateSummaryDiffLabelFields struct {
-	Name        string  `json:"name"`
-	Color       string  `json:"color"`
-	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name" yaml:"name"`
+	Color       string  `json:"color" yaml:"color"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewTemplateSummaryDiffLabelFields instantiates a new TemplateSummaryDiffLabelFields object

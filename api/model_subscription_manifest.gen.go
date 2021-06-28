@@ -16,9 +16,9 @@ import (
 
 // SubscriptionManifest struct for SubscriptionManifest
 type SubscriptionManifest struct {
-	Name         string   `json:"name"`
-	Mode         string   `json:"mode"`
-	Destinations []string `json:"destinations"`
+	Name         string   `json:"name" yaml:"name"`
+	Mode         string   `json:"mode" yaml:"mode"`
+	Destinations []string `json:"destinations" yaml:"destinations"`
 }
 
 // NewSubscriptionManifest instantiates a new SubscriptionManifest object

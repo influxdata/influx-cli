@@ -16,13 +16,13 @@ import (
 
 // TemplateSummaryLabel struct for TemplateSummaryLabel
 type TemplateSummaryLabel struct {
-	Kind             string                              `json:"kind"`
-	TemplateMetaName *string                             `json:"templateMetaName,omitempty"`
-	EnvReferences    []TemplateEnvReference              `json:"envReferences"`
-	Id               string                              `json:"id"`
-	OrgID            *string                             `json:"orgID,omitempty"`
-	Name             string                              `json:"name"`
-	Properties       TemplateSummaryLabelAllOfProperties `json:"properties"`
+	Kind             string                              `json:"kind" yaml:"kind"`
+	TemplateMetaName *string                             `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
+	EnvReferences    []TemplateEnvReference              `json:"envReferences" yaml:"envReferences"`
+	Id               string                              `json:"id" yaml:"id"`
+	OrgID            *string                             `json:"orgID,omitempty" yaml:"orgID,omitempty"`
+	Name             string                              `json:"name" yaml:"name"`
+	Properties       TemplateSummaryLabelAllOfProperties `json:"properties" yaml:"properties"`
 }
 
 // NewTemplateSummaryLabel instantiates a new TemplateSummaryLabel object

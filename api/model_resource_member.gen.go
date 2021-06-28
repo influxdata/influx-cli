@@ -16,13 +16,13 @@ import (
 
 // ResourceMember struct for ResourceMember
 type ResourceMember struct {
-	Id      *string `json:"id,omitempty"`
-	OauthID *string `json:"oauthID,omitempty"`
-	Name    string  `json:"name"`
+	Id      *string `json:"id,omitempty" yaml:"id,omitempty"`
+	OauthID *string `json:"oauthID,omitempty" yaml:"oauthID,omitempty"`
+	Name    string  `json:"name" yaml:"name"`
 	// If inactive the user is inactive.
-	Status *string            `json:"status,omitempty"`
-	Links  *UserResponseLinks `json:"links,omitempty"`
-	Role   *string            `json:"role,omitempty"`
+	Status *string            `json:"status,omitempty" yaml:"status,omitempty"`
+	Links  *UserResponseLinks `json:"links,omitempty" yaml:"links,omitempty"`
+	Role   *string            `json:"role,omitempty" yaml:"role,omitempty"`
 }
 
 // NewResourceMember instantiates a new ResourceMember object

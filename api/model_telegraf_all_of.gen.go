@@ -16,9 +16,9 @@ import (
 
 // TelegrafAllOf struct for TelegrafAllOf
 type TelegrafAllOf struct {
-	Id     *string             `json:"id,omitempty"`
-	Links  *TelegrafAllOfLinks `json:"links,omitempty"`
-	Labels *[]Label            `json:"labels,omitempty"`
+	Id     *string             `json:"id,omitempty" yaml:"id,omitempty"`
+	Links  *TelegrafAllOfLinks `json:"links,omitempty" yaml:"links,omitempty"`
+	Labels *[]Label            `json:"labels,omitempty" yaml:"labels,omitempty"`
 }
 
 // NewTelegrafAllOf instantiates a new TelegrafAllOf object

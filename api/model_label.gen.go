@@ -16,11 +16,11 @@ import (
 
 // Label struct for Label
 type Label struct {
-	Id    *string `json:"id,omitempty"`
-	OrgID *string `json:"orgID,omitempty"`
-	Name  *string `json:"name,omitempty"`
+	Id    *string `json:"id,omitempty" yaml:"id,omitempty"`
+	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
+	Name  *string `json:"name,omitempty" yaml:"name,omitempty"`
 	// Key/Value pairs associated with this label. Keys can be removed by sending an update with an empty value.
-	Properties *map[string]string `json:"properties,omitempty"`
+	Properties *map[string]string `json:"properties,omitempty" yaml:"properties,omitempty"`
 }
 
 // NewLabel instantiates a new Label object

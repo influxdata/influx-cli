@@ -16,12 +16,12 @@ import (
 
 // TemplateSummaryDiffCheck struct for TemplateSummaryDiffCheck
 type TemplateSummaryDiffCheck struct {
-	Kind             string                          `json:"kind"`
-	StateStatus      string                          `json:"stateStatus"`
-	Id               string                          `json:"id"`
-	TemplateMetaName string                          `json:"templateMetaName"`
-	New              *TemplateSummaryDiffCheckFields `json:"new,omitempty"`
-	Old              *TemplateSummaryDiffCheckFields `json:"old,omitempty"`
+	Kind             string                          `json:"kind" yaml:"kind"`
+	StateStatus      string                          `json:"stateStatus" yaml:"stateStatus"`
+	Id               string                          `json:"id" yaml:"id"`
+	TemplateMetaName string                          `json:"templateMetaName" yaml:"templateMetaName"`
+	New              *TemplateSummaryDiffCheckFields `json:"new,omitempty" yaml:"new,omitempty"`
+	Old              *TemplateSummaryDiffCheckFields `json:"old,omitempty" yaml:"old,omitempty"`
 }
 
 // NewTemplateSummaryDiffCheck instantiates a new TemplateSummaryDiffCheck object

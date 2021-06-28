@@ -16,7 +16,7 @@ import (
 
 // SecretKeysResponseAllOf struct for SecretKeysResponseAllOf
 type SecretKeysResponseAllOf struct {
-	Links *SecretKeysResponseAllOfLinks `json:"links,omitempty"`
+	Links *SecretKeysResponseAllOfLinks `json:"links,omitempty" yaml:"links,omitempty"`
 }
 
 // NewSecretKeysResponseAllOf instantiates a new SecretKeysResponseAllOf object

@@ -16,8 +16,8 @@ import (
 
 // Authorizations struct for Authorizations
 type Authorizations struct {
-	Links          *Links           `json:"links,omitempty"`
-	Authorizations *[]Authorization `json:"authorizations,omitempty"`
+	Links          *Links           `json:"links,omitempty" yaml:"links,omitempty"`
+	Authorizations *[]Authorization `json:"authorizations,omitempty" yaml:"authorizations,omitempty"`
 }
 
 // NewAuthorizations instantiates a new Authorizations object

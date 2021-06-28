@@ -16,13 +16,13 @@ import (
 
 // Error struct for Error
 type Error struct {
-	Code ErrorCode `json:"code"`
+	Code ErrorCode `json:"code" yaml:"code"`
 	// message is a human-readable message.
-	Message string `json:"message"`
+	Message string `json:"message" yaml:"message"`
 	// op describes the logical code operation during error. Useful for debugging.
-	Op *string `json:"op,omitempty"`
+	Op *string `json:"op,omitempty" yaml:"op,omitempty"`
 	// err is a stack of errors that occurred during processing of the request. Useful for debugging.
-	Err *string `json:"err,omitempty"`
+	Err *string `json:"err,omitempty" yaml:"err,omitempty"`
 }
 
 // NewError instantiates a new Error object

@@ -16,9 +16,9 @@ import (
 
 // TemplateSummaryDiffVariableFields struct for TemplateSummaryDiffVariableFields
 type TemplateSummaryDiffVariableFields struct {
-	Name        string                      `json:"name"`
-	Description *string                     `json:"description,omitempty"`
-	Args        TemplateSummaryVariableArgs `json:"args"`
+	Name        string                      `json:"name" yaml:"name"`
+	Description *string                     `json:"description,omitempty" yaml:"description,omitempty"`
+	Args        TemplateSummaryVariableArgs `json:"args" yaml:"args"`
 }
 
 // NewTemplateSummaryDiffVariableFields instantiates a new TemplateSummaryDiffVariableFields object

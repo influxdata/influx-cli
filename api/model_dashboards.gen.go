@@ -16,8 +16,8 @@ import (
 
 // Dashboards struct for Dashboards
 type Dashboards struct {
-	Links      *Links       `json:"links,omitempty"`
-	Dashboards *[]Dashboard `json:"dashboards,omitempty"`
+	Links      *Links       `json:"links,omitempty" yaml:"links,omitempty"`
+	Dashboards *[]Dashboard `json:"dashboards,omitempty" yaml:"dashboards,omitempty"`
 }
 
 // NewDashboards instantiates a new Dashboards object

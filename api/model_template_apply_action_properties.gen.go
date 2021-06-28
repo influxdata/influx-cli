@@ -16,8 +16,8 @@ import (
 
 // TemplateApplyActionProperties struct for TemplateApplyActionProperties
 type TemplateApplyActionProperties struct {
-	Kind                 string  `json:"kind"`
-	ResourceTemplateName *string `json:"resourceTemplateName,omitempty"`
+	Kind                 string  `json:"kind" yaml:"kind"`
+	ResourceTemplateName *string `json:"resourceTemplateName,omitempty" yaml:"resourceTemplateName,omitempty"`
 }
 
 // NewTemplateApplyActionProperties instantiates a new TemplateApplyActionProperties object

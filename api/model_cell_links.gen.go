@@ -16,8 +16,8 @@ import (
 
 // CellLinks struct for CellLinks
 type CellLinks struct {
-	Self *string `json:"self,omitempty"`
-	View *string `json:"view,omitempty"`
+	Self *string `json:"self,omitempty" yaml:"self,omitempty"`
+	View *string `json:"view,omitempty" yaml:"view,omitempty"`
 }
 
 // NewCellLinks instantiates a new CellLinks object

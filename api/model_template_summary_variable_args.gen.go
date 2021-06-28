@@ -16,7 +16,7 @@ import (
 
 // TemplateSummaryVariableArgs struct for TemplateSummaryVariableArgs
 type TemplateSummaryVariableArgs struct {
-	Type                 string `json:"type"`
+	Type                 string `json:"type" yaml:"type"`
 	AdditionalProperties map[string]interface{}
 }
 

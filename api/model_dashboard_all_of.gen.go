@@ -16,11 +16,11 @@ import (
 
 // DashboardAllOf struct for DashboardAllOf
 type DashboardAllOf struct {
-	Links  *DashboardAllOfLinks `json:"links,omitempty"`
-	Id     *string              `json:"id,omitempty"`
-	Meta   *DashboardAllOfMeta  `json:"meta,omitempty"`
-	Cells  *[]Cell              `json:"cells,omitempty"`
-	Labels *[]Label             `json:"labels,omitempty"`
+	Links  *DashboardAllOfLinks `json:"links,omitempty" yaml:"links,omitempty"`
+	Id     *string              `json:"id,omitempty" yaml:"id,omitempty"`
+	Meta   *DashboardAllOfMeta  `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Cells  *[]Cell              `json:"cells,omitempty" yaml:"cells,omitempty"`
+	Labels *[]Label             `json:"labels,omitempty" yaml:"labels,omitempty"`
 }
 
 // NewDashboardAllOf instantiates a new DashboardAllOf object

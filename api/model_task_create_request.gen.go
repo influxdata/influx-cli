@@ -17,14 +17,14 @@ import (
 // TaskCreateRequest struct for TaskCreateRequest
 type TaskCreateRequest struct {
 	// The ID of the organization that owns this Task.
-	OrgID *string `json:"orgID,omitempty"`
+	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
 	// The name of the organization that owns this Task.
-	Org    *string         `json:"org,omitempty"`
-	Status *TaskStatusType `json:"status,omitempty"`
+	Org    *string         `json:"org,omitempty" yaml:"org,omitempty"`
+	Status *TaskStatusType `json:"status,omitempty" yaml:"status,omitempty"`
 	// The Flux script to run for this task.
-	Flux string `json:"flux"`
+	Flux string `json:"flux" yaml:"flux"`
 	// An optional description of the task.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewTaskCreateRequest instantiates a new TaskCreateRequest object

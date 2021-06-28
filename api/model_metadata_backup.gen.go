@@ -17,9 +17,9 @@ import (
 
 // MetadataBackup struct for MetadataBackup
 type MetadataBackup struct {
-	Kv      *os.File                 `json:"kv"`
-	Sql     *os.File                 `json:"sql"`
-	Buckets []BucketMetadataManifest `json:"buckets"`
+	Kv      *os.File                 `json:"kv" yaml:"kv"`
+	Sql     *os.File                 `json:"sql" yaml:"sql"`
+	Buckets []BucketMetadataManifest `json:"buckets" yaml:"buckets"`
 }
 
 // NewMetadataBackup instantiates a new MetadataBackup object

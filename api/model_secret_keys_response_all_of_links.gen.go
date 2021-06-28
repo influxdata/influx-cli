@@ -16,8 +16,8 @@ import (
 
 // SecretKeysResponseAllOfLinks struct for SecretKeysResponseAllOfLinks
 type SecretKeysResponseAllOfLinks struct {
-	Self *string `json:"self,omitempty"`
-	Org  *string `json:"org,omitempty"`
+	Self *string `json:"self,omitempty" yaml:"self,omitempty"`
+	Org  *string `json:"org,omitempty" yaml:"org,omitempty"`
 }
 
 // NewSecretKeysResponseAllOfLinks instantiates a new SecretKeysResponseAllOfLinks object

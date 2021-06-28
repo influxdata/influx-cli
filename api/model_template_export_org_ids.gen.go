@@ -16,8 +16,8 @@ import (
 
 // TemplateExportOrgIDs struct for TemplateExportOrgIDs
 type TemplateExportOrgIDs struct {
-	OrgID           *string                        `json:"orgID,omitempty"`
-	ResourceFilters *TemplateExportResourceFilters `json:"resourceFilters,omitempty"`
+	OrgID           *string                        `json:"orgID,omitempty" yaml:"orgID,omitempty"`
+	ResourceFilters *TemplateExportResourceFilters `json:"resourceFilters,omitempty" yaml:"resourceFilters,omitempty"`
 }
 
 // NewTemplateExportOrgIDs instantiates a new TemplateExportOrgIDs object

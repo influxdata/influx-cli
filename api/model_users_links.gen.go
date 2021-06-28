@@ -16,7 +16,7 @@ import (
 
 // UsersLinks struct for UsersLinks
 type UsersLinks struct {
-	Self *string `json:"self,omitempty"`
+	Self *string `json:"self,omitempty" yaml:"self,omitempty"`
 }
 
 // NewUsersLinks instantiates a new UsersLinks object

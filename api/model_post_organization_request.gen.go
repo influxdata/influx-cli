@@ -16,8 +16,8 @@ import (
 
 // PostOrganizationRequest struct for PostOrganizationRequest
 type PostOrganizationRequest struct {
-	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name" yaml:"name"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewPostOrganizationRequest instantiates a new PostOrganizationRequest object

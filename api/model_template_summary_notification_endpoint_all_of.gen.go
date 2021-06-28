@@ -16,10 +16,10 @@ import (
 
 // TemplateSummaryNotificationEndpointAllOf struct for TemplateSummaryNotificationEndpointAllOf
 type TemplateSummaryNotificationEndpointAllOf struct {
-	Id          string  `json:"id"`
-	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
-	Status      string  `json:"status"`
+	Id          string  `json:"id" yaml:"id"`
+	Name        string  `json:"name" yaml:"name"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
+	Status      string  `json:"status" yaml:"status"`
 }
 
 // NewTemplateSummaryNotificationEndpointAllOf instantiates a new TemplateSummaryNotificationEndpointAllOf object

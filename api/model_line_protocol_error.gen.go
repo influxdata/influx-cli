@@ -16,15 +16,15 @@ import (
 
 // LineProtocolError struct for LineProtocolError
 type LineProtocolError struct {
-	Code LineProtocolErrorCode `json:"code"`
+	Code LineProtocolErrorCode `json:"code" yaml:"code"`
 	// Message is a human-readable message.
-	Message string `json:"message"`
+	Message string `json:"message" yaml:"message"`
 	// Op describes the logical code operation during error. Useful for debugging.
-	Op string `json:"op"`
+	Op string `json:"op" yaml:"op"`
 	// Err is a stack of errors that occurred during processing of the request. Useful for debugging.
-	Err string `json:"err"`
+	Err string `json:"err" yaml:"err"`
 	// First line within sent body containing malformed data
-	Line *int32 `json:"line,omitempty"`
+	Line *int32 `json:"line,omitempty" yaml:"line,omitempty"`
 }
 
 // NewLineProtocolError instantiates a new LineProtocolError object

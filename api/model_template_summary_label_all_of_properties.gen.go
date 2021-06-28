@@ -16,8 +16,8 @@ import (
 
 // TemplateSummaryLabelAllOfProperties struct for TemplateSummaryLabelAllOfProperties
 type TemplateSummaryLabelAllOfProperties struct {
-	Color       string  `json:"color"`
-	Description *string `json:"description,omitempty"`
+	Color       string  `json:"color" yaml:"color"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewTemplateSummaryLabelAllOfProperties instantiates a new TemplateSummaryLabelAllOfProperties object

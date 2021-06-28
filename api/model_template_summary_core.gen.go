@@ -16,9 +16,9 @@ import (
 
 // TemplateSummaryCore struct for TemplateSummaryCore
 type TemplateSummaryCore struct {
-	Kind             string                 `json:"kind"`
-	TemplateMetaName *string                `json:"templateMetaName,omitempty"`
-	EnvReferences    []TemplateEnvReference `json:"envReferences"`
+	Kind             string                 `json:"kind" yaml:"kind"`
+	TemplateMetaName *string                `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
+	EnvReferences    []TemplateEnvReference `json:"envReferences" yaml:"envReferences"`
 }
 
 // NewTemplateSummaryCore instantiates a new TemplateSummaryCore object

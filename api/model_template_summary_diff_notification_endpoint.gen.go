@@ -16,12 +16,12 @@ import (
 
 // TemplateSummaryDiffNotificationEndpoint struct for TemplateSummaryDiffNotificationEndpoint
 type TemplateSummaryDiffNotificationEndpoint struct {
-	Kind             string                                         `json:"kind"`
-	StateStatus      string                                         `json:"stateStatus"`
-	Id               string                                         `json:"id"`
-	TemplateMetaName string                                         `json:"templateMetaName"`
-	New              *TemplateSummaryDiffNotificationEndpointFields `json:"new,omitempty"`
-	Old              *TemplateSummaryDiffNotificationEndpointFields `json:"old,omitempty"`
+	Kind             string                                         `json:"kind" yaml:"kind"`
+	StateStatus      string                                         `json:"stateStatus" yaml:"stateStatus"`
+	Id               string                                         `json:"id" yaml:"id"`
+	TemplateMetaName string                                         `json:"templateMetaName" yaml:"templateMetaName"`
+	New              *TemplateSummaryDiffNotificationEndpointFields `json:"new,omitempty" yaml:"new,omitempty"`
+	Old              *TemplateSummaryDiffNotificationEndpointFields `json:"old,omitempty" yaml:"old,omitempty"`
 }
 
 // NewTemplateSummaryDiffNotificationEndpoint instantiates a new TemplateSummaryDiffNotificationEndpoint object

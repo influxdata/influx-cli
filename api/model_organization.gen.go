@@ -17,14 +17,14 @@ import (
 
 // Organization struct for Organization
 type Organization struct {
-	Links       *OrganizationLinks `json:"links,omitempty"`
-	Id          *string            `json:"id,omitempty"`
-	Name        string             `json:"name"`
-	Description *string            `json:"description,omitempty"`
-	CreatedAt   *time.Time         `json:"createdAt,omitempty"`
-	UpdatedAt   *time.Time         `json:"updatedAt,omitempty"`
+	Links       *OrganizationLinks `json:"links,omitempty" yaml:"links,omitempty"`
+	Id          *string            `json:"id,omitempty" yaml:"id,omitempty"`
+	Name        string             `json:"name" yaml:"name"`
+	Description *string            `json:"description,omitempty" yaml:"description,omitempty"`
+	CreatedAt   *time.Time         `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
+	UpdatedAt   *time.Time         `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
 	// If inactive the organization is inactive.
-	Status *string `json:"status,omitempty"`
+	Status *string `json:"status,omitempty" yaml:"status,omitempty"`
 }
 
 // NewOrganization instantiates a new Organization object

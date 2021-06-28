@@ -16,7 +16,7 @@ import (
 
 // TemplateSummaryTelegrafAllOf struct for TemplateSummaryTelegrafAllOf
 type TemplateSummaryTelegrafAllOf struct {
-	TelegrafConfig TemplateSummaryTelegrafConfig `json:"telegrafConfig"`
+	TelegrafConfig TemplateSummaryTelegrafConfig `json:"telegrafConfig" yaml:"telegrafConfig"`
 }
 
 // NewTemplateSummaryTelegrafAllOf instantiates a new TemplateSummaryTelegrafAllOf object

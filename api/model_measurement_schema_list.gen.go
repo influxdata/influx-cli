@@ -16,7 +16,7 @@ import (
 
 // MeasurementSchemaList A list of measurement schemas returning summary information
 type MeasurementSchemaList struct {
-	MeasurementSchemas []MeasurementSchema `json:"measurementSchemas"`
+	MeasurementSchemas []MeasurementSchema `json:"measurementSchemas" yaml:"measurementSchemas"`
 }
 
 // NewMeasurementSchemaList instantiates a new MeasurementSchemaList object

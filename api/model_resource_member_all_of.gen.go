@@ -16,7 +16,7 @@ import (
 
 // ResourceMemberAllOf struct for ResourceMemberAllOf
 type ResourceMemberAllOf struct {
-	Role *string `json:"role,omitempty"`
+	Role *string `json:"role,omitempty" yaml:"role,omitempty"`
 }
 
 // NewResourceMemberAllOf instantiates a new ResourceMemberAllOf object

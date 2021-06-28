@@ -17,12 +17,12 @@ import (
 
 // MeasurementSchema The schema definition for a single measurement
 type MeasurementSchema struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id   string `json:"id" yaml:"id"`
+	Name string `json:"name" yaml:"name"`
 	// An ordered collection of column definitions
-	Columns   []MeasurementSchemaColumn `json:"columns"`
-	CreatedAt time.Time                 `json:"createdAt"`
-	UpdatedAt time.Time                 `json:"updatedAt"`
+	Columns   []MeasurementSchemaColumn `json:"columns" yaml:"columns"`
+	CreatedAt time.Time                 `json:"createdAt" yaml:"createdAt"`
+	UpdatedAt time.Time                 `json:"updatedAt" yaml:"updatedAt"`
 }
 
 // NewMeasurementSchema instantiates a new MeasurementSchema object

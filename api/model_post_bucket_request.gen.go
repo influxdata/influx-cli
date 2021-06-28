@@ -16,13 +16,13 @@ import (
 
 // PostBucketRequest struct for PostBucketRequest
 type PostBucketRequest struct {
-	OrgID       string  `json:"orgID"`
-	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
-	Rp          *string `json:"rp,omitempty"`
+	OrgID       string  `json:"orgID" yaml:"orgID"`
+	Name        string  `json:"name" yaml:"name"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
+	Rp          *string `json:"rp,omitempty" yaml:"rp,omitempty"`
 	// Rules to expire or retain data.  No rules means data never expires.
-	RetentionRules []RetentionRule `json:"retentionRules"`
-	SchemaType     *SchemaType     `json:"schemaType,omitempty"`
+	RetentionRules []RetentionRule `json:"retentionRules" yaml:"retentionRules"`
+	SchemaType     *SchemaType     `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
 }
 
 // NewPostBucketRequest instantiates a new PostBucketRequest object

@@ -16,13 +16,13 @@ import (
 
 // TemplateSummaryCheck struct for TemplateSummaryCheck
 type TemplateSummaryCheck struct {
-	Kind              string                 `json:"kind"`
-	TemplateMetaName  *string                `json:"templateMetaName,omitempty"`
-	EnvReferences     []TemplateEnvReference `json:"envReferences"`
-	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations"`
-	Id                string                 `json:"id"`
-	Name              string                 `json:"name"`
-	Description       *string                `json:"description,omitempty"`
+	Kind              string                 `json:"kind" yaml:"kind"`
+	TemplateMetaName  *string                `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
+	EnvReferences     []TemplateEnvReference `json:"envReferences" yaml:"envReferences"`
+	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations" yaml:"labelAssociations"`
+	Id                string                 `json:"id" yaml:"id"`
+	Name              string                 `json:"name" yaml:"name"`
+	Description       *string                `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewTemplateSummaryCheck instantiates a new TemplateSummaryCheck object

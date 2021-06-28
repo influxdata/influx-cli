@@ -16,13 +16,13 @@ import (
 
 // TemplateSummaryNotificationRuleAllOf struct for TemplateSummaryNotificationRuleAllOf
 type TemplateSummaryNotificationRuleAllOf struct {
-	Name                     string  `json:"name"`
-	Description              *string `json:"description,omitempty"`
-	EndpointTemplateMetaName string  `json:"endpointTemplateMetaName"`
-	EndpointID               string  `json:"endpointID"`
-	EndpointType             string  `json:"endpointType"`
-	Every                    string  `json:"every"`
-	Offset                   string  `json:"offset"`
+	Name                     string  `json:"name" yaml:"name"`
+	Description              *string `json:"description,omitempty" yaml:"description,omitempty"`
+	EndpointTemplateMetaName string  `json:"endpointTemplateMetaName" yaml:"endpointTemplateMetaName"`
+	EndpointID               string  `json:"endpointID" yaml:"endpointID"`
+	EndpointType             string  `json:"endpointType" yaml:"endpointType"`
+	Every                    string  `json:"every" yaml:"every"`
+	Offset                   string  `json:"offset" yaml:"offset"`
 }
 
 // NewTemplateSummaryNotificationRuleAllOf instantiates a new TemplateSummaryNotificationRuleAllOf object

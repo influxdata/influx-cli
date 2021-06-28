@@ -16,15 +16,15 @@ import (
 
 // OnboardingRequest struct for OnboardingRequest
 type OnboardingRequest struct {
-	Username               string  `json:"username"`
-	Password               *string `json:"password,omitempty"`
-	Org                    string  `json:"org"`
-	Bucket                 string  `json:"bucket"`
-	RetentionPeriodSeconds *int64  `json:"retentionPeriodSeconds,omitempty"`
+	Username               string  `json:"username" yaml:"username"`
+	Password               *string `json:"password,omitempty" yaml:"password,omitempty"`
+	Org                    string  `json:"org" yaml:"org"`
+	Bucket                 string  `json:"bucket" yaml:"bucket"`
+	RetentionPeriodSeconds *int64  `json:"retentionPeriodSeconds,omitempty" yaml:"retentionPeriodSeconds,omitempty"`
 	// Retention period *in nanoseconds* for the new bucket. This key's name has been misleading since OSS 2.0 GA, please transition to use `retentionPeriodSeconds`
-	RetentionPeriodHrs *int32 `json:"retentionPeriodHrs,omitempty"`
+	RetentionPeriodHrs *int32 `json:"retentionPeriodHrs,omitempty" yaml:"retentionPeriodHrs,omitempty"`
 	// Authentication token to set on the initial user. If not specified, the server will generate a token.
-	Token *string `json:"token,omitempty"`
+	Token *string `json:"token,omitempty" yaml:"token,omitempty"`
 }
 
 // NewOnboardingRequest instantiates a new OnboardingRequest object

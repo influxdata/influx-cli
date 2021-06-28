@@ -16,14 +16,14 @@ import (
 
 // Telegraf struct for Telegraf
 type Telegraf struct {
-	Name        *string                  `json:"name,omitempty"`
-	Description *string                  `json:"description,omitempty"`
-	Metadata    *TelegrafRequestMetadata `json:"metadata,omitempty"`
-	Config      *string                  `json:"config,omitempty"`
-	OrgID       *string                  `json:"orgID,omitempty"`
-	Id          *string                  `json:"id,omitempty"`
-	Links       *TelegrafAllOfLinks      `json:"links,omitempty"`
-	Labels      *[]Label                 `json:"labels,omitempty"`
+	Name        *string                  `json:"name,omitempty" yaml:"name,omitempty"`
+	Description *string                  `json:"description,omitempty" yaml:"description,omitempty"`
+	Metadata    *TelegrafRequestMetadata `json:"metadata,omitempty" yaml:"metadata,omitempty"`
+	Config      *string                  `json:"config,omitempty" yaml:"config,omitempty"`
+	OrgID       *string                  `json:"orgID,omitempty" yaml:"orgID,omitempty"`
+	Id          *string                  `json:"id,omitempty" yaml:"id,omitempty"`
+	Links       *TelegrafAllOfLinks      `json:"links,omitempty" yaml:"links,omitempty"`
+	Labels      *[]Label                 `json:"labels,omitempty" yaml:"labels,omitempty"`
 }
 
 // NewTelegraf instantiates a new Telegraf object

@@ -16,10 +16,10 @@ import (
 
 // OnboardingResponse struct for OnboardingResponse
 type OnboardingResponse struct {
-	User   *UserResponse  `json:"user,omitempty"`
-	Org    *Organization  `json:"org,omitempty"`
-	Bucket *Bucket        `json:"bucket,omitempty"`
-	Auth   *Authorization `json:"auth,omitempty"`
+	User   *UserResponse  `json:"user,omitempty" yaml:"user,omitempty"`
+	Org    *Organization  `json:"org,omitempty" yaml:"org,omitempty"`
+	Bucket *Bucket        `json:"bucket,omitempty" yaml:"bucket,omitempty"`
+	Auth   *Authorization `json:"auth,omitempty" yaml:"auth,omitempty"`
 }
 
 // NewOnboardingResponse instantiates a new OnboardingResponse object

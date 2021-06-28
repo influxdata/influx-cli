@@ -18,7 +18,7 @@ import (
 // RunManually struct for RunManually
 type RunManually struct {
 	// Time used for run's \"now\" option, RFC3339.  Default is the server's now time.
-	ScheduledFor NullableTime `json:"scheduledFor,omitempty"`
+	ScheduledFor NullableTime `json:"scheduledFor,omitempty" yaml:"scheduledFor,omitempty"`
 }
 
 // NewRunManually instantiates a new RunManually object

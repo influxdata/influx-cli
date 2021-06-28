@@ -16,13 +16,13 @@ import (
 
 // BucketMetadataManifest struct for BucketMetadataManifest
 type BucketMetadataManifest struct {
-	OrganizationID         string                    `json:"organizationID"`
-	OrganizationName       string                    `json:"organizationName"`
-	BucketID               string                    `json:"bucketID"`
-	BucketName             string                    `json:"bucketName"`
-	Description            *string                   `json:"description,omitempty"`
-	DefaultRetentionPolicy string                    `json:"defaultRetentionPolicy"`
-	RetentionPolicies      []RetentionPolicyManifest `json:"retentionPolicies"`
+	OrganizationID         string                    `json:"organizationID" yaml:"organizationID"`
+	OrganizationName       string                    `json:"organizationName" yaml:"organizationName"`
+	BucketID               string                    `json:"bucketID" yaml:"bucketID"`
+	BucketName             string                    `json:"bucketName" yaml:"bucketName"`
+	Description            *string                   `json:"description,omitempty" yaml:"description,omitempty"`
+	DefaultRetentionPolicy string                    `json:"defaultRetentionPolicy" yaml:"defaultRetentionPolicy"`
+	RetentionPolicies      []RetentionPolicyManifest `json:"retentionPolicies" yaml:"retentionPolicies"`
 }
 
 // NewBucketMetadataManifest instantiates a new BucketMetadataManifest object

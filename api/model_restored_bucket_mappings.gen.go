@@ -17,9 +17,9 @@ import (
 // RestoredBucketMappings struct for RestoredBucketMappings
 type RestoredBucketMappings struct {
 	// New ID of the restored bucket
-	Id            string               `json:"id"`
-	Name          string               `json:"name"`
-	ShardMappings []BucketShardMapping `json:"shardMappings"`
+	Id            string               `json:"id" yaml:"id"`
+	Name          string               `json:"name" yaml:"name"`
+	ShardMappings []BucketShardMapping `json:"shardMappings" yaml:"shardMappings"`
 }
 
 // NewRestoredBucketMappings instantiates a new RestoredBucketMappings object

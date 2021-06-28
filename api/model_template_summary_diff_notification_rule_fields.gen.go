@@ -16,14 +16,14 @@ import (
 
 // TemplateSummaryDiffNotificationRuleFields struct for TemplateSummaryDiffNotificationRuleFields
 type TemplateSummaryDiffNotificationRuleFields struct {
-	Name            string  `json:"name"`
-	Description     *string `json:"description,omitempty"`
-	EndpointName    string  `json:"endpointName"`
-	EndpointID      string  `json:"endpointID"`
-	EndpointType    string  `json:"endpointType"`
-	Every           string  `json:"every"`
-	Offset          string  `json:"offset"`
-	MessageTemplate *string `json:"messageTemplate,omitempty"`
+	Name            string  `json:"name" yaml:"name"`
+	Description     *string `json:"description,omitempty" yaml:"description,omitempty"`
+	EndpointName    string  `json:"endpointName" yaml:"endpointName"`
+	EndpointID      string  `json:"endpointID" yaml:"endpointID"`
+	EndpointType    string  `json:"endpointType" yaml:"endpointType"`
+	Every           string  `json:"every" yaml:"every"`
+	Offset          string  `json:"offset" yaml:"offset"`
+	MessageTemplate *string `json:"messageTemplate,omitempty" yaml:"messageTemplate,omitempty"`
 }
 
 // NewTemplateSummaryDiffNotificationRuleFields instantiates a new TemplateSummaryDiffNotificationRuleFields object

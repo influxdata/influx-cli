@@ -16,8 +16,8 @@ import (
 
 // ShardManifest struct for ShardManifest
 type ShardManifest struct {
-	Id          int64        `json:"id"`
-	ShardOwners []ShardOwner `json:"shardOwners"`
+	Id          int64        `json:"id" yaml:"id"`
+	ShardOwners []ShardOwner `json:"shardOwners" yaml:"shardOwners"`
 }
 
 // NewShardManifest instantiates a new ShardManifest object

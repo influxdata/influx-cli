@@ -16,7 +16,7 @@ import (
 
 // SecretKeys struct for SecretKeys
 type SecretKeys struct {
-	Secrets *[]string `json:"secrets,omitempty"`
+	Secrets *[]string `json:"secrets,omitempty" yaml:"secrets,omitempty"`
 }
 
 // NewSecretKeys instantiates a new SecretKeys object

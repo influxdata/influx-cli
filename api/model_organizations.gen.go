@@ -16,8 +16,8 @@ import (
 
 // Organizations struct for Organizations
 type Organizations struct {
-	Links *Links          `json:"links,omitempty"`
-	Orgs  *[]Organization `json:"orgs,omitempty"`
+	Links *Links          `json:"links,omitempty" yaml:"links,omitempty"`
+	Orgs  *[]Organization `json:"orgs,omitempty" yaml:"orgs,omitempty"`
 }
 
 // NewOrganizations instantiates a new Organizations object

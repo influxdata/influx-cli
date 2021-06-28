@@ -16,7 +16,7 @@ import (
 
 // Telegrafs struct for Telegrafs
 type Telegrafs struct {
-	Configurations *[]Telegraf `json:"configurations,omitempty"`
+	Configurations *[]Telegraf `json:"configurations,omitempty" yaml:"configurations,omitempty"`
 }
 
 // NewTelegrafs instantiates a new Telegrafs object

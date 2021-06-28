@@ -16,9 +16,9 @@ import (
 
 // TemplateExportResources struct for TemplateExportResources
 type TemplateExportResources struct {
-	Id   *string `json:"id,omitempty"`
-	Kind string  `json:"kind"`
-	Name *string `json:"name,omitempty"`
+	Id   *string `json:"id,omitempty" yaml:"id,omitempty"`
+	Kind string  `json:"kind" yaml:"kind"`
+	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
 }
 
 // NewTemplateExportResources instantiates a new TemplateExportResources object

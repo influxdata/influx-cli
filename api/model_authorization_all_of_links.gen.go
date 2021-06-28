@@ -17,9 +17,9 @@ import (
 // AuthorizationAllOfLinks struct for AuthorizationAllOfLinks
 type AuthorizationAllOfLinks struct {
 	// URI of resource.
-	Self *string `json:"self,omitempty"`
+	Self *string `json:"self,omitempty" yaml:"self,omitempty"`
 	// URI of resource.
-	User *string `json:"user,omitempty"`
+	User *string `json:"user,omitempty" yaml:"user,omitempty"`
 }
 
 // NewAuthorizationAllOfLinks instantiates a new AuthorizationAllOfLinks object

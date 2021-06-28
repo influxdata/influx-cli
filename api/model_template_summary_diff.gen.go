@@ -16,16 +16,16 @@ import (
 
 // TemplateSummaryDiff struct for TemplateSummaryDiff
 type TemplateSummaryDiff struct {
-	Buckets               []TemplateSummaryDiffBucket               `json:"buckets"`
-	Checks                []TemplateSummaryDiffCheck                `json:"checks"`
-	Dashboards            []TemplateSummaryDiffDashboard            `json:"dashboards"`
-	Labels                []TemplateSummaryDiffLabel                `json:"labels"`
-	LabelMappings         []TemplateSummaryLabelMapping             `json:"labelMappings"`
-	NotificationEndpoints []TemplateSummaryDiffNotificationEndpoint `json:"notificationEndpoints"`
-	NotificationRules     []TemplateSummaryDiffNotificationRule     `json:"notificationRules"`
-	Tasks                 []TemplateSummaryDiffTask                 `json:"tasks"`
-	TelegrafConfigs       []TemplateSummaryDiffTelegraf             `json:"telegrafConfigs"`
-	Variables             []TemplateSummaryDiffVariable             `json:"variables"`
+	Buckets               []TemplateSummaryDiffBucket               `json:"buckets" yaml:"buckets"`
+	Checks                []TemplateSummaryDiffCheck                `json:"checks" yaml:"checks"`
+	Dashboards            []TemplateSummaryDiffDashboard            `json:"dashboards" yaml:"dashboards"`
+	Labels                []TemplateSummaryDiffLabel                `json:"labels" yaml:"labels"`
+	LabelMappings         []TemplateSummaryLabelMapping             `json:"labelMappings" yaml:"labelMappings"`
+	NotificationEndpoints []TemplateSummaryDiffNotificationEndpoint `json:"notificationEndpoints" yaml:"notificationEndpoints"`
+	NotificationRules     []TemplateSummaryDiffNotificationRule     `json:"notificationRules" yaml:"notificationRules"`
+	Tasks                 []TemplateSummaryDiffTask                 `json:"tasks" yaml:"tasks"`
+	TelegrafConfigs       []TemplateSummaryDiffTelegraf             `json:"telegrafConfigs" yaml:"telegrafConfigs"`
+	Variables             []TemplateSummaryDiffVariable             `json:"variables" yaml:"variables"`
 }
 
 // NewTemplateSummaryDiff instantiates a new TemplateSummaryDiff object

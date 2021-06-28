@@ -16,8 +16,8 @@ import (
 
 // Permission struct for Permission
 type Permission struct {
-	Action   string             `json:"action"`
-	Resource PermissionResource `json:"resource"`
+	Action   string             `json:"action" yaml:"action"`
+	Resource PermissionResource `json:"resource" yaml:"resource"`
 }
 
 // NewPermission instantiates a new Permission object

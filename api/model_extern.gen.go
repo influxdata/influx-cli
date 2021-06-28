@@ -16,7 +16,7 @@ import (
 
 // Extern Free-form Flux AST to prepend to query requests
 type Extern struct {
-	Type                 *string `json:"type,omitempty"`
+	Type                 *string `json:"type,omitempty" yaml:"type,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 

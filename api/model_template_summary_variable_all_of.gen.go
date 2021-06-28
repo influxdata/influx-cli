@@ -16,10 +16,10 @@ import (
 
 // TemplateSummaryVariableAllOf struct for TemplateSummaryVariableAllOf
 type TemplateSummaryVariableAllOf struct {
-	Id          string                      `json:"id"`
-	Name        string                      `json:"name"`
-	Description *string                     `json:"description,omitempty"`
-	Arguments   TemplateSummaryVariableArgs `json:"arguments"`
+	Id          string                      `json:"id" yaml:"id"`
+	Name        string                      `json:"name" yaml:"name"`
+	Description *string                     `json:"description,omitempty" yaml:"description,omitempty"`
+	Arguments   TemplateSummaryVariableArgs `json:"arguments" yaml:"arguments"`
 }
 
 // NewTemplateSummaryVariableAllOf instantiates a new TemplateSummaryVariableAllOf object

@@ -16,10 +16,10 @@ import (
 
 // TemplateSummaryDiffBucketFields struct for TemplateSummaryDiffBucketFields
 type TemplateSummaryDiffBucketFields struct {
-	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name" yaml:"name"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 	// Rules to expire or retain data.  No rules means data never expires.
-	RetentionRules []RetentionRule `json:"retentionRules"`
+	RetentionRules []RetentionRule `json:"retentionRules" yaml:"retentionRules"`
 }
 
 // NewTemplateSummaryDiffBucketFields instantiates a new TemplateSummaryDiffBucketFields object

@@ -16,7 +16,7 @@ import (
 
 // PasswordResetBody struct for PasswordResetBody
 type PasswordResetBody struct {
-	Password string `json:"password"`
+	Password string `json:"password" yaml:"password"`
 }
 
 // NewPasswordResetBody instantiates a new PasswordResetBody object

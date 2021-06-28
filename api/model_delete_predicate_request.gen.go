@@ -18,11 +18,11 @@ import (
 // DeletePredicateRequest The delete predicate request.
 type DeletePredicateRequest struct {
 	// RFC3339Nano
-	Start time.Time `json:"start"`
+	Start time.Time `json:"start" yaml:"start"`
 	// RFC3339Nano
-	Stop time.Time `json:"stop"`
+	Stop time.Time `json:"stop" yaml:"stop"`
 	// InfluxQL-like delete statement
-	Predicate *string `json:"predicate,omitempty"`
+	Predicate *string `json:"predicate,omitempty" yaml:"predicate,omitempty"`
 }
 
 // NewDeletePredicateRequest instantiates a new DeletePredicateRequest object

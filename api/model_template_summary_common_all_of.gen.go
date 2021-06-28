@@ -16,7 +16,7 @@ import (
 
 // TemplateSummaryCommonAllOf struct for TemplateSummaryCommonAllOf
 type TemplateSummaryCommonAllOf struct {
-	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations"`
+	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations" yaml:"labelAssociations"`
 }
 
 // NewTemplateSummaryCommonAllOf instantiates a new TemplateSummaryCommonAllOf object

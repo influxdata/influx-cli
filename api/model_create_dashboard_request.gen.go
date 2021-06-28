@@ -17,11 +17,11 @@ import (
 // CreateDashboardRequest struct for CreateDashboardRequest
 type CreateDashboardRequest struct {
 	// The ID of the organization that owns the dashboard.
-	OrgID string `json:"orgID"`
+	OrgID string `json:"orgID" yaml:"orgID"`
 	// The user-facing name of the dashboard.
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 	// The user-facing description of the dashboard.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // NewCreateDashboardRequest instantiates a new CreateDashboardRequest object

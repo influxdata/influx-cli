@@ -16,7 +16,7 @@ import (
 
 // DBRPGet struct for DBRPGet
 type DBRPGet struct {
-	Content *DBRP `json:"content,omitempty"`
+	Content *DBRP `json:"content,omitempty" yaml:"content,omitempty"`
 }
 
 // NewDBRPGet instantiates a new DBRPGet object

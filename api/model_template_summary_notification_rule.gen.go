@@ -16,17 +16,17 @@ import (
 
 // TemplateSummaryNotificationRule struct for TemplateSummaryNotificationRule
 type TemplateSummaryNotificationRule struct {
-	Kind                     string                 `json:"kind"`
-	TemplateMetaName         *string                `json:"templateMetaName,omitempty"`
-	EnvReferences            []TemplateEnvReference `json:"envReferences"`
-	LabelAssociations        []TemplateSummaryLabel `json:"labelAssociations"`
-	Name                     string                 `json:"name"`
-	Description              *string                `json:"description,omitempty"`
-	EndpointTemplateMetaName string                 `json:"endpointTemplateMetaName"`
-	EndpointID               string                 `json:"endpointID"`
-	EndpointType             string                 `json:"endpointType"`
-	Every                    string                 `json:"every"`
-	Offset                   string                 `json:"offset"`
+	Kind                     string                 `json:"kind" yaml:"kind"`
+	TemplateMetaName         *string                `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
+	EnvReferences            []TemplateEnvReference `json:"envReferences" yaml:"envReferences"`
+	LabelAssociations        []TemplateSummaryLabel `json:"labelAssociations" yaml:"labelAssociations"`
+	Name                     string                 `json:"name" yaml:"name"`
+	Description              *string                `json:"description,omitempty" yaml:"description,omitempty"`
+	EndpointTemplateMetaName string                 `json:"endpointTemplateMetaName" yaml:"endpointTemplateMetaName"`
+	EndpointID               string                 `json:"endpointID" yaml:"endpointID"`
+	EndpointType             string                 `json:"endpointType" yaml:"endpointType"`
+	Every                    string                 `json:"every" yaml:"every"`
+	Offset                   string                 `json:"offset" yaml:"offset"`
 }
 
 // NewTemplateSummaryNotificationRule instantiates a new TemplateSummaryNotificationRule object

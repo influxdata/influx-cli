@@ -16,18 +16,18 @@ import (
 
 // TemplateSummaryResources struct for TemplateSummaryResources
 type TemplateSummaryResources struct {
-	Buckets               []TemplateSummaryBucket               `json:"buckets"`
-	Checks                []TemplateSummaryCheck                `json:"checks"`
-	Dashboards            []TemplateSummaryDashboard            `json:"dashboards"`
-	Labels                []TemplateSummaryLabel                `json:"labels"`
-	LabelMappings         []TemplateSummaryLabelMapping         `json:"labelMappings"`
-	MissingEnvRefs        []string                              `json:"missingEnvRefs"`
-	MissingSecrets        []string                              `json:"missingSecrets"`
-	NotificationEndpoints []TemplateSummaryNotificationEndpoint `json:"notificationEndpoints"`
-	NotificationRules     []TemplateSummaryNotificationRule     `json:"notificationRules"`
-	Tasks                 []TemplateSummaryTask                 `json:"tasks"`
-	TelegrafConfigs       []TemplateSummaryTelegraf             `json:"telegrafConfigs"`
-	Variables             []TemplateSummaryVariable             `json:"variables"`
+	Buckets               []TemplateSummaryBucket               `json:"buckets" yaml:"buckets"`
+	Checks                []TemplateSummaryCheck                `json:"checks" yaml:"checks"`
+	Dashboards            []TemplateSummaryDashboard            `json:"dashboards" yaml:"dashboards"`
+	Labels                []TemplateSummaryLabel                `json:"labels" yaml:"labels"`
+	LabelMappings         []TemplateSummaryLabelMapping         `json:"labelMappings" yaml:"labelMappings"`
+	MissingEnvRefs        []string                              `json:"missingEnvRefs" yaml:"missingEnvRefs"`
+	MissingSecrets        []string                              `json:"missingSecrets" yaml:"missingSecrets"`
+	NotificationEndpoints []TemplateSummaryNotificationEndpoint `json:"notificationEndpoints" yaml:"notificationEndpoints"`
+	NotificationRules     []TemplateSummaryNotificationRule     `json:"notificationRules" yaml:"notificationRules"`
+	Tasks                 []TemplateSummaryTask                 `json:"tasks" yaml:"tasks"`
+	TelegrafConfigs       []TemplateSummaryTelegraf             `json:"telegrafConfigs" yaml:"telegrafConfigs"`
+	Variables             []TemplateSummaryVariable             `json:"variables" yaml:"variables"`
 }
 
 // NewTemplateSummaryResources instantiates a new TemplateSummaryResources object

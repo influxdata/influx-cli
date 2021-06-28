@@ -16,9 +16,9 @@ import (
 
 // TemplateExport struct for TemplateExport
 type TemplateExport struct {
-	StackID   *string                   `json:"stackID,omitempty"`
-	OrgIDs    *[]TemplateExportOrgIDs   `json:"orgIDs,omitempty"`
-	Resources []TemplateExportResources `json:"resources"`
+	StackID   *string                   `json:"stackID,omitempty" yaml:"stackID,omitempty"`
+	OrgIDs    *[]TemplateExportOrgIDs   `json:"orgIDs,omitempty" yaml:"orgIDs,omitempty"`
+	Resources []TemplateExportResources `json:"resources" yaml:"resources"`
 }
 
 // NewTemplateExport instantiates a new TemplateExport object

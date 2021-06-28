@@ -16,7 +16,7 @@ import (
 
 // TemplateSummaryDiffNotificationEndpointFields struct for TemplateSummaryDiffNotificationEndpointFields
 type TemplateSummaryDiffNotificationEndpointFields struct {
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 }
 
 // NewTemplateSummaryDiffNotificationEndpointFields instantiates a new TemplateSummaryDiffNotificationEndpointFields object

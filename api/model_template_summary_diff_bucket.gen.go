@@ -16,12 +16,12 @@ import (
 
 // TemplateSummaryDiffBucket struct for TemplateSummaryDiffBucket
 type TemplateSummaryDiffBucket struct {
-	Kind             string                           `json:"kind"`
-	StateStatus      string                           `json:"stateStatus"`
-	Id               string                           `json:"id"`
-	TemplateMetaName string                           `json:"templateMetaName"`
-	New              *TemplateSummaryDiffBucketFields `json:"new,omitempty"`
-	Old              *TemplateSummaryDiffBucketFields `json:"old,omitempty"`
+	Kind             string                           `json:"kind" yaml:"kind"`
+	StateStatus      string                           `json:"stateStatus" yaml:"stateStatus"`
+	Id               string                           `json:"id" yaml:"id"`
+	TemplateMetaName string                           `json:"templateMetaName" yaml:"templateMetaName"`
+	New              *TemplateSummaryDiffBucketFields `json:"new,omitempty" yaml:"new,omitempty"`
+	Old              *TemplateSummaryDiffBucketFields `json:"old,omitempty" yaml:"old,omitempty"`
 }
 
 // NewTemplateSummaryDiffBucket instantiates a new TemplateSummaryDiffBucket object

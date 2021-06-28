@@ -17,12 +17,12 @@ import (
 
 // ShardGroupManifest struct for ShardGroupManifest
 type ShardGroupManifest struct {
-	Id          int64           `json:"id"`
-	StartTime   time.Time       `json:"startTime"`
-	EndTime     time.Time       `json:"endTime"`
-	DeletedAt   *time.Time      `json:"deletedAt,omitempty"`
-	TruncatedAt *time.Time      `json:"truncatedAt,omitempty"`
-	Shards      []ShardManifest `json:"shards"`
+	Id          int64           `json:"id" yaml:"id"`
+	StartTime   time.Time       `json:"startTime" yaml:"startTime"`
+	EndTime     time.Time       `json:"endTime" yaml:"endTime"`
+	DeletedAt   *time.Time      `json:"deletedAt,omitempty" yaml:"deletedAt,omitempty"`
+	TruncatedAt *time.Time      `json:"truncatedAt,omitempty" yaml:"truncatedAt,omitempty"`
+	Shards      []ShardManifest `json:"shards" yaml:"shards"`
 }
 
 // NewShardGroupManifest instantiates a new ShardGroupManifest object

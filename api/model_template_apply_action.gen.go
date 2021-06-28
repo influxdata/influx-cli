@@ -16,8 +16,8 @@ import (
 
 // TemplateApplyAction struct for TemplateApplyAction
 type TemplateApplyAction struct {
-	Action     TemplateApplyActionKind       `json:"action"`
-	Properties TemplateApplyActionProperties `json:"properties"`
+	Action     TemplateApplyActionKind       `json:"action" yaml:"action"`
+	Properties TemplateApplyActionProperties `json:"properties" yaml:"properties"`
 }
 
 // NewTemplateApplyAction instantiates a new TemplateApplyAction object

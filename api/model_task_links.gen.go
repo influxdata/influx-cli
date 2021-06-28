@@ -17,17 +17,17 @@ import (
 // TaskLinks struct for TaskLinks
 type TaskLinks struct {
 	// URI of resource.
-	Self *string `json:"self,omitempty"`
+	Self *string `json:"self,omitempty" yaml:"self,omitempty"`
 	// URI of resource.
-	Owners *string `json:"owners,omitempty"`
+	Owners *string `json:"owners,omitempty" yaml:"owners,omitempty"`
 	// URI of resource.
-	Members *string `json:"members,omitempty"`
+	Members *string `json:"members,omitempty" yaml:"members,omitempty"`
 	// URI of resource.
-	Runs *string `json:"runs,omitempty"`
+	Runs *string `json:"runs,omitempty" yaml:"runs,omitempty"`
 	// URI of resource.
-	Logs *string `json:"logs,omitempty"`
+	Logs *string `json:"logs,omitempty" yaml:"logs,omitempty"`
 	// URI of resource.
-	Labels *string `json:"labels,omitempty"`
+	Labels *string `json:"labels,omitempty" yaml:"labels,omitempty"`
 }
 
 // NewTaskLinks instantiates a new TaskLinks object

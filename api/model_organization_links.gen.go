@@ -17,21 +17,21 @@ import (
 // OrganizationLinks struct for OrganizationLinks
 type OrganizationLinks struct {
 	// URI of resource.
-	Self *string `json:"self,omitempty"`
+	Self *string `json:"self,omitempty" yaml:"self,omitempty"`
 	// URI of resource.
-	Members *string `json:"members,omitempty"`
+	Members *string `json:"members,omitempty" yaml:"members,omitempty"`
 	// URI of resource.
-	Owners *string `json:"owners,omitempty"`
+	Owners *string `json:"owners,omitempty" yaml:"owners,omitempty"`
 	// URI of resource.
-	Labels *string `json:"labels,omitempty"`
+	Labels *string `json:"labels,omitempty" yaml:"labels,omitempty"`
 	// URI of resource.
-	Secrets *string `json:"secrets,omitempty"`
+	Secrets *string `json:"secrets,omitempty" yaml:"secrets,omitempty"`
 	// URI of resource.
-	Buckets *string `json:"buckets,omitempty"`
+	Buckets *string `json:"buckets,omitempty" yaml:"buckets,omitempty"`
 	// URI of resource.
-	Tasks *string `json:"tasks,omitempty"`
+	Tasks *string `json:"tasks,omitempty" yaml:"tasks,omitempty"`
 	// URI of resource.
-	Dashboards *string `json:"dashboards,omitempty"`
+	Dashboards *string `json:"dashboards,omitempty" yaml:"dashboards,omitempty"`
 }
 
 // NewOrganizationLinks instantiates a new OrganizationLinks object

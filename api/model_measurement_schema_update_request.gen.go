@@ -17,7 +17,7 @@ import (
 // MeasurementSchemaUpdateRequest Update an existing measurement schema
 type MeasurementSchemaUpdateRequest struct {
 	// An ordered collection of column definitions
-	Columns []MeasurementSchemaColumn `json:"columns"`
+	Columns []MeasurementSchemaColumn `json:"columns" yaml:"columns"`
 }
 
 // NewMeasurementSchemaUpdateRequest instantiates a new MeasurementSchemaUpdateRequest object

@@ -16,8 +16,8 @@ import (
 
 // Tasks struct for Tasks
 type Tasks struct {
-	Links *Links  `json:"links,omitempty"`
-	Tasks *[]Task `json:"tasks,omitempty"`
+	Links *Links  `json:"links,omitempty" yaml:"links,omitempty"`
+	Tasks *[]Task `json:"tasks,omitempty" yaml:"tasks,omitempty"`
 }
 
 // NewTasks instantiates a new Tasks object

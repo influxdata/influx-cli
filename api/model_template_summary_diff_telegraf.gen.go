@@ -16,12 +16,12 @@ import (
 
 // TemplateSummaryDiffTelegraf struct for TemplateSummaryDiffTelegraf
 type TemplateSummaryDiffTelegraf struct {
-	Kind             string                         `json:"kind"`
-	StateStatus      string                         `json:"stateStatus"`
-	Id               string                         `json:"id"`
-	TemplateMetaName string                         `json:"templateMetaName"`
-	New              *TemplateSummaryTelegrafConfig `json:"new,omitempty"`
-	Old              *TemplateSummaryTelegrafConfig `json:"old,omitempty"`
+	Kind             string                         `json:"kind" yaml:"kind"`
+	StateStatus      string                         `json:"stateStatus" yaml:"stateStatus"`
+	Id               string                         `json:"id" yaml:"id"`
+	TemplateMetaName string                         `json:"templateMetaName" yaml:"templateMetaName"`
+	New              *TemplateSummaryTelegrafConfig `json:"new,omitempty" yaml:"new,omitempty"`
+	Old              *TemplateSummaryTelegrafConfig `json:"old,omitempty" yaml:"old,omitempty"`
 }
 
 // NewTemplateSummaryDiffTelegraf instantiates a new TemplateSummaryDiffTelegraf object
