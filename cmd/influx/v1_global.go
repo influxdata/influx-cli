@@ -8,9 +8,9 @@ import (
 	"runtime"
 
 	v1 "github.com/influxdata/influx-cli/v2/api/v1"
-	"github.com/influxdata/influx-cli/v2/internal/config"
+	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 // newApiV1Client returns an API clients configured to communicate with a remote InfluxDB instance over HTTP.

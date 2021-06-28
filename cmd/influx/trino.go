@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/influxdata/influx-cli/v2/clients/trino"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 func withTrinoClient() cli.BeforeFunc {
@@ -28,20 +28,20 @@ func getTrinoClient(ctx *cli.Context) trino.Client {
 	return i
 }
 
-func newTrinoCmd() *cli.Command {
-	return &cli.Command{
+func newTrinoCmd() cli.Command {
+	return cli.Command{
 		Name:  "trino",
 		Usage: "Trino management and query commands",
-		Subcommands: []*cli.Command{
+		Subcommands: cli.Commands{
 			newTrinoInferSchemaCmd(),
 		},
 	}
 }
 
-func newTrinoInferSchemaCmd() *cli.Command {
+func newTrinoInferSchemaCmd() cli.Command {
 	params := trino.InferSchemaParams{}
 
-	return &cli.Command{
+	return cli.Command{
 		Name:   "infer-schema",
 		Usage:  "Infer schema for provided InfluxQL database",
 		Before: withTrinoClient(),
@@ -50,13 +50,13 @@ func newTrinoInferSchemaCmd() *cli.Command {
 			&cli.StringFlag{
 				Name:        "database",
 				Usage:       "Database name",
-				EnvVars:     []string{"INFLUX_V1_DB"},
+				EnvVar:      "INFLUX_V1_DB",
 				Destination: &params.DB,
 				Required:    true,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
-			return getTrinoClient(ctx).InferSchema(ctx.Context, &params)
+			return getTrinoClient(ctx).InferSchema(getContext(ctx), &params)
 		},
 	}
 }
