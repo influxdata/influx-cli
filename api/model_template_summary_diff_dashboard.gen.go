@@ -17,7 +17,7 @@ import (
 // TemplateSummaryDiffDashboard struct for TemplateSummaryDiffDashboard
 type TemplateSummaryDiffDashboard struct {
 	StateStatus      string                              `json:"stateStatus" yaml:"stateStatus"`
-	Id               string                              `json:"id" yaml:"id"`
+	Id               uint64                              `json:"id" yaml:"id"`
 	Kind             string                              `json:"kind" yaml:"kind"`
 	TemplateMetaName string                              `json:"templateMetaName" yaml:"templateMetaName"`
 	New              *TemplateSummaryDiffDashboardFields `json:"new,omitempty" yaml:"new,omitempty"`
@@ -28,7 +28,7 @@ type TemplateSummaryDiffDashboard struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffDashboard(stateStatus string, id string, kind string, templateMetaName string) *TemplateSummaryDiffDashboard {
+func NewTemplateSummaryDiffDashboard(stateStatus string, id uint64, kind string, templateMetaName string) *TemplateSummaryDiffDashboard {
 	this := TemplateSummaryDiffDashboard{}
 	this.StateStatus = stateStatus
 	this.Id = id
@@ -70,9 +70,9 @@ func (o *TemplateSummaryDiffDashboard) SetStateStatus(v string) {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryDiffDashboard) GetId() string {
+func (o *TemplateSummaryDiffDashboard) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -81,7 +81,7 @@ func (o *TemplateSummaryDiffDashboard) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryDiffDashboard) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryDiffDashboard) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -89,7 +89,7 @@ func (o *TemplateSummaryDiffDashboard) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryDiffDashboard) SetId(v string) {
+func (o *TemplateSummaryDiffDashboard) SetId(v uint64) {
 	o.Id = v
 }
 

@@ -37,3 +37,4 @@ multiple locations.
 
 `model_simple.mustache`
 * Added `yaml:` tags to all model fields to support unmarshalling camelCase
+* Added support for `x-go-field-type` vendor extension, to explicitly override the type generated for model fields

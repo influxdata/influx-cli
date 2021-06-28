@@ -20,7 +20,7 @@ type TemplateSummaryVariable struct {
 	TemplateMetaName  *string                     `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
 	EnvReferences     []TemplateEnvReference      `json:"envReferences" yaml:"envReferences"`
 	LabelAssociations []TemplateSummaryLabel      `json:"labelAssociations" yaml:"labelAssociations"`
-	Id                string                      `json:"id" yaml:"id"`
+	Id                uint64                      `json:"id" yaml:"id"`
 	Name              string                      `json:"name" yaml:"name"`
 	Description       *string                     `json:"description,omitempty" yaml:"description,omitempty"`
 	Arguments         TemplateSummaryVariableArgs `json:"arguments" yaml:"arguments"`
@@ -30,7 +30,7 @@ type TemplateSummaryVariable struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryVariable(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id string, name string, arguments TemplateSummaryVariableArgs) *TemplateSummaryVariable {
+func NewTemplateSummaryVariable(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id uint64, name string, arguments TemplateSummaryVariableArgs) *TemplateSummaryVariable {
 	this := TemplateSummaryVariable{}
 	this.Kind = kind
 	this.EnvReferences = envReferences
@@ -154,9 +154,9 @@ func (o *TemplateSummaryVariable) SetLabelAssociations(v []TemplateSummaryLabel)
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryVariable) GetId() string {
+func (o *TemplateSummaryVariable) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -165,7 +165,7 @@ func (o *TemplateSummaryVariable) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryVariable) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryVariable) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -173,7 +173,7 @@ func (o *TemplateSummaryVariable) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryVariable) SetId(v string) {
+func (o *TemplateSummaryVariable) SetId(v uint64) {
 	o.Id = v
 }
 

@@ -16,26 +16,28 @@ import (
 
 // TemplateApply struct for TemplateApply
 type TemplateApply struct {
-	DryRun    bool                               `json:"dryRun" yaml:"dryRun"`
-	OrgID     string                             `json:"orgID" yaml:"orgID"`
-	StackID   *string                            `json:"stackID,omitempty" yaml:"stackID,omitempty"`
-	Template  *TemplateApplyTemplate             `json:"template,omitempty" yaml:"template,omitempty"`
-	Templates []TemplateApplyTemplate            `json:"templates" yaml:"templates"`
-	EnvRefs   *map[string]map[string]interface{} `json:"envRefs,omitempty" yaml:"envRefs,omitempty"`
-	Secrets   *map[string]string                 `json:"secrets,omitempty" yaml:"secrets,omitempty"`
-	Remotes   []TemplateApplyRemoteRef           `json:"remotes" yaml:"remotes"`
-	Actions   []TemplateApplyAction              `json:"actions" yaml:"actions"`
+	DryRun    bool                     `json:"dryRun" yaml:"dryRun"`
+	OrgID     string                   `json:"orgID" yaml:"orgID"`
+	StackID   *string                  `json:"stackID,omitempty" yaml:"stackID,omitempty"`
+	Template  *TemplateApplyTemplate   `json:"template,omitempty" yaml:"template,omitempty"`
+	Templates []TemplateApplyTemplate  `json:"templates" yaml:"templates"`
+	EnvRefs   map[string]string        `json:"envRefs" yaml:"envRefs"`
+	Secrets   map[string]string        `json:"secrets" yaml:"secrets"`
+	Remotes   []TemplateApplyRemoteRef `json:"remotes" yaml:"remotes"`
+	Actions   []TemplateApplyAction    `json:"actions" yaml:"actions"`
 }
 
 // NewTemplateApply instantiates a new TemplateApply object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateApply(dryRun bool, orgID string, templates []TemplateApplyTemplate, remotes []TemplateApplyRemoteRef, actions []TemplateApplyAction) *TemplateApply {
+func NewTemplateApply(dryRun bool, orgID string, templates []TemplateApplyTemplate, envRefs map[string]string, secrets map[string]string, remotes []TemplateApplyRemoteRef, actions []TemplateApplyAction) *TemplateApply {
 	this := TemplateApply{}
 	this.DryRun = dryRun
 	this.OrgID = orgID
 	this.Templates = templates
+	this.EnvRefs = envRefs
+	this.Secrets = secrets
 	this.Remotes = remotes
 	this.Actions = actions
 	return &this
@@ -185,68 +187,52 @@ func (o *TemplateApply) SetTemplates(v []TemplateApplyTemplate) {
 	o.Templates = v
 }
 
-// GetEnvRefs returns the EnvRefs field value if set, zero value otherwise.
-func (o *TemplateApply) GetEnvRefs() map[string]map[string]interface{} {
-	if o == nil || o.EnvRefs == nil {
-		var ret map[string]map[string]interface{}
-		return ret
-	}
-	return *o.EnvRefs
-}
-
-// GetEnvRefsOk returns a tuple with the EnvRefs field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *TemplateApply) GetEnvRefsOk() (*map[string]map[string]interface{}, bool) {
-	if o == nil || o.EnvRefs == nil {
-		return nil, false
-	}
-	return o.EnvRefs, true
-}
-
-// HasEnvRefs returns a boolean if a field has been set.
-func (o *TemplateApply) HasEnvRefs() bool {
-	if o != nil && o.EnvRefs != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEnvRefs gets a reference to the given map[string]map[string]interface{} and assigns it to the EnvRefs field.
-func (o *TemplateApply) SetEnvRefs(v map[string]map[string]interface{}) {
-	o.EnvRefs = &v
-}
-
-// GetSecrets returns the Secrets field value if set, zero value otherwise.
-func (o *TemplateApply) GetSecrets() map[string]string {
-	if o == nil || o.Secrets == nil {
+// GetEnvRefs returns the EnvRefs field value
+func (o *TemplateApply) GetEnvRefs() map[string]string {
+	if o == nil {
 		var ret map[string]string
 		return ret
 	}
-	return *o.Secrets
+
+	return o.EnvRefs
 }
 
-// GetSecretsOk returns a tuple with the Secrets field value if set, nil otherwise
+// GetEnvRefsOk returns a tuple with the EnvRefs field value
 // and a boolean to check if the value has been set.
-func (o *TemplateApply) GetSecretsOk() (*map[string]string, bool) {
-	if o == nil || o.Secrets == nil {
+func (o *TemplateApply) GetEnvRefsOk() (*map[string]string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Secrets, true
+	return &o.EnvRefs, true
 }
 
-// HasSecrets returns a boolean if a field has been set.
-func (o *TemplateApply) HasSecrets() bool {
-	if o != nil && o.Secrets != nil {
-		return true
+// SetEnvRefs sets field value
+func (o *TemplateApply) SetEnvRefs(v map[string]string) {
+	o.EnvRefs = v
+}
+
+// GetSecrets returns the Secrets field value
+func (o *TemplateApply) GetSecrets() map[string]string {
+	if o == nil {
+		var ret map[string]string
+		return ret
 	}
 
-	return false
+	return o.Secrets
 }
 
-// SetSecrets gets a reference to the given map[string]string and assigns it to the Secrets field.
+// GetSecretsOk returns a tuple with the Secrets field value
+// and a boolean to check if the value has been set.
+func (o *TemplateApply) GetSecretsOk() (*map[string]string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Secrets, true
+}
+
+// SetSecrets sets field value
 func (o *TemplateApply) SetSecrets(v map[string]string) {
-	o.Secrets = &v
+	o.Secrets = v
 }
 
 // GetRemotes returns the Remotes field value
@@ -314,10 +300,10 @@ func (o TemplateApply) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["templates"] = o.Templates
 	}
-	if o.EnvRefs != nil {
+	if true {
 		toSerialize["envRefs"] = o.EnvRefs
 	}
-	if o.Secrets != nil {
+	if true {
 		toSerialize["secrets"] = o.Secrets
 	}
 	if true {

@@ -19,7 +19,7 @@ type TemplateSummaryNotificationRuleAllOf struct {
 	Name                     string  `json:"name" yaml:"name"`
 	Description              *string `json:"description,omitempty" yaml:"description,omitempty"`
 	EndpointTemplateMetaName string  `json:"endpointTemplateMetaName" yaml:"endpointTemplateMetaName"`
-	EndpointID               string  `json:"endpointID" yaml:"endpointID"`
+	EndpointID               uint64  `json:"endpointID" yaml:"endpointID"`
 	EndpointType             string  `json:"endpointType" yaml:"endpointType"`
 	Every                    string  `json:"every" yaml:"every"`
 	Offset                   string  `json:"offset" yaml:"offset"`
@@ -29,7 +29,7 @@ type TemplateSummaryNotificationRuleAllOf struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryNotificationRuleAllOf(name string, endpointTemplateMetaName string, endpointID string, endpointType string, every string, offset string) *TemplateSummaryNotificationRuleAllOf {
+func NewTemplateSummaryNotificationRuleAllOf(name string, endpointTemplateMetaName string, endpointID uint64, endpointType string, every string, offset string) *TemplateSummaryNotificationRuleAllOf {
 	this := TemplateSummaryNotificationRuleAllOf{}
 	this.Name = name
 	this.EndpointTemplateMetaName = endpointTemplateMetaName
@@ -129,9 +129,9 @@ func (o *TemplateSummaryNotificationRuleAllOf) SetEndpointTemplateMetaName(v str
 }
 
 // GetEndpointID returns the EndpointID field value
-func (o *TemplateSummaryNotificationRuleAllOf) GetEndpointID() string {
+func (o *TemplateSummaryNotificationRuleAllOf) GetEndpointID() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -140,7 +140,7 @@ func (o *TemplateSummaryNotificationRuleAllOf) GetEndpointID() string {
 
 // GetEndpointIDOk returns a tuple with the EndpointID field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryNotificationRuleAllOf) GetEndpointIDOk() (*string, bool) {
+func (o *TemplateSummaryNotificationRuleAllOf) GetEndpointIDOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -148,7 +148,7 @@ func (o *TemplateSummaryNotificationRuleAllOf) GetEndpointIDOk() (*string, bool)
 }
 
 // SetEndpointID sets field value
-func (o *TemplateSummaryNotificationRuleAllOf) SetEndpointID(v string) {
+func (o *TemplateSummaryNotificationRuleAllOf) SetEndpointID(v uint64) {
 	o.EndpointID = v
 }
 

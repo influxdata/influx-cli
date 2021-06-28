@@ -18,7 +18,7 @@ import (
 type TemplateSummaryDiffLabel struct {
 	StateStatus      string                          `json:"stateStatus" yaml:"stateStatus"`
 	Kind             string                          `json:"kind" yaml:"kind"`
-	Id               string                          `json:"id" yaml:"id"`
+	Id               uint64                          `json:"id" yaml:"id"`
 	TemplateMetaName string                          `json:"templateMetaName" yaml:"templateMetaName"`
 	New              *TemplateSummaryDiffLabelFields `json:"new,omitempty" yaml:"new,omitempty"`
 	Old              *TemplateSummaryDiffLabelFields `json:"old,omitempty" yaml:"old,omitempty"`
@@ -28,7 +28,7 @@ type TemplateSummaryDiffLabel struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffLabel(stateStatus string, kind string, id string, templateMetaName string) *TemplateSummaryDiffLabel {
+func NewTemplateSummaryDiffLabel(stateStatus string, kind string, id uint64, templateMetaName string) *TemplateSummaryDiffLabel {
 	this := TemplateSummaryDiffLabel{}
 	this.StateStatus = stateStatus
 	this.Kind = kind
@@ -94,9 +94,9 @@ func (o *TemplateSummaryDiffLabel) SetKind(v string) {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryDiffLabel) GetId() string {
+func (o *TemplateSummaryDiffLabel) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -105,7 +105,7 @@ func (o *TemplateSummaryDiffLabel) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryDiffLabel) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryDiffLabel) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -113,7 +113,7 @@ func (o *TemplateSummaryDiffLabel) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryDiffLabel) SetId(v string) {
+func (o *TemplateSummaryDiffLabel) SetId(v uint64) {
 	o.Id = v
 }
 

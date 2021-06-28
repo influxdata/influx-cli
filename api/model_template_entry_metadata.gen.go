@@ -14,31 +14,31 @@ import (
 	"encoding/json"
 )
 
-// TemplateEntryMeta struct for TemplateEntryMeta
-type TemplateEntryMeta struct {
+// TemplateEntryMetadata struct for TemplateEntryMetadata
+type TemplateEntryMetadata struct {
 	Name string `json:"name" yaml:"name"`
 }
 
-// NewTemplateEntryMeta instantiates a new TemplateEntryMeta object
+// NewTemplateEntryMetadata instantiates a new TemplateEntryMetadata object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateEntryMeta(name string) *TemplateEntryMeta {
-	this := TemplateEntryMeta{}
+func NewTemplateEntryMetadata(name string) *TemplateEntryMetadata {
+	this := TemplateEntryMetadata{}
 	this.Name = name
 	return &this
 }
 
-// NewTemplateEntryMetaWithDefaults instantiates a new TemplateEntryMeta object
+// NewTemplateEntryMetadataWithDefaults instantiates a new TemplateEntryMetadata object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewTemplateEntryMetaWithDefaults() *TemplateEntryMeta {
-	this := TemplateEntryMeta{}
+func NewTemplateEntryMetadataWithDefaults() *TemplateEntryMetadata {
+	this := TemplateEntryMetadata{}
 	return &this
 }
 
 // GetName returns the Name field value
-func (o *TemplateEntryMeta) GetName() string {
+func (o *TemplateEntryMetadata) GetName() string {
 	if o == nil {
 		var ret string
 		return ret
@@ -49,7 +49,7 @@ func (o *TemplateEntryMeta) GetName() string {
 
 // GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
-func (o *TemplateEntryMeta) GetNameOk() (*string, bool) {
+func (o *TemplateEntryMetadata) GetNameOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -57,11 +57,11 @@ func (o *TemplateEntryMeta) GetNameOk() (*string, bool) {
 }
 
 // SetName sets field value
-func (o *TemplateEntryMeta) SetName(v string) {
+func (o *TemplateEntryMetadata) SetName(v string) {
 	o.Name = v
 }
 
-func (o TemplateEntryMeta) MarshalJSON() ([]byte, error) {
+func (o TemplateEntryMetadata) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
 		toSerialize["name"] = o.Name
@@ -69,38 +69,38 @@ func (o TemplateEntryMeta) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-type NullableTemplateEntryMeta struct {
-	value *TemplateEntryMeta
+type NullableTemplateEntryMetadata struct {
+	value *TemplateEntryMetadata
 	isSet bool
 }
 
-func (v NullableTemplateEntryMeta) Get() *TemplateEntryMeta {
+func (v NullableTemplateEntryMetadata) Get() *TemplateEntryMetadata {
 	return v.value
 }
 
-func (v *NullableTemplateEntryMeta) Set(val *TemplateEntryMeta) {
+func (v *NullableTemplateEntryMetadata) Set(val *TemplateEntryMetadata) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableTemplateEntryMeta) IsSet() bool {
+func (v NullableTemplateEntryMetadata) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableTemplateEntryMeta) Unset() {
+func (v *NullableTemplateEntryMetadata) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableTemplateEntryMeta(val *TemplateEntryMeta) *NullableTemplateEntryMeta {
-	return &NullableTemplateEntryMeta{value: val, isSet: true}
+func NewNullableTemplateEntryMetadata(val *TemplateEntryMetadata) *NullableTemplateEntryMetadata {
+	return &NullableTemplateEntryMetadata{value: val, isSet: true}
 }
 
-func (v NullableTemplateEntryMeta) MarshalJSON() ([]byte, error) {
+func (v NullableTemplateEntryMetadata) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableTemplateEntryMeta) UnmarshalJSON(src []byte) error {
+func (v *NullableTemplateEntryMetadata) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

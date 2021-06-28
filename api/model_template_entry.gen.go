@@ -18,7 +18,7 @@ import (
 type TemplateEntry struct {
 	ApiVersion string                 `json:"apiVersion" yaml:"apiVersion"`
 	Kind       string                 `json:"kind" yaml:"kind"`
-	Meta       TemplateEntryMeta      `json:"meta" yaml:"meta"`
+	Metadata   TemplateEntryMetadata  `json:"metadata" yaml:"metadata"`
 	Spec       map[string]interface{} `json:"spec" yaml:"spec"`
 }
 
@@ -26,11 +26,11 @@ type TemplateEntry struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateEntry(apiVersion string, kind string, meta TemplateEntryMeta, spec map[string]interface{}) *TemplateEntry {
+func NewTemplateEntry(apiVersion string, kind string, metadata TemplateEntryMetadata, spec map[string]interface{}) *TemplateEntry {
 	this := TemplateEntry{}
 	this.ApiVersion = apiVersion
 	this.Kind = kind
-	this.Meta = meta
+	this.Metadata = metadata
 	this.Spec = spec
 	return &this
 }
@@ -91,28 +91,28 @@ func (o *TemplateEntry) SetKind(v string) {
 	o.Kind = v
 }
 
-// GetMeta returns the Meta field value
-func (o *TemplateEntry) GetMeta() TemplateEntryMeta {
+// GetMetadata returns the Metadata field value
+func (o *TemplateEntry) GetMetadata() TemplateEntryMetadata {
 	if o == nil {
-		var ret TemplateEntryMeta
+		var ret TemplateEntryMetadata
 		return ret
 	}
 
-	return o.Meta
+	return o.Metadata
 }
 
-// GetMetaOk returns a tuple with the Meta field value
+// GetMetadataOk returns a tuple with the Metadata field value
 // and a boolean to check if the value has been set.
-func (o *TemplateEntry) GetMetaOk() (*TemplateEntryMeta, bool) {
+func (o *TemplateEntry) GetMetadataOk() (*TemplateEntryMetadata, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Meta, true
+	return &o.Metadata, true
 }
 
-// SetMeta sets field value
-func (o *TemplateEntry) SetMeta(v TemplateEntryMeta) {
-	o.Meta = v
+// SetMetadata sets field value
+func (o *TemplateEntry) SetMetadata(v TemplateEntryMetadata) {
+	o.Metadata = v
 }
 
 // GetSpec returns the Spec field value
@@ -148,7 +148,7 @@ func (o TemplateEntry) MarshalJSON() ([]byte, error) {
 		toSerialize["kind"] = o.Kind
 	}
 	if true {
-		toSerialize["meta"] = o.Meta
+		toSerialize["metadata"] = o.Metadata
 	}
 	if true {
 		toSerialize["spec"] = o.Spec

@@ -16,7 +16,7 @@ import (
 
 // TemplateSummaryTelegrafConfig struct for TemplateSummaryTelegrafConfig
 type TemplateSummaryTelegrafConfig struct {
-	Id          string  `json:"id" yaml:"id"`
+	Id          uint64  `json:"id" yaml:"id"`
 	Name        string  `json:"name" yaml:"name"`
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
@@ -25,7 +25,7 @@ type TemplateSummaryTelegrafConfig struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryTelegrafConfig(id string, name string) *TemplateSummaryTelegrafConfig {
+func NewTemplateSummaryTelegrafConfig(id uint64, name string) *TemplateSummaryTelegrafConfig {
 	this := TemplateSummaryTelegrafConfig{}
 	this.Id = id
 	this.Name = name
@@ -41,9 +41,9 @@ func NewTemplateSummaryTelegrafConfigWithDefaults() *TemplateSummaryTelegrafConf
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryTelegrafConfig) GetId() string {
+func (o *TemplateSummaryTelegrafConfig) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -52,7 +52,7 @@ func (o *TemplateSummaryTelegrafConfig) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryTelegrafConfig) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryTelegrafConfig) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -60,7 +60,7 @@ func (o *TemplateSummaryTelegrafConfig) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryTelegrafConfig) SetId(v string) {
+func (o *TemplateSummaryTelegrafConfig) SetId(v uint64) {
 	o.Id = v
 }
 

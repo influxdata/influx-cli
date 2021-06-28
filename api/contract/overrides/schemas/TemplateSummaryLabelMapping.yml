@@ -7,7 +7,9 @@ properties:
   resourceName:
     type: string
   resourceID:
-    type: string
+    type: integer
+    format: int64
+    x-go-field-type: uint64
   resourceType:
     type: string
   labelTemplateMetaName:
@@ -15,7 +17,9 @@ properties:
   labelName:
     type: string
   labelID:
-    type: string
+    type: integer
+    format: int64
+    x-go-field-type: uint64
 required:
   - status
   - resourceTemplateMetaName

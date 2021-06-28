@@ -18,7 +18,7 @@ import (
 type TemplateSummaryDiffTelegraf struct {
 	Kind             string                         `json:"kind" yaml:"kind"`
 	StateStatus      string                         `json:"stateStatus" yaml:"stateStatus"`
-	Id               string                         `json:"id" yaml:"id"`
+	Id               uint64                         `json:"id" yaml:"id"`
 	TemplateMetaName string                         `json:"templateMetaName" yaml:"templateMetaName"`
 	New              *TemplateSummaryTelegrafConfig `json:"new,omitempty" yaml:"new,omitempty"`
 	Old              *TemplateSummaryTelegrafConfig `json:"old,omitempty" yaml:"old,omitempty"`
@@ -28,7 +28,7 @@ type TemplateSummaryDiffTelegraf struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffTelegraf(kind string, stateStatus string, id string, templateMetaName string) *TemplateSummaryDiffTelegraf {
+func NewTemplateSummaryDiffTelegraf(kind string, stateStatus string, id uint64, templateMetaName string) *TemplateSummaryDiffTelegraf {
 	this := TemplateSummaryDiffTelegraf{}
 	this.Kind = kind
 	this.StateStatus = stateStatus
@@ -94,9 +94,9 @@ func (o *TemplateSummaryDiffTelegraf) SetStateStatus(v string) {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryDiffTelegraf) GetId() string {
+func (o *TemplateSummaryDiffTelegraf) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -105,7 +105,7 @@ func (o *TemplateSummaryDiffTelegraf) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryDiffTelegraf) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryDiffTelegraf) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -113,7 +113,7 @@ func (o *TemplateSummaryDiffTelegraf) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryDiffTelegraf) SetId(v string) {
+func (o *TemplateSummaryDiffTelegraf) SetId(v uint64) {
 	o.Id = v
 }
 

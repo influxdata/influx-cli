@@ -18,7 +18,7 @@ import (
 type TemplateSummaryDiffNotificationEndpoint struct {
 	Kind             string                                         `json:"kind" yaml:"kind"`
 	StateStatus      string                                         `json:"stateStatus" yaml:"stateStatus"`
-	Id               string                                         `json:"id" yaml:"id"`
+	Id               uint64                                         `json:"id" yaml:"id"`
 	TemplateMetaName string                                         `json:"templateMetaName" yaml:"templateMetaName"`
 	New              *TemplateSummaryDiffNotificationEndpointFields `json:"new,omitempty" yaml:"new,omitempty"`
 	Old              *TemplateSummaryDiffNotificationEndpointFields `json:"old,omitempty" yaml:"old,omitempty"`
@@ -28,7 +28,7 @@ type TemplateSummaryDiffNotificationEndpoint struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffNotificationEndpoint(kind string, stateStatus string, id string, templateMetaName string) *TemplateSummaryDiffNotificationEndpoint {
+func NewTemplateSummaryDiffNotificationEndpoint(kind string, stateStatus string, id uint64, templateMetaName string) *TemplateSummaryDiffNotificationEndpoint {
 	this := TemplateSummaryDiffNotificationEndpoint{}
 	this.Kind = kind
 	this.StateStatus = stateStatus
@@ -94,9 +94,9 @@ func (o *TemplateSummaryDiffNotificationEndpoint) SetStateStatus(v string) {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryDiffNotificationEndpoint) GetId() string {
+func (o *TemplateSummaryDiffNotificationEndpoint) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -105,7 +105,7 @@ func (o *TemplateSummaryDiffNotificationEndpoint) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryDiffNotificationEndpoint) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryDiffNotificationEndpoint) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -113,7 +113,7 @@ func (o *TemplateSummaryDiffNotificationEndpoint) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryDiffNotificationEndpoint) SetId(v string) {
+func (o *TemplateSummaryDiffNotificationEndpoint) SetId(v uint64) {
 	o.Id = v
 }
 

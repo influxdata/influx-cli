@@ -20,7 +20,7 @@ type TemplateSummaryBucket struct {
 	TemplateMetaName  *string                `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
 	EnvReferences     []TemplateEnvReference `json:"envReferences" yaml:"envReferences"`
 	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations" yaml:"labelAssociations"`
-	Id                string                 `json:"id" yaml:"id"`
+	Id                uint64                 `json:"id" yaml:"id"`
 	Name              string                 `json:"name" yaml:"name"`
 	Description       *string                `json:"description,omitempty" yaml:"description,omitempty"`
 	RetentionPeriod   int32                  `json:"retentionPeriod" yaml:"retentionPeriod"`
@@ -31,7 +31,7 @@ type TemplateSummaryBucket struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryBucket(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id string, name string, retentionPeriod int32) *TemplateSummaryBucket {
+func NewTemplateSummaryBucket(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id uint64, name string, retentionPeriod int32) *TemplateSummaryBucket {
 	this := TemplateSummaryBucket{}
 	this.Kind = kind
 	this.EnvReferences = envReferences
@@ -155,9 +155,9 @@ func (o *TemplateSummaryBucket) SetLabelAssociations(v []TemplateSummaryLabel) {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryBucket) GetId() string {
+func (o *TemplateSummaryBucket) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -166,7 +166,7 @@ func (o *TemplateSummaryBucket) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryBucket) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryBucket) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -174,7 +174,7 @@ func (o *TemplateSummaryBucket) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryBucket) SetId(v string) {
+func (o *TemplateSummaryBucket) SetId(v uint64) {
 	o.Id = v
 }
 

@@ -20,7 +20,7 @@ type TemplateSummaryTask struct {
 	TemplateMetaName  *string                `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
 	EnvReferences     []TemplateEnvReference `json:"envReferences" yaml:"envReferences"`
 	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations" yaml:"labelAssociations"`
-	Id                string                 `json:"id" yaml:"id"`
+	Id                uint64                 `json:"id" yaml:"id"`
 	Name              string                 `json:"name" yaml:"name"`
 	Description       *string                `json:"description,omitempty" yaml:"description,omitempty"`
 	Cron              *string                `json:"cron,omitempty" yaml:"cron,omitempty"`
@@ -32,7 +32,7 @@ type TemplateSummaryTask struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryTask(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id string, name string) *TemplateSummaryTask {
+func NewTemplateSummaryTask(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id uint64, name string) *TemplateSummaryTask {
 	this := TemplateSummaryTask{}
 	this.Kind = kind
 	this.EnvReferences = envReferences
@@ -155,9 +155,9 @@ func (o *TemplateSummaryTask) SetLabelAssociations(v []TemplateSummaryLabel) {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryTask) GetId() string {
+func (o *TemplateSummaryTask) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -166,7 +166,7 @@ func (o *TemplateSummaryTask) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryTask) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryTask) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -174,7 +174,7 @@ func (o *TemplateSummaryTask) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryTask) SetId(v string) {
+func (o *TemplateSummaryTask) SetId(v uint64) {
 	o.Id = v
 }
 

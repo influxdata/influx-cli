@@ -4,7 +4,7 @@ properties:
     type: string
   kind:
     type: string
-  meta:
+  metadata:
     type: object
     properties:
       name:
@@ -12,4 +12,4 @@ properties:
     required: [name]
   spec:
     type: object
-required: [apiVersion, kind, meta, spec]
+required: [apiVersion, kind, metadata, spec]

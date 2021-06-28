@@ -19,7 +19,7 @@ type TemplateSummaryDiffNotificationRuleFields struct {
 	Name            string  `json:"name" yaml:"name"`
 	Description     *string `json:"description,omitempty" yaml:"description,omitempty"`
 	EndpointName    string  `json:"endpointName" yaml:"endpointName"`
-	EndpointID      string  `json:"endpointID" yaml:"endpointID"`
+	EndpointID      uint64  `json:"endpointID" yaml:"endpointID"`
 	EndpointType    string  `json:"endpointType" yaml:"endpointType"`
 	Every           string  `json:"every" yaml:"every"`
 	Offset          string  `json:"offset" yaml:"offset"`
@@ -30,7 +30,7 @@ type TemplateSummaryDiffNotificationRuleFields struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffNotificationRuleFields(name string, endpointName string, endpointID string, endpointType string, every string, offset string) *TemplateSummaryDiffNotificationRuleFields {
+func NewTemplateSummaryDiffNotificationRuleFields(name string, endpointName string, endpointID uint64, endpointType string, every string, offset string) *TemplateSummaryDiffNotificationRuleFields {
 	this := TemplateSummaryDiffNotificationRuleFields{}
 	this.Name = name
 	this.EndpointName = endpointName
@@ -130,9 +130,9 @@ func (o *TemplateSummaryDiffNotificationRuleFields) SetEndpointName(v string) {
 }
 
 // GetEndpointID returns the EndpointID field value
-func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointID() string {
+func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointID() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -141,7 +141,7 @@ func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointID() string {
 
 // GetEndpointIDOk returns a tuple with the EndpointID field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointIDOk() (*string, bool) {
+func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointIDOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -149,7 +149,7 @@ func (o *TemplateSummaryDiffNotificationRuleFields) GetEndpointIDOk() (*string, 
 }
 
 // SetEndpointID sets field value
-func (o *TemplateSummaryDiffNotificationRuleFields) SetEndpointID(v string) {
+func (o *TemplateSummaryDiffNotificationRuleFields) SetEndpointID(v uint64) {
 	o.EndpointID = v
 }
 

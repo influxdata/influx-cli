@@ -16,7 +16,7 @@ import (
 
 // TemplateSummaryBucketAllOf struct for TemplateSummaryBucketAllOf
 type TemplateSummaryBucketAllOf struct {
-	Id              string  `json:"id" yaml:"id"`
+	Id              uint64  `json:"id" yaml:"id"`
 	Name            string  `json:"name" yaml:"name"`
 	Description     *string `json:"description,omitempty" yaml:"description,omitempty"`
 	RetentionPeriod int32   `json:"retentionPeriod" yaml:"retentionPeriod"`
@@ -27,7 +27,7 @@ type TemplateSummaryBucketAllOf struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryBucketAllOf(id string, name string, retentionPeriod int32) *TemplateSummaryBucketAllOf {
+func NewTemplateSummaryBucketAllOf(id uint64, name string, retentionPeriod int32) *TemplateSummaryBucketAllOf {
 	this := TemplateSummaryBucketAllOf{}
 	this.Id = id
 	this.Name = name
@@ -44,9 +44,9 @@ func NewTemplateSummaryBucketAllOfWithDefaults() *TemplateSummaryBucketAllOf {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryBucketAllOf) GetId() string {
+func (o *TemplateSummaryBucketAllOf) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -55,7 +55,7 @@ func (o *TemplateSummaryBucketAllOf) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryBucketAllOf) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryBucketAllOf) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -63,7 +63,7 @@ func (o *TemplateSummaryBucketAllOf) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryBucketAllOf) SetId(v string) {
+func (o *TemplateSummaryBucketAllOf) SetId(v uint64) {
 	o.Id = v
 }
 
