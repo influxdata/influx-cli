@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newVersionCmd() *cli.Command {
-	return &cli.Command{
+func newVersionCmd() cli.Command {
+	return cli.Command{
 		Name:  "version",
 		Usage: "Print the influx CLI version",
 		Action: func(*cli.Context) error {

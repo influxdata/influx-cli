@@ -3,18 +3,17 @@ package main
 import (
 	"github.com/influxdata/influx-cli/v2/clients/dashboards"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newDashboardsCommand() *cli.Command {
+func newDashboardsCommand() cli.Command {
 	var params dashboards.Params
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 	flags = append(flags, &cli.StringSliceFlag{
-		Name:    "id",
-		Usage:   "Dashboard ID to retrieve",
-		Aliases: []string{"i"},
+		Name:  "id, i",
+		Usage: "Dashboard ID to retrieve",
 	})
-	return &cli.Command{
+	return cli.Command{
 		Name:  "dashboards",
 		Usage: "List Dashboard(s).",
 		Description: `List Dashboard(s).
@@ -40,7 +39,7 @@ Examples:
 				CLI:           getCLI(ctx),
 				DashboardsApi: api.DashboardsApi,
 			}
-			return client.List(ctx.Context, &params)
+			return client.List(getContext(ctx), &params)
 		},
 	}
 }

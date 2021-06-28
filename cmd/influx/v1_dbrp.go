@@ -3,14 +3,14 @@ package main
 import (
 	v1dbrps "github.com/influxdata/influx-cli/v2/clients/v1_dbrps"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
-func newV1DBRPCmd() *cli.Command {
-	return &cli.Command{
+func newV1DBRPCmd() cli.Command {
+	return cli.Command{
 		Name:  "dbrp",
 		Usage: "Commands to manage database and retention policy mappings for v1 APIs",
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newV1DBRPListCmd(),
 			newV1DBRPCreateCmd(),
 			newV1DBRPDeleteCmd(),
@@ -19,11 +19,11 @@ func newV1DBRPCmd() *cli.Command {
 	}
 }
 
-func newV1DBRPListCmd() *cli.Command {
+func newV1DBRPListCmd() cli.Command {
 	var params v1dbrps.ListParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 
-	return &cli.Command{
+	return cli.Command{
 		Name:    "list",
 		Usage:   "List database and retention policy mappings",
 		Aliases: []string{"find", "ls"},
@@ -62,16 +62,16 @@ func newV1DBRPListCmd() *cli.Command {
 				CLI:      getCLI(ctx),
 				DBRPsApi: api.DBRPsApi,
 			}
-			return client.List(ctx.Context, &params)
+			return client.List(getContext(ctx), &params)
 		},
 	}
 }
 
-func newV1DBRPCreateCmd() *cli.Command {
+func newV1DBRPCreateCmd() cli.Command {
 	var params v1dbrps.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 
-	return &cli.Command{
+	return cli.Command{
 		Name:  "create",
 		Usage: "Create a database and retention policy mapping to an existing bucket",
 		Flags: append(
@@ -108,16 +108,16 @@ func newV1DBRPCreateCmd() *cli.Command {
 				DBRPsApi:         api.DBRPsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
-			return client.Create(ctx.Context, &params)
+			return client.Create(getContext(ctx), &params)
 		},
 	}
 }
 
-func newV1DBRPDeleteCmd() *cli.Command {
+func newV1DBRPDeleteCmd() cli.Command {
 	var params v1dbrps.DeleteParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 
-	return &cli.Command{
+	return cli.Command{
 		Name:  "delete",
 		Usage: "Delete a database and retention policy mapping",
 		Flags: append(
@@ -136,16 +136,16 @@ func newV1DBRPDeleteCmd() *cli.Command {
 				CLI:      getCLI(ctx),
 				DBRPsApi: api.DBRPsApi,
 			}
-			return client.Delete(ctx.Context, &params)
+			return client.Delete(getContext(ctx), &params)
 		},
 	}
 }
 
-func newV1DBRPUpdateCmd() *cli.Command {
+func newV1DBRPUpdateCmd() cli.Command {
 	var params v1dbrps.UpdateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 
-	return &cli.Command{
+	return cli.Command{
 		Name:  "update",
 		Usage: "Update a database and retention policy mapping",
 		Flags: append(
@@ -174,7 +174,7 @@ func newV1DBRPUpdateCmd() *cli.Command {
 				CLI:      getCLI(ctx),
 				DBRPsApi: api.DBRPsApi,
 			}
-			return client.Update(ctx.Context, &params)
+			return client.Update(getContext(ctx), &params)
 		},
 	}
 }

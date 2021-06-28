@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 // ReadQuery reads a Flux query into memory from a --file argument, args, or stdin

@@ -1,11 +1,13 @@
 package main
 
 import (
+	"os"
+
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/bucket_schema"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 func withBucketSchemaClient() cli.BeforeFunc {
@@ -31,11 +33,11 @@ func getBucketSchemaClient(ctx *cli.Context) bucket_schema.Client {
 	return i
 }
 
-func newBucketSchemaCmd() *cli.Command {
-	return &cli.Command{
+func newBucketSchemaCmd() cli.Command {
+	return cli.Command{
 		Name:  "bucket-schema",
 		Usage: "Bucket schema management commands",
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			newBucketSchemaCreateCmd(),
 			newBucketSchemaUpdateCmd(),
 			newBucketSchemaListCmd(),
@@ -43,7 +45,7 @@ func newBucketSchemaCmd() *cli.Command {
 	}
 }
 
-func newBucketSchemaCreateCmd() *cli.Command {
+func newBucketSchemaCreateCmd() cli.Command {
 	var params struct {
 		clients.OrgBucketParams
 		Name           string
@@ -51,7 +53,7 @@ func newBucketSchemaCreateCmd() *cli.Command {
 		ColumnsFormat  bucket_schema.ColumnsFormat
 		ExtendedOutput bool
 	}
-	return &cli.Command{
+	return cli.Command{
 		Name:   "create",
 		Usage:  "Create a measurement schema for a bucket",
 		Before: withBucketSchemaClient(),
@@ -70,25 +72,23 @@ func newBucketSchemaCreateCmd() *cli.Command {
 					Destination: &params.ColumnsFile,
 				},
 				&cli.GenericFlag{
-					Name:        "columns-format",
-					Usage:       "The format of the columns file. \"auto\" will attempt to guess the format.",
-					DefaultText: "auto",
-					Value:       &params.ColumnsFormat,
+					Name:  "columns-format",
+					Usage: "The format of the columns file. \"auto\" will attempt to guess the format.",
+					Value: &params.ColumnsFormat,
 				},
 				&cli.BoolFlag{
-					Name:        "extended-output",
+					Name:        "extended-output, x",
 					Usage:       "Print column information for each measurement",
-					Aliases:     []string{"x"},
 					Destination: &params.ExtendedOutput,
 				},
 			)...,
 		),
 		Action: func(ctx *cli.Context) error {
 			return getBucketSchemaClient(ctx).
-				Create(ctx.Context, bucket_schema.CreateParams{
+				Create(getContext(ctx), bucket_schema.CreateParams{
 					OrgBucketParams: params.OrgBucketParams,
 					Name:            params.Name,
-					Stdin:           ctx.App.Reader,
+					Stdin:           os.Stdin,
 					ColumnsFile:     params.ColumnsFile,
 					ColumnsFormat:   params.ColumnsFormat,
 					ExtendedOutput:  params.ExtendedOutput,
@@ -97,7 +97,7 @@ func newBucketSchemaCreateCmd() *cli.Command {
 	}
 }
 
-func newBucketSchemaUpdateCmd() *cli.Command {
+func newBucketSchemaUpdateCmd() cli.Command {
 	var params struct {
 		clients.OrgBucketParams
 		ID             influxid.ID
@@ -106,7 +106,7 @@ func newBucketSchemaUpdateCmd() *cli.Command {
 		ColumnsFormat  bucket_schema.ColumnsFormat
 		ExtendedOutput bool
 	}
-	return &cli.Command{
+	return cli.Command{
 		Name:   "update",
 		Usage:  "Update a measurement schema for a bucket",
 		Before: withBucketSchemaClient(),
@@ -130,26 +130,24 @@ func newBucketSchemaUpdateCmd() *cli.Command {
 					Destination: &params.ColumnsFile,
 				},
 				&cli.GenericFlag{
-					Name:        "columns-format",
-					Usage:       "The format of the columns file. \"auto\" will attempt to guess the format.",
-					DefaultText: "auto",
-					Value:       &params.ColumnsFormat,
+					Name:  "columns-format",
+					Usage: "The format of the columns file. \"auto\" will attempt to guess the format.",
+					Value: &params.ColumnsFormat,
 				},
 				&cli.BoolFlag{
-					Name:        "extended-output",
+					Name:        "extended-output, x",
 					Usage:       "Print column information for each measurement",
-					Aliases:     []string{"x"},
 					Destination: &params.ExtendedOutput,
 				},
 			)...,
 		),
 		Action: func(ctx *cli.Context) error {
 			return getBucketSchemaClient(ctx).
-				Update(ctx.Context, bucket_schema.UpdateParams{
+				Update(getContext(ctx), bucket_schema.UpdateParams{
 					OrgBucketParams: params.OrgBucketParams,
 					ID:              params.ID.String(),
 					Name:            params.Name,
-					Stdin:           ctx.App.Reader,
+					Stdin:           os.Stdin,
 					ColumnsFile:     params.ColumnsFile,
 					ColumnsFormat:   params.ColumnsFormat,
 					ExtendedOutput:  params.ExtendedOutput,
@@ -158,9 +156,9 @@ func newBucketSchemaUpdateCmd() *cli.Command {
 	}
 }
 
-func newBucketSchemaListCmd() *cli.Command {
+func newBucketSchemaListCmd() cli.Command {
 	var params bucket_schema.ListParams
-	return &cli.Command{
+	return cli.Command{
 		Name:   "list",
 		Usage:  "List schemas for a bucket",
 		Before: withBucketSchemaClient(),
@@ -174,15 +172,14 @@ func newBucketSchemaListCmd() *cli.Command {
 					Destination: &params.Name,
 				},
 				&cli.BoolFlag{
-					Name:        "extended-output",
+					Name:        "extended-output, x",
 					Usage:       "Print column information for each measurement",
-					Aliases:     []string{"x"},
 					Destination: &params.ExtendedOutput,
 				},
 			)...,
 		),
 		Action: func(ctx *cli.Context) error {
-			return getBucketSchemaClient(ctx).List(ctx.Context, params)
+			return getBucketSchemaClient(ctx).List(getContext(ctx), params)
 		},
 	}
 }

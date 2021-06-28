@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"runtime"
@@ -9,8 +10,9 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
+	"github.com/influxdata/influx-cli/v2/pkg/signals"
 	"github.com/influxdata/influx-cli/v2/pkg/stdio"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 const (
@@ -91,6 +93,21 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 	return api.NewAPIClient(api.NewAPIConfig(configParams)), nil
 }
 
+func withContext() cli.BeforeFunc {
+	return func(ctx *cli.Context) error {
+		ctx.App.Metadata["context"] = signals.WithStandardSignals(context.Background())
+		return nil
+	}
+}
+
+func getContext(ctx *cli.Context) context.Context {
+	c, ok := ctx.App.Metadata["context"].(context.Context)
+	if !ok {
+		panic("missing context")
+	}
+	return c
+}
+
 func withCli() cli.BeforeFunc {
 	return func(ctx *cli.Context) error {
 		c, err := newCli(ctx)
@@ -153,10 +170,10 @@ func getAPINoToken(ctx *cli.Context) *api.APIClient {
 
 // configPathFlag returns the flag used by commands that access the CLI's local config store.
 func configPathFlag() cli.Flag {
-	return &cli.PathFlag{
-		Name:    configPathFlagName,
-		Usage:   "Path to the influx CLI configurations",
-		EnvVars: []string{"INFLUX_CLI_CONFIGS_PATH"},
+	return &cli.StringFlag{
+		Name:   configPathFlagName,
+		Usage:  "Path to the influx CLI configurations",
+		EnvVar: "INFLUX_CLI_CONFIGS_PATH",
 	}
 }
 
@@ -164,9 +181,9 @@ func configPathFlag() cli.Flag {
 func coreFlags() []cli.Flag {
 	return []cli.Flag{
 		&cli.StringFlag{
-			Name:    hostFlagName,
-			Usage:   "HTTP address of InfluxDB",
-			EnvVars: []string{"INFLUX_HOST"},
+			Name:   hostFlagName,
+			Usage:  "HTTP address of InfluxDB",
+			EnvVar: "INFLUX_HOST",
 		},
 		&cli.BoolFlag{
 			Name:  skipVerifyFlagName,
@@ -174,15 +191,14 @@ func coreFlags() []cli.Flag {
 		},
 		configPathFlag(),
 		&cli.StringFlag{
-			Name:    configNameFlagName,
-			Usage:   "Config name to use for command",
-			Aliases: []string{"c"},
-			EnvVars: []string{"INFLUX_ACTIVE_CONFIG"},
+			Name:   configNameFlagName + ", c",
+			Usage:  "Config name to use for command",
+			EnvVar: "INFLUX_ACTIVE_CONFIG",
 		},
 		&cli.StringFlag{
-			Name:    traceIdFlagName,
-			Hidden:  true,
-			EnvVars: []string{"INFLUX_TRACE_DEBUG_ID"},
+			Name:   traceIdFlagName,
+			Hidden: true,
+			EnvVar: "INFLUX_TRACE_DEBUG_ID",
 		},
 		&cli.BoolFlag{
 			Name:   httpDebugFlagName,
@@ -195,14 +211,14 @@ func coreFlags() []cli.Flag {
 func printFlags() []cli.Flag {
 	return []cli.Flag{
 		&cli.BoolFlag{
-			Name:    printJsonFlagName,
-			Usage:   "Output data as JSON",
-			EnvVars: []string{"INFLUX_OUTPUT_JSON"},
+			Name:   printJsonFlagName,
+			Usage:  "Output data as JSON",
+			EnvVar: "INFLUX_OUTPUT_JSON",
 		},
 		&cli.BoolFlag{
-			Name:    hideHeadersFlagName,
-			Usage:   "Hide the table headers in output data",
-			EnvVars: []string{"INFLUX_HIDE_HEADERS"},
+			Name:   hideHeadersFlagName,
+			Usage:  "Hide the table headers in output data",
+			EnvVar: "INFLUX_HIDE_HEADERS",
 		},
 	}
 }
@@ -210,10 +226,9 @@ func printFlags() []cli.Flag {
 // commonTokenFlag returns the flag used by commands that hit an authenticated API.
 func commonTokenFlag() cli.Flag {
 	return &cli.StringFlag{
-		Name:    tokenFlagName,
-		Usage:   "Authentication token",
-		Aliases: []string{"t"},
-		EnvVars: []string{"INFLUX_TOKEN"},
+		Name:   tokenFlagName + ", t",
+		Usage:  "Authentication token",
+		EnvVar: "INFLUX_TOKEN",
 	}
 }
 
@@ -239,14 +254,13 @@ func getOrgFlags(params *clients.OrgParams) []cli.Flag {
 		&cli.GenericFlag{
 			Name:    "org-id",
 			Usage:   "The ID of the organization",
-			EnvVars: []string{"INFLUX_ORG_ID"},
+			EnvVar: "INFLUX_ORG_ID",
 			Value:   &params.OrgID,
 		},
 		&cli.StringFlag{
-			Name:        "org",
+			Name:        "org, o",
 			Usage:       "The name of the organization",
-			Aliases:     []string{"o"},
-			EnvVars:     []string{"INFLUX_ORG"},
+			EnvVar:     "INFLUX_ORG",
 			Destination: &params.OrgName,
 		},
 	}
@@ -257,15 +271,13 @@ func getOrgFlags(params *clients.OrgParams) []cli.Flag {
 func getBucketFlags(params *clients.BucketParams) []cli.Flag {
 	return []cli.Flag{
 		&cli.GenericFlag{
-			Name:    "bucket-id",
+			Name:    "bucket-id, i",
 			Usage:   "The bucket ID, required if name isn't provided",
-			Aliases: []string{"i"},
 			Value:   &params.BucketID,
 		},
 		&cli.StringFlag{
-			Name:        "bucket",
+			Name:        "bucket, n",
 			Usage:       "The bucket name, org or org-id will be required by choosing this",
-			Aliases:     []string{"n"},
 			Destination: &params.BucketName,
 		},
 	}

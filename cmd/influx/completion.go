@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli"
 )
 
 var (
@@ -67,14 +67,14 @@ param($commandName, $wordToComplete, $cursorPosition)
 `
 )
 
-func newCompletionCmd() *cli.Command {
-	return &cli.Command{
+func newCompletionCmd() cli.Command {
+	return cli.Command{
 		Name:      "completion",
 		Usage:     "Generates completion scripts",
 		ArgsUsage: "[bash|zsh|powershell]",
 		Action: func(ctx *cli.Context) error {
 			prog := path.Base(os.Args[0])
-			completeFlag := cli.BashCompletionFlag.Names()[0]
+			completeFlag := cli.BashCompletionFlag.GetName()
 
 			if ctx.NArg() != 1 {
 				return fmt.Errorf("usage: %s completion [bash|zsh|powershell]", prog)
