@@ -2,6 +2,10 @@ allOf:
   - $ref: "./TemplateSummaryCommon.yml"
   - type: object
     properties:
+      id:
+        type: integer
+        format: int64
+        x-go-field-type: uint64
       name:
         type: string
       description:
@@ -18,4 +22,4 @@ allOf:
         type: string
       offset:
         type: string
-    required: [name, endpointTemplateMetaName, endpointID, endpointType, every, offset]
+    required: [id, name, endpointTemplateMetaName, endpointID, endpointType, every, offset]

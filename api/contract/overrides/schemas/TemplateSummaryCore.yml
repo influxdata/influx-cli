@@ -8,4 +8,4 @@ properties:
     type: array
     items:
       $ref: "./TemplateEnvReference.yml"
-required: [kind, tempateMetaName, envReferences]
+required: [kind, templateMetaName, envReferences]

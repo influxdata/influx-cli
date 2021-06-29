@@ -351,6 +351,8 @@ components:
       $ref: "./overrides/schemas/TemplateSummaryDiffLabel.yml"
     TemplateSummaryDiffLabelFields:
       $ref: "./overrides/schemas/TemplateSummaryDiffLabelFields.yml"
+    TemplateSummaryDiffLabelMapping:
+      $ref: "./overrides/schemas/TemplateSummaryDiffLabelMapping.yml"
     TemplateSummaryDiffNotificationEndpoint:
       $ref: "./overrides/schemas/TemplateSummaryDiffNotificationEndpoint.yml"
     TemplateSummaryDiffNotificationEndpointFields:

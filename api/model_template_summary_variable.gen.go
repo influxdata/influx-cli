@@ -16,28 +16,28 @@ import (
 
 // TemplateSummaryVariable struct for TemplateSummaryVariable
 type TemplateSummaryVariable struct {
-	Kind              string                      `json:"kind" yaml:"kind"`
-	TemplateMetaName  *string                     `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
-	EnvReferences     []TemplateEnvReference      `json:"envReferences" yaml:"envReferences"`
-	LabelAssociations []TemplateSummaryLabel      `json:"labelAssociations" yaml:"labelAssociations"`
-	Id                uint64                      `json:"id" yaml:"id"`
-	Name              string                      `json:"name" yaml:"name"`
-	Description       *string                     `json:"description,omitempty" yaml:"description,omitempty"`
-	Arguments         TemplateSummaryVariableArgs `json:"arguments" yaml:"arguments"`
+	Kind              string                       `json:"kind" yaml:"kind"`
+	TemplateMetaName  string                       `json:"templateMetaName" yaml:"templateMetaName"`
+	EnvReferences     []TemplateEnvReference       `json:"envReferences" yaml:"envReferences"`
+	LabelAssociations []TemplateSummaryLabel       `json:"labelAssociations" yaml:"labelAssociations"`
+	Id                uint64                       `json:"id" yaml:"id"`
+	Name              string                       `json:"name" yaml:"name"`
+	Description       *string                      `json:"description,omitempty" yaml:"description,omitempty"`
+	Arguments         *TemplateSummaryVariableArgs `json:"arguments,omitempty" yaml:"arguments,omitempty"`
 }
 
 // NewTemplateSummaryVariable instantiates a new TemplateSummaryVariable object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryVariable(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id uint64, name string, arguments TemplateSummaryVariableArgs) *TemplateSummaryVariable {
+func NewTemplateSummaryVariable(kind string, templateMetaName string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id uint64, name string) *TemplateSummaryVariable {
 	this := TemplateSummaryVariable{}
 	this.Kind = kind
+	this.TemplateMetaName = templateMetaName
 	this.EnvReferences = envReferences
 	this.LabelAssociations = labelAssociations
 	this.Id = id
 	this.Name = name
-	this.Arguments = arguments
 	return &this
 }
 
@@ -73,36 +73,28 @@ func (o *TemplateSummaryVariable) SetKind(v string) {
 	o.Kind = v
 }
 
-// GetTemplateMetaName returns the TemplateMetaName field value if set, zero value otherwise.
+// GetTemplateMetaName returns the TemplateMetaName field value
 func (o *TemplateSummaryVariable) GetTemplateMetaName() string {
-	if o == nil || o.TemplateMetaName == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.TemplateMetaName
+
+	return o.TemplateMetaName
 }
 
-// GetTemplateMetaNameOk returns a tuple with the TemplateMetaName field value if set, nil otherwise
+// GetTemplateMetaNameOk returns a tuple with the TemplateMetaName field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryVariable) GetTemplateMetaNameOk() (*string, bool) {
-	if o == nil || o.TemplateMetaName == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.TemplateMetaName, true
+	return &o.TemplateMetaName, true
 }
 
-// HasTemplateMetaName returns a boolean if a field has been set.
-func (o *TemplateSummaryVariable) HasTemplateMetaName() bool {
-	if o != nil && o.TemplateMetaName != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTemplateMetaName gets a reference to the given string and assigns it to the TemplateMetaName field.
+// SetTemplateMetaName sets field value
 func (o *TemplateSummaryVariable) SetTemplateMetaName(v string) {
-	o.TemplateMetaName = &v
+	o.TemplateMetaName = v
 }
 
 // GetEnvReferences returns the EnvReferences field value
@@ -233,28 +225,36 @@ func (o *TemplateSummaryVariable) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetArguments returns the Arguments field value
+// GetArguments returns the Arguments field value if set, zero value otherwise.
 func (o *TemplateSummaryVariable) GetArguments() TemplateSummaryVariableArgs {
-	if o == nil {
+	if o == nil || o.Arguments == nil {
 		var ret TemplateSummaryVariableArgs
 		return ret
 	}
-
-	return o.Arguments
+	return *o.Arguments
 }
 
-// GetArgumentsOk returns a tuple with the Arguments field value
+// GetArgumentsOk returns a tuple with the Arguments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryVariable) GetArgumentsOk() (*TemplateSummaryVariableArgs, bool) {
-	if o == nil {
+	if o == nil || o.Arguments == nil {
 		return nil, false
 	}
-	return &o.Arguments, true
+	return o.Arguments, true
 }
 
-// SetArguments sets field value
+// HasArguments returns a boolean if a field has been set.
+func (o *TemplateSummaryVariable) HasArguments() bool {
+	if o != nil && o.Arguments != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetArguments gets a reference to the given TemplateSummaryVariableArgs and assigns it to the Arguments field.
 func (o *TemplateSummaryVariable) SetArguments(v TemplateSummaryVariableArgs) {
-	o.Arguments = v
+	o.Arguments = &v
 }
 
 func (o TemplateSummaryVariable) MarshalJSON() ([]byte, error) {
@@ -262,7 +262,7 @@ func (o TemplateSummaryVariable) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["kind"] = o.Kind
 	}
-	if o.TemplateMetaName != nil {
+	if true {
 		toSerialize["templateMetaName"] = o.TemplateMetaName
 	}
 	if true {
@@ -280,7 +280,7 @@ func (o TemplateSummaryVariable) MarshalJSON() ([]byte, error) {
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}
-	if true {
+	if o.Arguments != nil {
 		toSerialize["arguments"] = o.Arguments
 	}
 	return json.Marshal(toSerialize)

@@ -12,6 +12,7 @@ allOf:
         type: string
       retentionPeriod:
         type: integer
+        format: int64
       schemaType:
-        type: string
+        $ref: "../../openapi/src/common/schemas/SchemaType.yml"
     required: [id, name, retentionPeriod]

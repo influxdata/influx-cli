@@ -16,18 +16,18 @@ import (
 
 // TemplateSummaryBucketAllOf struct for TemplateSummaryBucketAllOf
 type TemplateSummaryBucketAllOf struct {
-	Id              uint64  `json:"id" yaml:"id"`
-	Name            string  `json:"name" yaml:"name"`
-	Description     *string `json:"description,omitempty" yaml:"description,omitempty"`
-	RetentionPeriod int32   `json:"retentionPeriod" yaml:"retentionPeriod"`
-	SchemaType      *string `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
+	Id              uint64      `json:"id" yaml:"id"`
+	Name            string      `json:"name" yaml:"name"`
+	Description     *string     `json:"description,omitempty" yaml:"description,omitempty"`
+	RetentionPeriod int64       `json:"retentionPeriod" yaml:"retentionPeriod"`
+	SchemaType      *SchemaType `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
 }
 
 // NewTemplateSummaryBucketAllOf instantiates a new TemplateSummaryBucketAllOf object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryBucketAllOf(id uint64, name string, retentionPeriod int32) *TemplateSummaryBucketAllOf {
+func NewTemplateSummaryBucketAllOf(id uint64, name string, retentionPeriod int64) *TemplateSummaryBucketAllOf {
 	this := TemplateSummaryBucketAllOf{}
 	this.Id = id
 	this.Name = name
@@ -124,9 +124,9 @@ func (o *TemplateSummaryBucketAllOf) SetDescription(v string) {
 }
 
 // GetRetentionPeriod returns the RetentionPeriod field value
-func (o *TemplateSummaryBucketAllOf) GetRetentionPeriod() int32 {
+func (o *TemplateSummaryBucketAllOf) GetRetentionPeriod() int64 {
 	if o == nil {
-		var ret int32
+		var ret int64
 		return ret
 	}
 
@@ -135,7 +135,7 @@ func (o *TemplateSummaryBucketAllOf) GetRetentionPeriod() int32 {
 
 // GetRetentionPeriodOk returns a tuple with the RetentionPeriod field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryBucketAllOf) GetRetentionPeriodOk() (*int32, bool) {
+func (o *TemplateSummaryBucketAllOf) GetRetentionPeriodOk() (*int64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -143,14 +143,14 @@ func (o *TemplateSummaryBucketAllOf) GetRetentionPeriodOk() (*int32, bool) {
 }
 
 // SetRetentionPeriod sets field value
-func (o *TemplateSummaryBucketAllOf) SetRetentionPeriod(v int32) {
+func (o *TemplateSummaryBucketAllOf) SetRetentionPeriod(v int64) {
 	o.RetentionPeriod = v
 }
 
 // GetSchemaType returns the SchemaType field value if set, zero value otherwise.
-func (o *TemplateSummaryBucketAllOf) GetSchemaType() string {
+func (o *TemplateSummaryBucketAllOf) GetSchemaType() SchemaType {
 	if o == nil || o.SchemaType == nil {
-		var ret string
+		var ret SchemaType
 		return ret
 	}
 	return *o.SchemaType
@@ -158,7 +158,7 @@ func (o *TemplateSummaryBucketAllOf) GetSchemaType() string {
 
 // GetSchemaTypeOk returns a tuple with the SchemaType field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryBucketAllOf) GetSchemaTypeOk() (*string, bool) {
+func (o *TemplateSummaryBucketAllOf) GetSchemaTypeOk() (*SchemaType, bool) {
 	if o == nil || o.SchemaType == nil {
 		return nil, false
 	}
@@ -174,8 +174,8 @@ func (o *TemplateSummaryBucketAllOf) HasSchemaType() bool {
 	return false
 }
 
-// SetSchemaType gets a reference to the given string and assigns it to the SchemaType field.
-func (o *TemplateSummaryBucketAllOf) SetSchemaType(v string) {
+// SetSchemaType gets a reference to the given SchemaType and assigns it to the SchemaType field.
+func (o *TemplateSummaryBucketAllOf) SetSchemaType(v SchemaType) {
 	o.SchemaType = &v
 }
 

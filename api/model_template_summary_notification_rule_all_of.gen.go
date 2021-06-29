@@ -16,6 +16,7 @@ import (
 
 // TemplateSummaryNotificationRuleAllOf struct for TemplateSummaryNotificationRuleAllOf
 type TemplateSummaryNotificationRuleAllOf struct {
+	Id                       uint64  `json:"id" yaml:"id"`
 	Name                     string  `json:"name" yaml:"name"`
 	Description              *string `json:"description,omitempty" yaml:"description,omitempty"`
 	EndpointTemplateMetaName string  `json:"endpointTemplateMetaName" yaml:"endpointTemplateMetaName"`
@@ -29,8 +30,9 @@ type TemplateSummaryNotificationRuleAllOf struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryNotificationRuleAllOf(name string, endpointTemplateMetaName string, endpointID uint64, endpointType string, every string, offset string) *TemplateSummaryNotificationRuleAllOf {
+func NewTemplateSummaryNotificationRuleAllOf(id uint64, name string, endpointTemplateMetaName string, endpointID uint64, endpointType string, every string, offset string) *TemplateSummaryNotificationRuleAllOf {
 	this := TemplateSummaryNotificationRuleAllOf{}
+	this.Id = id
 	this.Name = name
 	this.EndpointTemplateMetaName = endpointTemplateMetaName
 	this.EndpointID = endpointID
@@ -46,6 +48,30 @@ func NewTemplateSummaryNotificationRuleAllOf(name string, endpointTemplateMetaNa
 func NewTemplateSummaryNotificationRuleAllOfWithDefaults() *TemplateSummaryNotificationRuleAllOf {
 	this := TemplateSummaryNotificationRuleAllOf{}
 	return &this
+}
+
+// GetId returns the Id field value
+func (o *TemplateSummaryNotificationRuleAllOf) GetId() uint64 {
+	if o == nil {
+		var ret uint64
+		return ret
+	}
+
+	return o.Id
+}
+
+// GetIdOk returns a tuple with the Id field value
+// and a boolean to check if the value has been set.
+func (o *TemplateSummaryNotificationRuleAllOf) GetIdOk() (*uint64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Id, true
+}
+
+// SetId sets field value
+func (o *TemplateSummaryNotificationRuleAllOf) SetId(v uint64) {
+	o.Id = v
 }
 
 // GetName returns the Name field value
@@ -226,6 +252,9 @@ func (o *TemplateSummaryNotificationRuleAllOf) SetOffset(v string) {
 
 func (o TemplateSummaryNotificationRuleAllOf) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
+	if true {
+		toSerialize["id"] = o.Id
+	}
 	if true {
 		toSerialize["name"] = o.Name
 	}

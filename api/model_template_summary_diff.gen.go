@@ -20,7 +20,7 @@ type TemplateSummaryDiff struct {
 	Checks                []TemplateSummaryDiffCheck                `json:"checks" yaml:"checks"`
 	Dashboards            []TemplateSummaryDiffDashboard            `json:"dashboards" yaml:"dashboards"`
 	Labels                []TemplateSummaryDiffLabel                `json:"labels" yaml:"labels"`
-	LabelMappings         []TemplateSummaryLabelMapping             `json:"labelMappings" yaml:"labelMappings"`
+	LabelMappings         []TemplateSummaryDiffLabelMapping         `json:"labelMappings" yaml:"labelMappings"`
 	NotificationEndpoints []TemplateSummaryDiffNotificationEndpoint `json:"notificationEndpoints" yaml:"notificationEndpoints"`
 	NotificationRules     []TemplateSummaryDiffNotificationRule     `json:"notificationRules" yaml:"notificationRules"`
 	Tasks                 []TemplateSummaryDiffTask                 `json:"tasks" yaml:"tasks"`
@@ -32,7 +32,7 @@ type TemplateSummaryDiff struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiff(buckets []TemplateSummaryDiffBucket, checks []TemplateSummaryDiffCheck, dashboards []TemplateSummaryDiffDashboard, labels []TemplateSummaryDiffLabel, labelMappings []TemplateSummaryLabelMapping, notificationEndpoints []TemplateSummaryDiffNotificationEndpoint, notificationRules []TemplateSummaryDiffNotificationRule, tasks []TemplateSummaryDiffTask, telegrafConfigs []TemplateSummaryDiffTelegraf, variables []TemplateSummaryDiffVariable) *TemplateSummaryDiff {
+func NewTemplateSummaryDiff(buckets []TemplateSummaryDiffBucket, checks []TemplateSummaryDiffCheck, dashboards []TemplateSummaryDiffDashboard, labels []TemplateSummaryDiffLabel, labelMappings []TemplateSummaryDiffLabelMapping, notificationEndpoints []TemplateSummaryDiffNotificationEndpoint, notificationRules []TemplateSummaryDiffNotificationRule, tasks []TemplateSummaryDiffTask, telegrafConfigs []TemplateSummaryDiffTelegraf, variables []TemplateSummaryDiffVariable) *TemplateSummaryDiff {
 	this := TemplateSummaryDiff{}
 	this.Buckets = buckets
 	this.Checks = checks
@@ -152,9 +152,9 @@ func (o *TemplateSummaryDiff) SetLabels(v []TemplateSummaryDiffLabel) {
 }
 
 // GetLabelMappings returns the LabelMappings field value
-func (o *TemplateSummaryDiff) GetLabelMappings() []TemplateSummaryLabelMapping {
+func (o *TemplateSummaryDiff) GetLabelMappings() []TemplateSummaryDiffLabelMapping {
 	if o == nil {
-		var ret []TemplateSummaryLabelMapping
+		var ret []TemplateSummaryDiffLabelMapping
 		return ret
 	}
 
@@ -163,7 +163,7 @@ func (o *TemplateSummaryDiff) GetLabelMappings() []TemplateSummaryLabelMapping {
 
 // GetLabelMappingsOk returns a tuple with the LabelMappings field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryDiff) GetLabelMappingsOk() (*[]TemplateSummaryLabelMapping, bool) {
+func (o *TemplateSummaryDiff) GetLabelMappingsOk() (*[]TemplateSummaryDiffLabelMapping, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -171,7 +171,7 @@ func (o *TemplateSummaryDiff) GetLabelMappingsOk() (*[]TemplateSummaryLabelMappi
 }
 
 // SetLabelMappings sets field value
-func (o *TemplateSummaryDiff) SetLabelMappings(v []TemplateSummaryLabelMapping) {
+func (o *TemplateSummaryDiff) SetLabelMappings(v []TemplateSummaryDiffLabelMapping) {
 	o.LabelMappings = v
 }
 

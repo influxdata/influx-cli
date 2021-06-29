@@ -19,17 +19,20 @@ type TemplateSummaryDiffBucketFields struct {
 	Name        string  `json:"name" yaml:"name"`
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 	// Rules to expire or retain data.  No rules means data never expires.
-	RetentionRules []RetentionRule `json:"retentionRules" yaml:"retentionRules"`
+	RetentionRules     []RetentionRule          `json:"retentionRules" yaml:"retentionRules"`
+	SchemaType         *SchemaType              `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
+	MeasurementSchemas []map[string]interface{} `json:"measurementSchemas" yaml:"measurementSchemas"`
 }
 
 // NewTemplateSummaryDiffBucketFields instantiates a new TemplateSummaryDiffBucketFields object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffBucketFields(name string, retentionRules []RetentionRule) *TemplateSummaryDiffBucketFields {
+func NewTemplateSummaryDiffBucketFields(name string, retentionRules []RetentionRule, measurementSchemas []map[string]interface{}) *TemplateSummaryDiffBucketFields {
 	this := TemplateSummaryDiffBucketFields{}
 	this.Name = name
 	this.RetentionRules = retentionRules
+	this.MeasurementSchemas = measurementSchemas
 	return &this
 }
 
@@ -121,6 +124,62 @@ func (o *TemplateSummaryDiffBucketFields) SetRetentionRules(v []RetentionRule) {
 	o.RetentionRules = v
 }
 
+// GetSchemaType returns the SchemaType field value if set, zero value otherwise.
+func (o *TemplateSummaryDiffBucketFields) GetSchemaType() SchemaType {
+	if o == nil || o.SchemaType == nil {
+		var ret SchemaType
+		return ret
+	}
+	return *o.SchemaType
+}
+
+// GetSchemaTypeOk returns a tuple with the SchemaType field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TemplateSummaryDiffBucketFields) GetSchemaTypeOk() (*SchemaType, bool) {
+	if o == nil || o.SchemaType == nil {
+		return nil, false
+	}
+	return o.SchemaType, true
+}
+
+// HasSchemaType returns a boolean if a field has been set.
+func (o *TemplateSummaryDiffBucketFields) HasSchemaType() bool {
+	if o != nil && o.SchemaType != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetSchemaType gets a reference to the given SchemaType and assigns it to the SchemaType field.
+func (o *TemplateSummaryDiffBucketFields) SetSchemaType(v SchemaType) {
+	o.SchemaType = &v
+}
+
+// GetMeasurementSchemas returns the MeasurementSchemas field value
+func (o *TemplateSummaryDiffBucketFields) GetMeasurementSchemas() []map[string]interface{} {
+	if o == nil {
+		var ret []map[string]interface{}
+		return ret
+	}
+
+	return o.MeasurementSchemas
+}
+
+// GetMeasurementSchemasOk returns a tuple with the MeasurementSchemas field value
+// and a boolean to check if the value has been set.
+func (o *TemplateSummaryDiffBucketFields) GetMeasurementSchemasOk() (*[]map[string]interface{}, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.MeasurementSchemas, true
+}
+
+// SetMeasurementSchemas sets field value
+func (o *TemplateSummaryDiffBucketFields) SetMeasurementSchemas(v []map[string]interface{}) {
+	o.MeasurementSchemas = v
+}
+
 func (o TemplateSummaryDiffBucketFields) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
@@ -131,6 +190,12 @@ func (o TemplateSummaryDiffBucketFields) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["retentionRules"] = o.RetentionRules
+	}
+	if o.SchemaType != nil {
+		toSerialize["schemaType"] = o.SchemaType
+	}
+	if true {
+		toSerialize["measurementSchemas"] = o.MeasurementSchemas
 	}
 	return json.Marshal(toSerialize)
 }

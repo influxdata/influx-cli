@@ -1,0 +1,7 @@
+allOf:
+  - $ref: "./TemplateSummaryLabelMapping.yml"
+  - type: object
+    properties:
+      stateStatus:
+        type: string
+    required: [stateStatus]

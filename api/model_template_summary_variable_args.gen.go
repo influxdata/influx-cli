@@ -16,19 +16,18 @@ import (
 
 // TemplateSummaryVariableArgs struct for TemplateSummaryVariableArgs
 type TemplateSummaryVariableArgs struct {
-	Type                 string `json:"type" yaml:"type"`
-	AdditionalProperties map[string]interface{}
+	Type   string      `json:"type" yaml:"type"`
+	Values interface{} `json:"values" yaml:"values"`
 }
-
-type _TemplateSummaryVariableArgs TemplateSummaryVariableArgs
 
 // NewTemplateSummaryVariableArgs instantiates a new TemplateSummaryVariableArgs object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryVariableArgs(type_ string) *TemplateSummaryVariableArgs {
+func NewTemplateSummaryVariableArgs(type_ string, values interface{}) *TemplateSummaryVariableArgs {
 	this := TemplateSummaryVariableArgs{}
 	this.Type = type_
+	this.Values = values
 	return &this
 }
 
@@ -64,34 +63,41 @@ func (o *TemplateSummaryVariableArgs) SetType(v string) {
 	o.Type = v
 }
 
+// GetValues returns the Values field value
+// If the value is explicit nil, the zero value for interface{} will be returned
+func (o *TemplateSummaryVariableArgs) GetValues() interface{} {
+	if o == nil {
+		var ret interface{}
+		return ret
+	}
+
+	return o.Values
+}
+
+// GetValuesOk returns a tuple with the Values field value
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *TemplateSummaryVariableArgs) GetValuesOk() (*interface{}, bool) {
+	if o == nil || o.Values == nil {
+		return nil, false
+	}
+	return &o.Values, true
+}
+
+// SetValues sets field value
+func (o *TemplateSummaryVariableArgs) SetValues(v interface{}) {
+	o.Values = v
+}
+
 func (o TemplateSummaryVariableArgs) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
 		toSerialize["type"] = o.Type
 	}
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
+	if o.Values != nil {
+		toSerialize["values"] = o.Values
 	}
-
 	return json.Marshal(toSerialize)
-}
-
-func (o *TemplateSummaryVariableArgs) UnmarshalJSON(bytes []byte) (err error) {
-	varTemplateSummaryVariableArgs := _TemplateSummaryVariableArgs{}
-
-	if err = json.Unmarshal(bytes, &varTemplateSummaryVariableArgs); err == nil {
-		*o = TemplateSummaryVariableArgs(varTemplateSummaryVariableArgs)
-	}
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(bytes, &additionalProperties); err == nil {
-		delete(additionalProperties, "type")
-		o.AdditionalProperties = additionalProperties
-	}
-
-	return err
 }
 
 type NullableTemplateSummaryVariableArgs struct {
