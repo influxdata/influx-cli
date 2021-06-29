@@ -142,7 +142,7 @@ func SourceFromURL(u *url.URL, encoding TemplateEncoding) TemplateSource {
 		}
 	}
 
-	normalized := github.NormalizeURLToContent(u, "yaml", "yml", "jsonnet", "json").String()
+	normalized := github.NormalizeURLToContent(u, ".yaml", ".yml", ".jsonnet", ".json").String()
 
 	return TemplateSource{
 		Name:     normalized,
