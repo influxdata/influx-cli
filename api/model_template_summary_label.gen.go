@@ -19,8 +19,8 @@ type TemplateSummaryLabel struct {
 	Kind             string                              `json:"kind" yaml:"kind"`
 	TemplateMetaName *string                             `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
 	EnvReferences    []TemplateEnvReference              `json:"envReferences" yaml:"envReferences"`
-	Id               string                              `json:"id" yaml:"id"`
-	OrgID            *string                             `json:"orgID,omitempty" yaml:"orgID,omitempty"`
+	Id               uint64                              `json:"id" yaml:"id"`
+	OrgID            *uint64                             `json:"orgID,omitempty" yaml:"orgID,omitempty"`
 	Name             string                              `json:"name" yaml:"name"`
 	Properties       TemplateSummaryLabelAllOfProperties `json:"properties" yaml:"properties"`
 }
@@ -29,7 +29,7 @@ type TemplateSummaryLabel struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryLabel(kind string, envReferences []TemplateEnvReference, id string, name string, properties TemplateSummaryLabelAllOfProperties) *TemplateSummaryLabel {
+func NewTemplateSummaryLabel(kind string, envReferences []TemplateEnvReference, id uint64, name string, properties TemplateSummaryLabelAllOfProperties) *TemplateSummaryLabel {
 	this := TemplateSummaryLabel{}
 	this.Kind = kind
 	this.EnvReferences = envReferences
@@ -128,9 +128,9 @@ func (o *TemplateSummaryLabel) SetEnvReferences(v []TemplateEnvReference) {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryLabel) GetId() string {
+func (o *TemplateSummaryLabel) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -139,7 +139,7 @@ func (o *TemplateSummaryLabel) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryLabel) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryLabel) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -147,14 +147,14 @@ func (o *TemplateSummaryLabel) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryLabel) SetId(v string) {
+func (o *TemplateSummaryLabel) SetId(v uint64) {
 	o.Id = v
 }
 
 // GetOrgID returns the OrgID field value if set, zero value otherwise.
-func (o *TemplateSummaryLabel) GetOrgID() string {
+func (o *TemplateSummaryLabel) GetOrgID() uint64 {
 	if o == nil || o.OrgID == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 	return *o.OrgID
@@ -162,7 +162,7 @@ func (o *TemplateSummaryLabel) GetOrgID() string {
 
 // GetOrgIDOk returns a tuple with the OrgID field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryLabel) GetOrgIDOk() (*string, bool) {
+func (o *TemplateSummaryLabel) GetOrgIDOk() (*uint64, bool) {
 	if o == nil || o.OrgID == nil {
 		return nil, false
 	}
@@ -178,8 +178,8 @@ func (o *TemplateSummaryLabel) HasOrgID() bool {
 	return false
 }
 
-// SetOrgID gets a reference to the given string and assigns it to the OrgID field.
-func (o *TemplateSummaryLabel) SetOrgID(v string) {
+// SetOrgID gets a reference to the given int64 and assigns it to the OrgID field.
+func (o *TemplateSummaryLabel) SetOrgID(v uint64) {
 	o.OrgID = &v
 }
 

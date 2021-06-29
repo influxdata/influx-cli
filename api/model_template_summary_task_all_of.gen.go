@@ -16,7 +16,7 @@ import (
 
 // TemplateSummaryTaskAllOf struct for TemplateSummaryTaskAllOf
 type TemplateSummaryTaskAllOf struct {
-	Id          string  `json:"id" yaml:"id"`
+	Id          uint64  `json:"id" yaml:"id"`
 	Name        string  `json:"name" yaml:"name"`
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 	Cron        *string `json:"cron,omitempty" yaml:"cron,omitempty"`
@@ -28,7 +28,7 @@ type TemplateSummaryTaskAllOf struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryTaskAllOf(id string, name string) *TemplateSummaryTaskAllOf {
+func NewTemplateSummaryTaskAllOf(id uint64, name string) *TemplateSummaryTaskAllOf {
 	this := TemplateSummaryTaskAllOf{}
 	this.Id = id
 	this.Name = name
@@ -44,9 +44,9 @@ func NewTemplateSummaryTaskAllOfWithDefaults() *TemplateSummaryTaskAllOf {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryTaskAllOf) GetId() string {
+func (o *TemplateSummaryTaskAllOf) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -55,7 +55,7 @@ func (o *TemplateSummaryTaskAllOf) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryTaskAllOf) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryTaskAllOf) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -63,7 +63,7 @@ func (o *TemplateSummaryTaskAllOf) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryTaskAllOf) SetId(v string) {
+func (o *TemplateSummaryTaskAllOf) SetId(v uint64) {
 	o.Id = v
 }
 

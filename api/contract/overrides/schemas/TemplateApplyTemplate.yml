@@ -6,4 +6,6 @@ properties:
       type: string
   contents:
     $ref: "./Template.yml"
-required: [sources, contents]
+  contentType:
+    type: string
+required: [sources, contents, contentType]

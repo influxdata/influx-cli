@@ -16,8 +16,8 @@ import (
 
 // TemplateSummaryLabelAllOf struct for TemplateSummaryLabelAllOf
 type TemplateSummaryLabelAllOf struct {
-	Id         string                              `json:"id" yaml:"id"`
-	OrgID      *string                             `json:"orgID,omitempty" yaml:"orgID,omitempty"`
+	Id         uint64                              `json:"id" yaml:"id"`
+	OrgID      *uint64                             `json:"orgID,omitempty" yaml:"orgID,omitempty"`
 	Name       string                              `json:"name" yaml:"name"`
 	Properties TemplateSummaryLabelAllOfProperties `json:"properties" yaml:"properties"`
 }
@@ -26,7 +26,7 @@ type TemplateSummaryLabelAllOf struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryLabelAllOf(id string, name string, properties TemplateSummaryLabelAllOfProperties) *TemplateSummaryLabelAllOf {
+func NewTemplateSummaryLabelAllOf(id uint64, name string, properties TemplateSummaryLabelAllOfProperties) *TemplateSummaryLabelAllOf {
 	this := TemplateSummaryLabelAllOf{}
 	this.Id = id
 	this.Name = name
@@ -43,9 +43,9 @@ func NewTemplateSummaryLabelAllOfWithDefaults() *TemplateSummaryLabelAllOf {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryLabelAllOf) GetId() string {
+func (o *TemplateSummaryLabelAllOf) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -54,7 +54,7 @@ func (o *TemplateSummaryLabelAllOf) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryLabelAllOf) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryLabelAllOf) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -62,14 +62,14 @@ func (o *TemplateSummaryLabelAllOf) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryLabelAllOf) SetId(v string) {
+func (o *TemplateSummaryLabelAllOf) SetId(v uint64) {
 	o.Id = v
 }
 
 // GetOrgID returns the OrgID field value if set, zero value otherwise.
-func (o *TemplateSummaryLabelAllOf) GetOrgID() string {
+func (o *TemplateSummaryLabelAllOf) GetOrgID() uint64 {
 	if o == nil || o.OrgID == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 	return *o.OrgID
@@ -77,7 +77,7 @@ func (o *TemplateSummaryLabelAllOf) GetOrgID() string {
 
 // GetOrgIDOk returns a tuple with the OrgID field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryLabelAllOf) GetOrgIDOk() (*string, bool) {
+func (o *TemplateSummaryLabelAllOf) GetOrgIDOk() (*uint64, bool) {
 	if o == nil || o.OrgID == nil {
 		return nil, false
 	}
@@ -93,8 +93,8 @@ func (o *TemplateSummaryLabelAllOf) HasOrgID() bool {
 	return false
 }
 
-// SetOrgID gets a reference to the given string and assigns it to the OrgID field.
-func (o *TemplateSummaryLabelAllOf) SetOrgID(v string) {
+// SetOrgID gets a reference to the given int64 and assigns it to the OrgID field.
+func (o *TemplateSummaryLabelAllOf) SetOrgID(v uint64) {
 	o.OrgID = &v
 }
 

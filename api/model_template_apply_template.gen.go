@@ -16,18 +16,20 @@ import (
 
 // TemplateApplyTemplate struct for TemplateApplyTemplate
 type TemplateApplyTemplate struct {
-	Sources  []string        `json:"sources" yaml:"sources"`
-	Contents []TemplateEntry `json:"contents" yaml:"contents"`
+	Sources     []string        `json:"sources" yaml:"sources"`
+	Contents    []TemplateEntry `json:"contents" yaml:"contents"`
+	ContentType string          `json:"contentType" yaml:"contentType"`
 }
 
 // NewTemplateApplyTemplate instantiates a new TemplateApplyTemplate object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateApplyTemplate(sources []string, contents []TemplateEntry) *TemplateApplyTemplate {
+func NewTemplateApplyTemplate(sources []string, contents []TemplateEntry, contentType string) *TemplateApplyTemplate {
 	this := TemplateApplyTemplate{}
 	this.Sources = sources
 	this.Contents = contents
+	this.ContentType = contentType
 	return &this
 }
 
@@ -87,6 +89,30 @@ func (o *TemplateApplyTemplate) SetContents(v []TemplateEntry) {
 	o.Contents = v
 }
 
+// GetContentType returns the ContentType field value
+func (o *TemplateApplyTemplate) GetContentType() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.ContentType
+}
+
+// GetContentTypeOk returns a tuple with the ContentType field value
+// and a boolean to check if the value has been set.
+func (o *TemplateApplyTemplate) GetContentTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ContentType, true
+}
+
+// SetContentType sets field value
+func (o *TemplateApplyTemplate) SetContentType(v string) {
+	o.ContentType = v
+}
+
 func (o TemplateApplyTemplate) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
@@ -94,6 +120,9 @@ func (o TemplateApplyTemplate) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["contents"] = o.Contents
+	}
+	if true {
+		toSerialize["contentType"] = o.ContentType
 	}
 	return json.Marshal(toSerialize)
 }

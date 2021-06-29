@@ -14,7 +14,8 @@ properties:
       $ref: "./TemplateApplyTemplate.yml"
   envRefs:
     type: object
-    additionalProperties: true
+    additionalProperties:
+      type: string
   secrets:
     type: object
     additionalProperties:
@@ -27,4 +28,4 @@ properties:
     type: array
     items:
       $ref: "./TemplateApplyAction.yml"
-required: [dryRun, orgID, templates, remotes, actions]
+required: [dryRun, orgID, templates, envRefs, secrets, remotes, actions]

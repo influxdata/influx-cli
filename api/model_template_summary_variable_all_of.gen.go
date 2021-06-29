@@ -16,7 +16,7 @@ import (
 
 // TemplateSummaryVariableAllOf struct for TemplateSummaryVariableAllOf
 type TemplateSummaryVariableAllOf struct {
-	Id          string                      `json:"id" yaml:"id"`
+	Id          uint64                      `json:"id" yaml:"id"`
 	Name        string                      `json:"name" yaml:"name"`
 	Description *string                     `json:"description,omitempty" yaml:"description,omitempty"`
 	Arguments   TemplateSummaryVariableArgs `json:"arguments" yaml:"arguments"`
@@ -26,7 +26,7 @@ type TemplateSummaryVariableAllOf struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryVariableAllOf(id string, name string, arguments TemplateSummaryVariableArgs) *TemplateSummaryVariableAllOf {
+func NewTemplateSummaryVariableAllOf(id uint64, name string, arguments TemplateSummaryVariableArgs) *TemplateSummaryVariableAllOf {
 	this := TemplateSummaryVariableAllOf{}
 	this.Id = id
 	this.Name = name
@@ -43,9 +43,9 @@ func NewTemplateSummaryVariableAllOfWithDefaults() *TemplateSummaryVariableAllOf
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryVariableAllOf) GetId() string {
+func (o *TemplateSummaryVariableAllOf) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -54,7 +54,7 @@ func (o *TemplateSummaryVariableAllOf) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryVariableAllOf) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryVariableAllOf) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -62,7 +62,7 @@ func (o *TemplateSummaryVariableAllOf) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryVariableAllOf) SetId(v string) {
+func (o *TemplateSummaryVariableAllOf) SetId(v uint64) {
 	o.Id = v
 }
 

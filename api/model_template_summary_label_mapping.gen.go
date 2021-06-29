@@ -19,18 +19,18 @@ type TemplateSummaryLabelMapping struct {
 	Status                   string `json:"status" yaml:"status"`
 	ResourceTemplateMetaName string `json:"resourceTemplateMetaName" yaml:"resourceTemplateMetaName"`
 	ResourceName             string `json:"resourceName" yaml:"resourceName"`
-	ResourceID               string `json:"resourceID" yaml:"resourceID"`
+	ResourceID               uint64 `json:"resourceID" yaml:"resourceID"`
 	ResourceType             string `json:"resourceType" yaml:"resourceType"`
 	LabelTemplateMetaName    string `json:"labelTemplateMetaName" yaml:"labelTemplateMetaName"`
 	LabelName                string `json:"labelName" yaml:"labelName"`
-	LabelID                  string `json:"labelID" yaml:"labelID"`
+	LabelID                  uint64 `json:"labelID" yaml:"labelID"`
 }
 
 // NewTemplateSummaryLabelMapping instantiates a new TemplateSummaryLabelMapping object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryLabelMapping(status string, resourceTemplateMetaName string, resourceName string, resourceID string, resourceType string, labelTemplateMetaName string, labelName string, labelID string) *TemplateSummaryLabelMapping {
+func NewTemplateSummaryLabelMapping(status string, resourceTemplateMetaName string, resourceName string, resourceID uint64, resourceType string, labelTemplateMetaName string, labelName string, labelID uint64) *TemplateSummaryLabelMapping {
 	this := TemplateSummaryLabelMapping{}
 	this.Status = status
 	this.ResourceTemplateMetaName = resourceTemplateMetaName
@@ -124,9 +124,9 @@ func (o *TemplateSummaryLabelMapping) SetResourceName(v string) {
 }
 
 // GetResourceID returns the ResourceID field value
-func (o *TemplateSummaryLabelMapping) GetResourceID() string {
+func (o *TemplateSummaryLabelMapping) GetResourceID() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -135,7 +135,7 @@ func (o *TemplateSummaryLabelMapping) GetResourceID() string {
 
 // GetResourceIDOk returns a tuple with the ResourceID field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryLabelMapping) GetResourceIDOk() (*string, bool) {
+func (o *TemplateSummaryLabelMapping) GetResourceIDOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -143,7 +143,7 @@ func (o *TemplateSummaryLabelMapping) GetResourceIDOk() (*string, bool) {
 }
 
 // SetResourceID sets field value
-func (o *TemplateSummaryLabelMapping) SetResourceID(v string) {
+func (o *TemplateSummaryLabelMapping) SetResourceID(v uint64) {
 	o.ResourceID = v
 }
 
@@ -220,9 +220,9 @@ func (o *TemplateSummaryLabelMapping) SetLabelName(v string) {
 }
 
 // GetLabelID returns the LabelID field value
-func (o *TemplateSummaryLabelMapping) GetLabelID() string {
+func (o *TemplateSummaryLabelMapping) GetLabelID() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -231,7 +231,7 @@ func (o *TemplateSummaryLabelMapping) GetLabelID() string {
 
 // GetLabelIDOk returns a tuple with the LabelID field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryLabelMapping) GetLabelIDOk() (*string, bool) {
+func (o *TemplateSummaryLabelMapping) GetLabelIDOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -239,7 +239,7 @@ func (o *TemplateSummaryLabelMapping) GetLabelIDOk() (*string, bool) {
 }
 
 // SetLabelID sets field value
-func (o *TemplateSummaryLabelMapping) SetLabelID(v string) {
+func (o *TemplateSummaryLabelMapping) SetLabelID(v uint64) {
 	o.LabelID = v
 }
 

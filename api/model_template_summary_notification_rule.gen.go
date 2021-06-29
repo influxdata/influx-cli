@@ -23,7 +23,7 @@ type TemplateSummaryNotificationRule struct {
 	Name                     string                 `json:"name" yaml:"name"`
 	Description              *string                `json:"description,omitempty" yaml:"description,omitempty"`
 	EndpointTemplateMetaName string                 `json:"endpointTemplateMetaName" yaml:"endpointTemplateMetaName"`
-	EndpointID               string                 `json:"endpointID" yaml:"endpointID"`
+	EndpointID               uint64                 `json:"endpointID" yaml:"endpointID"`
 	EndpointType             string                 `json:"endpointType" yaml:"endpointType"`
 	Every                    string                 `json:"every" yaml:"every"`
 	Offset                   string                 `json:"offset" yaml:"offset"`
@@ -33,7 +33,7 @@ type TemplateSummaryNotificationRule struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryNotificationRule(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, name string, endpointTemplateMetaName string, endpointID string, endpointType string, every string, offset string) *TemplateSummaryNotificationRule {
+func NewTemplateSummaryNotificationRule(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, name string, endpointTemplateMetaName string, endpointID uint64, endpointType string, every string, offset string) *TemplateSummaryNotificationRule {
 	this := TemplateSummaryNotificationRule{}
 	this.Kind = kind
 	this.EnvReferences = envReferences
@@ -240,9 +240,9 @@ func (o *TemplateSummaryNotificationRule) SetEndpointTemplateMetaName(v string) 
 }
 
 // GetEndpointID returns the EndpointID field value
-func (o *TemplateSummaryNotificationRule) GetEndpointID() string {
+func (o *TemplateSummaryNotificationRule) GetEndpointID() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -251,7 +251,7 @@ func (o *TemplateSummaryNotificationRule) GetEndpointID() string {
 
 // GetEndpointIDOk returns a tuple with the EndpointID field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryNotificationRule) GetEndpointIDOk() (*string, bool) {
+func (o *TemplateSummaryNotificationRule) GetEndpointIDOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -259,7 +259,7 @@ func (o *TemplateSummaryNotificationRule) GetEndpointIDOk() (*string, bool) {
 }
 
 // SetEndpointID sets field value
-func (o *TemplateSummaryNotificationRule) SetEndpointID(v string) {
+func (o *TemplateSummaryNotificationRule) SetEndpointID(v uint64) {
 	o.EndpointID = v
 }
 

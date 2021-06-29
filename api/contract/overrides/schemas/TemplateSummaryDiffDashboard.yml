@@ -3,7 +3,9 @@ properties:
   stateStatus:
     type: string
   id:
-    type: string
+    type: integer
+    format: int64
+    x-go-field-type: uint64
   kind:
     type: string
   templateMetaName:

@@ -20,7 +20,7 @@ type TemplateSummaryCheck struct {
 	TemplateMetaName  *string                `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
 	EnvReferences     []TemplateEnvReference `json:"envReferences" yaml:"envReferences"`
 	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations" yaml:"labelAssociations"`
-	Id                string                 `json:"id" yaml:"id"`
+	Id                uint64                 `json:"id" yaml:"id"`
 	Name              string                 `json:"name" yaml:"name"`
 	Description       *string                `json:"description,omitempty" yaml:"description,omitempty"`
 }
@@ -29,7 +29,7 @@ type TemplateSummaryCheck struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryCheck(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id string, name string) *TemplateSummaryCheck {
+func NewTemplateSummaryCheck(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id uint64, name string) *TemplateSummaryCheck {
 	this := TemplateSummaryCheck{}
 	this.Kind = kind
 	this.EnvReferences = envReferences
@@ -152,9 +152,9 @@ func (o *TemplateSummaryCheck) SetLabelAssociations(v []TemplateSummaryLabel) {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryCheck) GetId() string {
+func (o *TemplateSummaryCheck) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -163,7 +163,7 @@ func (o *TemplateSummaryCheck) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryCheck) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryCheck) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -171,7 +171,7 @@ func (o *TemplateSummaryCheck) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryCheck) SetId(v string) {
+func (o *TemplateSummaryCheck) SetId(v uint64) {
 	o.Id = v
 }
 

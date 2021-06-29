@@ -18,7 +18,7 @@ import (
 type TemplateSummaryDiffNotificationRule struct {
 	Kind             string                                     `json:"kind" yaml:"kind"`
 	StateStatus      string                                     `json:"stateStatus" yaml:"stateStatus"`
-	Id               string                                     `json:"id" yaml:"id"`
+	Id               uint64                                     `json:"id" yaml:"id"`
 	TemplateMetaName string                                     `json:"templateMetaName" yaml:"templateMetaName"`
 	New              *TemplateSummaryDiffNotificationRuleFields `json:"new,omitempty" yaml:"new,omitempty"`
 	Old              *TemplateSummaryDiffNotificationRuleFields `json:"old,omitempty" yaml:"old,omitempty"`
@@ -28,7 +28,7 @@ type TemplateSummaryDiffNotificationRule struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffNotificationRule(kind string, stateStatus string, id string, templateMetaName string) *TemplateSummaryDiffNotificationRule {
+func NewTemplateSummaryDiffNotificationRule(kind string, stateStatus string, id uint64, templateMetaName string) *TemplateSummaryDiffNotificationRule {
 	this := TemplateSummaryDiffNotificationRule{}
 	this.Kind = kind
 	this.StateStatus = stateStatus
@@ -94,9 +94,9 @@ func (o *TemplateSummaryDiffNotificationRule) SetStateStatus(v string) {
 }
 
 // GetId returns the Id field value
-func (o *TemplateSummaryDiffNotificationRule) GetId() string {
+func (o *TemplateSummaryDiffNotificationRule) GetId() uint64 {
 	if o == nil {
-		var ret string
+		var ret uint64
 		return ret
 	}
 
@@ -105,7 +105,7 @@ func (o *TemplateSummaryDiffNotificationRule) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryDiffNotificationRule) GetIdOk() (*string, bool) {
+func (o *TemplateSummaryDiffNotificationRule) GetIdOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -113,7 +113,7 @@ func (o *TemplateSummaryDiffNotificationRule) GetIdOk() (*string, bool) {
 }
 
 // SetId sets field value
-func (o *TemplateSummaryDiffNotificationRule) SetId(v string) {
+func (o *TemplateSummaryDiffNotificationRule) SetId(v uint64) {
 	o.Id = v
 }
 

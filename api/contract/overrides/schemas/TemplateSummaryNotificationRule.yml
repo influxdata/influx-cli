@@ -9,7 +9,9 @@ allOf:
       endpointTemplateMetaName:
         type: string
       endpointID:
-        type: string
+        type: integer
+        format: int64
+        x-go-field-type: uint64
       endpointType:
         type: string
       every:
