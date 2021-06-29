@@ -12,4 +12,4 @@ allOf:
         type: string
       arguments:
         $ref: "./TemplateSummaryVariableArgs.yml"
-    required: [id, name, arguments]
+    required: [id, name]

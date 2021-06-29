@@ -6,4 +6,10 @@ properties:
     type: string
   retentionRules:
     $ref: "../../openapi/src/common/schemas/RetentionRules.yml"
-required: [name, retentionRules]
+  schemaType:
+    $ref: "../../openapi/src/common/schemas/SchemaType.yml"
+  measurementSchemas:
+    type: array
+    items:
+      type: object
+required: [name, retentionRules, measurementSchemas]

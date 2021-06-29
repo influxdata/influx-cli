@@ -16,21 +16,20 @@ import (
 
 // TemplateSummaryVariableAllOf struct for TemplateSummaryVariableAllOf
 type TemplateSummaryVariableAllOf struct {
-	Id          uint64                      `json:"id" yaml:"id"`
-	Name        string                      `json:"name" yaml:"name"`
-	Description *string                     `json:"description,omitempty" yaml:"description,omitempty"`
-	Arguments   TemplateSummaryVariableArgs `json:"arguments" yaml:"arguments"`
+	Id          uint64                       `json:"id" yaml:"id"`
+	Name        string                       `json:"name" yaml:"name"`
+	Description *string                      `json:"description,omitempty" yaml:"description,omitempty"`
+	Arguments   *TemplateSummaryVariableArgs `json:"arguments,omitempty" yaml:"arguments,omitempty"`
 }
 
 // NewTemplateSummaryVariableAllOf instantiates a new TemplateSummaryVariableAllOf object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryVariableAllOf(id uint64, name string, arguments TemplateSummaryVariableArgs) *TemplateSummaryVariableAllOf {
+func NewTemplateSummaryVariableAllOf(id uint64, name string) *TemplateSummaryVariableAllOf {
 	this := TemplateSummaryVariableAllOf{}
 	this.Id = id
 	this.Name = name
-	this.Arguments = arguments
 	return &this
 }
 
@@ -122,28 +121,36 @@ func (o *TemplateSummaryVariableAllOf) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetArguments returns the Arguments field value
+// GetArguments returns the Arguments field value if set, zero value otherwise.
 func (o *TemplateSummaryVariableAllOf) GetArguments() TemplateSummaryVariableArgs {
-	if o == nil {
+	if o == nil || o.Arguments == nil {
 		var ret TemplateSummaryVariableArgs
 		return ret
 	}
-
-	return o.Arguments
+	return *o.Arguments
 }
 
-// GetArgumentsOk returns a tuple with the Arguments field value
+// GetArgumentsOk returns a tuple with the Arguments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryVariableAllOf) GetArgumentsOk() (*TemplateSummaryVariableArgs, bool) {
-	if o == nil {
+	if o == nil || o.Arguments == nil {
 		return nil, false
 	}
-	return &o.Arguments, true
+	return o.Arguments, true
 }
 
-// SetArguments sets field value
+// HasArguments returns a boolean if a field has been set.
+func (o *TemplateSummaryVariableAllOf) HasArguments() bool {
+	if o != nil && o.Arguments != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetArguments gets a reference to the given TemplateSummaryVariableArgs and assigns it to the Arguments field.
 func (o *TemplateSummaryVariableAllOf) SetArguments(v TemplateSummaryVariableArgs) {
-	o.Arguments = v
+	o.Arguments = &v
 }
 
 func (o TemplateSummaryVariableAllOf) MarshalJSON() ([]byte, error) {
@@ -157,7 +164,7 @@ func (o TemplateSummaryVariableAllOf) MarshalJSON() ([]byte, error) {
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}
-	if true {
+	if o.Arguments != nil {
 		toSerialize["arguments"] = o.Arguments
 	}
 	return json.Marshal(toSerialize)

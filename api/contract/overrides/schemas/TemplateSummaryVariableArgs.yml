@@ -2,5 +2,6 @@ type: object
 properties:
   type:
     type: string
-required: [type]
-additionalProperties: true
+  values:
+    x-go-field-type: 'interface{}'
+required: [type, values]

@@ -19,7 +19,7 @@ properties:
   labelMappings:
     type: array
     items:
-      $ref: "./TemplateSummaryLabelMapping.yml"
+      $ref: "./TemplateSummaryDiffLabelMapping.yml"
   notificationEndpoints:
     type: array
     items:

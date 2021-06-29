@@ -16,19 +16,18 @@ import (
 
 // TemplateSummaryDiffVariableFields struct for TemplateSummaryDiffVariableFields
 type TemplateSummaryDiffVariableFields struct {
-	Name        string                      `json:"name" yaml:"name"`
-	Description *string                     `json:"description,omitempty" yaml:"description,omitempty"`
-	Args        TemplateSummaryVariableArgs `json:"args" yaml:"args"`
+	Name        string                       `json:"name" yaml:"name"`
+	Description *string                      `json:"description,omitempty" yaml:"description,omitempty"`
+	Args        *TemplateSummaryVariableArgs `json:"args,omitempty" yaml:"args,omitempty"`
 }
 
 // NewTemplateSummaryDiffVariableFields instantiates a new TemplateSummaryDiffVariableFields object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryDiffVariableFields(name string, args TemplateSummaryVariableArgs) *TemplateSummaryDiffVariableFields {
+func NewTemplateSummaryDiffVariableFields(name string) *TemplateSummaryDiffVariableFields {
 	this := TemplateSummaryDiffVariableFields{}
 	this.Name = name
-	this.Args = args
 	return &this
 }
 
@@ -96,28 +95,36 @@ func (o *TemplateSummaryDiffVariableFields) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetArgs returns the Args field value
+// GetArgs returns the Args field value if set, zero value otherwise.
 func (o *TemplateSummaryDiffVariableFields) GetArgs() TemplateSummaryVariableArgs {
-	if o == nil {
+	if o == nil || o.Args == nil {
 		var ret TemplateSummaryVariableArgs
 		return ret
 	}
-
-	return o.Args
+	return *o.Args
 }
 
-// GetArgsOk returns a tuple with the Args field value
+// GetArgsOk returns a tuple with the Args field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryDiffVariableFields) GetArgsOk() (*TemplateSummaryVariableArgs, bool) {
-	if o == nil {
+	if o == nil || o.Args == nil {
 		return nil, false
 	}
-	return &o.Args, true
+	return o.Args, true
 }
 
-// SetArgs sets field value
+// HasArgs returns a boolean if a field has been set.
+func (o *TemplateSummaryDiffVariableFields) HasArgs() bool {
+	if o != nil && o.Args != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetArgs gets a reference to the given TemplateSummaryVariableArgs and assigns it to the Args field.
 func (o *TemplateSummaryDiffVariableFields) SetArgs(v TemplateSummaryVariableArgs) {
-	o.Args = v
+	o.Args = &v
 }
 
 func (o TemplateSummaryDiffVariableFields) MarshalJSON() ([]byte, error) {
@@ -128,7 +135,7 @@ func (o TemplateSummaryDiffVariableFields) MarshalJSON() ([]byte, error) {
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}
-	if true {
+	if o.Args != nil {
 		toSerialize["args"] = o.Args
 	}
 	return json.Marshal(toSerialize)

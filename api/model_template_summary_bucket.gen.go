@@ -17,23 +17,24 @@ import (
 // TemplateSummaryBucket struct for TemplateSummaryBucket
 type TemplateSummaryBucket struct {
 	Kind              string                 `json:"kind" yaml:"kind"`
-	TemplateMetaName  *string                `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
+	TemplateMetaName  string                 `json:"templateMetaName" yaml:"templateMetaName"`
 	EnvReferences     []TemplateEnvReference `json:"envReferences" yaml:"envReferences"`
 	LabelAssociations []TemplateSummaryLabel `json:"labelAssociations" yaml:"labelAssociations"`
 	Id                uint64                 `json:"id" yaml:"id"`
 	Name              string                 `json:"name" yaml:"name"`
 	Description       *string                `json:"description,omitempty" yaml:"description,omitempty"`
-	RetentionPeriod   int32                  `json:"retentionPeriod" yaml:"retentionPeriod"`
-	SchemaType        *string                `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
+	RetentionPeriod   int64                  `json:"retentionPeriod" yaml:"retentionPeriod"`
+	SchemaType        *SchemaType            `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
 }
 
 // NewTemplateSummaryBucket instantiates a new TemplateSummaryBucket object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryBucket(kind string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id uint64, name string, retentionPeriod int32) *TemplateSummaryBucket {
+func NewTemplateSummaryBucket(kind string, templateMetaName string, envReferences []TemplateEnvReference, labelAssociations []TemplateSummaryLabel, id uint64, name string, retentionPeriod int64) *TemplateSummaryBucket {
 	this := TemplateSummaryBucket{}
 	this.Kind = kind
+	this.TemplateMetaName = templateMetaName
 	this.EnvReferences = envReferences
 	this.LabelAssociations = labelAssociations
 	this.Id = id
@@ -74,36 +75,28 @@ func (o *TemplateSummaryBucket) SetKind(v string) {
 	o.Kind = v
 }
 
-// GetTemplateMetaName returns the TemplateMetaName field value if set, zero value otherwise.
+// GetTemplateMetaName returns the TemplateMetaName field value
 func (o *TemplateSummaryBucket) GetTemplateMetaName() string {
-	if o == nil || o.TemplateMetaName == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.TemplateMetaName
+
+	return o.TemplateMetaName
 }
 
-// GetTemplateMetaNameOk returns a tuple with the TemplateMetaName field value if set, nil otherwise
+// GetTemplateMetaNameOk returns a tuple with the TemplateMetaName field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryBucket) GetTemplateMetaNameOk() (*string, bool) {
-	if o == nil || o.TemplateMetaName == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.TemplateMetaName, true
+	return &o.TemplateMetaName, true
 }
 
-// HasTemplateMetaName returns a boolean if a field has been set.
-func (o *TemplateSummaryBucket) HasTemplateMetaName() bool {
-	if o != nil && o.TemplateMetaName != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTemplateMetaName gets a reference to the given string and assigns it to the TemplateMetaName field.
+// SetTemplateMetaName sets field value
 func (o *TemplateSummaryBucket) SetTemplateMetaName(v string) {
-	o.TemplateMetaName = &v
+	o.TemplateMetaName = v
 }
 
 // GetEnvReferences returns the EnvReferences field value
@@ -235,9 +228,9 @@ func (o *TemplateSummaryBucket) SetDescription(v string) {
 }
 
 // GetRetentionPeriod returns the RetentionPeriod field value
-func (o *TemplateSummaryBucket) GetRetentionPeriod() int32 {
+func (o *TemplateSummaryBucket) GetRetentionPeriod() int64 {
 	if o == nil {
-		var ret int32
+		var ret int64
 		return ret
 	}
 
@@ -246,7 +239,7 @@ func (o *TemplateSummaryBucket) GetRetentionPeriod() int32 {
 
 // GetRetentionPeriodOk returns a tuple with the RetentionPeriod field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryBucket) GetRetentionPeriodOk() (*int32, bool) {
+func (o *TemplateSummaryBucket) GetRetentionPeriodOk() (*int64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -254,14 +247,14 @@ func (o *TemplateSummaryBucket) GetRetentionPeriodOk() (*int32, bool) {
 }
 
 // SetRetentionPeriod sets field value
-func (o *TemplateSummaryBucket) SetRetentionPeriod(v int32) {
+func (o *TemplateSummaryBucket) SetRetentionPeriod(v int64) {
 	o.RetentionPeriod = v
 }
 
 // GetSchemaType returns the SchemaType field value if set, zero value otherwise.
-func (o *TemplateSummaryBucket) GetSchemaType() string {
+func (o *TemplateSummaryBucket) GetSchemaType() SchemaType {
 	if o == nil || o.SchemaType == nil {
-		var ret string
+		var ret SchemaType
 		return ret
 	}
 	return *o.SchemaType
@@ -269,7 +262,7 @@ func (o *TemplateSummaryBucket) GetSchemaType() string {
 
 // GetSchemaTypeOk returns a tuple with the SchemaType field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryBucket) GetSchemaTypeOk() (*string, bool) {
+func (o *TemplateSummaryBucket) GetSchemaTypeOk() (*SchemaType, bool) {
 	if o == nil || o.SchemaType == nil {
 		return nil, false
 	}
@@ -285,8 +278,8 @@ func (o *TemplateSummaryBucket) HasSchemaType() bool {
 	return false
 }
 
-// SetSchemaType gets a reference to the given string and assigns it to the SchemaType field.
-func (o *TemplateSummaryBucket) SetSchemaType(v string) {
+// SetSchemaType gets a reference to the given SchemaType and assigns it to the SchemaType field.
+func (o *TemplateSummaryBucket) SetSchemaType(v SchemaType) {
 	o.SchemaType = &v
 }
 
@@ -295,7 +288,7 @@ func (o TemplateSummaryBucket) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["kind"] = o.Kind
 	}
-	if o.TemplateMetaName != nil {
+	if true {
 		toSerialize["templateMetaName"] = o.TemplateMetaName
 	}
 	if true {

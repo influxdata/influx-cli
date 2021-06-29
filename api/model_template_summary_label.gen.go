@@ -17,7 +17,7 @@ import (
 // TemplateSummaryLabel struct for TemplateSummaryLabel
 type TemplateSummaryLabel struct {
 	Kind             string                              `json:"kind" yaml:"kind"`
-	TemplateMetaName *string                             `json:"templateMetaName,omitempty" yaml:"templateMetaName,omitempty"`
+	TemplateMetaName string                              `json:"templateMetaName" yaml:"templateMetaName"`
 	EnvReferences    []TemplateEnvReference              `json:"envReferences" yaml:"envReferences"`
 	Id               uint64                              `json:"id" yaml:"id"`
 	OrgID            *uint64                             `json:"orgID,omitempty" yaml:"orgID,omitempty"`
@@ -29,9 +29,10 @@ type TemplateSummaryLabel struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryLabel(kind string, envReferences []TemplateEnvReference, id uint64, name string, properties TemplateSummaryLabelAllOfProperties) *TemplateSummaryLabel {
+func NewTemplateSummaryLabel(kind string, templateMetaName string, envReferences []TemplateEnvReference, id uint64, name string, properties TemplateSummaryLabelAllOfProperties) *TemplateSummaryLabel {
 	this := TemplateSummaryLabel{}
 	this.Kind = kind
+	this.TemplateMetaName = templateMetaName
 	this.EnvReferences = envReferences
 	this.Id = id
 	this.Name = name
@@ -71,36 +72,28 @@ func (o *TemplateSummaryLabel) SetKind(v string) {
 	o.Kind = v
 }
 
-// GetTemplateMetaName returns the TemplateMetaName field value if set, zero value otherwise.
+// GetTemplateMetaName returns the TemplateMetaName field value
 func (o *TemplateSummaryLabel) GetTemplateMetaName() string {
-	if o == nil || o.TemplateMetaName == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.TemplateMetaName
+
+	return o.TemplateMetaName
 }
 
-// GetTemplateMetaNameOk returns a tuple with the TemplateMetaName field value if set, nil otherwise
+// GetTemplateMetaNameOk returns a tuple with the TemplateMetaName field value
 // and a boolean to check if the value has been set.
 func (o *TemplateSummaryLabel) GetTemplateMetaNameOk() (*string, bool) {
-	if o == nil || o.TemplateMetaName == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.TemplateMetaName, true
+	return &o.TemplateMetaName, true
 }
 
-// HasTemplateMetaName returns a boolean if a field has been set.
-func (o *TemplateSummaryLabel) HasTemplateMetaName() bool {
-	if o != nil && o.TemplateMetaName != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTemplateMetaName gets a reference to the given string and assigns it to the TemplateMetaName field.
+// SetTemplateMetaName sets field value
 func (o *TemplateSummaryLabel) SetTemplateMetaName(v string) {
-	o.TemplateMetaName = &v
+	o.TemplateMetaName = v
 }
 
 // GetEnvReferences returns the EnvReferences field value
@@ -236,7 +229,7 @@ func (o TemplateSummaryLabel) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["kind"] = o.Kind
 	}
-	if o.TemplateMetaName != nil {
+	if true {
 		toSerialize["templateMetaName"] = o.TemplateMetaName
 	}
 	if true {
