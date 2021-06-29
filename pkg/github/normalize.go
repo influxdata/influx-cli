@@ -37,7 +37,7 @@ func NormalizeURLToContent(u *url.URL, extensions ...string) *url.URL {
 func extensionMatches(u *url.URL, extensions []string) bool {
 	ext := path.Ext(u.Path)
 	for _, e := range extensions {
-		if strings.EqualFold(e, "."+ext) {
+		if strings.EqualFold(ext, "."+e) {
 			return true
 		}
 	}

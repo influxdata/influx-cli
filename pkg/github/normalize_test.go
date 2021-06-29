@@ -23,6 +23,12 @@ func TestNormalize(t *testing.T) {
 			out:  url.URL{Host: "raw.githubusercontent.com", Path: "/influxdata/influxdb/master/flags.yml"},
 		},
 		{
+			name: "github URL with extensions",
+			in: url.URL{Host: "github.com", Path: "/influxdata/community-templates/blob/master/github/github.yml"},
+			exts: []string{"yaml", "yml", "jsonnet", "json"},
+			out: url.URL{Host: "raw.githubusercontent.com", Path: "/influxdata/community-templates/master/github/github.yml"},
+		},
+		{
 			name: "other URL",
 			in:   url.URL{Host: "google.com", Path: "/fake.yml"},
 			out:  url.URL{Host: "google.com", Path: "/fake.yml"},
