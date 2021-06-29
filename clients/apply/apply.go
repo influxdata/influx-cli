@@ -1,0 +1,729 @@
+package apply
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"reflect"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/clients"
+	"github.com/influxdata/influx-cli/v2/pkg/influxid"
+	"github.com/influxdata/influx-cli/v2/pkg/template"
+)
+
+type Client struct {
+	clients.CLI
+	api.TemplatesApi
+	api.OrganizationsApi
+}
+
+type Params struct {
+	OrgId   string
+	OrgName string
+
+	StackId   string
+	Sources   []TemplateSource
+	Recursive bool
+
+	Secrets map[string]string
+	EnvVars map[string]string
+
+	Filters []ResourceFilter
+
+	Force              bool
+	OverwriteConflicts bool
+	Quiet              bool
+	RenderTableColors  bool
+	RenderTableBorders bool
+}
+
+type ResourceFilter struct {
+	Kind string
+	Name *string
+}
+
+func (c Client) Apply(ctx context.Context, params *Params) error {
+	if params.OrgId == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
+		return clients.ErrMustSpecifyOrg
+	}
+	orgID := params.OrgId
+	if orgID == "" {
+		orgName := params.OrgName
+		if orgName == "" {
+			orgName = c.ActiveConfig.Org
+		}
+		orgs, err := c.GetOrgs(ctx).Org(orgName).Execute()
+		if err != nil {
+			return fmt.Errorf("failed to get ID for org %q: %w", orgName, err)
+		}
+		if len(orgs.GetOrgs()) == 0 {
+			return fmt.Errorf("no orgs found with name %q: %w", orgName, err)
+		}
+		orgID = orgs.GetOrgs()[0].GetId()
+	}
+
+	templates, err := readTemplates(ctx, params.Sources)
+	if err != nil {
+		return err
+	}
+
+	req := api.TemplateApply{
+		DryRun:    true,
+		OrgID:     orgID,
+		Templates: templates,
+		EnvRefs:   params.EnvVars,
+		Secrets:   params.Secrets,
+		Actions:   make([]api.TemplateApplyAction, len(params.Filters)),
+	}
+	if params.StackId != "" {
+		req.StackID = &params.StackId
+	}
+	for i, f := range params.Filters {
+		req.Actions[i].Action = api.TEMPLATEAPPLYACTIONKIND_SKIP_KIND
+		if f.Name != nil {
+			req.Actions[i].Action = api.TEMPLATEAPPLYACTIONKIND_SKIP_RESOURCE
+		}
+		req.Actions[i].Properties = api.TemplateApplyActionProperties{
+			Kind:                 f.Kind,
+			ResourceTemplateName: f.Name,
+		}
+	}
+
+	// Initial dry-run to make the server summarize the template & report any missing env/secret values.
+	res, err := c.ApplyTemplate(ctx).TemplateApply(req).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to check template impact: %w", err)
+	}
+
+	if len(res.Summary.MissingEnvRefs) > 0 || len(res.Summary.MissingSecrets) > 0 {
+		for _, e := range res.Summary.MissingEnvRefs {
+			val, err := c.StdIO.GetStringInput(fmt.Sprintf("Please provide environment reference value for key %s", e), "")
+			if err != nil {
+				return err
+			}
+			req.EnvRefs[e] = val
+		}
+		for _, s := range res.Summary.MissingSecrets {
+			val, err := c.StdIO.GetSecret(fmt.Sprintf("Please provide secret value for key %s (optional, press enter to skip)", s), 0)
+			if err != nil {
+				return err
+			}
+			if val != "" {
+				req.Secrets[s] = val
+			}
+		}
+
+		// 2nd dry-run to see the diff after resolving all env/secret values.
+		res, err = c.ApplyTemplate(ctx).TemplateApply(req).Execute()
+		if err != nil {
+			return fmt.Errorf("failed to check template impact: %w", err)
+		}
+	}
+
+	if !params.Quiet {
+		if err := c.printDiff(res.Diff, params); err != nil {
+			return err
+		}
+	}
+
+	if !params.Force {
+		if confirmed := c.StdIO.GetConfirm("Confirm application of the above resources"); !confirmed {
+			return errors.New("aborted application of template")
+		}
+	}
+
+	if !params.OverwriteConflicts && hasConflicts(res.Diff) {
+		return errors.New("template has conflicts with existing resources and cannot safely apply")
+	}
+
+	// Flip the dry-run flag and apply the template.
+	req.DryRun = false
+	res, err = c.ApplyTemplate(ctx).TemplateApply(req).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to apply template: %w", err)
+	}
+	params.StackId = res.StackID
+
+	if !params.Quiet {
+		if err := c.printSummary(res.Summary, params); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func readTemplates(ctx context.Context, sources []TemplateSource) ([]api.TemplateApplyTemplate, error) {
+	templates := make([]api.TemplateApplyTemplate, 0, len(sources))
+	for _, source := range sources {
+		tmpl, err := source.Read(ctx)
+		if err != nil {
+			return nil, err
+		}
+		// We always send the templates as JSON.
+		tmpl.ContentType = "json"
+		templates = append(templates, tmpl)
+	}
+	return templates, nil
+}
+
+func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
+	if c.PrintAsJSON {
+		return c.PrintJSON(diff)
+	}
+
+	newDiffPrinter := func(title string, headers []string) *template.DiffPrinter {
+		return template.NewDiffPrinter(c.StdIO, params.RenderTableColors, params.RenderTableBorders).
+			Title(title).
+			SetHeaders(append([]string{"Metadata Name", "ID", "Resource Name"}, headers...)...)
+	}
+
+	if labels := diff.Labels; len(labels) > 0 {
+		printer := newDiffPrinter("Labels", []string{"Color", "Description"})
+		buildRow := func(metaName string, id string, lf api.TemplateSummaryDiffLabelFields) []string {
+			var desc string
+			if lf.Description != nil {
+				desc = *lf.Description
+			}
+			return []string{metaName, id, lf.Name, lf.Color, desc}
+		}
+		for _, l := range labels {
+			var oldRow, newRow []string
+			hexId := influxid.ID(l.Id).String()
+			if l.Old != nil {
+				oldRow = buildRow(l.TemplateMetaName, hexId, *l.Old)
+			}
+			if l.New != nil {
+				newRow = buildRow(l.TemplateMetaName, hexId, *l.New)
+			}
+			printer.AppendDiff(oldRow, newRow)
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if bkts := diff.Buckets; len(bkts) > 0 {
+		printer := newDiffPrinter("Buckets", []string{"Retention Period", "Description", "Schema Type", "Num Measurements"})
+		buildRow := func(metaName string, id string, bf api.TemplateSummaryDiffBucketFields) []string {
+			var desc string
+			if bf.Description != nil {
+				desc = *bf.Description
+			}
+			var retention time.Duration
+			if len(bf.RetentionRules) > 0 {
+				retention = time.Duration(bf.RetentionRules[0].EverySeconds) * time.Second
+			}
+			schemaType := api.SCHEMATYPE_IMPLICIT
+			if bf.SchemaType != nil {
+				schemaType = *bf.SchemaType
+			}
+			return []string{metaName, id, bf.Name, retention.String(), desc, schemaType.String(), strconv.Itoa(len(bf.MeasurementSchemas))}
+		}
+		for _, b := range bkts {
+			var oldRow, newRow []string
+			hexId := influxid.ID(b.Id).String()
+			if b.Old != nil {
+				oldRow = buildRow(b.TemplateMetaName, hexId, *b.Old)
+			}
+			if b.New != nil {
+				newRow = buildRow(b.TemplateMetaName, hexId, *b.New)
+			}
+			printer.AppendDiff(oldRow, newRow)
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if checks := diff.Checks; len(checks) > 0 {
+		printer := newDiffPrinter("Checks", []string{"Description"})
+		buildRow := func(metaName string, id string, cf api.TemplateSummaryDiffCheckFields) []string {
+			var desc string
+			if cf.Description != nil {
+				desc = *cf.Description
+			}
+			return []string{metaName, id, cf.Name, desc}
+		}
+		for _, c := range checks {
+			var oldRow, newRow []string
+			hexId := influxid.ID(c.Id).String()
+			if c.Old != nil {
+				oldRow = buildRow(c.TemplateMetaName, hexId, *c.Old)
+			}
+			if c.New != nil {
+				newRow = buildRow(c.TemplateMetaName, hexId, *c.New)
+			}
+			printer.AppendDiff(oldRow, newRow)
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if dashboards := diff.Dashboards; len(dashboards) > 0 {
+		printer := newDiffPrinter("Dashboards", []string{"Description", "Num Charts"})
+		buildRow := func(metaName string, id string, df api.TemplateSummaryDiffDashboardFields) []string {
+			var desc string
+			if df.Description != nil {
+				desc = *df.Description
+			}
+			return []string{metaName, id, df.Name, desc, strconv.Itoa(len(df.Charts))}
+		}
+		for _, d := range dashboards {
+			var oldRow, newRow []string
+			hexId := influxid.ID(d.Id).String()
+			if d.Old != nil {
+				oldRow = buildRow(d.TemplateMetaName, hexId, *d.Old)
+			}
+			if d.New != nil {
+				newRow = buildRow(d.TemplateMetaName, hexId, *d.New)
+			}
+			printer.AppendDiff(oldRow, newRow)
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if endpoints := diff.NotificationEndpoints; len(endpoints) > 0 {
+		printer := newDiffPrinter("Notification Endpoints", nil)
+		buildRow := func(metaName string, id string, nef api.TemplateSummaryDiffNotificationEndpointFields) []string {
+			return []string{metaName, id, nef.Name}
+		}
+		for _, e := range endpoints {
+			var oldRow, newRow []string
+			hexId := influxid.ID(e.Id).String()
+			if e.Old != nil {
+				oldRow = buildRow(e.TemplateMetaName, hexId, *e.Old)
+			}
+			if e.New != nil {
+				newRow = buildRow(e.TemplateMetaName, hexId, *e.New)
+			}
+			printer.AppendDiff(oldRow, newRow)
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if rules := diff.NotificationRules; len(rules) > 0 {
+		printer := newDiffPrinter("Notification Rules", []string{"Description", "Every", "Offset", "Endpoint Name", "Endpoint ID", "Endpoint Type"})
+		buildRow := func(metaName string, id string, nrf api.TemplateSummaryDiffNotificationRuleFields) []string {
+			var desc string
+			if nrf.Description != nil {
+				desc = *nrf.Description
+			}
+			eid := influxid.ID(nrf.EndpointID).String()
+			return []string{metaName, id, nrf.Name, desc, nrf.Every, nrf.Offset, nrf.EndpointName, eid, nrf.EndpointType}
+		}
+		for _, r := range rules {
+			var oldRow, newRow []string
+			hexId := influxid.ID(r.Id).String()
+			if r.Old != nil {
+				oldRow = buildRow(r.TemplateMetaName, hexId, *r.Old)
+			}
+			if r.New != nil {
+				newRow = buildRow(r.TemplateMetaName, hexId, *r.New)
+			}
+			printer.AppendDiff(oldRow, newRow)
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if teles := diff.TelegrafConfigs; len(teles) > 0 {
+		printer := newDiffPrinter("Telegraf Configurations", []string{"Description"})
+		buildRow := func(metaName string, id string, tc api.TemplateSummaryTelegrafConfig) []string {
+			var desc string
+			if tc.Description != nil {
+				desc = *tc.Description
+			}
+			return []string{metaName, id, tc.Name, desc}
+		}
+		for _, t := range teles {
+			var oldRow, newRow []string
+			hexId := influxid.ID(t.Id).String()
+			if t.Old != nil {
+				oldRow = buildRow(t.TemplateMetaName, hexId, *t.Old)
+			}
+			if t.New != nil {
+				newRow = buildRow(t.TemplateMetaName, hexId, *t.New)
+			}
+			printer.AppendDiff(oldRow, newRow)
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if tasks := diff.Tasks; len(tasks) > 0 {
+		printer := newDiffPrinter("Tasks", []string{"Description", "Cycle"})
+		buildRow := func(metaName string, id string, tf api.TemplateSummaryDiffTaskFields) []string {
+			var desc string
+			if tf.Description != nil {
+				desc = *tf.Description
+			}
+			var timing string
+			if tf.Cron != nil {
+				timing = *tf.Cron
+			} else {
+				offset := time.Duration(0).String()
+				if tf.Offset != nil {
+					offset = *tf.Offset
+				}
+				// If `cron` isn't set, `every` must be set
+				timing = fmt.Sprintf("every: %s offset: %s", *tf.Every, offset)
+			}
+			return []string{metaName, id, tf.Name, desc, timing}
+		}
+		for _, t := range tasks {
+			var oldRow, newRow []string
+			hexId := influxid.ID(t.Id).String()
+			if t.Old != nil {
+				oldRow = buildRow(t.TemplateMetaName, hexId, *t.Old)
+			}
+			if t.New != nil {
+				newRow = buildRow(t.TemplateMetaName, hexId, *t.New)
+			}
+			printer.AppendDiff(oldRow, newRow)
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if vars := diff.Variables; len(vars) > 0 {
+		printer := newDiffPrinter("Variables", []string{"Description", "Arg Type", "Arg Values"})
+		buildRow := func(metaName string, id string, vf api.TemplateSummaryDiffVariableFields) []string {
+			var desc, argType string
+			if vf.Description != nil {
+				desc = *vf.Description
+			}
+			if vf.Args != nil {
+				argType = vf.Args.Type
+			}
+			return []string{metaName, id, vf.Name, desc, argType, sprintVarArgs(vf.Args)}
+		}
+		for _, v := range vars {
+			var oldRow, newRow []string
+			hexId := influxid.ID(v.Id).String()
+			if v.Old != nil {
+				oldRow = buildRow(v.TemplateMetaName, hexId, *v.Old)
+			}
+			if v.New != nil {
+				newRow = buildRow(v.TemplateMetaName, hexId, *v.New)
+			}
+			printer.AppendDiff(oldRow, newRow)
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if mappings := diff.LabelMappings; len(mappings) > 0 {
+		printer := template.NewDiffPrinter(c.StdIO, params.RenderTableColors, params.RenderTableBorders).
+			Title("Label Associations").
+			SetHeaders("Resource Type", "Resource Meta Name", "Resource Name", "Resource ID", "Label Package Name", "Label Name", "Label ID")
+
+		for _, m := range mappings {
+			resId := influxid.ID(m.ResourceID).String()
+			labelId := influxid.ID(m.LabelID).String()
+			row := []string{m.ResourceType, m.ResourceName, resId, m.LabelTemplateMetaName, m.LabelName, labelId}
+			switch m.StateStatus {
+			case "new":
+				printer.AppendDiff(nil, row)
+			case "remove":
+				printer.AppendDiff(row, nil)
+			default:
+				printer.AppendDiff(row, row)
+			}
+		}
+		printer.Render()
+	}
+
+	return nil
+}
+
+func sprintVarArgs(args *api.TemplateSummaryVariableArgs) string {
+	if args == nil {
+		return "<nil>"
+	}
+	switch args.Type {
+	case "map":
+		b, err := json.Marshal(args.Values)
+		if err != nil {
+			return "{}"
+		}
+		return string(b)
+	case "constant":
+		values, ok := args.Values.([]interface{})
+		if !ok {
+			return "[]"
+		}
+		var out []string
+		for _, v := range values {
+			out = append(out, fmt.Sprintf("%q", v))
+		}
+		return fmt.Sprintf("[%s]", strings.Join(out, " "))
+	case "query":
+		values, ok := args.Values.(map[string]interface{})
+		if !ok {
+			return ""
+		}
+		qVal, ok := values["query"]
+		if !ok {
+			return ""
+		}
+		lVal, ok := values["language"]
+		if !ok {
+			return ""
+		}
+		return fmt.Sprintf("language=%q query=%q", lVal, qVal)
+	default:
+	}
+	return "unknown variable argument"
+}
+
+func hasConflicts(diff api.TemplateSummaryDiff) bool {
+	for _, l := range diff.Labels {
+		if l.StateStatus != "new" && l.Old != nil && l.New != nil && !reflect.DeepEqual(l.Old, l.New) {
+			return true
+		}
+	}
+	for _, b := range diff.Buckets {
+		if b.StateStatus != "new" && b.Old != nil && b.New != nil && !reflect.DeepEqual(b.Old, b.New) {
+			return true
+		}
+	}
+	for _, c := range diff.Checks {
+		if c.StateStatus != "new" && c.Old != nil && c.New != nil && !reflect.DeepEqual(c.Old, c.New) {
+			return true
+		}
+	}
+	for _, d := range diff.Dashboards {
+		if d.StateStatus != "new" && d.Old != nil && d.New != nil && !reflect.DeepEqual(d.Old, d.New) {
+			return true
+		}
+	}
+	for _, e := range diff.NotificationEndpoints {
+		if e.StateStatus != "new" && e.Old != nil && e.New != nil && !reflect.DeepEqual(e.Old, e.New) {
+			return true
+		}
+	}
+	for _, r := range diff.NotificationRules {
+		if r.StateStatus != "new" && r.Old != nil && r.New != nil && !reflect.DeepEqual(r.Old, r.New) {
+			return true
+		}
+	}
+	for _, t := range diff.TelegrafConfigs {
+		if t.StateStatus != "new" && t.Old != nil && t.New != nil && !reflect.DeepEqual(t.Old, t.New) {
+			return true
+		}
+	}
+	for _, t := range diff.Tasks {
+		if t.StateStatus != "new" && t.Old != nil && t.New != nil && !reflect.DeepEqual(t.Old, t.New) {
+			return true
+		}
+	}
+	for _, v := range diff.Variables {
+		if v.StateStatus != "new" && v.Old != nil && v.New != nil && !reflect.DeepEqual(v.Old, v.New) {
+			return true
+		}
+	}
+	return false
+}
+
+func (c Client) printSummary(summary api.TemplateSummaryResources, params *Params) error {
+	if c.PrintAsJSON {
+		return c.PrintJSON(struct {
+			StackID string `json:"stackID"`
+			Summary api.TemplateSummaryResources
+		}{
+			StackID: params.StackId,
+			Summary: summary,
+		})
+	}
+
+	newPrinter := func(title string, headers []string) *template.TablePrinter {
+		return template.NewTablePrinter(c.StdIO, params.RenderTableColors, params.RenderTableBorders).
+			Title(title).
+			SetHeaders(append([]string{"Package Name", "ID", "Resource Name"}, headers...)...)
+	}
+
+	if labels := summary.Labels; len(labels) > 0 {
+		printer := newPrinter("LABELS", []string{"Description", "Color"})
+		for _, l := range labels {
+			id := influxid.ID(l.Id).String()
+			var desc string
+			if l.Properties.Description != nil {
+				desc = *l.Properties.Description
+			}
+			printer.Append([]string{l.TemplateMetaName, id, l.Name, desc, l.Properties.Color})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if buckets := summary.Buckets; len(buckets) > 0 {
+		printer := newPrinter("BUCKETS", []string{"Retention", "Description", "Schema Type"})
+		for _, b := range buckets {
+			id := influxid.ID(b.Id).String()
+			var desc string
+			if b.Description != nil {
+				desc = *b.Description
+			}
+			rp := "inf"
+			if b.RetentionPeriod != 0 {
+				rp = time.Duration(b.RetentionPeriod).String()
+			}
+			schemaType := api.SCHEMATYPE_IMPLICIT
+			if b.SchemaType != nil {
+				schemaType = *b.SchemaType
+			}
+			printer.Append([]string{b.TemplateMetaName, id, b.Name, rp, desc, schemaType.String()})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if checks := summary.Checks; len(checks) > 0 {
+		printer := newPrinter("CHECKS", []string{"Description"})
+		for _, c := range checks {
+			id := influxid.ID(c.Id).String()
+			var desc string
+			if c.Description != nil {
+				desc = *c.Description
+			}
+			printer.Append([]string{c.TemplateMetaName, id, c.Name, desc})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if dashboards := summary.Dashboards; len(dashboards) > 0 {
+		printer := newPrinter("DASHBOARDS", []string{"Description"})
+		for _, d := range dashboards {
+			id := influxid.ID(d.Id).String()
+			var desc string
+			if d.Description != nil {
+				desc = *d.Description
+			}
+			printer.Append([]string{d.TemplateMetaName, id, d.Name, desc})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if endpoints := summary.NotificationEndpoints; len(endpoints) > 0 {
+		printer := newPrinter("NOTIFICATION ENDPOINTS", []string{"Description", "Status"})
+		for _, e := range endpoints {
+			id := influxid.ID(e.Id).String()
+			var desc string
+			if e.Description != nil {
+				desc = *e.Description
+			}
+			printer.Append([]string{e.TemplateMetaName, id, e.Name, desc, e.Status})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if rules := summary.NotificationRules; len(rules) > 0 {
+		printer := newPrinter("NOTIFICATION RULES", []string{"Description", "Every", "Offset", "Endpoint Name", "Endpoint ID", "Endpoint Type"})
+		for _, r := range rules {
+			id := influxid.ID(r.Id).String()
+			eid := influxid.ID(r.EndpointID).String()
+			var desc string
+			if r.Description != nil {
+				desc = *r.Description
+			}
+			printer.Append([]string{r.TemplateMetaName, id, r.Name, desc, r.Every, r.Offset, r.EndpointTemplateMetaName, eid, r.EndpointType})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if tasks := summary.Tasks; len(tasks) > 0 {
+		printer := newPrinter("TASKS", []string{"Description", "Cycle"})
+		for _, t := range tasks {
+			id := influxid.ID(t.Id).String()
+			var desc string
+			if t.Description != nil {
+				desc = *t.Description
+			}
+			var timing string
+			if t.Cron != nil {
+				timing = *t.Cron
+			} else {
+				offset := time.Duration(0).String()
+				if t.Offset != nil {
+					offset = *t.Offset
+				}
+				// If `cron` isn't set, `every` must be set
+				timing = fmt.Sprintf("every: %s offset: %s", *t.Every, offset)
+			}
+			printer.Append([]string{t.TemplateMetaName, id, t.Name, desc, timing})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if teles := summary.TelegrafConfigs; len(teles) > 0 {
+		printer := newPrinter("TELEGRAF CONFIGS", []string{"Description"})
+		for _, t := range teles {
+			var desc string
+			if t.TelegrafConfig.Description != nil {
+				desc = *t.TelegrafConfig.Description
+			}
+			printer.Append([]string{t.TemplateMetaName, t.TelegrafConfig.Id, t.TelegrafConfig.Name, desc})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if vars := summary.Variables; len(vars) > 0 {
+		printer := newPrinter("VARIABLES", []string{"Description", "Arg Type", "Arg Values"})
+		for _, v := range vars {
+			id := influxid.ID(v.Id).String()
+			var desc string
+			if v.Description != nil {
+				desc = *v.Description
+			}
+			var argType string
+			if v.Arguments != nil {
+				argType = v.Arguments.Type
+			}
+			printer.Append([]string{v.TemplateMetaName, id, v.Name, desc, argType, sprintVarArgs(v.Arguments)})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if mappings := summary.LabelMappings; len(mappings) > 0 {
+		printer := template.NewTablePrinter(c.StdIO, params.RenderTableColors, params.RenderTableBorders).
+			Title("LABEL ASSOCIATIONS").
+			SetHeaders("Resource Type", "Resource Name", "Resource ID", "Label Name", "Label ID")
+		for _, m := range mappings {
+			rid := influxid.ID(m.ResourceID).String()
+			lid := influxid.ID(m.LabelID).String()
+			printer.Append([]string{m.ResourceType, m.ResourceName, rid, m.LabelName, lid})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if secrets := summary.MissingSecrets; len(secrets) > 0 {
+		printer := template.NewTablePrinter(c.StdIO, params.RenderTableColors, params.RenderTableBorders).
+			Title("MISSING SECRETS").
+			SetHeaders("Secret Key")
+		for _, sk := range secrets {
+			printer.Append([]string{sk})
+		}
+		printer.Render()
+		_, _ = c.StdIO.Write([]byte("\n"))
+	}
+
+	if params.StackId != "" {
+		_, _ = c.StdIO.Write([]byte(fmt.Sprintf("Stack ID: %s\n", params.StackId)))
+	}
+
+	return nil
+}

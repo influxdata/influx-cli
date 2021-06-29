@@ -50,6 +50,7 @@ var app = cli.App{
 		newSecretCommand(),
 		newV1SubCommand(),
 		newAuthCommand(),
+		newApplyCmd(),
 	},
 	Before: withContext(),
 }

@@ -180,7 +180,7 @@ func SourceFromReader(r io.Reader, encoding TemplateEncoding) TemplateSource {
 	}
 }
 
-func (s TemplateSource) Read(ctx context.Context) ([]api.TemplateEntry, error) {
+func (s TemplateSource) Read(ctx context.Context) (api.TemplateApplyTemplate, error) {
 	var entries []api.TemplateEntry
 	if err := func() error {
 		in, err := s.Open(ctx)
@@ -210,8 +210,11 @@ func (s TemplateSource) Read(ctx context.Context) ([]api.TemplateEntry, error) {
 		}
 		return err
 	}(); err != nil {
-		return nil, fmt.Errorf("failed to read template(s) from %q: %w", s.Name, err)
+		return api.TemplateApplyTemplate{}, fmt.Errorf("failed to read template(s) from %q: %w", s.Name, err)
 	}
 
-	return entries, nil
+	return api.TemplateApplyTemplate{
+		Sources:  []string{s.Name},
+		Contents: entries,
+	}, nil
 }
