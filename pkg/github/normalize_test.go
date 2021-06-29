@@ -25,7 +25,7 @@ func TestNormalize(t *testing.T) {
 		{
 			name: "github URL with extensions",
 			in: url.URL{Host: "github.com", Path: "/influxdata/community-templates/blob/master/github/github.yml"},
-			exts: []string{"yaml", "yml", "jsonnet", "json"},
+			exts: []string{".yaml", ".yml", ".jsonnet", ".json"},
 			out: url.URL{Host: "raw.githubusercontent.com", Path: "/influxdata/community-templates/master/github/github.yml"},
 		},
 		{
@@ -36,7 +36,7 @@ func TestNormalize(t *testing.T) {
 		{
 			name: "github URL - wrong extension",
 			in:   url.URL{Host: "github.com", Path: "/influxdata/influxdb/blob/master/flags.yml"},
-			exts: []string{"json"},
+			exts: []string{".json"},
 			out:  url.URL{Host: "github.com", Path: "/influxdata/influxdb/blob/master/flags.yml"},
 		},
 	}
