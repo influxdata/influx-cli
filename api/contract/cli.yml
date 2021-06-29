@@ -79,6 +79,10 @@ paths:
     $ref: "./overrides/paths/templates_export.yml"
   /templates/apply:
     $ref: "./overrides/paths/templates_apply.yml"
+  /stacks:
+    $ref: "./overrides/paths/stacks.yml"
+  /stacks/{stack_id}:
+    $ref: "./overrides/paths/stacks_stack_id.yml"
   /dbrps:
     $ref: "./openapi/src/common/paths/dbrps.yml"
   "/dbrps/{dbrpID}":
@@ -371,6 +375,22 @@ components:
       $ref: "./overrides/schemas/TemplateSummaryDiffVariable.yml"
     TemplateSummaryDiffVariableFields:
       $ref: "./overrides/schemas/TemplateSummaryDiffVariableFields.yml"
+    Stacks:
+      $ref: "./overrides/schemas/Stacks.yml"
+    Stack:
+      $ref: "./overrides/schemas/Stack.yml"
+    StackEvent:
+      $ref: "./overrides/schemas/StackEvent.yml"
+    StackEventResource:
+      $ref: "./overrides/schemas/StackEventResource.yml"
+    StackEventResourceAssociation:
+      $ref: "./overrides/schemas/StackEventResourceAssociation.yml"
+    StackPostRequest:
+      $ref: "./overrides/schemas/StackPostRequest.yml"
+    StackPatchRequest:
+      $ref: "./overrides/schemas/StackPatchRequest.yml"
+    StackPatchRequestResource:
+      $ref: "./overrides/schemas/StackPatchRequestResource.yml"
     SecretKeysResponse:
       $ref: "./openapi/src/common/schemas/SecretKeysResponse.yml"
     SecretKeys:

@@ -1,0 +1,60 @@
+get:
+  operationId: ListStacks
+  tags:
+    - Stacks
+  summary: List all installed InfluxDB templates
+  parameters:
+    - in: query
+      name: orgID
+      required: true
+      schema:
+        type: string
+      description: The organization id of the stacks
+    - in: query
+      name: name
+      schema:
+        type: string
+      description: A collection of names to filter the list by.
+    - in: query
+      name: stackID
+      schema:
+        type: string
+      description: A collection of stackIDs to filter the list by.
+  responses:
+    "200":
+      description: Influx stacks found
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Stacks.yml"
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "../../openapi/src/common/schemas/Error.yml"
+post:
+  operationId: CreateStack
+  tags:
+    - Stacks
+  summary: Create a new stack
+  requestBody:
+    description: Stack to create.
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/StackPostRequest.yml"
+  responses:
+    "201":
+      description: InfluxDB Stack created
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Stack.yml"
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "../../openapi/src/common/schemas/Error.yml"

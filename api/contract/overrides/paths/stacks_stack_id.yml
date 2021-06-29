@@ -1,0 +1,84 @@
+get:
+  operationId: ReadStack
+  tags:
+    - Stacks
+  summary: Retrieve a stack
+  parameters:
+    - in: path
+      name: stack_id
+      required: true
+      schema:
+        type: string
+      description: Theidentifier of the stack.
+  responses:
+    "200":
+      description: The InfluxDB stack
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Stack.yml"
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "../../openapi/src/common/schemas/Error.yml"
+patch:
+  operationId: UpdateStack
+  tags:
+    - Stacks
+  summary: Update an InfluxDB Stack
+  parameters:
+    - in: path
+      name: stack_id
+      required: true
+      schema:
+        type: string
+      description: Theidentifier of the stack.
+  requestBody:
+    description: Influx stack to update.
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/StackPatchRequest.yml"
+  responses:
+    "200":
+      description: Influx stack updated
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Stack.yml"
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "../../openapi/src/common/schemas/Error.yml"
+delete:
+  operationId: DeleteStack
+  tags:
+    - Stacks
+  summary: Delete a stack and associated resources
+  parameters:
+    - in: path
+      name: stack_id
+      required: true
+      schema:
+        type: string
+      description: Theidentifier of the stack.
+    - in: query
+      name: orgID
+      required: true
+      schema:
+        type: string
+      description: The identifier of the organization.
+  responses:
+    "204":
+      description: The stack and its associated resources are deleted
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "../../openapi/src/common/schemas/Error.yml"

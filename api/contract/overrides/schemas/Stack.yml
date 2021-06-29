@@ -1,0 +1,14 @@
+type: object
+properties:
+  id:
+    type: string
+  orgID:
+    type: string
+  createdAt:
+    type: string
+    format: date-time
+  events:
+    type: array
+    items:
+      $ref: "./StackEvent.yml"
+required: [id, orgID, createdAt, events]

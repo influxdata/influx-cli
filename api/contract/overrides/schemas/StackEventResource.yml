@@ -1,0 +1,20 @@
+type: object
+properties:
+  apiVersion:
+    type: string
+  resourceID:
+    type: string
+  kind:
+    type: string
+  templateMetaName:
+    type: string
+  associations:
+    type: array
+    items:
+      $ref: "./StackEventResourceAssociation.yml"
+  links:
+    type: object
+    properties:
+      self:
+        type: string
+required: [apiVersion, resourceID, kind, templateMetaName, associations]

@@ -1,0 +1,7 @@
+type: object
+properties:
+  stacks:
+    type: array
+    items:
+      $ref: "./Stack.yml"
+required: [stacks]

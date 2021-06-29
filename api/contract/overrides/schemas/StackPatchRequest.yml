@@ -1,0 +1,15 @@
+type: object
+properties:
+  name:
+    type: string
+  description:
+    type: string
+  templateURLs:
+    type: array
+    items:
+      type: string
+  additionalResources:
+    type: array
+    items:
+      $ref: "./StackPatchRequestResource.yml"
+required: [templateURLs, additionalResources]
