@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/influxdata/influx-cli/v2/clients/export"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
+	"github.com/influxdata/influx-cli/v2/pkg/template"
 	"github.com/mattn/go-isatty"
 	"github.com/urfave/cli"
 )
@@ -205,7 +205,8 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 				},
 			}
 
-			outParams, closer, err := parseOutParams(params.out)
+			cli := getCLI(ctx)
+			outParams, closer, err := template.ParseOutParams(params.out, cli.StdIO)
 			if closer != nil {
 				defer closer()
 			}
@@ -241,7 +242,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 			}
 
 			client := export.Client{
-				CLI:          getCLI(ctx),
+				CLI:          cli,
 				TemplatesApi: getAPI(ctx).TemplatesApi,
 			}
 			return client.Export(getContext(ctx), &parsedParams)
@@ -338,7 +339,8 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 				}
 			}
 
-			outParams, closer, err := parseOutParams(params.out)
+			cli := getCLI(ctx)
+			outParams, closer, err := template.ParseOutParams(params.out, cli.StdIO)
 			if closer != nil {
 				defer closer()
 			}
@@ -349,7 +351,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 
 			apiClient := getAPI(ctx)
 			client := export.Client{
-				CLI:              getCLI(ctx),
+				CLI:              cli,
 				TemplatesApi:     apiClient.TemplatesApi,
 				OrganizationsApi: apiClient.OrganizationsApi,
 			}
@@ -396,7 +398,8 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/stack/
 				StackId: ctx.Args().Get(0),
 			}
 
-			outParams, closer, err := parseOutParams(params.out)
+			cli := getCLI(ctx)
+			outParams, closer, err := template.ParseOutParams(params.out, cli.StdIO)
 			if closer != nil {
 				defer closer()
 			}
@@ -407,7 +410,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/stack/
 
 			apiClient := getAPI(ctx)
 			client := export.Client{
-				CLI:              getCLI(ctx),
+				CLI:              cli,
 				TemplatesApi:     apiClient.TemplatesApi,
 				OrganizationsApi: apiClient.OrganizationsApi,
 			}
@@ -421,24 +424,4 @@ func splitNonEmpty(s string) []string {
 		return nil
 	}
 	return strings.Split(s, ",")
-}
-
-func parseOutParams(outPath string) (export.OutParams, func(), error) {
-	if outPath == "" {
-		return export.OutParams{Out: os.Stdout, Encoding: export.YamlEncoding}, nil, nil
-	}
-
-	f, err := os.OpenFile(outPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		return export.OutParams{}, nil, fmt.Errorf("failed to open output path %q: %w", outPath, err)
-	}
-	params := export.OutParams{Out: f}
-	switch filepath.Ext(outPath) {
-	case ".json":
-		params.Encoding = export.JsonEncoding
-	default:
-		params.Encoding = export.YamlEncoding
-	}
-
-	return params, func() { _ = f.Close() }, nil
 }
