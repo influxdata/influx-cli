@@ -43,7 +43,7 @@ type StacksApi interface {
 	/*
 	 * DeleteStack Delete a stack and associated resources
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param stackId Theidentifier of the stack.
+	 * @param stackId The identifier of the stack.
 	 * @return ApiDeleteStackRequest
 	 */
 	DeleteStack(ctx _context.Context, stackId string) ApiDeleteStackRequest
@@ -69,7 +69,7 @@ type StacksApi interface {
 	/*
 	 * ReadStack Retrieve a stack
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param stackId Theidentifier of the stack.
+	 * @param stackId The identifier of the stack.
 	 * @return ApiReadStackRequest
 	 */
 	ReadStack(ctx _context.Context, stackId string) ApiReadStackRequest
@@ -83,7 +83,7 @@ type StacksApi interface {
 	/*
 	 * UpdateStack Update an InfluxDB Stack
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param stackId Theidentifier of the stack.
+	 * @param stackId The identifier of the stack.
 	 * @return ApiUpdateStackRequest
 	 */
 	UpdateStack(ctx _context.Context, stackId string) ApiUpdateStackRequest
@@ -230,11 +230,11 @@ func (a *StacksApiService) CreateStackExecute(r ApiCreateStackRequest) (Stack, e
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
@@ -290,7 +290,7 @@ func (r ApiDeleteStackRequest) Execute() error {
 /*
  * DeleteStack Delete a stack and associated resources
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param stackId Theidentifier of the stack.
+ * @param stackId The identifier of the stack.
  * @return ApiDeleteStackRequest
  */
 func (a *StacksApiService) DeleteStack(ctx _context.Context, stackId string) ApiDeleteStackRequest {
@@ -381,11 +381,11 @@ func (a *StacksApiService) DeleteStackExecute(r ApiDeleteStackRequest) error {
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return newErr
 		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 
@@ -543,11 +543,11 @@ func (a *StacksApiService) ListStacksExecute(r ApiListStacksRequest) (Stacks, er
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
@@ -594,7 +594,7 @@ func (r ApiReadStackRequest) Execute() (Stack, error) {
 /*
  * ReadStack Retrieve a stack
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param stackId Theidentifier of the stack.
+ * @param stackId The identifier of the stack.
  * @return ApiReadStackRequest
  */
 func (a *StacksApiService) ReadStack(ctx _context.Context, stackId string) ApiReadStackRequest {
@@ -683,11 +683,11 @@ func (a *StacksApiService) ReadStackExecute(r ApiReadStackRequest) (Stack, error
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
@@ -743,7 +743,7 @@ func (r ApiUpdateStackRequest) Execute() (Stack, error) {
 /*
  * UpdateStack Update an InfluxDB Stack
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param stackId Theidentifier of the stack.
+ * @param stackId The identifier of the stack.
  * @return ApiUpdateStackRequest
  */
 func (a *StacksApiService) UpdateStack(ctx _context.Context, stackId string) ApiUpdateStackRequest {
@@ -837,11 +837,11 @@ func (a *StacksApiService) UpdateStackExecute(r ApiUpdateStackRequest) (Stack, e
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return localVarReturnValue, newErr
 	}
 
