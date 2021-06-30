@@ -6,6 +6,7 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
+	"github.com/influxdata/influx-cli/v2/pkg/template"
 )
 
 type Client struct {
@@ -15,7 +16,7 @@ type Client struct {
 }
 
 type Params struct {
-	OutParams
+	template.OutParams
 	StackId string
 
 	IdsPerType   map[string][]string
@@ -52,14 +53,14 @@ func (c Client) Export(ctx context.Context, params *Params) error {
 	if err != nil {
 		return fmt.Errorf("failed to export template: %w", err)
 	}
-	if err := params.OutParams.writeTemplate(tmpl); err != nil {
+	if err := params.OutParams.WriteTemplate(tmpl); err != nil {
 		return fmt.Errorf("failed to write exported template: %w", err)
 	}
 	return nil
 }
 
 type AllParams struct {
-	OutParams
+	template.OutParams
 
 	OrgId   string
 	OrgName string
@@ -105,14 +106,14 @@ func (c Client) ExportAll(ctx context.Context, params *AllParams) error {
 	if err != nil {
 		return fmt.Errorf("failed to export template: %w", err)
 	}
-	if err := params.OutParams.writeTemplate(tmpl); err != nil {
+	if err := params.OutParams.WriteTemplate(tmpl); err != nil {
 		return fmt.Errorf("failed to write exported template: %w", err)
 	}
 	return nil
 }
 
 type StackParams struct {
-	OutParams
+	template.OutParams
 	StackId string
 }
 
@@ -127,7 +128,7 @@ func (c Client) ExportStack(ctx context.Context, params *StackParams) error {
 	if err != nil {
 		return fmt.Errorf("failed to export stack %q: %w", params.StackId, err)
 	}
-	if err := params.OutParams.writeTemplate(tmpl); err != nil {
+	if err := params.OutParams.WriteTemplate(tmpl); err != nil {
 		return fmt.Errorf("failed to write exported template: %w", err)
 	}
 
