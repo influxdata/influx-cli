@@ -268,9 +268,6 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/stacks/update/
 
 			rawResources := ctx.StringSlice("addResource")
 			for _, res := range rawResources {
-				if res == "" {
-					continue
-				}
 				pieces := strings.Split(res, "=")
 				if len(pieces) != 2 {
 					return fmt.Errorf("invalid resource specification %q, must have format `KIND=ID`", res)

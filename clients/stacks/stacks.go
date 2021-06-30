@@ -193,8 +193,8 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 		return nil
 	}
 
-	if !c.StdIO.GetConfirm(`Your stack now differs from your template. Applying an outdated template will revert
-these updates. Export a new template with these updates to prevent accidental changes?`) {
+	if !c.StdIO.GetConfirm(`Your stack now differs from your template. Applying an outdated template will revert these updates.
+Export a new template with these updates to prevent accidental changes?`) {
 		return nil
 	}
 
