@@ -9,7 +9,7 @@ get:
       required: true
       schema:
         type: string
-      description: Theidentifier of the stack.
+      description: The identifier of the stack.
   responses:
     "200":
       description: The InfluxDB stack
@@ -34,7 +34,7 @@ patch:
       required: true
       schema:
         type: string
-      description: Theidentifier of the stack.
+      description: The identifier of the stack.
   requestBody:
     description: Influx stack to update.
     required: true
@@ -66,7 +66,7 @@ delete:
       required: true
       schema:
         type: string
-      description: Theidentifier of the stack.
+      description: The identifier of the stack.
     - in: query
       name: orgID
       required: true
