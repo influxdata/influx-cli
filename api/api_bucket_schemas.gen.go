@@ -248,16 +248,16 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
-			v.SetMessage(errorPrefix)
+			v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 			newErr.model = &v
 		}
 		return localVarReturnValue, newErr
@@ -426,7 +426,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		return localVarReturnValue, newErr
 	}
@@ -594,16 +594,16 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
-			v.SetMessage(errorPrefix)
+			v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 			newErr.model = &v
 		}
 		return localVarReturnValue, newErr
@@ -783,16 +783,16 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 				return localVarReturnValue, newErr
 			}
-			v.SetMessage(errorPrefix)
+			v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 			newErr.model = &v
 		}
 		return localVarReturnValue, newErr

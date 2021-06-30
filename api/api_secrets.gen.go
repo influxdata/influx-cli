@@ -207,15 +207,15 @@ func (a *SecretsApiService) GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(errorPrefix)
+		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -371,15 +371,15 @@ func (a *SecretsApiService) PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsReq
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 			return newErr
 		}
-		v.SetMessage(errorPrefix)
+		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 		newErr.model = &v
 		return newErr
 	}
@@ -516,15 +516,15 @@ func (a *SecretsApiService) PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsReque
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 			return newErr
 		}
-		v.SetMessage(errorPrefix)
+		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 		newErr.model = &v
 		return newErr
 	}

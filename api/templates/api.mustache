@@ -391,7 +391,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 				newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 				return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 			}
-			v.SetMessage(errorPrefix)
+			v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 			newErr.model = &v
 			{{^-last}}
 			return {{#returnType}}localVarReturnValue, {{/returnType}}newErr

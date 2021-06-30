@@ -245,15 +245,15 @@ func (a *UsersApiService) DeleteUsersIDExecute(r ApiDeleteUsersIDRequest) error 
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 			return newErr
 		}
-		v.SetMessage(errorPrefix)
+		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 		newErr.model = &v
 		return newErr
 	}
@@ -426,15 +426,15 @@ func (a *UsersApiService) GetUsersExecute(r ApiGetUsersRequest) (Users, error) {
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(errorPrefix)
+		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -578,15 +578,15 @@ func (a *UsersApiService) GetUsersIDExecute(r ApiGetUsersIDRequest) (UserRespons
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(errorPrefix)
+		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -744,15 +744,15 @@ func (a *UsersApiService) PatchUsersIDExecute(r ApiPatchUsersIDRequest) (UserRes
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(errorPrefix)
+		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -898,15 +898,15 @@ func (a *UsersApiService) PostUsersExecute(r ApiPostUsersRequest) (UserResponse,
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(errorPrefix)
+		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -1062,15 +1062,15 @@ func (a *UsersApiService) PostUsersIDPasswordExecute(r ApiPostUsersIDPasswordReq
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
 			return newErr
 		}
-		v.SetMessage(errorPrefix)
+		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
 		newErr.model = &v
 		return newErr
 	}
