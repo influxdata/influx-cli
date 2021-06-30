@@ -1,0 +1,24 @@
+type: object
+properties:
+  eventType:
+    type: string
+  name:
+    type: string
+  description:
+    type: string
+  sources:
+    type: array
+    items:
+      type: string
+  resources:
+    type: array
+    items:
+      $ref: "./StackEventResource.yml"
+  urls:
+    type: array
+    items:
+      type: string
+  updatedAt:
+    type: string
+    format: date-time
+required: [eventType, name, sources, resources, urls, updatedAt]
