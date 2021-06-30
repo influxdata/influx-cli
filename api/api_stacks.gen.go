@@ -16,6 +16,7 @@ import (
 	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
+	"reflect"
 	"strings"
 )
 
@@ -395,8 +396,8 @@ type ApiListStacksRequest struct {
 	ctx        _context.Context
 	ApiService StacksApi
 	orgID      *string
-	name       *string
-	stackID    *string
+	name       *[]string
+	stackID    *[]string
 }
 
 func (r ApiListStacksRequest) OrgID(orgID string) ApiListStacksRequest {
@@ -407,19 +408,19 @@ func (r ApiListStacksRequest) GetOrgID() *string {
 	return r.orgID
 }
 
-func (r ApiListStacksRequest) Name(name string) ApiListStacksRequest {
+func (r ApiListStacksRequest) Name(name []string) ApiListStacksRequest {
 	r.name = &name
 	return r
 }
-func (r ApiListStacksRequest) GetName() *string {
+func (r ApiListStacksRequest) GetName() *[]string {
 	return r.name
 }
 
-func (r ApiListStacksRequest) StackID(stackID string) ApiListStacksRequest {
+func (r ApiListStacksRequest) StackID(stackID []string) ApiListStacksRequest {
 	r.stackID = &stackID
 	return r
 }
-func (r ApiListStacksRequest) GetStackID() *string {
+func (r ApiListStacksRequest) GetStackID() *[]string {
 	return r.stackID
 }
 
@@ -469,10 +470,26 @@ func (a *StacksApiService) ListStacksExecute(r ApiListStacksRequest) (Stacks, er
 
 	localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
 	if r.name != nil {
-		localVarQueryParams.Add("name", parameterToString(*r.name, ""))
+		t := *r.name
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				localVarQueryParams.Add("name", parameterToString(s.Index(i), "multi"))
+			}
+		} else {
+			localVarQueryParams.Add("name", parameterToString(t, "multi"))
+		}
 	}
 	if r.stackID != nil {
-		localVarQueryParams.Add("stackID", parameterToString(*r.stackID, ""))
+		t := *r.stackID
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				localVarQueryParams.Add("stackID", parameterToString(s.Index(i), "multi"))
+			}
+		} else {
+			localVarQueryParams.Add("stackID", parameterToString(t, "multi"))
+		}
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}

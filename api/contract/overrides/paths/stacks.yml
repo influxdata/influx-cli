@@ -13,12 +13,16 @@ get:
     - in: query
       name: name
       schema:
-        type: string
+        type: array
+        items:
+          type: string
       description: A collection of names to filter the list by.
     - in: query
       name: stackID
       schema:
-        type: string
+        type: array
+        items:
+          type: string
       description: A collection of stackIDs to filter the list by.
   responses:
     "200":
