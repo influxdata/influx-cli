@@ -23,7 +23,7 @@ type OutParams struct {
 	Encoding OutEncoding
 }
 
-func ParseOutParams(path string, fallback io.Writer) (OutParams, func(), error){
+func ParseOutParams(path string, fallback io.Writer) (OutParams, func(), error) {
 	if path == "" {
 		return OutParams{Out: fallback, Encoding: YamlEncoding}, nil, nil
 	}
