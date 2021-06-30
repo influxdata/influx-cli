@@ -208,67 +208,67 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 
 	var errorPrefix string
 	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
+		errorPrefix = "InfluxDB OSS-only command failed"
 	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
+		errorPrefix = "InfluxDB Cloud-only command failed"
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return _fmt.Errorf("%s: %w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return _fmt.Errorf("%s: %w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
 				return newErr
 			}
+			v.SetMessage(errorPrefix)
 			newErr.model = &v
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
 				return newErr
 			}
+			v.SetMessage(errorPrefix)
 			newErr.model = &v
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
 				return newErr
 			}
+			v.SetMessage(errorPrefix)
 			newErr.model = &v
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			return newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
 			return newErr
 		}
+		v.SetMessage(errorPrefix)
 		newErr.model = &v
-		newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 		return newErr
 	}
 

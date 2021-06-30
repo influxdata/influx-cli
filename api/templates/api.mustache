@@ -358,25 +358,25 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 
 	var errorPrefix string
 	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
+		errorPrefix = "InfluxDB OSS-only command failed"
 	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
+		errorPrefix = "InfluxDB Cloud-only command failed"
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
+			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s: %w", errorPrefix, err)
 		}
 		localVarBody, err := _ioutil.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
+			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s: %w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		{{#responses}}
 		{{#dataType}}
@@ -388,11 +388,11 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 			var v {{{dataType}}}
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s%v", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %v", errorPrefix, err.Error())
 				return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 			}
+			v.SetMessage(errorPrefix)
 			newErr.model = &v
-			newErr.error = _fmt.Sprintf("%s%v", errorPrefix, v.Error())
 			{{^-last}}
 			return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 			{{/-last}}
@@ -414,18 +414,18 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
+		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s: %w", errorPrefix, err)
 	}
 	localVarBody, err := _ioutil.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
+		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s: %w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, err.Error()),
 		}
 		return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
 	}
