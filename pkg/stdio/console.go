@@ -7,6 +7,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/terminal"
+	"github.com/mattn/go-isatty"
 )
 
 // terminalStdio interacts with the user via an interactive terminal.
@@ -53,6 +54,10 @@ func (t *terminalStdio) Error(message string) error {
 	r.WithStdio(terminal.Stdio{In: t.Stdin, Out: t.Stdout, Err: t.Stderr})
 	cfg := survey.PromptConfig{Icons: survey.IconSet{Error: survey.Icon{Text: "X", Format: "red"}}}
 	return r.Error(&cfg, errors.New(message))
+}
+
+func (t *terminalStdio) InputIsInteractive() bool {
+	return isatty.IsTerminal(t.Stdin.Fd()) || isatty.IsCygwinTerminal(t.Stdin.Fd())
 }
 
 // GetStringInput prompts the user for arbitrary input.

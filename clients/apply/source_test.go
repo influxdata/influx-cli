@@ -377,7 +377,7 @@ spec:
 				"name": "test",
 				"retentionRules": []interface{}{
 					map[string]interface{}{
-						"type":         "expire",
+						"type": "expire",
 					},
 				},
 			},
@@ -389,7 +389,7 @@ spec:
 				"name": "test2",
 				"retentionRules": []interface{}{
 					map[string]interface{}{
-						"type":         "expire",
+						"type": "expire",
 					},
 				},
 			},
@@ -424,10 +424,13 @@ spec:
 			t.Parallel()
 
 			source := apply.SourceFromReader(strings.NewReader(tc.data), tc.encoding)
-			tmpls, err := source.Read(context.Background())
+			tmpl, err := source.Read(context.Background())
 			require.NoError(t, err)
-
-			require.Equal(t, parsed, tmpls)
+			expected := api.TemplateApplyTemplate{
+				Sources:     []string{source.Name},
+				Contents:    parsed,
+			}
+			require.Equal(t, expected, tmpl)
 		})
 	}
 }
