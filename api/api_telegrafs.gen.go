@@ -232,15 +232,15 @@ func (a *TelegrafsApiService) DeleteTelegrafsIDExecute(r ApiDeleteTelegrafsIDReq
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return newErr
 	}
@@ -365,15 +365,15 @@ func (a *TelegrafsApiService) GetTelegrafsExecute(r ApiGetTelegrafsRequest) (Tel
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -529,15 +529,15 @@ func (a *TelegrafsApiService) GetTelegrafsIDExecute(r ApiGetTelegrafsIDRequest) 
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -683,15 +683,15 @@ func (a *TelegrafsApiService) PostTelegrafsExecute(r ApiPostTelegrafsRequest) (T
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -849,15 +849,15 @@ func (a *TelegrafsApiService) PutTelegrafsIDExecute(r ApiPutTelegrafsIDRequest) 
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}

@@ -182,15 +182,15 @@ func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (T
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -321,15 +321,15 @@ func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) 
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}

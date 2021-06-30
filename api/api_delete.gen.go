@@ -226,16 +226,16 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 				return newErr
 			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
 			return newErr
 		}
@@ -243,10 +243,10 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 				return newErr
 			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
 			return newErr
 		}
@@ -254,20 +254,20 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 				return newErr
 			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
 			return newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return newErr
 	}

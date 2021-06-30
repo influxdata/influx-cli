@@ -274,26 +274,26 @@ func (a *OrganizationsApiService) DeleteOrgsIDExecute(r ApiDeleteOrgsIDRequest) 
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 				return newErr
 			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
 			return newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return newErr
 	}
@@ -428,15 +428,15 @@ func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsID
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return newErr
 	}
@@ -621,15 +621,15 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -773,15 +773,15 @@ func (a *OrganizationsApiService) GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organ
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -925,26 +925,26 @@ func (a *OrganizationsApiService) GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersR
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 				return localVarReturnValue, newErr
 			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
 			return localVarReturnValue, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -1102,15 +1102,15 @@ func (a *OrganizationsApiService) PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (O
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -1256,15 +1256,15 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -1422,15 +1422,15 @@ func (a *OrganizationsApiService) PostOrgsIDMembersExecute(r ApiPostOrgsIDMember
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}

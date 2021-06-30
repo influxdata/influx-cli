@@ -337,15 +337,15 @@ func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error 
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return newErr
 	}
@@ -480,15 +480,15 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDReq
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return newErr
 	}
@@ -685,15 +685,15 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -837,15 +837,15 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -989,15 +989,15 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -1189,15 +1189,15 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -1353,15 +1353,15 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -1517,15 +1517,15 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -1684,15 +1684,15 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -1838,15 +1838,15 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -2001,15 +2001,15 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
@@ -2176,15 +2176,15 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
-			error: _fmt.Sprintf("%s: code %s", errorPrefix, localVarHTTPResponse.Status),
+			error: _fmt.Sprintf("%s: %s", errorPrefix, localVarHTTPResponse.Status),
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", errorPrefix, err.Error())
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
 			return localVarReturnValue, newErr
 		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", errorPrefix, v.GetMessage()))
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
 		return localVarReturnValue, newErr
 	}
