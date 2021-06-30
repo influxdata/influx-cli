@@ -9,6 +9,7 @@ type StdIO interface {
 	WriteErr(p []byte) (n int, err error)
 	Banner(message string) error
 	Error(message string) error
+	InputIsInteractive() bool
 	GetStringInput(prompt, defaultValue string) (string, error)
 	GetSecret(prompt string, minLen int) (string, error)
 	GetPassword(prompt string) (string, error)
