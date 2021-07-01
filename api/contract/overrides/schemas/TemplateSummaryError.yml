@@ -12,4 +12,5 @@ properties:
     type: array
     items:
       type: integer
+    x-go-field-type: '[]*int'
 required: [kind, reason, fields, indexes]

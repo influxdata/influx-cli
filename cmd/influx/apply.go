@@ -9,6 +9,7 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/clients/apply"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
+	"github.com/influxdata/influx-cli/v2/pkg/template"
 	"github.com/mattn/go-isatty"
 	"github.com/urfave/cli"
 )
@@ -21,7 +22,7 @@ func newApplyCmd() cli.Command {
 		inPaths        cli.StringSlice
 		inUrls         cli.StringSlice
 		recursive      bool
-		encoding       apply.TemplateEncoding
+		encoding       template.Encoding
 		noColor        bool
 		noTableBorders bool
 		quiet          bool
@@ -192,9 +193,9 @@ https://github.com/influxdata/community-templates.
 						log.Println("WARN: Passing URLs via -f/--file is deprecated, please use -u/--template-url instead")
 						deprecationShown = true
 					}
-					parsedParams.Sources = append(parsedParams.Sources, apply.SourceFromURL(u, params.encoding))
+					parsedParams.Sources = append(parsedParams.Sources, template.SourceFromURL(u, params.encoding))
 				} else {
-					fileSources, err := apply.SourcesFromPath(in, params.recursive, params.encoding)
+					fileSources, err := template.SourcesFromPath(in, params.recursive, params.encoding)
 					if err != nil {
 						return err
 					}
@@ -206,10 +207,10 @@ https://github.com/influxdata/community-templates.
 				if err != nil {
 					return fmt.Errorf("failed to parse input URL %q: %w", in, err)
 				}
-				parsedParams.Sources = append(parsedParams.Sources, apply.SourceFromURL(u, params.encoding))
+				parsedParams.Sources = append(parsedParams.Sources, template.SourceFromURL(u, params.encoding))
 			}
 			if !isatty.IsTerminal(os.Stdin.Fd()) {
-				parsedParams.Sources = append(parsedParams.Sources, apply.SourceFromReader(os.Stdin, params.encoding))
+				parsedParams.Sources = append(parsedParams.Sources, template.SourceFromReader(os.Stdin, params.encoding))
 			}
 
 			// Parse env and secret values.

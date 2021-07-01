@@ -1,4 +1,4 @@
-package apply_test
+package template_test
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"testing"
 
 	"github.com/influxdata/influx-cli/v2/api"
-	"github.com/influxdata/influx-cli/v2/clients/apply"
+	"github.com/influxdata/influx-cli/v2/pkg/template"
 	"github.com/stretchr/testify/require"
 )
 
@@ -22,14 +22,14 @@ func TestSourcesFromPath(t *testing.T) {
 
 	type contents struct {
 		name     string
-		encoding apply.TemplateEncoding
+		encoding template.Encoding
 		contents string
 	}
 	testCases := []struct {
 		name       string
 		setup      func(t *testing.T, rootDir string)
 		inPath     func(rootDir string) string
-		inEncoding apply.TemplateEncoding
+		inEncoding template.Encoding
 		recursive  bool
 		expected   func(rootDir string) []contents
 	}{
@@ -44,7 +44,7 @@ func TestSourcesFromPath(t *testing.T) {
 			expected: func(string) []contents {
 				return []contents{{
 					name:     "foo.json",
-					encoding: apply.TemplateEncodingJson,
+					encoding: template.EncodingJson,
 					contents: "foo",
 				}}
 			},
@@ -60,7 +60,7 @@ func TestSourcesFromPath(t *testing.T) {
 			expected: func(string) []contents {
 				return []contents{{
 					name:     "foo.yaml",
-					encoding: apply.TemplateEncodingYaml,
+					encoding: template.EncodingYaml,
 					contents: "foo",
 				}}
 			},
@@ -76,7 +76,7 @@ func TestSourcesFromPath(t *testing.T) {
 			expected: func(string) []contents {
 				return []contents{{
 					name:     "foo.yml",
-					encoding: apply.TemplateEncodingYaml,
+					encoding: template.EncodingYaml,
 					contents: "foo",
 				}}
 			},
@@ -92,7 +92,7 @@ func TestSourcesFromPath(t *testing.T) {
 			expected: func(string) []contents {
 				return []contents{{
 					name:     "foo.jsonnet",
-					encoding: apply.TemplateEncodingJsonnet,
+					encoding: template.EncodingJsonnet,
 					contents: "foo",
 				}}
 			},
@@ -102,14 +102,14 @@ func TestSourcesFromPath(t *testing.T) {
 			setup: func(t *testing.T, rootDir string) {
 				require.NoError(t, os.WriteFile(filepath.Join(rootDir, "foo"), []byte("foo"), os.ModePerm))
 			},
-			inEncoding: apply.TemplateEncodingJson,
+			inEncoding: template.EncodingJson,
 			inPath: func(rootDir string) string {
 				return filepath.Join(rootDir, "foo")
 			},
 			expected: func(string) []contents {
 				return []contents{{
 					name:     "foo",
-					encoding: apply.TemplateEncodingJson,
+					encoding: template.EncodingJson,
 					contents: "foo",
 				}}
 			},
@@ -131,12 +131,12 @@ func TestSourcesFromPath(t *testing.T) {
 					{
 						name:     filepath.Join(rootDir, "foo.json"),
 						contents: "foo.json",
-						encoding: apply.TemplateEncodingJson,
+						encoding: template.EncodingJson,
 					},
 					{
 						name:     filepath.Join(rootDir, "foo.yml"),
 						contents: "foo.yml",
-						encoding: apply.TemplateEncodingYaml,
+						encoding: template.EncodingYaml,
 					},
 				}
 			},
@@ -159,22 +159,22 @@ func TestSourcesFromPath(t *testing.T) {
 					{
 						name:     filepath.Join(rootDir, "foo.json"),
 						contents: "foo.json",
-						encoding: apply.TemplateEncodingJson,
+						encoding: template.EncodingJson,
 					},
 					{
 						name:     filepath.Join(rootDir, "foo.yml"),
 						contents: "foo.yml",
-						encoding: apply.TemplateEncodingYaml,
+						encoding: template.EncodingYaml,
 					},
 					{
 						name:     filepath.Join(rootDir, "bar", "foo.yaml"),
 						contents: "foo.yaml",
-						encoding: apply.TemplateEncodingYaml,
+						encoding: template.EncodingYaml,
 					},
 					{
 						name:     filepath.Join(rootDir, "bar", "foo.jsonnet"),
 						contents: "foo.jsonnet",
-						encoding: apply.TemplateEncodingJsonnet,
+						encoding: template.EncodingJsonnet,
 					},
 				}
 			},
@@ -191,7 +191,7 @@ func TestSourcesFromPath(t *testing.T) {
 			defer os.RemoveAll(tmp)
 			tc.setup(t, tmp)
 
-			sources, err := apply.SourcesFromPath(tc.inPath(tmp), tc.recursive, tc.inEncoding)
+			sources, err := template.SourcesFromPath(tc.inPath(tmp), tc.recursive, tc.inEncoding)
 			require.NoError(t, err)
 			expected := tc.expected(tmp)
 			require.Len(t, sources, len(expected))
@@ -225,8 +225,8 @@ func TestSourceFromURL(t *testing.T) {
 	testCases := []struct {
 		name           string
 		filename       string
-		inEncoding     apply.TemplateEncoding
-		expectEncoding apply.TemplateEncoding
+		inEncoding     template.Encoding
+		expectEncoding template.Encoding
 		resStatus      int
 		resBody        string
 		expectErr      bool
@@ -234,43 +234,43 @@ func TestSourceFromURL(t *testing.T) {
 		{
 			name:           "JSON file",
 			filename:       "foo.json",
-			expectEncoding: apply.TemplateEncodingJson,
+			expectEncoding: template.EncodingJson,
 			resStatus:      200,
 			resBody:        "Foo bar",
 		},
 		{
 			name:           "YAML file",
 			filename:       "foo.yaml",
-			expectEncoding: apply.TemplateEncodingYaml,
+			expectEncoding: template.EncodingYaml,
 			resStatus:      200,
 			resBody:        "Foo bar",
 		},
 		{
 			name:           "YML file",
 			filename:       "foo.yml",
-			expectEncoding: apply.TemplateEncodingYaml,
+			expectEncoding: template.EncodingYaml,
 			resStatus:      200,
 			resBody:        "Foo bar",
 		},
 		{
 			name:           "JSONNET file",
 			filename:       "foo.jsonnet",
-			expectEncoding: apply.TemplateEncodingJsonnet,
+			expectEncoding: template.EncodingJsonnet,
 			resStatus:      200,
 			resBody:        "Foo bar",
 		},
 		{
 			name:           "explicit encoding",
 			filename:       "foo",
-			inEncoding:     apply.TemplateEncodingJson,
-			expectEncoding: apply.TemplateEncodingJson,
+			inEncoding:     template.EncodingJson,
+			expectEncoding: template.EncodingJson,
 			resStatus:      200,
 			resBody:        "Foo bar",
 		},
 		{
 			name:           "err response",
 			filename:       "foo.json",
-			expectEncoding: apply.TemplateEncodingJson,
+			expectEncoding: template.EncodingJson,
 			resStatus:      403,
 			resBody:        "OH NO",
 			expectErr:      true,
@@ -292,7 +292,7 @@ func TestSourceFromURL(t *testing.T) {
 			require.NoError(t, err)
 			u.Path = tc.filename
 
-			source := apply.SourceFromURL(u, tc.inEncoding)
+			source := template.SourceFromURL(u, tc.inEncoding)
 			in, err := source.Open(context.Background())
 			if tc.expectErr {
 				require.Error(t, err)
@@ -398,22 +398,22 @@ spec:
 
 	testCases := []struct {
 		name     string
-		encoding apply.TemplateEncoding
+		encoding template.Encoding
 		data     string
 	}{
 		{
 			name:     "JSON",
-			encoding: apply.TemplateEncodingJson,
+			encoding: template.EncodingJson,
 			data:     jsonTemplate,
 		},
 		{
 			name:     "YAML",
-			encoding: apply.TemplateEncodingYaml,
+			encoding: template.EncodingYaml,
 			data:     yamlTemplate,
 		},
 		{
 			name:     "JSONNET",
-			encoding: apply.TemplateEncodingJsonnet,
+			encoding: template.EncodingJsonnet,
 			data:     jsonnetTemplate,
 		},
 	}
@@ -423,7 +423,7 @@ spec:
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			source := apply.SourceFromReader(strings.NewReader(tc.data), tc.encoding)
+			source := template.SourceFromReader(strings.NewReader(tc.data), tc.encoding)
 			tmpl, err := source.Read(context.Background())
 			require.NoError(t, err)
 			expected := api.TemplateApplyTemplate{
