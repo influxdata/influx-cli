@@ -29,6 +29,12 @@ post:
         application/json:
           schema:
             $ref: "../schemas/TemplateSummary.yml"
+    "422":
+      description: Template failed validation
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/TemplateSummary.yml"
     default:
       description: Unexpected error
       content:

@@ -89,3 +89,47 @@ func (o *LineProtocolLengthError) ErrorCode() ErrorCode {
 		return ERRORCODE_INVALID
 	}
 }
+
+func (o *TemplateSummary) Error() string {
+	if len(o.Errors) == 0 {
+		panic("error-less template summary used as an error!")
+	}
+
+	var errMsg []string
+	seenErrs := map[string]struct{}{}
+	for _, e := range o.Errors {
+		fieldPairs := make([]string, 0, len(e.Fields))
+		for i, idx := range e.Indexes {
+			field := e.Fields[i]
+			if idx == nil || *idx == -1 {
+				fieldPairs = append(fieldPairs, field)
+				continue
+			}
+			fieldPairs = append(fieldPairs, fmt.Sprintf("%s[%d]", field, *idx))
+		}
+		msg := fmt.Sprintf("kind=%s field=%s reason=%q", e.Kind, strings.Join(fieldPairs, "."), e.Reason)
+		if _, ok := seenErrs[msg]; ok {
+			continue
+		}
+		seenErrs[msg] = struct{}{}
+		errMsg = append(errMsg, msg)
+	}
+
+	return strings.Join(errMsg, "\n\t")
+}
+
+func (o *TemplateSummary) ErrorCode() ErrorCode {
+	if len(o.Errors) == 0 {
+		panic("error-less template summary used as an error!")
+	}
+
+	return ERRORCODE_UNPROCESSABLE_ENTITY
+}
+
+func (o *TemplateSummary) SetMessage(string) {
+	// Placeholder to satisfy interface
+}
+
+func (o TemplateSummary) GetMessage() string {
+	return o.Error()
+}

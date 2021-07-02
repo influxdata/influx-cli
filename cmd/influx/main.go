@@ -52,6 +52,7 @@ var app = cli.App{
 		newAuthCommand(),
 		newApplyCmd(),
 		newStacksCmd(),
+		newTemplateCmd(),
 	},
 	Before: withContext(),
 }

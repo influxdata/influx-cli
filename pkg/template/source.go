@@ -1,4 +1,4 @@
-package apply
+package template
 
 import (
 	"context"
@@ -18,75 +18,75 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type TemplateEncoding int
+type Encoding int
 
 const (
-	TemplateEncodingUnknown TemplateEncoding = iota
-	TemplateEncodingJson
-	TemplateEncodingJsonnet
-	TemplateEncodingYaml
+	EncodingUnknown Encoding = iota
+	EncodingJson
+	EncodingJsonnet
+	EncodingYaml
 )
 
-func (e *TemplateEncoding) Set(v string) error {
+func (e *Encoding) Set(v string) error {
 	switch v {
 	case "jsonnet":
-		*e = TemplateEncodingJsonnet
+		*e = EncodingJsonnet
 	case "json":
-		*e = TemplateEncodingJson
+		*e = EncodingJson
 	case "yml", "yaml":
-		*e = TemplateEncodingYaml
+		*e = EncodingYaml
 	default:
 		return fmt.Errorf("unknown inEncoding %q", v)
 	}
 	return nil
 }
 
-func (e TemplateEncoding) String() string {
+func (e Encoding) String() string {
 	switch e {
-	case TemplateEncodingJsonnet:
+	case EncodingJsonnet:
 		return "jsonnet"
-	case TemplateEncodingJson:
+	case EncodingJson:
 		return "json"
-	case TemplateEncodingYaml:
+	case EncodingYaml:
 		return "yaml"
-	case TemplateEncodingUnknown:
+	case EncodingUnknown:
 		fallthrough
 	default:
 		return "unknown"
 	}
 }
 
-type TemplateSource struct {
+type Source struct {
 	Name     string
-	Encoding TemplateEncoding
+	Encoding Encoding
 	Open     func(context.Context) (io.ReadCloser, error)
 }
 
-func SourcesFromPath(path string, recur bool, encoding TemplateEncoding) ([]TemplateSource, error) {
+func SourcesFromPath(path string, recur bool, encoding Encoding) ([]Source, error) {
 	paths, err := findPaths(path, recur)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find inputs at path %q: %w", path, err)
 	}
 
-	sources := make([]TemplateSource, len(paths))
+	sources := make([]Source, len(paths))
 	for i := range paths {
 		path := paths[i] // Local var for the `Open` closure to capture.
 		encoding := encoding
-		if encoding == TemplateEncodingUnknown {
+		if encoding == EncodingUnknown {
 			switch filepath.Ext(path) {
 			case ".jsonnet":
-				encoding = TemplateEncodingJsonnet
+				encoding = EncodingJsonnet
 			case ".json":
-				encoding = TemplateEncodingJson
+				encoding = EncodingJson
 			case ".yml":
 				fallthrough
 			case ".yaml":
-				encoding = TemplateEncodingYaml
+				encoding = EncodingYaml
 			default:
 			}
 		}
 
-		sources[i] = TemplateSource{
+		sources[i] = Source{
 			Name:     path,
 			Encoding: encoding,
 			Open: func(context.Context) (io.ReadCloser, error) {
@@ -127,24 +127,24 @@ func findPaths(path string, recur bool) ([]string, error) {
 	return paths, nil
 }
 
-func SourceFromURL(u *url.URL, encoding TemplateEncoding) TemplateSource {
-	if encoding == TemplateEncodingUnknown {
+func SourceFromURL(u *url.URL, encoding Encoding) Source {
+	if encoding == EncodingUnknown {
 		switch path.Ext(u.Path) {
 		case ".jsonnet":
-			encoding = TemplateEncodingJsonnet
+			encoding = EncodingJsonnet
 		case ".json":
-			encoding = TemplateEncodingJson
+			encoding = EncodingJson
 		case ".yml":
 			fallthrough
 		case ".yaml":
-			encoding = TemplateEncodingYaml
+			encoding = EncodingYaml
 		default:
 		}
 	}
 
 	normalized := github.NormalizeURLToContent(u, ".yaml", ".yml", ".jsonnet", ".json").String()
 
-	return TemplateSource{
+	return Source{
 		Name:     normalized,
 		Encoding: encoding,
 		Open: func(ctx context.Context) (io.ReadCloser, error) {
@@ -170,8 +170,8 @@ func SourceFromURL(u *url.URL, encoding TemplateEncoding) TemplateSource {
 	}
 }
 
-func SourceFromReader(r io.Reader, encoding TemplateEncoding) TemplateSource {
-	return TemplateSource{
+func SourceFromReader(r io.Reader, encoding Encoding) Source {
+	return Source{
 		Name:     "byte stream",
 		Encoding: encoding,
 		Open: func(context.Context) (io.ReadCloser, error) {
@@ -180,7 +180,21 @@ func SourceFromReader(r io.Reader, encoding TemplateEncoding) TemplateSource {
 	}
 }
 
-func (s TemplateSource) Read(ctx context.Context) (api.TemplateApplyTemplate, error) {
+func ReadSources(ctx context.Context, sources []Source) ([]api.TemplateApplyTemplate, error) {
+	templates := make([]api.TemplateApplyTemplate, 0, len(sources))
+	for _, source := range sources {
+		tmpl, err := source.Read(ctx)
+		if err != nil {
+			return nil, err
+		}
+		// We always send the templates as JSON.
+		tmpl.ContentType = "json"
+		templates = append(templates, tmpl)
+	}
+	return templates, nil
+}
+
+func (s Source) Read(ctx context.Context) (api.TemplateApplyTemplate, error) {
 	var entries []api.TemplateEntry
 	if err := func() error {
 		in, err := s.Open(ctx)
@@ -190,13 +204,13 @@ func (s TemplateSource) Read(ctx context.Context) (api.TemplateApplyTemplate, er
 		defer in.Close()
 
 		switch s.Encoding {
-		case TemplateEncodingJsonnet:
+		case EncodingJsonnet:
 			err = jsonnet.NewDecoder(in).Decode(&entries)
-		case TemplateEncodingJson:
+		case EncodingJson:
 			err = json.NewDecoder(in).Decode(&entries)
-		case TemplateEncodingUnknown:
+		case EncodingUnknown:
 			fallthrough // Assume YAML if we can't make a better guess
-		case TemplateEncodingYaml:
+		case EncodingYaml:
 			dec := yaml.NewDecoder(in)
 			for {
 				var e api.TemplateEntry

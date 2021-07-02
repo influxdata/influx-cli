@@ -19,14 +19,14 @@ type TemplateSummaryError struct {
 	Kind    string   `json:"kind" yaml:"kind"`
 	Reason  string   `json:"reason" yaml:"reason"`
 	Fields  []string `json:"fields" yaml:"fields"`
-	Indexes []int32  `json:"indexes" yaml:"indexes"`
+	Indexes []*int   `json:"indexes" yaml:"indexes"`
 }
 
 // NewTemplateSummaryError instantiates a new TemplateSummaryError object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummaryError(kind string, reason string, fields []string, indexes []int32) *TemplateSummaryError {
+func NewTemplateSummaryError(kind string, reason string, fields []string, indexes []*int) *TemplateSummaryError {
 	this := TemplateSummaryError{}
 	this.Kind = kind
 	this.Reason = reason
@@ -116,9 +116,9 @@ func (o *TemplateSummaryError) SetFields(v []string) {
 }
 
 // GetIndexes returns the Indexes field value
-func (o *TemplateSummaryError) GetIndexes() []int32 {
+func (o *TemplateSummaryError) GetIndexes() []*int {
 	if o == nil {
-		var ret []int32
+		var ret []*int
 		return ret
 	}
 
@@ -127,7 +127,7 @@ func (o *TemplateSummaryError) GetIndexes() []int32 {
 
 // GetIndexesOk returns a tuple with the Indexes field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummaryError) GetIndexesOk() (*[]int32, bool) {
+func (o *TemplateSummaryError) GetIndexesOk() (*[]*int, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -135,7 +135,7 @@ func (o *TemplateSummaryError) GetIndexesOk() (*[]int32, bool) {
 }
 
 // SetIndexes sets field value
-func (o *TemplateSummaryError) SetIndexes(v []int32) {
+func (o *TemplateSummaryError) SetIndexes(v []*int) {
 	o.Indexes = v
 }
 
