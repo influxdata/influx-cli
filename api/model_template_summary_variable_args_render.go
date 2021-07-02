@@ -3,10 +3,11 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 )
 
-func (args *TemplateSummaryVariableArgs) String() string {
+func (args *TemplateSummaryVariableArgs) Render() string {
 	if args == nil {
 		return "<nil>"
 	}
@@ -14,13 +15,15 @@ func (args *TemplateSummaryVariableArgs) String() string {
 	case "map":
 		b, err := json.Marshal(args.Values)
 		if err != nil {
-			return "{}"
+			log.Printf("WARN: failed to parse map-variable args: expected JSON, got %v\n", args.Values)
+			return "<parsing err>"
 		}
 		return string(b)
 	case "constant":
 		values, ok := args.Values.([]interface{})
 		if !ok {
-			return "[]"
+			log.Printf("WARN: failed to parse constant-variable args: expected array, got %v\n", args.Values)
+			return "<parsing err>"
 		}
 		var out []string
 		for _, v := range values {
@@ -30,18 +33,21 @@ func (args *TemplateSummaryVariableArgs) String() string {
 	case "query":
 		values, ok := args.Values.(map[string]interface{})
 		if !ok {
-			return ""
+			log.Printf("WARN: failed to parse query-variable args: expected JSON object, got %v\n", args.Values)
+			return "<parsing err>"
 		}
 		qVal, ok := values["query"]
 		if !ok {
-			return ""
+			log.Printf("WARN: failed to parse query-variable args: no 'query' key in %v\n", values)
+			return "<parsing err>"
 		}
 		lVal, ok := values["language"]
 		if !ok {
-			return ""
+			log.Printf("WARN: failed to parse query-variable args: no 'language' key in %v\n", values)
+			return "<parsing err>"
 		}
 		return fmt.Sprintf("language=%q query=%q", lVal, qVal)
 	default:
 	}
-	return "unknown variable argument"
+	return "<unknown variable type>"
 }

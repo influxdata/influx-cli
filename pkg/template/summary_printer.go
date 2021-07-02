@@ -9,8 +9,13 @@ import (
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 )
 
+// PrintSummary renders high-level info about a template as a table for display on the console.
+//
+// NOTE: The implementation here is very "static" in that it's hard-coded to look for specific
+// resource-kinds and fields within those kinds. If the API changes to add more kinds / more fields,
+// this function won't automatically pick them up & print them. It'd be nice to rework this to be
+// less opinionated / more resilient to extension in the future...
 func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor bool, useBorders bool) error {
-
 	newPrinter := func(title string, headers []string) *TablePrinter {
 		return NewTablePrinter(out, useColor, useBorders).
 			Title(title).
@@ -160,7 +165,7 @@ func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor 
 			if v.Arguments != nil {
 				argType = v.Arguments.Type
 			}
-			printer.Append([]string{v.TemplateMetaName, id, v.Name, desc, argType, v.Arguments.String()})
+			printer.Append([]string{v.TemplateMetaName, id, v.Name, desc, argType, v.Arguments.Render()})
 		}
 		printer.Render()
 		_, _ = out.Write([]byte("\n"))

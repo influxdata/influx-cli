@@ -385,7 +385,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if vf.Args != nil {
 				argType = vf.Args.Type
 			}
-			return []string{metaName, id, vf.Name, desc, argType, vf.Args.String()}
+			return []string{metaName, id, vf.Name, desc, argType, vf.Args.Render()}
 		}
 		for _, v := range vars {
 			var oldRow, newRow []string
