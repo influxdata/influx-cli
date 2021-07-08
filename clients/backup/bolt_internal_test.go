@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/influxdata/influx-cli/v2/api"
@@ -15,6 +16,10 @@ const testFile = "testdata/test.bolt.gz"
 
 func TestExtractManifest(t *testing.T) {
 	t.Parallel()
+
+	if runtime.GOOS == "windows" {
+		t.Skip("skipping test on Windows: https://github.com/etcd-io/bbolt/issues/252")
+	}
 
 	// Extract our example input into a format the bbolt client can use.
 	boltIn, err := os.Open(testFile)
