@@ -28,6 +28,20 @@ var (
 type RestoreApi interface {
 
 	/*
+	 * PostRestoreBucketID Overwrite storage metadata for a bucket with shard info from a backup.
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param bucketID The bucket ID.
+	 * @return ApiPostRestoreBucketIDRequest
+	 */
+	PostRestoreBucketID(ctx _context.Context, bucketID string) ApiPostRestoreBucketIDRequest
+
+	/*
+	 * PostRestoreBucketIDExecute executes the request
+	 * @return string
+	 */
+	PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDRequest) (string, error)
+
+	/*
 	 * PostRestoreBucketMetadata Create a new bucket pre-seeded with shard info from a backup.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiPostRestoreBucketMetadataRequest
@@ -99,6 +113,184 @@ func (a *RestoreApiService) OnlyOSS() RestoreApi {
 func (a *RestoreApiService) OnlyCloud() RestoreApi {
 	a.isOnlyCloud = true
 	return a
+}
+
+type ApiPostRestoreBucketIDRequest struct {
+	ctx          _context.Context
+	ApiService   RestoreApi
+	bucketID     string
+	body         []byte
+	zapTraceSpan *string
+	contentType  *string
+}
+
+func (r ApiPostRestoreBucketIDRequest) BucketID(bucketID string) ApiPostRestoreBucketIDRequest {
+	r.bucketID = bucketID
+	return r
+}
+func (r ApiPostRestoreBucketIDRequest) GetBucketID() string {
+	return r.bucketID
+}
+
+func (r ApiPostRestoreBucketIDRequest) Body(body []byte) ApiPostRestoreBucketIDRequest {
+	r.body = body
+	return r
+}
+func (r ApiPostRestoreBucketIDRequest) GetBody() []byte {
+	return r.body
+}
+
+func (r ApiPostRestoreBucketIDRequest) ZapTraceSpan(zapTraceSpan string) ApiPostRestoreBucketIDRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiPostRestoreBucketIDRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiPostRestoreBucketIDRequest) ContentType(contentType string) ApiPostRestoreBucketIDRequest {
+	r.contentType = &contentType
+	return r
+}
+func (r ApiPostRestoreBucketIDRequest) GetContentType() *string {
+	return r.contentType
+}
+
+func (r ApiPostRestoreBucketIDRequest) Execute() (string, error) {
+	return r.ApiService.PostRestoreBucketIDExecute(r)
+}
+
+/*
+ * PostRestoreBucketID Overwrite storage metadata for a bucket with shard info from a backup.
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param bucketID The bucket ID.
+ * @return ApiPostRestoreBucketIDRequest
+ */
+func (a *RestoreApiService) PostRestoreBucketID(ctx _context.Context, bucketID string) ApiPostRestoreBucketIDRequest {
+	return ApiPostRestoreBucketIDRequest{
+		ApiService: a,
+		ctx:        ctx,
+		bucketID:   bucketID,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return string
+ */
+func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDRequest) (string, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodPost
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  string
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RestoreApiService.PostRestoreBucketID")
+	if err != nil {
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/restore/bucket/{bucketID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+	if r.body == nil {
+		return localVarReturnValue, reportError("body is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"text/plain"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	if r.contentType != nil {
+		localVarHeaderParams["Content-Type"] = parameterToString(*r.contentType, "")
+	}
+	// body params
+	localVarPostBody = r.body
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, err
+	}
+
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		}
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		}
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarReturnValue, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarReturnValue, newErr
+	}
+
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+	}
+	localVarBody, err := _ioutil.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+	}
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
+		}
+		return localVarReturnValue, newErr
+	}
+
+	return localVarReturnValue, nil
 }
 
 type ApiPostRestoreBucketMetadataRequest struct {

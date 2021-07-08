@@ -28,6 +28,19 @@ var (
 type BackupApi interface {
 
 	/*
+	 * GetBackupKV Download snapshot of metadata stored in the server's embedded KV store. Should not be used in versions > 2.1.x, as it doesn't include metadata stored in embedded SQL.
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @return ApiGetBackupKVRequest
+	 */
+	GetBackupKV(ctx _context.Context) ApiGetBackupKVRequest
+
+	/*
+	 * GetBackupKVExecute executes the request
+	 * @return *os.File
+	 */
+	GetBackupKVExecute(r ApiGetBackupKVRequest) (*_nethttp.Response, error)
+
+	/*
 	 * GetBackupMetadata Download snapshot of all metadata in the server
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetBackupMetadataRequest
@@ -76,6 +89,129 @@ func (a *BackupApiService) OnlyOSS() BackupApi {
 func (a *BackupApiService) OnlyCloud() BackupApi {
 	a.isOnlyCloud = true
 	return a
+}
+
+type ApiGetBackupKVRequest struct {
+	ctx          _context.Context
+	ApiService   BackupApi
+	zapTraceSpan *string
+}
+
+func (r ApiGetBackupKVRequest) ZapTraceSpan(zapTraceSpan string) ApiGetBackupKVRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiGetBackupKVRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiGetBackupKVRequest) Execute() (*_nethttp.Response, error) {
+	return r.ApiService.GetBackupKVExecute(r)
+}
+
+/*
+ * GetBackupKV Download snapshot of metadata stored in the server's embedded KV store. Should not be used in versions > 2.1.x, as it doesn't include metadata stored in embedded SQL.
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiGetBackupKVRequest
+ */
+func (a *BackupApiService) GetBackupKV(ctx _context.Context) ApiGetBackupKVRequest {
+	return ApiGetBackupKVRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return *os.File
+ */
+func (a *BackupApiService) GetBackupKVExecute(r ApiGetBackupKVRequest) (*_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  *_nethttp.Response
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BackupApiService.GetBackupKV")
+	if err != nil {
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/backup/kv"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/octet-stream", "application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, err
+	}
+
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		}
+		localVarBody, err := _ioutil.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		}
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarReturnValue, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarReturnValue, newErr
+	}
+
+	localVarReturnValue = localVarHTTPResponse
+
+	return localVarReturnValue, nil
 }
 
 type ApiGetBackupMetadataRequest struct {

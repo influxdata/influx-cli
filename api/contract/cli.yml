@@ -57,6 +57,8 @@ paths:
     $ref: "./openapi/src/common/paths/tasks_taskID_logs.yml"
   /tasks/{taskID}/runs/{runID}/logs:
     $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID_logs.yml"
+  /backup/kv:
+    $ref: "./openapi/src/oss/paths/backup_kv.yml"
   /backup/metadata:
     $ref: "./overrides/paths/backup_metadata.yml"
   /backup/shards/{shardID}:
@@ -65,6 +67,8 @@ paths:
     $ref: "./openapi/src/oss/paths/restore_kv.yml"
   /restore/sql:
     $ref: "./openapi/src/oss/paths/restore_sql.yml"
+  /restore/bucket/{bucketID}:
+    $ref: "./openapi/src/oss/paths/restore_bucket_bucketID.yml"
   /restore/bucket-metadata:
     $ref: "./openapi/src/oss/paths/restore_bucket-metadata.yml"
   /restore/shards/{shardID}:
