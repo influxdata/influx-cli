@@ -26,6 +26,8 @@ type Task struct {
 	Org *string `json:"org,omitempty" yaml:"org,omitempty"`
 	// The name of the task.
 	Name string `json:"name" yaml:"name"`
+	// The ID of the user who owns this Task.
+	OwnerID *string `json:"ownerID,omitempty" yaml:"ownerID,omitempty"`
 	// An optional description of the task.
 	Description *string         `json:"description,omitempty" yaml:"description,omitempty"`
 	Status      *TaskStatusType `json:"status,omitempty" yaml:"status,omitempty"`
@@ -204,6 +206,38 @@ func (o *Task) GetNameOk() (*string, bool) {
 // SetName sets field value
 func (o *Task) SetName(v string) {
 	o.Name = v
+}
+
+// GetOwnerID returns the OwnerID field value if set, zero value otherwise.
+func (o *Task) GetOwnerID() string {
+	if o == nil || o.OwnerID == nil {
+		var ret string
+		return ret
+	}
+	return *o.OwnerID
+}
+
+// GetOwnerIDOk returns a tuple with the OwnerID field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Task) GetOwnerIDOk() (*string, bool) {
+	if o == nil || o.OwnerID == nil {
+		return nil, false
+	}
+	return o.OwnerID, true
+}
+
+// HasOwnerID returns a boolean if a field has been set.
+func (o *Task) HasOwnerID() bool {
+	if o != nil && o.OwnerID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetOwnerID gets a reference to the given string and assigns it to the OwnerID field.
+func (o *Task) SetOwnerID(v string) {
+	o.OwnerID = &v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -662,6 +696,9 @@ func (o Task) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["name"] = o.Name
+	}
+	if o.OwnerID != nil {
+		toSerialize["ownerID"] = o.OwnerID
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description

@@ -36,6 +36,35 @@ func (m *MockBackupApi) EXPECT() *MockBackupApiMockRecorder {
 	return m.recorder
 }
 
+// GetBackupKV mocks base method.
+func (m *MockBackupApi) GetBackupKV(arg0 context.Context) api.ApiGetBackupKVRequest {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBackupKV", arg0)
+	ret0, _ := ret[0].(api.ApiGetBackupKVRequest)
+	return ret0
+}
+
+// GetBackupKV indicates an expected call of GetBackupKV.
+func (mr *MockBackupApiMockRecorder) GetBackupKV(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBackupKV", reflect.TypeOf((*MockBackupApi)(nil).GetBackupKV), arg0)
+}
+
+// GetBackupKVExecute mocks base method.
+func (m *MockBackupApi) GetBackupKVExecute(arg0 api.ApiGetBackupKVRequest) (*http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBackupKVExecute", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBackupKVExecute indicates an expected call of GetBackupKVExecute.
+func (mr *MockBackupApiMockRecorder) GetBackupKVExecute(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBackupKVExecute", reflect.TypeOf((*MockBackupApi)(nil).GetBackupKVExecute), arg0)
+}
+
 // GetBackupMetadata mocks base method.
 func (m *MockBackupApi) GetBackupMetadata(arg0 context.Context) api.ApiGetBackupMetadataRequest {
 	m.ctrl.T.Helper()
