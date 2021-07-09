@@ -276,6 +276,7 @@ func (c *Client) downloadMetadataLegacy(ctx context.Context, params *Params) err
 		}
 		defer tmpIn.Close()
 
+		kvName = kvName + ".gz"
 		out, err := os.Create(kvName)
 		if err != nil {
 			return err
