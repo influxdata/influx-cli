@@ -193,7 +193,7 @@ func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDR
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/restore/bucket/{bucketID}"
+	localVarPath := localBasePath + "/restore/buckets/{bucketID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

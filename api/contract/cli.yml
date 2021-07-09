@@ -67,7 +67,7 @@ paths:
     $ref: "./openapi/src/oss/paths/restore_kv.yml"
   /restore/sql:
     $ref: "./openapi/src/oss/paths/restore_sql.yml"
-  /restore/bucket/{bucketID}:
+  /restore/buckets/{bucketID}:
     $ref: "./openapi/src/oss/paths/restore_bucket_bucketID.yml"
   /restore/bucket-metadata:
     $ref: "./openapi/src/oss/paths/restore_bucket-metadata.yml"
