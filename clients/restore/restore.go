@@ -131,11 +131,15 @@ func (c Client) fullRestore(ctx context.Context, path string) error {
 		return fmt.Errorf("failed to open local KV backup at %q: %w", filepath.Join(path, c.manifest.KV.FileName), err)
 	}
 	defer kvBytes.Close()
-	sqlBytes, err := c.readFileGzipped(path, c.manifest.SQL)
-	if err != nil {
-		return fmt.Errorf("failed to open local SQL backup at %q: %w", filepath.Join(path, c.manifest.SQL.FileName), err)
+
+	var sqlBytes io.ReadCloser
+	if c.manifest.SQL != nil {
+		sqlBytes, err = c.readFileGzipped(path, *c.manifest.SQL)
+		if err != nil {
+			return fmt.Errorf("failed to open local SQL backup at %q: %w", filepath.Join(path, c.manifest.SQL.FileName), err)
+		}
+		defer sqlBytes.Close()
 	}
-	defer sqlBytes.Close()
 
 	// Upload metadata snapshots to the server.
 	log.Println("INFO: Restoring KV snapshot")
@@ -146,13 +150,17 @@ func (c Client) fullRestore(ctx context.Context, path string) error {
 		Execute(); err != nil {
 		return fmt.Errorf("failed to restore KV snapshot: %w", err)
 	}
-	log.Println("INFO: Restoring SQL snapshot")
-	if err := c.PostRestoreSQL(ctx).
-		ContentEncoding("gzip").
-		ContentType("application/octet-stream").
-		Body(sqlBytes).
-		Execute(); err != nil {
-		return fmt.Errorf("failed to restore SQL snapshot: %w", err)
+
+	// TODO: Should we have some way of wiping out any existing SQL on the server-side in the case when there is no backup?
+	if c.manifest.SQL != nil {
+		log.Println("INFO: Restoring SQL snapshot")
+		if err := c.PostRestoreSQL(ctx).
+			ContentEncoding("gzip").
+			ContentType("application/octet-stream").
+			Body(sqlBytes).
+			Execute(); err != nil {
+			return fmt.Errorf("failed to restore SQL snapshot: %w", err)
+		}
 	}
 
 	// Drill down through bucket manifests to reach shard info, and upload it.

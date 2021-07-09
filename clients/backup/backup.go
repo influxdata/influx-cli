@@ -11,6 +11,8 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/api"
@@ -20,6 +22,7 @@ import (
 
 type Client struct {
 	clients.CLI
+	api.HealthApi
 	api.BackupApi
 
 	// Local state tracked across steps in the backup process.
@@ -70,9 +73,20 @@ func (c *Client) Backup(ctx context.Context, params *Params) error {
 	}
 	c.baseName = time.Now().UTC().Format(backupFilenamePattern)
 
-	if err := c.downloadMetadata(ctx, params); err != nil {
+	// The APIs we use to back up metadata depends on the server's version.
+	legacyServer, err := c.serverIsLegacy(ctx)
+	if err != nil {
+		return err
+	}
+	backupMetadata := c.downloadMetadata
+	if legacyServer {
+		backupMetadata = c.downloadMetadataLegacy
+	}
+	if err := backupMetadata(ctx, params); err != nil {
 		return fmt.Errorf("failed to backup metadata: %w", err)
 	}
+
+	// Once metadata has been fetched, things are consistent across versions.
 	if err := c.downloadBucketData(ctx, params); err != nil {
 		return fmt.Errorf("failed to backup bucket data: %w", err)
 	}
@@ -80,6 +94,40 @@ func (c *Client) Backup(ctx context.Context, params *Params) error {
 		return fmt.Errorf("failed to write backup manifest: %w", err)
 	}
 	return nil
+}
+
+var semverRegex = regexp.MustCompile(`(\d+)\.(\d+)\.(\d+).*`)
+
+// serverIsLegacy checks if the InfluxDB server targeted by the backup is running v2.0.x,
+// which used different APIs for backups.
+func (c Client) serverIsLegacy(ctx context.Context) (bool, error) {
+	res, err := c.GetHealth(ctx).Execute()
+	if err != nil {
+		return false, fmt.Errorf("API compatibility check failed: %w", err)
+	}
+	var version string
+	if res.Version != nil {
+		version = *res.Version
+	}
+
+	matches := semverRegex.FindSubmatch([]byte(version))
+	if matches == nil {
+		// Assume non-semver versions are only reported by nightlies & dev builds, which
+		// should now support the new APIs.
+		log.Printf("WARN: Couldn't parse version %q reported by server, assuming latest backup APIs are supported", version)
+		return false, nil
+	}
+	// matches[0] is the entire matched string, capture groups start at 1.
+	majorStr, minorStr := matches[1], matches[2]
+	// Ignore the err values here because the regex-match ensures we can parse the captured
+	// groups as integers.
+	major, _ := strconv.Atoi(string(majorStr))
+	minor, _ := strconv.Atoi(string(minorStr))
+
+	if major < 2 {
+		return false, fmt.Errorf("InfluxDB v%d does not support the APIs required for backups", major)
+	}
+	return minor == 0, nil
 }
 
 // downloadMetadata downloads a snapshot of the KV store, SQL DB, and bucket
@@ -91,6 +139,7 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 	if err != nil {
 		return fmt.Errorf("failed to download metadata snapshot: %w", err)
 	}
+	defer rawResp.Body.Close()
 
 	kvName := fmt.Sprintf("%s.bolt", c.baseName)
 	sqlName := fmt.Sprintf("%s.sqlite", c.baseName)
@@ -169,7 +218,7 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 			if err != nil {
 				return fmt.Errorf("failed to save local copy of SQL backup to %q: %w", sqlName, err)
 			}
-			c.manifest.SQL = fi
+			c.manifest.SQL = &fi
 		case "buckets":
 			if err := json.NewDecoder(part).Decode(&c.bucketMetadata); err != nil {
 				return fmt.Errorf("failed to decode bucket manifest from backup: %w", err)
@@ -177,6 +226,85 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 		default:
 			return fmt.Errorf("response contained unexpected part %q", name)
 		}
+	}
+	return nil
+}
+
+// downloadMetadataLegacy downloads a snapshot of the KV store from the server, and extracts
+// a bucket manifest from the result. KV is written to a local file; the extracted manifest
+// is tracked as a slice for additional processing.
+//
+// NOTE: This should _not_ be used against an InfluxDB instance running v2.1.0 or later, as
+// it will fail to capture metadata stored in SQL.
+func (c *Client) downloadMetadataLegacy(ctx context.Context, params *Params) error {
+	log.Println("INFO: Downloading legacy KV snapshot")
+	rawResp, err := c.GetBackupKV(ctx).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to download KV snapshot: %w", err)
+	}
+	defer rawResp.Body.Close()
+
+	kvName := filepath.Join(params.Path, fmt.Sprintf("%s.bolt", c.baseName))
+	tmpKv := fmt.Sprintf("%s.tmp", kvName)
+	defer os.RemoveAll(tmpKv)
+
+	// Since we need to read the bolt DB to extract a manifest, always save it uncompressed locally.
+	if err := func() error {
+		f, err := os.Create(tmpKv)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		_, err = io.Copy(f, rawResp.Body)
+		return err
+	}(); err != nil {
+		return fmt.Errorf("failed to save downloaded KV snapshot: %w", err)
+	}
+
+	// Extract the metadata we need from the downloaded KV store, and convert it to a new-style manifest.
+	log.Println("INFO: Extracting bucket manifest from legacy KV snapshot")
+	c.bucketMetadata, err = extractBucketManifest(tmpKv)
+	if err != nil {
+		return fmt.Errorf("failed to extract bucket metadata from downloaded KV snapshot: %w", err)
+	}
+
+	// Move/compress the bolt DB into its final location.
+	if err := func() error {
+		if params.Compression == br.NoCompression {
+			return os.Rename(tmpKv, kvName)
+		}
+
+		tmpIn, err := os.Open(tmpKv)
+		if err != nil {
+			return err
+		}
+		defer tmpIn.Close()
+
+		kvName = kvName + ".gz"
+		out, err := os.Create(kvName)
+		if err != nil {
+			return err
+		}
+		defer out.Close()
+
+		gzw := gzip.NewWriter(out)
+		defer gzw.Close()
+
+		_, err = io.Copy(gzw, tmpIn)
+		return err
+	}(); err != nil {
+		return fmt.Errorf("failed to rename downloaded KV snapshot: %w", err)
+	}
+
+	fi, err := os.Stat(kvName)
+	if err != nil {
+		return fmt.Errorf("failed to inspect local KV snapshot: %w", err)
+	}
+	c.manifest.KV = br.ManifestFileEntry{
+		FileName:    fi.Name(),
+		Size:        fi.Size(),
+		Compression: params.Compression,
 	}
 	return nil
 }

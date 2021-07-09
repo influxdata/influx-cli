@@ -61,9 +61,11 @@ Examples:
 			}
 			params.Path = ctx.Args().Get(0)
 
+			api := getAPI(ctx)
 			client := backup.Client{
 				CLI:       getCLI(ctx),
-				BackupApi: getAPI(ctx).BackupApi.OnlyOSS(),
+				BackupApi: api.BackupApi.OnlyOSS(),
+				HealthApi: api.HealthApi.OnlyOSS(),
 			}
 			return client.Backup(getContext(ctx), &params)
 		},

@@ -39,7 +39,7 @@ const ManifestExtension = "manifest"
 
 type Manifest struct {
 	KV      ManifestFileEntry     `json:"kv"`
-	SQL     ManifestFileEntry     `json:"sql"`
+	SQL     *ManifestFileEntry    `json:"sql,omitempty"`
 	Buckets []ManifestBucketEntry `json:"buckets"`
 }
 
