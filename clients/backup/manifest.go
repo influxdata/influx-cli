@@ -94,12 +94,12 @@ func ConvertShard(manifest api.ShardManifest, getShard func(shardId int64) (*br.
 
 	m := br.ManifestShardEntry{
 		ID:                manifest.Id,
-		ShardOwners:       make([]br.ShardOwner, len(manifest.ShardOwners)),
+		ShardOwners:       make([]br.ShardOwnerEntry, len(manifest.ShardOwners)),
 		ManifestFileEntry: *shardFileInfo,
 	}
 
 	for i, o := range manifest.ShardOwners {
-		m.ShardOwners[i] = br.ShardOwner{
+		m.ShardOwners[i] = br.ShardOwnerEntry{
 			NodeID: o.NodeID,
 		}
 	}
