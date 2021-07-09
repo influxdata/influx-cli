@@ -11,8 +11,6 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
-	"regexp"
-	"strconv"
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/api"
@@ -74,7 +72,7 @@ func (c *Client) Backup(ctx context.Context, params *Params) error {
 	c.baseName = time.Now().UTC().Format(backupFilenamePattern)
 
 	// The APIs we use to back up metadata depends on the server's version.
-	legacyServer, err := c.serverIsLegacy(ctx)
+	legacyServer, err := br.ServerIsLegacy(ctx, c.HealthApi)
 	if err != nil {
 		return err
 	}
@@ -94,40 +92,6 @@ func (c *Client) Backup(ctx context.Context, params *Params) error {
 		return fmt.Errorf("failed to write backup manifest: %w", err)
 	}
 	return nil
-}
-
-var semverRegex = regexp.MustCompile(`(\d+)\.(\d+)\.(\d+).*`)
-
-// serverIsLegacy checks if the InfluxDB server targeted by the backup is running v2.0.x,
-// which used different APIs for backups.
-func (c Client) serverIsLegacy(ctx context.Context) (bool, error) {
-	res, err := c.GetHealth(ctx).Execute()
-	if err != nil {
-		return false, fmt.Errorf("API compatibility check failed: %w", err)
-	}
-	var version string
-	if res.Version != nil {
-		version = *res.Version
-	}
-
-	matches := semverRegex.FindSubmatch([]byte(version))
-	if matches == nil {
-		// Assume non-semver versions are only reported by nightlies & dev builds, which
-		// should now support the new APIs.
-		log.Printf("WARN: Couldn't parse version %q reported by server, assuming latest backup APIs are supported", version)
-		return false, nil
-	}
-	// matches[0] is the entire matched string, capture groups start at 1.
-	majorStr, minorStr := matches[1], matches[2]
-	// Ignore the err values here because the regex-match ensures we can parse the captured
-	// groups as integers.
-	major, _ := strconv.Atoi(string(majorStr))
-	minor, _ := strconv.Atoi(string(minorStr))
-
-	if major < 2 {
-		return false, fmt.Errorf("InfluxDB v%d does not support the APIs required for backups", major)
-	}
-	return minor == 0, nil
 }
 
 // downloadMetadata downloads a snapshot of the KV store, SQL DB, and bucket

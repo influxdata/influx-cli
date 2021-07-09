@@ -8,7 +8,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/influxdata/influx-cli/v2/api"
-	"github.com/influxdata/influx-cli/v2/clients/backup/internal"
+	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
 	"go.etcd.io/bbolt"
 )
 
@@ -160,7 +160,7 @@ func extractBucketManifest(boltPath string) ([]api.BucketMetadataManifest, error
 			return errors.New("v1 database info not found in local KV store")
 		}
 
-		var pb internal.Data
+		var pb br.Data
 		if err := proto.Unmarshal(fullMeta, &pb); err != nil {
 			return fmt.Errorf("failed to unmarshal v1 database info: %w", err)
 		}
@@ -193,7 +193,7 @@ func extractBucketManifest(boltPath string) ([]api.BucketMetadataManifest, error
 	return manifests, nil
 }
 
-func unmarshalRawDBI(rawDBI internal.DatabaseInfo) influxdbV1DatabaseInfo {
+func unmarshalRawDBI(rawDBI br.DatabaseInfo) influxdbV1DatabaseInfo {
 	dbi := influxdbV1DatabaseInfo{
 		Name:                   rawDBI.GetName(),
 		DefaultRetentionPolicy: rawDBI.GetDefaultRetentionPolicy(),
@@ -208,7 +208,7 @@ func unmarshalRawDBI(rawDBI internal.DatabaseInfo) influxdbV1DatabaseInfo {
 	return dbi
 }
 
-func unmarshalRawRPI(rawRPI internal.RetentionPolicyInfo) influxdbV1RetentionPolicyInfo {
+func unmarshalRawRPI(rawRPI br.RetentionPolicyInfo) influxdbV1RetentionPolicyInfo {
 	rpi := influxdbV1RetentionPolicyInfo{
 		Name:               rawRPI.GetName(),
 		ReplicaN:           int32(rawRPI.GetReplicaN()),
@@ -236,7 +236,7 @@ func unmarshalRawRPI(rawRPI internal.RetentionPolicyInfo) influxdbV1RetentionPol
 	return rpi
 }
 
-func unmarshalRawSGI(rawSGI internal.ShardGroupInfo) influxdbV1ShardGroupInfo {
+func unmarshalRawSGI(rawSGI br.ShardGroupInfo) influxdbV1ShardGroupInfo {
 	sgi := influxdbV1ShardGroupInfo{
 		ID:          int64(rawSGI.GetID()),
 		StartTime:   time.Unix(0, rawSGI.GetStartTime()).UTC(),
@@ -254,7 +254,7 @@ func unmarshalRawSGI(rawSGI internal.ShardGroupInfo) influxdbV1ShardGroupInfo {
 	return sgi
 }
 
-func unmarshalRawShard(rawShard internal.ShardInfo) influxdbV1ShardInfo {
+func unmarshalRawShard(rawShard br.ShardInfo) influxdbV1ShardInfo {
 	si := influxdbV1ShardInfo{
 		ID: int64(rawShard.GetID()),
 	}

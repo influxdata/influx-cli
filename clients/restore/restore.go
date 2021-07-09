@@ -10,7 +10,9 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
@@ -19,7 +21,9 @@ import (
 
 type Client struct {
 	clients.CLI
+	api.HealthApi
 	api.RestoreApi
+	api.BucketsApi
 	api.OrganizationsApi
 
 	manifest br.Manifest
@@ -72,10 +76,17 @@ func (c *Client) Restore(ctx context.Context, params *Params) error {
 	if err := c.loadManifests(params.Path); err != nil {
 		return err
 	}
-	if params.Full {
-		return c.fullRestore(ctx, params.Path)
+
+	// The APIs we use to restore data depends on the server's version.
+	legacyServer, err := br.ServerIsLegacy(ctx, c.HealthApi)
+	if err != nil {
+		return err
 	}
-	return c.partialRestore(ctx, params)
+
+	if params.Full {
+		return c.fullRestore(ctx, params.Path, legacyServer)
+	}
+	return c.partialRestore(ctx, params, legacyServer)
 }
 
 // loadManifests finds and merges all backup manifests stored in a given directory,
@@ -124,9 +135,14 @@ func (c *Client) loadManifests(path string) error {
 	return nil
 }
 
-func (c Client) fullRestore(ctx context.Context, path string) error {
+// fullRestore completely replaces all metadata and data on the server with the contents of a local backup.
+func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error {
+	if legacy && c.manifest.SQL != nil {
+		return fmt.Errorf("cannot fully restore data from %s: target server's version too old to restore SQL metadata", path)
+	}
+
 	// Make sure we can read both local metadata snapshots before
-	kvBytes, err := c.readFileGzipped(path, c.manifest.KV)
+	kvBytes, err := readFileGzipped(path, c.manifest.KV)
 	if err != nil {
 		return fmt.Errorf("failed to open local KV backup at %q: %w", filepath.Join(path, c.manifest.KV.FileName), err)
 	}
@@ -134,7 +150,7 @@ func (c Client) fullRestore(ctx context.Context, path string) error {
 
 	var sqlBytes io.ReadCloser
 	if c.manifest.SQL != nil {
-		sqlBytes, err = c.readFileGzipped(path, *c.manifest.SQL)
+		sqlBytes, err = readFileGzipped(path, *c.manifest.SQL)
 		if err != nil {
 			return fmt.Errorf("failed to open local SQL backup at %q: %w", filepath.Join(path, c.manifest.SQL.FileName), err)
 		}
@@ -168,7 +184,7 @@ func (c Client) fullRestore(ctx context.Context, path string) error {
 		for _, rp := range b.RetentionPolicies {
 			for _, sg := range rp.ShardGroups {
 				for _, s := range sg.Shards {
-					if err := c.restoreShard(ctx, path, s); err != nil {
+					if err := c.restoreShard(ctx, path, s, legacy); err != nil {
 						return err
 					}
 				}
@@ -179,7 +195,9 @@ func (c Client) fullRestore(ctx context.Context, path string) error {
 	return nil
 }
 
-func (c Client) partialRestore(ctx context.Context, params *Params) (err error) {
+// partialRestore creates a bucket (or buckets) on the target server, and seeds it with data
+// from a local backup.
+func (c Client) partialRestore(ctx context.Context, params *Params, legacy bool) (err error) {
 	orgIds := map[string]string{}
 
 	for _, bkt := range c.manifest.Buckets {
@@ -216,17 +234,13 @@ func (c Client) partialRestore(ctx context.Context, params *Params) (err error) 
 			bkt.BucketName = params.NewBucketName
 		}
 
-		log.Printf("INFO: Restoring bucket %q as %q\n", bkt.BucketID, bkt.BucketName)
-		bucketMapping, err := c.PostRestoreBucketMetadata(ctx).
-			BucketMetadataManifest(ConvertBucketManifest(bkt)).
-			Execute()
+		restoreBucket := c.restoreBucket
+		if legacy {
+			restoreBucket = c.restoreBucketLegacy
+		}
+		shardIdMap, err := restoreBucket(ctx, bkt)
 		if err != nil {
 			return fmt.Errorf("failed to restore bucket %q: %w", bkt.BucketName, err)
-		}
-
-		shardIdMap := make(map[int64]int64, len(bucketMapping.ShardMappings))
-		for _, mapping := range bucketMapping.ShardMappings {
-			shardIdMap[mapping.OldId] = mapping.NewId
 		}
 
 		for _, rp := range bkt.RetentionPolicies {
@@ -238,7 +252,7 @@ func (c Client) partialRestore(ctx context.Context, params *Params) (err error) 
 						continue
 					}
 					sh.ID = newID
-					if err := c.restoreShard(ctx, params.Path, sh); err != nil {
+					if err := c.restoreShard(ctx, params.Path, sh, legacy); err != nil {
 						return err
 					}
 				}
@@ -247,6 +261,67 @@ func (c Client) partialRestore(ctx context.Context, params *Params) (err error) 
 	}
 
 	return nil
+}
+
+// restoreBucket creates a new bucket and pre-generates a set of shards within that bucket, returning
+// a mapping between the shard IDs stored in a local backup and the new shard IDs generated on the server.
+func (c Client) restoreBucket(ctx context.Context, bkt br.ManifestBucketEntry) (map[int64]int64, error) {
+	log.Printf("INFO: Restoring bucket %q as %q\n", bkt.BucketID, bkt.BucketName)
+	bucketMapping, err := c.PostRestoreBucketMetadata(ctx).
+		BucketMetadataManifest(ConvertBucketManifest(bkt)).
+		Execute()
+	if err != nil {
+		return nil, err
+	}
+
+	shardIdMap := make(map[int64]int64, len(bucketMapping.ShardMappings))
+	for _, mapping := range bucketMapping.ShardMappings {
+		shardIdMap[mapping.OldId] = mapping.NewId
+	}
+	return shardIdMap, nil
+}
+
+// restoreBucketLegacy creates a new bucket and pre-generates a set of shards within that bucket, returning
+// a mapping between the shard IDs stored in a local backup and the new shard IDs generated on the server.
+//
+// The server-side logic to do all this was introduced in v2.1.0. To support using newer CLI versions against
+// v2.0.x of the server, we replicate the logic here via multiple API calls.
+func (c Client) restoreBucketLegacy(ctx context.Context, bkt br.ManifestBucketEntry) (map[int64]int64, error) {
+	log.Printf("INFO: Restoring bucket %q as %q using legacy APIs\n", bkt.BucketID, bkt.BucketName)
+	// Legacy APIs require creating the bucket as a separate call.
+	rps := make([]api.RetentionRule, len(bkt.RetentionPolicies))
+	for i, rp := range bkt.RetentionPolicies {
+		rps[i] = *api.NewRetentionRuleWithDefaults()
+		rps[i].EverySeconds = int64(time.Duration(rp.Duration).Seconds())
+		sgd := int64(time.Duration(rp.ShardGroupDuration).Seconds())
+		rps[i].ShardGroupDurationSeconds = &sgd
+	}
+
+	bucketReq := *api.NewPostBucketRequest(bkt.OrganizationID, bkt.BucketName, rps)
+	bucketReq.Description = bkt.Description
+
+	newBkt, err := c.PostBuckets(ctx).PostBucketRequest(bucketReq).Execute()
+	if err != nil {
+		return nil, fmt.Errorf("couldn't create bucket %q: %w", bkt.BucketName, err)
+	}
+
+	dbi := bucketToDBI(bkt)
+	dbiBytes, err := proto.Marshal(&dbi)
+	if err != nil {
+		return nil, err
+	}
+
+	shardMapJSON, err := c.PostRestoreBucketID(ctx, *newBkt.Id).Body(dbiBytes).Execute()
+	if err != nil {
+		return nil, fmt.Errorf("couldn't restore database info for %q: %w", bkt.BucketName, err)
+	}
+
+	var shardMap map[int64]int64
+	if err := json.Unmarshal([]byte(shardMapJSON), &shardMap); err != nil {
+		return nil, fmt.Errorf("couldn't parse result of restoring database info for %q: %w", bkt.BucketName, err)
+	}
+
+	return shardMap, nil
 }
 
 // restoreOrg gets the ID for the org with the given name, creating the org if it doesn't already exist.
@@ -272,9 +347,88 @@ func (c Client) restoreOrg(ctx context.Context, name string) (string, error) {
 	return *orgs.GetOrgs()[0].Id, nil
 }
 
+func bucketToDBI(b br.ManifestBucketEntry) br.DatabaseInfo {
+	dbi := br.DatabaseInfo{
+		Name:                   &b.BucketID,
+		DefaultRetentionPolicy: &b.DefaultRetentionPolicy,
+		RetentionPolicies:      make([]*br.RetentionPolicyInfo, len(b.RetentionPolicies)),
+		ContinuousQueries:      nil,
+	}
+	for i, rp := range b.RetentionPolicies {
+		converted := retentionPolicyToRPI(rp)
+		dbi.RetentionPolicies[i] = &converted
+	}
+	return dbi
+}
+
+func retentionPolicyToRPI(rp br.ManifestRetentionPolicy) br.RetentionPolicyInfo {
+	replicaN := uint32(rp.ReplicaN)
+	rpi := br.RetentionPolicyInfo{
+		Name:               &rp.Name,
+		Duration:           &rp.Duration,
+		ShardGroupDuration: &rp.ShardGroupDuration,
+		ReplicaN:           &replicaN,
+		ShardGroups:        make([]*br.ShardGroupInfo, len(rp.ShardGroups)),
+		Subscriptions:      make([]*br.SubscriptionInfo, len(rp.Subscriptions)),
+	}
+	for i, sg := range rp.ShardGroups {
+		converted := shardGroupToSGI(sg)
+		rpi.ShardGroups[i] = &converted
+	}
+	for i, s := range rp.Subscriptions {
+		converted := br.SubscriptionInfo{
+			Name:         &s.Name,
+			Mode:         &s.Mode,
+			Destinations: s.Destinations,
+		}
+		rpi.Subscriptions[i] = &converted
+	}
+	return rpi
+}
+
+func shardGroupToSGI(sg br.ManifestShardGroup) br.ShardGroupInfo {
+	id := uint64(sg.ID)
+	start := sg.StartTime.UnixNano()
+	end := sg.EndTime.UnixNano()
+	var deleted, truncated int64
+	if sg.DeletedAt != nil {
+		deleted = sg.DeletedAt.UnixNano()
+	}
+	if sg.TruncatedAt != nil {
+		truncated = sg.TruncatedAt.UnixNano()
+	}
+	sgi := br.ShardGroupInfo{
+		ID:          &id,
+		StartTime:   &start,
+		EndTime:     &end,
+		DeletedAt:   &deleted,
+		Shards:      make([]*br.ShardInfo, len(sg.Shards)),
+		TruncatedAt: &truncated,
+	}
+	for i, s := range sg.Shards {
+		converted := shardToSI(s)
+		sgi.Shards[i] = &converted
+	}
+	return sgi
+}
+
+func shardToSI(shard br.ManifestShardEntry) br.ShardInfo {
+	id := uint64(shard.ID)
+	si := br.ShardInfo{
+		ID:     &id,
+		Owners: make([]*br.ShardOwner, len(shard.ShardOwners)),
+	}
+	for i, o := range shard.ShardOwners {
+		oid := uint64(o.NodeID)
+		converted := br.ShardOwner{NodeID: &oid}
+		si.Owners[i] = &converted
+	}
+	return si
+}
+
 // readFileGzipped opens a local file and returns a reader of its contents,
 // compressed with gzip.
-func (c Client) readFileGzipped(path string, file br.ManifestFileEntry) (io.ReadCloser, error) {
+func readFileGzipped(path string, file br.ManifestFileEntry) (io.ReadCloser, error) {
 	fullPath := filepath.Join(path, file.FileName)
 	f, err := os.Open(fullPath)
 	if err != nil {
@@ -286,20 +440,47 @@ func (c Client) readFileGzipped(path string, file br.ManifestFileEntry) (io.Read
 	return gzip.NewGzipPipe(f), nil
 }
 
-func (c Client) restoreShard(ctx context.Context, path string, m br.ManifestShardEntry) error {
+// readFileGunzipped opens a local file and returns a reader of its contents,
+// gunzipping it if it is compressed.
+func readFileGunzipped(path string, file br.ManifestFileEntry) (io.ReadCloser, error) {
+	fullPath := filepath.Join(path, file.FileName)
+	f, err := os.Open(fullPath)
+	if err != nil {
+		return nil, err
+	}
+	if file.Compression == br.NoCompression {
+		return f, nil
+	}
+	reader, err := gzip.NewGunzipReadCloser(f)
+	if err != nil {
+		f.Close()
+		return nil, err
+	}
+	return reader, nil
+}
+
+// restoreShard overwrites the contents of a single shard on the server using TSM stored in a local backup.
+func (c Client) restoreShard(ctx context.Context, path string, m br.ManifestShardEntry, legacy bool) error {
+	read := readFileGzipped
+	if legacy {
+		// The legacy API didn't support gzipped uploads.
+		read = readFileGunzipped
+	}
 	// Make sure we can read the local snapshot.
-	tsmBytes, err := c.readFileGzipped(path, m.ManifestFileEntry)
+	tsmBytes, err := read(path, m.ManifestFileEntry)
 	if err != nil {
 		return fmt.Errorf("failed to open local TSM snapshot at %q: %w", filepath.Join(path, m.FileName), err)
 	}
 	defer tsmBytes.Close()
 
-	log.Printf("INFO: Restoring TSM snapshot for shard %d\n", m.ID)
-	if err := c.PostRestoreShardId(ctx, fmt.Sprintf("%d", m.ID)).
-		ContentEncoding("gzip").
+	req := c.PostRestoreShardId(ctx, fmt.Sprintf("%d", m.ID)).
 		ContentType("application/octet-stream").
-		Body(tsmBytes).
-		Execute(); err != nil {
+		Body(tsmBytes)
+	if !legacy {
+		req = req.ContentEncoding("gzip")
+	}
+	log.Printf("INFO: Restoring TSM snapshot for shard %d\n", m.ID)
+	if err := req.Execute(); err != nil {
 		return fmt.Errorf("failed to restore TSM snapshot for shard %d: %w", m.ID, err)
 	}
 	return nil

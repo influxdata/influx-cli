@@ -123,7 +123,7 @@ func TestConvertBucketManifest(t *testing.T) {
 						Shards: []br.ManifestShardEntry{
 							{
 								ID:          10,
-								ShardOwners: []br.ShardOwner{{NodeID: 1}},
+								ShardOwners: []br.ShardOwnerEntry{{NodeID: 1}},
 								ManifestFileEntry: br.ManifestFileEntry{
 									FileName:    "10.gz",
 									Size:        1000,
@@ -140,7 +140,7 @@ func TestConvertBucketManifest(t *testing.T) {
 						Shards: []br.ManifestShardEntry{
 							{
 								ID:          30,
-								ShardOwners: []br.ShardOwner{},
+								ShardOwners: []br.ShardOwnerEntry{},
 								ManifestFileEntry: br.ManifestFileEntry{
 									FileName:    "30.gz",
 									Size:        3000,

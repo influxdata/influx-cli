@@ -1,34 +1,20 @@
 package api
 
 import (
-	"compress/gzip"
 	"io"
 	"net/http"
+
+	"github.com/influxdata/influx-cli/v2/pkg/gzip"
 )
 
 func GunzipIfNeeded(resp *http.Response) (io.ReadCloser, error) {
 	if resp.Header.Get("Content-Encoding") == "gzip" {
-		gzr, err := gzip.NewReader(resp.Body)
+		reader, err := gzip.NewGunzipReadCloser(resp.Body)
 		if err != nil {
-			return resp.Body, err
+			resp.Body.Close()
+			return nil, err
 		}
-		return &gunzipReadCloser{underlying: resp.Body, gunzip: gzr}, nil
+		return reader, nil
 	}
 	return resp.Body, nil
-}
-
-type gunzipReadCloser struct {
-	underlying io.ReadCloser
-	gunzip     io.ReadCloser
-}
-
-func (gzrc *gunzipReadCloser) Read(p []byte) (int, error) {
-	return gzrc.gunzip.Read(p)
-}
-
-func (gzrc *gunzipReadCloser) Close() error {
-	if err := gzrc.gunzip.Close(); err != nil {
-		return err
-	}
-	return gzrc.underlying.Close()
 }

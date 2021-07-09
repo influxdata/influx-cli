@@ -78,12 +78,12 @@ type ManifestShardGroup struct {
 }
 
 type ManifestShardEntry struct {
-	ID          int64        `json:"id"`
-	ShardOwners []ShardOwner `json:"shardOwners"`
+	ID          int64             `json:"id"`
+	ShardOwners []ShardOwnerEntry `json:"shardOwners"`
 	ManifestFileEntry
 }
 
-type ShardOwner struct {
+type ShardOwnerEntry struct {
 	NodeID int64 `json:"nodeID"`
 }
 
