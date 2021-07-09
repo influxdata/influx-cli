@@ -231,7 +231,12 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 	return nil
 }
 
-// downloadMetadataLegacy TODO
+// downloadMetadataLegacy downloads a snapshot of the KV store from the server, and extracts
+// a bucket manifest from the result. KV is written to a local file; the extracted manifest
+// is tracked as a slice for additional processing.
+//
+// NOTE: This should _not_ be used against an InfluxDB instance running v2.1.0 or later, as
+// it will fail to capture metadata stored in SQL.
 func (c *Client) downloadMetadataLegacy(ctx context.Context, params *Params) error {
 	log.Println("INFO: Downloading legacy KV snapshot")
 	rawResp, err := c.GetBackupKV(ctx).Execute()
@@ -259,6 +264,7 @@ func (c *Client) downloadMetadataLegacy(ctx context.Context, params *Params) err
 	}
 
 	// Extract the metadata we need from the downloaded KV store, and convert it to a new-style manifest.
+	log.Println("INFO: Extracting bucket manifest from legacy KV snapshot")
 	c.bucketMetadata, err = extractBucketManifest(tmpKv)
 	if err != nil {
 		return fmt.Errorf("failed to extract bucket metadata from downloaded KV snapshot: %w", err)
