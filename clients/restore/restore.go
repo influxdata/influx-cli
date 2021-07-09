@@ -287,7 +287,7 @@ func (c Client) restoreBucket(ctx context.Context, bkt br.ManifestBucketEntry) (
 // The server-side logic to do all this was introduced in v2.1.0. To support using newer CLI versions against
 // v2.0.x of the server, we replicate the logic here via multiple API calls.
 func (c Client) restoreBucketLegacy(ctx context.Context, bkt br.ManifestBucketEntry) (map[int64]int64, error) {
-	log.Printf("INFO: Restoring buckdet %q as %q using legacy APIs\n", bkt.BucketID, bkt.BucketName)
+	log.Printf("INFO: Restoring bucket %q as %q using legacy APIs\n", bkt.BucketID, bkt.BucketName)
 	// Legacy APIs require creating the bucket as a separate call.
 	rps := make([]api.RetentionRule, len(bkt.RetentionPolicies))
 	for i, rp := range bkt.RetentionPolicies {
