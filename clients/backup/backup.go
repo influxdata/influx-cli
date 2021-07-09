@@ -139,18 +139,17 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 	if err != nil {
 		return fmt.Errorf("failed to download metadata snapshot: %w", err)
 	}
+	defer rawResp.Body.Close()
 
 	kvName := fmt.Sprintf("%s.bolt", c.baseName)
 	sqlName := fmt.Sprintf("%s.sqlite", c.baseName)
 
 	_, contentParams, err := mime.ParseMediaType(rawResp.Header.Get("Content-Type"))
 	if err != nil {
-		rawResp.Body.Close()
 		return err
 	}
 	body, err := api.GunzipIfNeeded(rawResp)
 	if err != nil {
-		rawResp.Body.Close()
 		return err
 	}
 	defer body.Close()
