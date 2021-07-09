@@ -135,7 +135,7 @@ func (c *Client) loadManifests(path string) error {
 	return nil
 }
 
-// fullRestore TODO
+// fullRestore completely replaces all metadata and data on the server with the contents of a local backup.
 func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error {
 	if legacy && c.manifest.SQL != nil {
 		return fmt.Errorf("cannot fully restore data from %s: target server's version too old to restore SQL metadata", path)
@@ -195,7 +195,8 @@ func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error
 	return nil
 }
 
-// partialRestore TODO
+// partialRestore creates a bucket (or buckets) on the target server, and seeds it with data
+// from a local backup.
 func (c Client) partialRestore(ctx context.Context, params *Params, legacy bool) (err error) {
 	orgIds := map[string]string{}
 
@@ -262,7 +263,8 @@ func (c Client) partialRestore(ctx context.Context, params *Params, legacy bool)
 	return nil
 }
 
-// restoreBucket TODO
+// restoreBucket creates a new bucket and pre-generates a set of shards within that bucket, returning
+// a mapping between the shard IDs stored in a local backup and the new shard IDs generated on the server.
 func (c Client) restoreBucket(ctx context.Context, bkt br.ManifestBucketEntry) (map[int64]int64, error) {
 	log.Printf("INFO: Restoring bucket %q as %q\n", bkt.BucketID, bkt.BucketName)
 	bucketMapping, err := c.PostRestoreBucketMetadata(ctx).
@@ -279,7 +281,11 @@ func (c Client) restoreBucket(ctx context.Context, bkt br.ManifestBucketEntry) (
 	return shardIdMap, nil
 }
 
-// restoreBucketLegacy TODO
+// restoreBucketLegacy creates a new bucket and pre-generates a set of shards within that bucket, returning
+// a mapping between the shard IDs stored in a local backup and the new shard IDs generated on the server.
+//
+// The server-side logic to do all this was introduced in v2.1.0. To support using newer CLI versions against
+// v2.0.x of the server, we replicate the logic here via multiple API calls.
 func (c Client) restoreBucketLegacy(ctx context.Context, bkt br.ManifestBucketEntry) (map[int64]int64, error) {
 	log.Printf("INFO: Restoring buckdet %q as %q using legacy APIs\n", bkt.BucketID, bkt.BucketName)
 	// Legacy APIs require creating the bucket as a separate call.
@@ -436,7 +442,7 @@ func (c Client) readFileGzipped(path string, file br.ManifestFileEntry) (io.Read
 	return gzip.NewGzipPipe(f), nil
 }
 
-// restoreShard TODO
+// restoreShard overwrites the contents of a single shard on the server using TSM stored in a local backup.
 func (c Client) restoreShard(ctx context.Context, path string, m br.ManifestShardEntry) error {
 	// Make sure we can read the local snapshot.
 	tsmBytes, err := c.readFileGzipped(path, m.ManifestFileEntry)
