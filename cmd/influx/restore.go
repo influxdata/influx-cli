@@ -87,7 +87,9 @@ Examples:
 			api := getAPI(ctx)
 			client := restore.Client{
 				CLI:              getCLI(ctx),
+				HealthApi:        api.HealthApi.OnlyOSS(),
 				RestoreApi:       api.RestoreApi.OnlyOSS(),
+				BucketsApi:       api.BucketsApi,
 				OrganizationsApi: api.OrganizationsApi,
 			}
 			return client.Restore(getContext(ctx), &params)
