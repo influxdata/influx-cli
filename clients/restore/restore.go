@@ -142,7 +142,7 @@ func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error
 	}
 
 	// Make sure we can read both local metadata snapshots before
-	kvBytes, err := c.readFileGzipped(path, c.manifest.KV)
+	kvBytes, err := readFileGzipped(path, c.manifest.KV)
 	if err != nil {
 		return fmt.Errorf("failed to open local KV backup at %q: %w", filepath.Join(path, c.manifest.KV.FileName), err)
 	}
@@ -150,7 +150,7 @@ func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error
 
 	var sqlBytes io.ReadCloser
 	if c.manifest.SQL != nil {
-		sqlBytes, err = c.readFileGzipped(path, *c.manifest.SQL)
+		sqlBytes, err = readFileGzipped(path, *c.manifest.SQL)
 		if err != nil {
 			return fmt.Errorf("failed to open local SQL backup at %q: %w", filepath.Join(path, c.manifest.SQL.FileName), err)
 		}
@@ -184,7 +184,7 @@ func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error
 		for _, rp := range b.RetentionPolicies {
 			for _, sg := range rp.ShardGroups {
 				for _, s := range sg.Shards {
-					if err := c.restoreShard(ctx, path, s); err != nil {
+					if err := c.restoreShard(ctx, path, s, legacy); err != nil {
 						return err
 					}
 				}
@@ -252,7 +252,7 @@ func (c Client) partialRestore(ctx context.Context, params *Params, legacy bool)
 						continue
 					}
 					sh.ID = newID
-					if err := c.restoreShard(ctx, params.Path, sh); err != nil {
+					if err := c.restoreShard(ctx, params.Path, sh, legacy); err != nil {
 						return err
 					}
 				}
@@ -390,22 +390,20 @@ func shardGroupToSGI(sg br.ManifestShardGroup) br.ShardGroupInfo {
 	id := uint64(sg.ID)
 	start := sg.StartTime.UnixNano()
 	end := sg.EndTime.UnixNano()
-	var deleted, truncated *int64
+	var deleted, truncated int64
 	if sg.DeletedAt != nil {
-		del := sg.DeletedAt.UnixNano()
-		deleted = &del
+		deleted = sg.DeletedAt.UnixNano()
 	}
 	if sg.TruncatedAt != nil {
-		trunc := sg.TruncatedAt.UnixNano()
-		truncated = &trunc
+		truncated = sg.TruncatedAt.UnixNano()
 	}
 	sgi := br.ShardGroupInfo{
 		ID:          &id,
 		StartTime:   &start,
 		EndTime:     &end,
-		DeletedAt:   deleted,
+		DeletedAt:   &deleted,
 		Shards:      make([]*br.ShardInfo, len(sg.Shards)),
-		TruncatedAt: truncated,
+		TruncatedAt: &truncated,
 	}
 	for i, s := range sg.Shards {
 		converted := shardToSI(s)
@@ -430,7 +428,7 @@ func shardToSI(shard br.ManifestShardEntry) br.ShardInfo {
 
 // readFileGzipped opens a local file and returns a reader of its contents,
 // compressed with gzip.
-func (c Client) readFileGzipped(path string, file br.ManifestFileEntry) (io.ReadCloser, error) {
+func readFileGzipped(path string, file br.ManifestFileEntry) (io.ReadCloser, error) {
 	fullPath := filepath.Join(path, file.FileName)
 	f, err := os.Open(fullPath)
 	if err != nil {
@@ -442,21 +440,47 @@ func (c Client) readFileGzipped(path string, file br.ManifestFileEntry) (io.Read
 	return gzip.NewGzipPipe(f), nil
 }
 
+// readFileGunzipped opens a local file and returns a reader of its contents,
+// gunzipping it if it is compressed.
+func readFileGunzipped(path string, file br.ManifestFileEntry) (io.ReadCloser, error) {
+	fullPath := filepath.Join(path, file.FileName)
+	f, err := os.Open(fullPath)
+	if err != nil {
+		return nil, err
+	}
+	if file.Compression == br.NoCompression {
+		return f, nil
+	}
+	reader, err := gzip.NewGunzipReadCloser(f)
+	if err != nil {
+		f.Close()
+		return nil, err
+	}
+	return reader, nil
+}
+
 // restoreShard overwrites the contents of a single shard on the server using TSM stored in a local backup.
-func (c Client) restoreShard(ctx context.Context, path string, m br.ManifestShardEntry) error {
+func (c Client) restoreShard(ctx context.Context, path string, m br.ManifestShardEntry, legacy bool) error {
+	read := readFileGzipped
+	if legacy {
+		// The legacy API didn't support gzipped uploads.
+		read = readFileGunzipped
+	}
 	// Make sure we can read the local snapshot.
-	tsmBytes, err := c.readFileGzipped(path, m.ManifestFileEntry)
+	tsmBytes, err := read(path, m.ManifestFileEntry)
 	if err != nil {
 		return fmt.Errorf("failed to open local TSM snapshot at %q: %w", filepath.Join(path, m.FileName), err)
 	}
 	defer tsmBytes.Close()
 
-	log.Printf("INFO: Restoring TSM snapshot for shard %d\n", m.ID)
-	if err := c.PostRestoreShardId(ctx, fmt.Sprintf("%d", m.ID)).
-		ContentEncoding("gzip").
+	req := c.PostRestoreShardId(ctx, fmt.Sprintf("%d", m.ID)).
 		ContentType("application/octet-stream").
-		Body(tsmBytes).
-		Execute(); err != nil {
+		Body(tsmBytes)
+	if !legacy {
+		req = req.ContentEncoding("gzip")
+	}
+	log.Printf("INFO: Restoring TSM snapshot for shard %d\n", m.ID)
+	if err := req.Execute(); err != nil {
 		return fmt.Errorf("failed to restore TSM snapshot for shard %d: %w", m.ID, err)
 	}
 	return nil
