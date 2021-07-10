@@ -1,4 +1,4 @@
-package backup
+package backup_restore_test
 
 import (
 	"compress/gzip"
@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/internal/backup_restore"
 	"github.com/stretchr/testify/require"
 )
 
@@ -41,7 +42,7 @@ func TestExtractManifest(t *testing.T) {
 	require.NoError(t, tmpBolt.Close())
 	require.NoError(t, err)
 
-	extracted, err := extractBucketManifest(tmpBoltPath)
+	extracted, err := backup_restore.ExtractBucketMetadata(tmpBoltPath)
 	require.NoError(t, err)
 
 	expected := []api.BucketMetadataManifest{

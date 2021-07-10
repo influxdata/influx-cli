@@ -1,4 +1,4 @@
-package backup_test
+package backup_restore_test
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/api"
-	"github.com/influxdata/influx-cli/v2/clients/backup"
 	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
 	"github.com/stretchr/testify/require"
 )
@@ -99,7 +98,7 @@ func TestConvertBucketManifest(t *testing.T) {
 		}, nil
 	}
 
-	converted, err := backup.ConvertBucketManifest(manifest, fakeGetShard)
+	converted, err := br.ConvertBucketManifest(manifest, fakeGetShard)
 	require.NoError(t, err)
 
 	expected := br.ManifestBucketEntry{
