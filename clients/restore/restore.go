@@ -110,11 +110,9 @@ func (c *Client) loadManifests(path string) error {
 			continue
 		}
 
-		var manifest br.Manifest
-		if buf, err := os.ReadFile(manifestFile); err != nil {
-			return fmt.Errorf("failed to read local manifest at %q: %w", manifestFile, err)
-		} else if err := json.Unmarshal(buf, &manifest); err != nil {
-			return fmt.Errorf("failed to parse manifest at %q: %w", manifestFile, err)
+		manifest, err := readManifest(manifestFile)
+		if err != nil {
+			return err
 		}
 
 		// Keep the latest KV and SQL overall.
