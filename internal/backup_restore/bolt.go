@@ -178,20 +178,22 @@ func convertRPI(rpi RetentionPolicyInfo) api.RetentionPolicyManifest {
 }
 
 func convertSGI(sgi ShardGroupInfo) api.ShardGroupManifest {
-	var deleted, truncated time.Time
+	var deleted, truncated *time.Time
 	if sgi.DeletedAt != nil {
-		deleted = time.Unix(0, *sgi.DeletedAt).UTC()
+		d := time.Unix(0, *sgi.DeletedAt).UTC()
+		deleted = &d
 	}
 	if sgi.TruncatedAt != nil {
-		truncated = time.Unix(0, *sgi.TruncatedAt).UTC()
+		t := time.Unix(0, *sgi.TruncatedAt).UTC()
+		truncated = &t
 	}
 
 	m := api.ShardGroupManifest{
 		Id:          int64(*sgi.ID),
 		StartTime:   time.Unix(0, *sgi.StartTime).UTC(),
 		EndTime:     time.Unix(0, *sgi.EndTime).UTC(),
-		DeletedAt:   &deleted,
-		TruncatedAt: &truncated,
+		DeletedAt:   deleted,
+		TruncatedAt: truncated,
 		Shards:      make([]api.ShardManifest, len(sgi.Shards)),
 	}
 	for i, s := range sgi.Shards {
