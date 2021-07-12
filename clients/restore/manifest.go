@@ -10,10 +10,13 @@ import (
 	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
 )
 
+// versionSwitch models the subset of fields needed to distinguish different versions of the CLI's backup manifest.
 type versionSwitch struct {
 	Version int `json:"manifestVersion,omitempty"`
 }
 
+// readManifest parses the manifest file at the given path, converting it to the latest version of our manifest
+// if needed.
 func readManifest(path string) (manifest br.Manifest, err error) {
 	var w struct {
 		versionSwitch
@@ -44,6 +47,9 @@ func readManifest(path string) (manifest br.Manifest, err error) {
 	return
 }
 
+// convertManifest converts a manifest from the 2.0.x CLI into the latest manifest schema.
+// NOTE: 2.0.x manifests didn't contain all the info needed by 2.1.x+, so this process requires opening & inspecting
+// the bolt file referenced by the legacy manifest.
 func convertManifest(path string, lm legacyManifest) (br.Manifest, error) {
 	// Extract bucket metadata from the local KV snapshot.
 	boltPath := filepath.Join(filepath.Dir(path), lm.KV.FileName)
@@ -85,6 +91,8 @@ func convertManifest(path string, lm legacyManifest) (br.Manifest, error) {
 	return m, nil
 }
 
+// legacyManifest models the subset of data stored in 2.0.x CLI backup manifests that is needed for conversion
+// into the latest manifest format.
 type legacyManifest struct {
 	KV     legacyKV      `json:"kv"`
 	Shards []legacyShard `json:"files"`
@@ -101,6 +109,7 @@ type legacyShard struct {
 	Size     int64  `json:"size"`
 }
 
+// ConvertBucketManifest converts a manifest parsed from local disk into a model compatible with the server-side API.
 func ConvertBucketManifest(manifest br.ManifestBucketEntry) api.BucketMetadataManifest {
 	m := api.BucketMetadataManifest{
 		OrganizationID:         manifest.OrganizationID,
