@@ -40,11 +40,11 @@ workflows:
   build-test-release-nightly:
     triggers:
       - schedule:
-          cron: "0 5 * * *"
+          cron: "30 20 * * *"
           filters:
             branches:
               only:
-                - main
+                - dm-nightly-build-170
     jobs:
       - lint
       - check-openapi
@@ -130,13 +130,13 @@ jobs:
           steps:
             - run:
                 name: Publish snapshot release
-                command: make SNAPSHOT_VERSION=<< parameters.version >> release
+                command: make SNAPSHOT_VERSION=<< parameters.version >> release-dryrun
       - unless:
           condition: << parameters.is-snapshot >>
           steps:
             - run:
                 name: Publish release
-                command: make VERSION=<< parameters.version >> release
+                command: make VERSION=<< parameters.version >> release-dryrun
       - store_artifacts:
           path: dist
 
