@@ -1,4 +1,9 @@
 project_name: influx-cli
+
+# Do not make github release
+release:
+  disable: true
+
 builds:
   - id: influx
     goos:
@@ -20,6 +25,52 @@ builds:
       - -s -w -X main.version={{if .IsSnapshot}}{{.Env.SNAPSHOT_VERSION}}{{else}}{{.Version}}{{end}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}
     binary: influx
 
-# Do not make github release
-release:
-  disable: true
+nfpms:
+  - id: influx-cli
+    formats:
+      - deb
+      - rpm
+    bindir: /usr/bin
+    overrides:
+      rpm:
+        replacements:
+          amd64: x86_64
+          arm64: aarch64
+          armhf: armv7hl
+        file_name_template: influx-cli-nightly.{{ .Arch }}
+      deb:
+        file_name_template: influx-cli-nightly-{{ .Arch }}
+    vendor: InfluxData
+    homepage: https://influxdata.com
+    maintainer: support@influxdata.com
+    description: CLI for managing resources in InfluxDB v2
+    license: MIT
+
+archives:
+  - id: influx-cli
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    wrap_in_directory: true
+    name_template: influx-cli-nightly-{{ .Os }}-{{ .Arch }}
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: influx-cli-nightly.sha256
+  algorithm: sha256
+
+# TODO: Do we want to do this signing work in Circle? Or elsewhere?
+signs:
+  - signature: "${artifact}.asc"
+    cmd: gpg
+    args: [ --passphrase, "{{.Env.PASSPHRASE}}", --pinentry-mode=loopback, --batch, --armor, --detach-sign, "${artifact}"]
+    artifacts: all
+
+blobs:
+  - provider: s3
+    bucket: dl.influxdata.com
+    region: us-east-1
+    folder: platform/nightlies/

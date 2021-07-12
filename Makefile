@@ -66,6 +66,12 @@ build: bin/goreleaser-$(GORELEASER_VERSION)
 crossbuild: bin/goreleaser-$(GORELEASER_VERSION)
 	$(GORELEASER_SETENV) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist $(SNAPSHOT_FLAG)
 
+release: bin/goreleaser-$(GORELEASER_VERSION)
+	$(GORELEASER_SETENV) bin/goreleaser-$(GORELEASER_VERSION) release --rm-dist $(SNAPSHOT_FLAG)
+
+release-dryrun: bin/goreleaser-$(GORELEASER_VERSION)
+	$(GORELEASER_SETENV) bin/goreleaser-$(GORELEASER_VERSION) release --rm-dist $(SNAPSHOT_FLAG) --skip-publish --skip-sign
+
 clean:
 	$(RM) -r bin
 	$(RM) -r vendor

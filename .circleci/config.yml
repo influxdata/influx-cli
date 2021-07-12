@@ -37,6 +37,30 @@ workflows:
                 - linux-arm64
                 - mac
                 - windows
+  build-test-release-nightly:
+    triggers:
+      - schedule:
+          cron: "0 5 * * *"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - lint
+      - check-openapi
+      - test:
+          matrix:
+            parameters:
+              executor:
+                - linux-amd64
+                - linux-arm64
+                - mac
+                - windows
+      - release:
+          requires:
+            - lint
+            - check-openapi
+            - test
 
 commands:
   setup:
@@ -86,6 +110,15 @@ jobs:
       - checkout
       - setup
       - run: make crossbuild
+      - store_artifacts:
+          path: dist
+
+  release:
+    executor: linux-amd64
+    steps:
+      - checkout
+      - setup
+      - run: make release
       - store_artifacts:
           path: dist
 
