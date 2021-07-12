@@ -4,10 +4,14 @@ export GOOS=$(shell go env GOOS)
 export GOARCH=$(shell go env GOARCH)
 export GOVERSION=$(shell go list -m -f '{{.GoVersion}}')
 
+ifndef VERSION
+ifndef SNAPSHOT_VERSION
 ifeq ($(GOOS), windows)
 	VERSION := $(shell git describe --exact-match --tags 2>nil)
 else
 	VERSION := $(shell git describe --exact-match --tags 2>/dev/null)
+endif
+endif
 endif
 COMMIT := $(shell git rev-parse --short HEAD)
 

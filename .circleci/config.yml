@@ -57,6 +57,8 @@ workflows:
                 - mac
                 - windows
       - release:
+          is-snapshot: true
+          version: nightly-$(date +%Y-%m-%d)
           requires:
             - lint
             - check-openapi
@@ -114,11 +116,27 @@ jobs:
           path: dist
 
   release:
+    parameters:
+      is-snapshot:
+        type: boolean
+      version:
+        type: string
     executor: linux-amd64
     steps:
       - checkout
       - setup
-      - run: make release
+      - when:
+          condition: << parameters.is-snapshot >>
+          steps:
+            - run:
+                name: Publish snapshot release
+                command: make SNAPSHOT_VERSION=<< parameters.version >> release
+      - unless:
+          condition: << parameters.is-snapshot >>
+          steps:
+            - run:
+                name: Publish release
+                command: make VERSION=<< parameters.version >> release
       - store_artifacts:
           path: dist
 
