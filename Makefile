@@ -4,7 +4,7 @@ export GOOS=$(shell go env GOOS)
 export GOARCH=$(shell go env GOARCH)
 export GOVERSION=$(shell go list -m -f '{{.GoVersion}}')
 
-ifeq ($(OS), Windows_NT)
+ifeq ($(GOOS), windows)
 	VERSION := $(shell git describe --exact-match --tags 2>nil)
 else
 	VERSION := $(shell git describe --exact-match --tags 2>/dev/null)
@@ -14,6 +14,14 @@ COMMIT := $(shell git rev-parse --short HEAD)
 LDFLAGS := $(LDFLAGS) -X main.commit=$(COMMIT) -X main.date=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 ifdef VERSION
 	LDFLAGS += -X main.version=$(VERSION)
+	GORELEASER_SETENV := GORELEASER_CURRENT_TAG=$(VERSION)
+else
+ifndef SNAPSHOT_VERSION
+	SNAPSHOT_VERSION := dev
+endif
+	LDFLAGS += -X main.version=$(SNAPSHOT_VERSION)
+	GORELEASER_SETENV := SNAPSHOT_VERSION=$(SNAPSHOT_VERSION)
+	SNAPSHOT_FLAG := --snapshot
 endif
 export GO_BUILD=go build -ldflags "$(LDFLAGS)"
 
@@ -53,18 +61,10 @@ bin/goreleaser-$(GORELEASER_VERSION):
 goreleaser: bin/goreleaser-$(GORELEASER_VERSION)
 
 build: bin/goreleaser-$(GORELEASER_VERSION)
-ifdef VERSION
-	GORELEASER_CURRENT_TAG=$(VERSION) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist --single-target
-else
-	bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist --single-target --snapshot
-endif
+	$(GORELEASER_SETENV) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist --single-target $(SNAPSHOT_FLAG)
 
 crossbuild: bin/goreleaser-$(GORELEASER_VERSION)
-ifdef VERSION
-	GORELEASER_CURRENT_TAG=$(VERSION) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist
-else
-	bin/goreleaser-$(GORELEASER_VERSION) build --snapshot --rm-dist
-endif
+	$(GORELEASER_SETENV) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist $(SNAPSHOT_FLAG)
 
 clean:
 	$(RM) -r bin

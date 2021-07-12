@@ -17,7 +17,7 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X main.version={{if .IsSnapshot}}dev{{else}}{{.Version}}{{end}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}
+      - -s -w -X main.version={{if .IsSnapshot}}{{.Env.SNAPSHOT_VERSION}}{{else}}{{.Version}}{{end}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}
     binary: influx
 
 # Do not make github release
