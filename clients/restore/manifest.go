@@ -101,7 +101,6 @@ type legacyShard struct {
 	Size     int64  `json:"size"`
 }
 
-
 func ConvertBucketManifest(manifest br.ManifestBucketEntry) api.BucketMetadataManifest {
 	m := api.BucketMetadataManifest{
 		OrganizationID:         manifest.OrganizationID,
