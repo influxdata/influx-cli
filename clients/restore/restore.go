@@ -121,7 +121,10 @@ func (c *Client) loadManifests(path string) error {
 
 		// Keep the latest manifest per-bucket.
 		for _, bkt := range manifest.Buckets {
-			bucketManifests[bkt.BucketID] = bkt
+			// NOTE: Deduplicate here by keeping only the latest entry for each `<org-name>/<bucket-name>` pair.
+			// This prevents "bucket already exists" errors during the restore when the backup manifests contain
+			// entries for multiple buckets with the same name (which can happen when a bucket is deleted & re-created).
+			bucketManifests[fmt.Sprintf("%s/%s", bkt.OrganizationName, bkt.BucketName)] = bkt
 		}
 	}
 
