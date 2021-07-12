@@ -110,11 +110,9 @@ func (c *Client) loadManifests(path string) error {
 			continue
 		}
 
-		var manifest br.Manifest
-		if buf, err := os.ReadFile(manifestFile); err != nil {
-			return fmt.Errorf("failed to read local manifest at %q: %w", manifestFile, err)
-		} else if err := json.Unmarshal(buf, &manifest); err != nil {
-			return fmt.Errorf("failed to parse manifest at %q: %w", manifestFile, err)
+		manifest, err := readManifest(manifestFile)
+		if err != nil {
+			return err
 		}
 
 		// Keep the latest KV and SQL overall.
@@ -123,7 +121,10 @@ func (c *Client) loadManifests(path string) error {
 
 		// Keep the latest manifest per-bucket.
 		for _, bkt := range manifest.Buckets {
-			bucketManifests[bkt.BucketID] = bkt
+			// NOTE: Deduplicate here by keeping only the latest entry for each `<org-name>/<bucket-name>` pair.
+			// This prevents "bucket already exists" errors during the restore when the backup manifests contain
+			// entries for multiple buckets with the same name (which can happen when a bucket is deleted & re-created).
+			bucketManifests[fmt.Sprintf("%s/%s", bkt.OrganizationName, bkt.BucketName)] = bkt
 		}
 	}
 

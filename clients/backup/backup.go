@@ -70,6 +70,7 @@ func (c *Client) Backup(ctx context.Context, params *Params) error {
 		return err
 	}
 	c.baseName = time.Now().UTC().Format(backupFilenamePattern)
+	c.manifest.Version = br.ManifestVersion
 
 	// The APIs we use to back up metadata depends on the server's version.
 	legacyServer, err := br.ServerIsLegacy(ctx, c.HealthApi)
@@ -228,7 +229,7 @@ func (c *Client) downloadMetadataLegacy(ctx context.Context, params *Params) err
 
 	// Extract the metadata we need from the downloaded KV store, and convert it to a new-style manifest.
 	log.Println("INFO: Extracting bucket manifest from legacy KV snapshot")
-	c.bucketMetadata, err = extractBucketManifest(tmpKv)
+	c.bucketMetadata, err = br.ExtractBucketMetadata(tmpKv)
 	if err != nil {
 		return fmt.Errorf("failed to extract bucket metadata from downloaded KV snapshot: %w", err)
 	}
@@ -283,7 +284,7 @@ func (c *Client) downloadBucketData(ctx context.Context, params *Params) error {
 		if !params.matches(b) {
 			continue
 		}
-		bktManifest, err := ConvertBucketManifest(b, func(shardId int64) (*br.ManifestFileEntry, error) {
+		bktManifest, err := br.ConvertBucketManifest(b, func(shardId int64) (*br.ManifestFileEntry, error) {
 			return c.downloadShardData(ctx, params, shardId)
 		})
 		if err != nil {
