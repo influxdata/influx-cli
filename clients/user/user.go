@@ -138,11 +138,12 @@ func (c Client) Update(ctx context.Context, params *UpdateParmas) error {
 }
 
 type SetPasswordParams struct {
-	Id   influxid.ID
-	Name string
+	Id       influxid.ID
+	Name     string
+	Password string
 }
 
-func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) error {
+func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) (err error) {
 	if !params.Id.Valid() && params.Name == "" {
 		return ErrMustSpecifyUser
 	}
@@ -160,9 +161,12 @@ func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) erro
 		id = (*users.Users)[0].GetId()
 	}
 
-	password, err := c.StdIO.GetPassword(fmt.Sprintf("Please type new password for %q", displayName))
-	if err != nil {
-		return err
+	password := params.Password
+	if password == "" {
+		password, err = c.StdIO.GetPassword(fmt.Sprintf("Please type new password for %q", displayName))
+		if err != nil {
+			return err
+		}
 	}
 
 	body := api.PasswordResetBody{Password: password}

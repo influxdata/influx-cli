@@ -11,7 +11,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/user"
-	 "github.com/influxdata/influx-cli/v2/config"
+	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
@@ -532,6 +532,24 @@ func TestClient_SetPassword(t *testing.T) {
 					return assert.Equal(t, "my-user", *in.GetName())
 				})).Return(api.Users{Users: &[]api.UserResponse{{Id: api.PtrString(id2.String())}}}, nil)
 
+				usersApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
+					Return(api.ApiPostUsersIDPasswordRequest{ApiService: usersApi}.UserID(id2.String()))
+				usersApi.EXPECT().PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
+					body := in.GetPasswordResetBody()
+					return assert.NotNil(t, body) &&
+						assert.Equal(t, id2.String(), in.GetUserID()) &&
+						assert.Equal(t, "mypassword", body.GetPassword())
+				})).Return(nil)
+			},
+		},
+		{
+			name: "with password via flag",
+			params: user.SetPasswordParams{
+				Id:       id2,
+				Password: "mypassword",
+			},
+			noExpectAsk: true,
+			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
 				usersApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
 					Return(api.ApiPostUsersIDPasswordRequest{ApiService: usersApi}.UserID(id2.String()))
 				usersApi.EXPECT().PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
