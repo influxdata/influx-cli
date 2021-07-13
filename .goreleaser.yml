@@ -25,6 +25,8 @@ builds:
       - -s -w -X main.version={{if .IsSnapshot}}{{.Env.SNAPSHOT_VERSION}}{{else}}{{.Version}}{{end}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}
     binary: influx
 
+# TODO: Do we want to publish deb/rpms for the CLI before we release 2.1.0 of the server?
+# How do we handle conflicts between the two until then?
 nfpms:
   - id: influx-cli
     formats:

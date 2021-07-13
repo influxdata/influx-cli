@@ -37,7 +37,7 @@ workflows:
                 - linux-arm64
                 - mac
                 - windows
-  build-test-release-nightly:
+  release-nightly:
     triggers:
       - schedule:
           cron: "30 20 * * *"
@@ -59,6 +59,45 @@ workflows:
       - release:
           is-snapshot: true
           version: nightly-$(date +%Y-%m-%d)
+          requires:
+            - lint
+            - check-openapi
+            - test
+  release:
+    jobs:
+      - lint:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)\.[0-9]+)?$/
+      - check-openapi:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)\.[0-9]+)?$/
+      - test:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)\.[0-9]+)?$/
+          matrix:
+            parameters:
+              executor:
+                - linux-amd64
+                - linux-arm64
+                - mac
+                - windows
+      - release:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)\.[0-9]+)?$/
+          is-snapshot: false
+          version: $CIRCLE_TAG
           requires:
             - lint
             - check-openapi
