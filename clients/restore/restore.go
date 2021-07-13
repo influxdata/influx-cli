@@ -166,7 +166,7 @@ func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error
 	// Upload metadata snapshots to the server.
 	log.Println("INFO: Restoring KV snapshot")
 	kvReq := c.PostRestoreKV(ctx).ContentType("application/octet-stream").Body(kvBytes)
-	if legacy {
+	if !legacy {
 		kvReq = kvReq.ContentEncoding("gzip")
 	}
 	if err := kvReq.Execute(); err != nil {
