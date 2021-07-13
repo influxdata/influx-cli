@@ -40,11 +40,11 @@ workflows:
   release-nightly:
     triggers:
       - schedule:
-          cron: "0 5 * * *"
+          cron: "30 20 * * *"
           filters:
             branches:
               only:
-                - main
+                - dm-nightly-build-170
     jobs:
       - lint
       - check-openapi
@@ -167,7 +167,7 @@ jobs:
           steps:
             - run:
                 name: Publish nightly snapshot release
-                command: make SNAPSHOT_VERSION=nightly-$(date +%Y-%m-%d) SNAPSHOT_PACKAGE_TAG=nightly release
+                command: make SNAPSHOT_VERSION=nightly-$(date +%Y-%m-%d) SNAPSHOT_PACKAGE_TAG=nightly release-dryrun
       - unless:
           condition: << parameters.is-nightly >>
           steps:
