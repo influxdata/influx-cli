@@ -39,9 +39,9 @@ nfpms:
           amd64: x86_64
           arm64: aarch64
           armhf: armv7hl
-        file_name_template: influx-cli-nightly.{{ .Arch }}
+        file_name_template: influxdb2-client-{{if .IsSnapshot}}{{.Env.SNAPSHOT_PACKAGE_TAG}}{{else}}{{.Version}}{{end}}.{{ .Arch }}
       deb:
-        file_name_template: influx-cli-nightly-{{ .Arch }}
+        file_name_template: influxdb2-client-{{if .IsSnapshot}}{{.Env.SNAPSHOT_PACKAGE_TAG}}{{else}}{{.Version}}{{end}}-{{ .Arch }}
     vendor: InfluxData
     homepage: https://influxdata.com
     maintainer: support@influxdata.com
@@ -55,13 +55,13 @@ archives:
       - goos: windows
         format: zip
     wrap_in_directory: true
-    name_template: influx-cli-nightly-{{ .Os }}-{{ .Arch }}
+    name_template: influxdb2-client-{{if .IsSnapshot}}{{.Env.SNAPSHOT_PACKAGE_TAG}}{{else}}{{.Version}}{{end}}-{{ .Os }}-{{ .Arch }}
     files:
       - LICENSE
       - README.md
 
 checksum:
-  name_template: influx-cli-nightly.sha256
+  name_template: influxdb2-client-{{if .IsSnapshot}}{{.Env.SNAPSHOT_PACKAGE_TAG}}{{else}}{{.Version}}{{end}}.sha256
   algorithm: sha256
 
 # TODO: Do we want to do this signing work in Circle? Or elsewhere?
@@ -75,4 +75,4 @@ blobs:
   - provider: s3
     bucket: dl.influxdata.com
     region: us-east-1
-    folder: platform/nightlies/
+    folder: "{{if .IsSnapshot}}platform/nightlies/{{else}}influxdb/releases/{{end}}"
