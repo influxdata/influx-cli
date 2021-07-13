@@ -157,6 +157,11 @@ func newUserSetPasswordCmd() cli.Command {
 				Usage:       "The user name",
 				Destination: &params.Name,
 			},
+			&cli.StringFlag{
+				Name:        "password, p",
+				Usage:       "Password to set on the user",
+				Destination: &params.Password,
+			},
 		),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
