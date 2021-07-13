@@ -55,7 +55,7 @@ func (c Client) Setup(ctx context.Context, params *Params) error {
 	}
 
 	// Initialize the server.
-	setupBody, err := c.onboardingRequest(params)
+	setupBody, err := c.OnboardingRequest(params)
 	if err != nil {
 		return err
 	}
@@ -118,10 +118,10 @@ func (c Client) validateNoNameCollision(configName string) error {
 	return nil
 }
 
-// onboardingRequest constructs a request body for the onboarding API.
+// OnboardingRequest constructs a request body for the onboarding API.
 // Unless the 'force' parameter is set, the user will be prompted to enter any missing information
 // and to confirm the final request parameters.
-func (c Client) onboardingRequest(params *Params) (req api.OnboardingRequest, err error) {
+func (c Client) OnboardingRequest(params *Params) (req api.OnboardingRequest, err error) {
 	if (params.Force || params.Password != "") && len(params.Password) < stdio.MinPasswordLen {
 		return req, clients.ErrPasswordIsTooShort
 	}
