@@ -143,7 +143,12 @@ func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error
 	}
 
 	// Make sure we can read both local metadata snapshots before
-	kvBytes, err := readFileGzipped(path, c.manifest.KV)
+	readKv := readFileGzipped
+	if legacy {
+		// The legacy API didn't support gzipped uploads.
+		readKv = readFileGunzipped
+	}
+	kvBytes, err := readKv(path, c.manifest.KV)
 	if err != nil {
 		return fmt.Errorf("failed to open local KV backup at %q: %w", filepath.Join(path, c.manifest.KV.FileName), err)
 	}
@@ -160,16 +165,17 @@ func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error
 
 	// Upload metadata snapshots to the server.
 	log.Println("INFO: Restoring KV snapshot")
-	if err := c.PostRestoreKV(ctx).
-		ContentEncoding("gzip").
-		ContentType("application/octet-stream").
-		Body(kvBytes).
-		Execute(); err != nil {
+	kvReq := c.PostRestoreKV(ctx).ContentType("application/octet-stream").Body(kvBytes)
+	if legacy {
+		kvReq = kvReq.ContentEncoding("gzip")
+	}
+	if err := kvReq.Execute(); err != nil {
 		return fmt.Errorf("failed to restore KV snapshot: %w", err)
 	}
 
 	// TODO: Should we have some way of wiping out any existing SQL on the server-side in the case when there is no backup?
 	if c.manifest.SQL != nil {
+		// NOTE: No logic here to upload non-gzipped data because legacy=true doesn't support SQL restores.
 		log.Println("INFO: Restoring SQL snapshot")
 		if err := c.PostRestoreSQL(ctx).
 			ContentEncoding("gzip").
