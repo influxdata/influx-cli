@@ -49,6 +49,9 @@ workflows:
       - lint
       - check-openapi
       - test:
+          requires:
+            - lint
+            - check-openapi
           matrix:
             parameters:
               executor:
@@ -60,8 +63,6 @@ workflows:
           is-snapshot: true
           version: nightly-$(date +%Y-%m-%d)
           requires:
-            - lint
-            - check-openapi
             - test
   release-tag:
     jobs:
