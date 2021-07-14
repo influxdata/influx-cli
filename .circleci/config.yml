@@ -159,6 +159,8 @@ jobs:
       is-nightly:
         type: boolean
     executor: linux-amd64
+    environment:
+      GORELEASER_VERSION: v0.165.0
     steps:
       - checkout
       - setup
@@ -167,18 +169,24 @@ jobs:
           command: |
             echo -e "$GPG_PRIVATE_KEY" > private.key
             gpg --batch --import private.key
+      - run:
+          name: Download goreleaser
+          command: ./scripts/ci/download-goreleaser.sh -b ${GOPATH}/bin ${GORELEASER_VERSION}
       - when:
           condition: << parameters.is-nightly >>
           steps:
             - run:
+                name: Make a pseudo-tag for the nightly build
+                command: git tag nightly-$(date +%Y-%m-%d)
+            - run:
                 name: Publish nightly snapshot release
-                command: make SNAPSHOT_VERSION=nightly-$(date +%Y-%m-%d) SNAPSHOT_PACKAGE_TAG=nightly release
+                command: TARGET_S3_FOLDER=platform/nightlies/ goreleaser release --rm-dist --skip-validate
       - unless:
           condition: << parameters.is-nightly >>
           steps:
             - run:
                 name: Publish tagged release
-                command: make VERSION=$CIRCLE_TAG release
+                command: TARGET_S3_FOLDER=influxdb/releases/ goreleaser release --rm-dist
       - store_artifacts:
           path: dist
 

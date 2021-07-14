@@ -22,7 +22,7 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X main.version={{if .IsSnapshot}}{{.Env.SNAPSHOT_VERSION}}{{else}}{{.Version}}{{end}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}
+      - -s -w -X main.version={{.Version}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}
     binary: influx
 
 nfpms:
@@ -39,7 +39,7 @@ nfpms:
           amd64: x86_64
           arm64: aarch64
           armhf: armv7hl
-        file_name_template: influxdb2-client-{{if .IsSnapshot}}{{.Env.SNAPSHOT_PACKAGE_TAG}}{{else}}{{.Version}}{{end}}.{{ .Arch }}
+        file_name_template: influxdb2-client-{{.Version}}.{{ .Arch }}
       deb:
         replaces:
           # Tells the deb system that it's ok for this package to overwrite files from versions of the `influxdb2`
@@ -51,7 +51,7 @@ nfpms:
           # when `influxdb2` is already installed. Users can work around this by downloading the RPM directly
           # and then using `rpm -i --replacefiles <the-rpm>`.
           - influxdb2 (<< 2.1.0)
-        file_name_template: influxdb2-client-{{if .IsSnapshot}}{{.Env.SNAPSHOT_PACKAGE_TAG}}{{else}}{{.Version}}{{end}}-{{ .Arch }}
+        file_name_template: influxdb2-client-{{.Version}}-{{ .Arch }}
     vendor: InfluxData
     homepage: https://influxdata.com
     maintainer: support@influxdata.com
@@ -65,13 +65,13 @@ archives:
       - goos: windows
         format: zip
     wrap_in_directory: true
-    name_template: influxdb2-client-{{if .IsSnapshot}}{{.Env.SNAPSHOT_PACKAGE_TAG}}{{else}}{{.Version}}{{end}}-{{ .Os }}-{{ .Arch }}
+    name_template: influxdb2-client-{{.Version}}-{{ .Os }}-{{ .Arch }}
     files:
       - LICENSE
       - README.md
 
 checksum:
-  name_template: influxdb2-client-{{if .IsSnapshot}}{{.Env.SNAPSHOT_PACKAGE_TAG}}{{else}}{{.Version}}{{end}}.sha256
+  name_template: influxdb2-client-{{.Version}}.sha256
   algorithm: sha256
 
 signs:
@@ -84,4 +84,4 @@ blobs:
   - provider: s3
     bucket: dl.influxdata.com
     region: us-east-1
-    folder: "{{if .IsSnapshot}}platform/nightlies/{{else}}influxdb/releases/{{end}}"
+    folder: "{{.Env.TARGET_S3_FOLDER}}"

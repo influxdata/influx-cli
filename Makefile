@@ -4,31 +4,13 @@ export GOOS=$(shell go env GOOS)
 export GOARCH=$(shell go env GOARCH)
 export GOVERSION=$(shell go list -m -f '{{.GoVersion}}')
 
-ifndef VERSION
-ifndef SNAPSHOT_VERSION
-ifeq ($(GOOS), windows)
-	VERSION := $(shell git describe --exact-match --tags 2>nil)
-else
-	VERSION := $(shell git describe --exact-match --tags 2>/dev/null)
-endif
-endif
-endif
-COMMIT := $(shell git rev-parse --short HEAD)
+LDFLAGS := $(LDFLAGS) -X main.date=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
-LDFLAGS := $(LDFLAGS) -X main.commit=$(COMMIT) -X main.date=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 ifdef VERSION
 	LDFLAGS += -X main.version=$(VERSION)
-	GORELEASER_SETENV := GORELEASER_CURRENT_TAG=$(VERSION)
-else
-ifndef SNAPSHOT_VERSION
-	SNAPSHOT_VERSION := dev
 endif
-ifndef SNAPSHOT_PACKAGE_TAG
-	SNAPSHOT_PACKAGE_TAG := dev
-endif
-	LDFLAGS += -X main.version=$(SNAPSHOT_VERSION)
-	GORELEASER_SETENV := SNAPSHOT_VERSION=$(SNAPSHOT_VERSION) SNAPSHOT_PACKAGE_TAG=$(SNAPSHOT_PACKAGE_TAG)
-	SNAPSHOT_FLAG := --snapshot
+ifdef COMMIT
+	LDFLAGS += -X main.commit=$(COMMIT)
 endif
 export GO_BUILD=go build -ldflags "$(LDFLAGS)"
 
@@ -60,24 +42,6 @@ influx: bin/$(GOOS)/influx
 
 vendor: go.mod go.sum
 	go mod vendor
-
-GORELEASER_VERSION := v0.165.0
-bin/goreleaser-$(GORELEASER_VERSION):
-	./etc/download-goreleaser.sh $(GORELEASER_VERSION)
-
-goreleaser: bin/goreleaser-$(GORELEASER_VERSION)
-
-build: bin/goreleaser-$(GORELEASER_VERSION)
-	$(GORELEASER_SETENV) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist --single-target $(SNAPSHOT_FLAG)
-
-crossbuild: bin/goreleaser-$(GORELEASER_VERSION)
-	$(GORELEASER_SETENV) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist $(SNAPSHOT_FLAG)
-
-release: bin/goreleaser-$(GORELEASER_VERSION)
-	$(GORELEASER_SETENV) bin/goreleaser-$(GORELEASER_VERSION) release --rm-dist $(SNAPSHOT_FLAG)
-
-release-dryrun: bin/goreleaser-$(GORELEASER_VERSION)
-	$(GORELEASER_SETENV) bin/goreleaser-$(GORELEASER_VERSION) release --rm-dist $(SNAPSHOT_FLAG) --skip-publish --skip-sign
 
 clean:
 	$(RM) -r bin
@@ -111,4 +75,4 @@ test-race:
 	$(GO_TEST) -v -race -count=1 $(GO_TEST_PATHS)
 
 ### List of all targets that don't produce a file
-.PHONY: influx openapi fmt build crossbuild goreleaser checkfmt checktidy staticcheck vet mock test test-race
+.PHONY: influx openapi fmt checkfmt checktidy staticcheck vet mock test test-race
