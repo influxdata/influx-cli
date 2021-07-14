@@ -162,6 +162,11 @@ jobs:
     steps:
       - checkout
       - setup
+      - run:
+          name: Import GPG key
+          command: |
+            echo -e "$GPG_PRIVATE_KEY" > private.key
+            gpg --batch --import private.key
       - when:
           condition: << parameters.is-nightly >>
           steps:
