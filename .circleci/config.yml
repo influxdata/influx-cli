@@ -172,7 +172,7 @@ jobs:
           steps:
             - run:
                 name: Publish nightly snapshot release
-                command: make SNAPSHOT_VERSION=nightly-$(date +%Y-%m-%d) SNAPSHOT_PACKAGE_TAG=nightly release-dryrun
+                command: make SNAPSHOT_VERSION=nightly-$(date +%Y-%m-%d) SNAPSHOT_PACKAGE_TAG=nightly release
       - unless:
           condition: << parameters.is-nightly >>
           steps:
