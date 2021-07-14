@@ -74,7 +74,6 @@ checksum:
   name_template: influxdb2-client-{{if .IsSnapshot}}{{.Env.SNAPSHOT_PACKAGE_TAG}}{{else}}{{.Version}}{{end}}.sha256
   algorithm: sha256
 
-# TODO: Do we want to do this signing work in Circle? Or elsewhere?
 signs:
   - signature: "${artifact}.asc"
     cmd: gpg
