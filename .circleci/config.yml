@@ -123,6 +123,11 @@ commands:
             echo 'export PATH=${GOPATH}/bin:${PATH}' >> $BASH_ENV
             mkdir -p ${HOME}/.cache
             echo 'export GOCACHE=${HOME}/.cache' >> $BASH_ENV
+  install-goreleaser:
+    steps:
+      - run:
+          name: Install goreleaser
+          command: ./scripts/ci/download-goreleaser.sh -b ${GOPATH}/bin v0.165.0
 
 jobs:
   lint:
@@ -150,7 +155,10 @@ jobs:
     steps:
       - checkout
       - setup
-      - run: make crossbuild
+      - install-goreleaser
+      - run:
+          name: Cross-build all targets
+          command: goreleaser build --rm-dist --snapshot
       - store_artifacts:
           path: dist
 
@@ -159,8 +167,6 @@ jobs:
       is-nightly:
         type: boolean
     executor: linux-amd64
-    environment:
-      GORELEASER_VERSION: v0.165.0
     steps:
       - checkout
       - setup
@@ -169,9 +175,7 @@ jobs:
           command: |
             echo -e "$GPG_PRIVATE_KEY" > private.key
             gpg --batch --import private.key
-      - run:
-          name: Download goreleaser
-          command: ./scripts/ci/download-goreleaser.sh -b ${GOPATH}/bin ${GORELEASER_VERSION}
+      - install-goreleaser
       - when:
           condition: << parameters.is-nightly >>
           steps:
