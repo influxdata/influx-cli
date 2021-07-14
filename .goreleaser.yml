@@ -34,24 +34,23 @@ nfpms:
     conflicts:
       - influxdb
     overrides:
-      rpm:
-        replacements:
-          amd64: x86_64
-          arm64: aarch64
-          armhf: armv7hl
-        file_name_template: influxdb2-client-{{.Version}}.{{ .Arch }}
       deb:
         replaces:
           # Tells the deb system that it's ok for this package to overwrite files from versions of the `influxdb2`
           # package prior to 2.1.0. Needed to support installing `influx-cli` next to `influxdb` without upgrading
           # the server.
-          #
-          # NOTE: rpm doesn't have an equivalent feature (the closest thing is to mark influx-cli as replacing
-          # `influxdb2`, which auto-uninstalls the server). Without that data, `yum install influx-cli` won't work
-          # when `influxdb2` is already installed. Users can work around this by downloading the RPM directly
-          # and then using `rpm -i --replacefiles <the-rpm>`.
           - influxdb2 (<< 2.1.0)
         file_name_template: influxdb2-client-{{.Version}}-{{ .Arch }}
+      rpm:
+        conflicts:
+          # Tells the rpm system that this package can't be installed alongside versions of the `influxdb2` package
+          # prior to 2.1.0. This is as good as we can do for rpm; there's no equivalent to deb's "replaces" metadata.
+          - influxdb2 < 2.1.0
+        replacements:
+          amd64: x86_64
+          arm64: aarch64
+          armhf: armv7hl
+        file_name_template: influxdb2-client-{{.Version}}.{{ .Arch }}
     vendor: InfluxData
     homepage: https://influxdata.com
     maintainer: support@influxdata.com
