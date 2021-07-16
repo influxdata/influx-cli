@@ -40,7 +40,7 @@ nfpms:
           # package prior to 2.0.8. Needed to support installing `influx-cli` next to `influxdb` without upgrading
           # the server.
           - influxdb2 (<< 2.0.8)
-        file_name_template: influxdb2-client-{{.Version}}-{{ .Arch }}
+        file_name_template: influxdb2-client-{{if index .Env "IS_NIGHTLY"}}nightly{{else}}{{.Version}}{{end}}-{{ .Arch }}
       rpm:
         conflicts:
           # Tells the rpm system that this package can't be installed alongside versions of the `influxdb2` package
@@ -50,7 +50,7 @@ nfpms:
           amd64: x86_64
           arm64: aarch64
           armhf: armv7hl
-        file_name_template: influxdb2-client-{{.Version}}.{{ .Arch }}
+        file_name_template: influxdb2-client-{{if index .Env "IS_NIGHTLY"}}nightly{{else}}{{.Version}}{{end}}.{{ .Arch }}
     vendor: InfluxData
     homepage: https://influxdata.com
     maintainer: support@influxdata.com
@@ -64,13 +64,13 @@ archives:
       - goos: windows
         format: zip
     wrap_in_directory: true
-    name_template: influxdb2-client-{{.Version}}-{{ .Os }}-{{ .Arch }}
+    name_template: influxdb2-client-{{if index .Env "IS_NIGHTLY"}}nightly{{else}}{{.Version}}{{end}}-{{ .Os }}-{{ .Arch }}
     files:
       - LICENSE
       - README.md
 
 checksum:
-  name_template: influxdb2-client-{{.Version}}.sha256
+  name_template: influxdb2-client-{{if index .Env "IS_NIGHTLY"}}nightly{{else}}{{.Version}}{{end}}.sha256
   algorithm: sha256
 
 signs:
@@ -83,4 +83,4 @@ blobs:
   - provider: s3
     bucket: dl.influxdata.com
     region: us-east-1
-    folder: "{{.Env.TARGET_S3_FOLDER}}"
+    folder: '{{if index .Env "IS_NIGHTLY"}}platform/nightlies/{{else}}influxdb/releases/{{end}}'

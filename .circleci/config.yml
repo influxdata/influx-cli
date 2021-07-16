@@ -184,13 +184,13 @@ jobs:
                 command: git tag nightly-$(date +%Y-%m-%d)
             - run:
                 name: Publish nightly snapshot release
-                command: TARGET_S3_FOLDER=platform/nightlies/ goreleaser release --rm-dist --skip-validate
+                command: IS_NIGHTLY=1 goreleaser release --rm-dist --skip-validate
       - unless:
           condition: << parameters.is-nightly >>
           steps:
             - run:
                 name: Publish tagged release
-                command: TARGET_S3_FOLDER=influxdb/releases/ goreleaser release --rm-dist
+                command: goreleaser release --rm-dist
       - store_artifacts:
           path: dist
 
