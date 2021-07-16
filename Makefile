@@ -4,16 +4,13 @@ export GOOS=$(shell go env GOOS)
 export GOARCH=$(shell go env GOARCH)
 export GOVERSION=$(shell go list -m -f '{{.GoVersion}}')
 
-ifeq ($(OS), Windows_NT)
-	VERSION := $(shell git describe --exact-match --tags 2>nil)
-else
-	VERSION := $(shell git describe --exact-match --tags 2>/dev/null)
-endif
-COMMIT := $(shell git rev-parse --short HEAD)
+LDFLAGS := $(LDFLAGS) -X main.date=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
-LDFLAGS := $(LDFLAGS) -X main.commit=$(COMMIT) -X main.date=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 ifdef VERSION
 	LDFLAGS += -X main.version=$(VERSION)
+endif
+ifdef COMMIT
+	LDFLAGS += -X main.commit=$(COMMIT)
 endif
 export GO_BUILD=go build -ldflags "$(LDFLAGS)"
 
@@ -45,26 +42,6 @@ influx: bin/$(GOOS)/influx
 
 vendor: go.mod go.sum
 	go mod vendor
-
-GORELEASER_VERSION := v0.165.0
-bin/goreleaser-$(GORELEASER_VERSION):
-	./etc/download-goreleaser.sh $(GORELEASER_VERSION)
-
-goreleaser: bin/goreleaser-$(GORELEASER_VERSION)
-
-build: bin/goreleaser-$(GORELEASER_VERSION)
-ifdef VERSION
-	GORELEASER_CURRENT_TAG=$(VERSION) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist --single-target
-else
-	bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist --single-target --snapshot
-endif
-
-crossbuild: bin/goreleaser-$(GORELEASER_VERSION)
-ifdef VERSION
-	GORELEASER_CURRENT_TAG=$(VERSION) bin/goreleaser-$(GORELEASER_VERSION) build --rm-dist
-else
-	bin/goreleaser-$(GORELEASER_VERSION) build --snapshot --rm-dist
-endif
 
 clean:
 	$(RM) -r bin
@@ -98,4 +75,4 @@ test-race:
 	$(GO_TEST) -v -race -count=1 $(GO_TEST_PATHS)
 
 ### List of all targets that don't produce a file
-.PHONY: influx openapi fmt build crossbuild goreleaser checkfmt checktidy staticcheck vet mock test test-race
+.PHONY: influx openapi fmt checkfmt checktidy staticcheck vet mock test test-race

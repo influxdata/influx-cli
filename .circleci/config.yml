@@ -37,6 +37,71 @@ workflows:
                 - linux-arm64
                 - mac
                 - windows
+  release-nightly:
+    triggers:
+      - schedule:
+          cron: "0 5 * * *"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - lint
+      - check-openapi
+      - test:
+          requires:
+            - lint
+            - check-openapi
+          matrix:
+            parameters:
+              executor:
+                - linux-amd64
+                - linux-arm64
+                - mac
+                - windows
+      - release:
+          is-nightly: true
+          requires:
+            - test
+  release-tag:
+    jobs:
+      - lint:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+      - check-openapi:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+      - test:
+          requires:
+            - lint
+            - check-openapi
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          matrix:
+            parameters:
+              executor:
+                - linux-amd64
+                - linux-arm64
+                - mac
+                - windows
+      - release:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          is-nightly: false
+          requires:
+            - test
 
 commands:
   setup:
@@ -58,6 +123,11 @@ commands:
             echo 'export PATH=${GOPATH}/bin:${PATH}' >> $BASH_ENV
             mkdir -p ${HOME}/.cache
             echo 'export GOCACHE=${HOME}/.cache' >> $BASH_ENV
+  install-goreleaser:
+    steps:
+      - run:
+          name: Install goreleaser
+          command: ./scripts/ci/download-goreleaser.sh -b ${GOPATH}/bin v0.165.0
 
 jobs:
   lint:
@@ -85,7 +155,42 @@ jobs:
     steps:
       - checkout
       - setup
-      - run: make crossbuild
+      - install-goreleaser
+      - run:
+          name: Cross-build all targets
+          command: goreleaser build --rm-dist --snapshot
+      - store_artifacts:
+          path: dist
+
+  release:
+    parameters:
+      is-nightly:
+        type: boolean
+    executor: linux-amd64
+    steps:
+      - checkout
+      - setup
+      - run:
+          name: Import GPG key
+          command: |
+            echo -e "$GPG_PRIVATE_KEY" > private.key
+            gpg --batch --import private.key
+      - install-goreleaser
+      - when:
+          condition: << parameters.is-nightly >>
+          steps:
+            - run:
+                name: Make a pseudo-tag for the nightly build
+                command: git tag nightly-$(date +%Y-%m-%d)
+            - run:
+                name: Publish nightly snapshot release
+                command: IS_NIGHTLY=1 goreleaser release --rm-dist --skip-validate
+      - unless:
+          condition: << parameters.is-nightly >>
+          steps:
+            - run:
+                name: Publish tagged release
+                command: goreleaser release --rm-dist
       - store_artifacts:
           path: dist
 

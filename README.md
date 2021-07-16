@@ -2,24 +2,16 @@
 
 CLI for managing resources in InfluxDB v2
 
-## Status
+## Motivation
 
-This is a work-in-progress effort to decouple the `influx` CLI from the OSS `influxdb` codebase.
-Our goals are to:
+This repository decouples the `influx` CLI from the OSS `influxdb` codebase. Our goals are to:
 1. Make it easier to keep the CLI up-to-date with InfluxDB Cloud API changes
 2. Enable faster turn-around on fixes/features that only affect the CLI
 3. Allow the CLI to be built & released for a wider range of platforms than the server can support
 
 ## Building
 
-### Development build
 Run `make` or `make influx` to build the CLI. The output binary will be written to `bin/$(GOOS)/influx`.
-
-### Release build
-We use [`goreleaser`](https://goreleaser.com/) to manage cross-building the CLI for release. Run `make build`
-to build the CLI with release settings for your current `GOOS` and `GOARCH`. Run `make crossbuild` to build
-the CLI for all `GOOS`/`GOARCH` pairs supported by the CLI. The output binary/binaries will be written under
-`dist/influx_${GOOS}_${GOARCH}/`.
 
 ### Regenerating OpenAPI client
 
