@@ -40,7 +40,7 @@ workflows:
   release-nightly:
     triggers:
       - schedule:
-          cron: "15 18 * * *"
+          cron: "5 20 * * *"
           filters:
             branches:
               only:
