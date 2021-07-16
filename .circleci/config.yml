@@ -40,11 +40,11 @@ workflows:
   release-nightly:
     triggers:
       - schedule:
-          cron: "30 20 * * *"
+          cron: "0 5 * * *"
           filters:
             branches:
               only:
-                - dm-nightly-build-170
+                - main
     jobs:
       - lint
       - check-openapi
