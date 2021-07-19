@@ -51,7 +51,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 		return fmt.Errorf("failed to list stacks: %w", err)
 	}
 
-	return c.printStacks(stackPrintOptions{stacks: &res})
+	return c.printStacks(stackPrintOptions{stacks: res.Stacks})
 }
 
 type InitParams struct {
@@ -211,7 +211,7 @@ Export a new template with these updates to prevent accidental changes?`) {
 
 type stackPrintOptions struct {
 	stack  *api.Stack
-	stacks *api.Stacks
+	stacks []api.Stack
 }
 
 func (c Client) printStacks(options stackPrintOptions) error {
@@ -228,7 +228,7 @@ func (c Client) printStacks(options stackPrintOptions) error {
 	headers := []string{"ID", "OrgID", "Active", "Name", "Description", "Num Resources", "Sources", "URLs", "Created At", "Updated At"}
 	var stacks []api.Stack
 	if options.stacks != nil {
-		stacks = options.stacks.Stacks
+		stacks = options.stacks
 	}
 	if options.stack != nil {
 		stacks = append(stacks, *options.stack)
