@@ -226,10 +226,7 @@ func (c Client) printStacks(options stackPrintOptions) error {
 	}
 
 	headers := []string{"ID", "OrgID", "Active", "Name", "Description", "Num Resources", "Sources", "URLs", "Created At", "Updated At"}
-	var stacks []api.Stack
-	if options.stacks != nil {
-		stacks = options.stacks
-	}
+	stacks := options.stacks
 	if options.stack != nil {
 		stacks = append(stacks, *options.stack)
 	}
