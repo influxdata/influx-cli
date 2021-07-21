@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// noninteractiveStdio interacts with the user via an interactive terminal.
+// noninteractiveStdio interacts with stdin/stdout/stderr as files, with no user interaction.
 type noninteractiveStdio struct {
 	in  *bufio.Scanner
 	out io.Writer
