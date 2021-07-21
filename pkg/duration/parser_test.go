@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/influxdata/influx-cli/v2/internal/duration"
+	"github.com/influxdata/influx-cli/v2/pkg/duration"
 	"github.com/stretchr/testify/require"
 )
 

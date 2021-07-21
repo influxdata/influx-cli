@@ -12,7 +12,7 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/bucket"
 	"github.com/influxdata/influx-cli/v2/config"
-	"github.com/influxdata/influx-cli/v2/internal/duration"
+	"github.com/influxdata/influx-cli/v2/pkg/duration"
 	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 )
 
