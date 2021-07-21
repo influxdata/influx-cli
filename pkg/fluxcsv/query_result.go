@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/influxdata/influx-cli/v2/internal/duration"
+	"github.com/influxdata/influx-cli/v2/pkg/duration"
 )
 
 type ColType int
