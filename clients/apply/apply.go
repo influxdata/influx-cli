@@ -98,7 +98,7 @@ func (c Client) Apply(ctx context.Context, params *Params) error {
 		return fmt.Errorf("failed to check template impact: %w", err)
 	}
 
-	if c.StdIO.InputIsInteractive() && (len(res.Summary.MissingEnvRefs) > 0 || len(res.Summary.MissingSecrets) > 0) {
+	if c.StdIO.IsInteractive() && (len(res.Summary.MissingEnvRefs) > 0 || len(res.Summary.MissingSecrets) > 0) {
 		for _, e := range res.Summary.MissingEnvRefs {
 			val, err := c.StdIO.GetStringInput(fmt.Sprintf("Please provide environment reference value for key %s", e), "")
 			if err != nil {
@@ -129,7 +129,7 @@ func (c Client) Apply(ctx context.Context, params *Params) error {
 		}
 	}
 
-	if c.StdIO.InputIsInteractive() && !params.Force {
+	if c.StdIO.IsInteractive() && !params.Force {
 		if confirmed := c.StdIO.GetConfirm("Confirm application of the above resources"); !confirmed {
 			return errors.New("aborted application of template")
 		}

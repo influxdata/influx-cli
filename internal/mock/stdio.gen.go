@@ -120,18 +120,18 @@ func (mr *MockStdIOMockRecorder) GetStringInput(arg0, arg1 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStringInput", reflect.TypeOf((*MockStdIO)(nil).GetStringInput), arg0, arg1)
 }
 
-// InputIsInteractive mocks base method.
-func (m *MockStdIO) InputIsInteractive() bool {
+// IsInteractive mocks base method.
+func (m *MockStdIO) IsInteractive() bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InputIsInteractive")
+	ret := m.ctrl.Call(m, "IsInteractive")
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
-// InputIsInteractive indicates an expected call of InputIsInteractive.
-func (mr *MockStdIOMockRecorder) InputIsInteractive() *gomock.Call {
+// IsInteractive indicates an expected call of IsInteractive.
+func (mr *MockStdIOMockRecorder) IsInteractive() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InputIsInteractive", reflect.TypeOf((*MockStdIO)(nil).InputIsInteractive))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsInteractive", reflect.TypeOf((*MockStdIO)(nil).IsInteractive))
 }
 
 // Write mocks base method.
