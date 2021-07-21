@@ -87,19 +87,23 @@ func (t *terminalStdio) GetSecret(prompt string, minLen int) (password string, e
 // GetPassword prompts the user for a secret twice, and inputs must match.
 // Uses stdio.MinPasswordLen as the minimum input length
 func (t *terminalStdio) GetPassword(prompt string) (string, error) {
-	pass1, err := t.GetSecret(prompt, MinPasswordLen)
-	if err != nil {
-		return "", err
+	for {
+		pass1, err := t.GetSecret(prompt, MinPasswordLen)
+		if err != nil {
+			return "", err
+		}
+		// Don't bother with the length check the 2nd time, since we check equality to pass1.
+		pass2, err := t.GetSecret(prompt+" again", 0)
+		if err != nil {
+			return "", err
+		}
+		if pass1 == pass2 {
+			return pass1, nil
+		}
+		if err := t.Error("Passwords do not match"); err != nil {
+			return "", err
+		}
 	}
-	// Don't bother with the length check the 2nd time, since we check equality to pass1.
-	pass2, err := t.GetSecret(prompt+" again", 0)
-	if err != nil {
-		return "", err
-	}
-	if pass1 == pass2 {
-		return pass1, nil
-	}
-	return "", t.Error("Passwords do not match")
 }
 
 // GetConfirm asks the user for a y/n answer to a prompt.
