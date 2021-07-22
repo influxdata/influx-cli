@@ -24,6 +24,11 @@ instead of performing the work on the client-side. Offline summarization & valid
 This change was made to avoid significant code duplication between `influxdb` and `influx-cli`, and to allow server-
 side template logic to evolve without requiring coordinated CLI changes.
 
+#### `influx stacks --json` output conventions
+
+The output of `influx stacks --json` previously used an UpperCamelCase naming convention for most, but not all, keys.
+The command now uses lowerCamelCase consistently for all objects keys, matching the schema returned by the API.
+
 ### Features
 
 1. [33](https://github.com/influxdata/influx-cli/pull/33): Add global `--http-debug` flag to help inspect communication with InfluxDB servers.
