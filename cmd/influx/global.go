@@ -173,7 +173,7 @@ func configPathFlag() cli.Flag {
 	return &cli.StringFlag{
 		Name:   configPathFlagName,
 		Usage:  "Path to the influx CLI configurations",
-		EnvVar: "INFLUX_CLI_CONFIGS_PATH",
+		EnvVar: "INFLUX_CONFIGS_PATH",
 	}
 }
 
