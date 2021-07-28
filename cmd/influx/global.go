@@ -186,8 +186,9 @@ func coreFlags() []cli.Flag {
 			EnvVar: "INFLUX_HOST",
 		},
 		&cli.BoolFlag{
-			Name:  skipVerifyFlagName,
-			Usage: "Skip TLS certificate chain and host name verification",
+			Name:   skipVerifyFlagName,
+			Usage:  "Skip TLS certificate chain and host name verification",
+			EnvVar: "INFLUX_SKIP_VERIFY",
 		},
 		configPathFlag(),
 		&cli.StringFlag{
