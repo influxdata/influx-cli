@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/google/go-cmp/cmp"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/bucket_schema"
@@ -132,7 +131,7 @@ func TestClient_Create(t *testing.T) {
 			a.schemas.EXPECT().
 				CreateMeasurementSchemaExecute(tmock.MatchedBy(func(in api.ApiCreateMeasurementSchemaRequest) bool {
 					orgIDPtr := orgID.String()
-					return cmp.Equal(in.GetOrgID(), &orgIDPtr) && cmp.Equal(in.GetBucketID(), bucketID.String())
+					return assert.Equal(t, in.GetOrgID(), &orgIDPtr) && assert.Equal(t, in.GetBucketID(), bucketID.String())
 				})).
 				Return(api.MeasurementSchema{
 					Id:        measurementID.String(),

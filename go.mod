@@ -12,7 +12,6 @@ require (
 	github.com/gocarina/gocsv v0.0.0-20210408192840-02d7211d929d
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/mock v1.5.0
-	github.com/google/go-cmp v0.5.5
 	github.com/google/go-jsonnet v0.17.0
 	github.com/mattn/go-isatty v0.0.13
 	github.com/olekukonko/tablewriter v0.0.5
