@@ -1,4 +1,4 @@
-## v2.1.0 [unreleased]
+## v2.1.0 [2021-07-29]
 
 ### New Repository
 
@@ -32,14 +32,14 @@ The command now uses lowerCamelCase consistently for all objects keys, matching 
 ### Features
 
 1. [33](https://github.com/influxdata/influx-cli/pull/33): Add global `--http-debug` flag to help inspect communication with InfluxDB servers.
-2. [52](https://github.com/influxdata/influx-cli/pull/52): Add `bucket-schema` commands to manage explicit measurement schemas in InfluxDB Cloud.
-3. [52](https://github.com/influxdata/influx-cli/pull/52): Update `bucket create` to allow setting a schema type.
-4. [52](https://github.com/influxdata/influx-cli/pull/52): Update `bucket list` to display schema types.
-5. [116](https://github.com/influxdata/influx-cli/pull/116): Reimplement `backup` to support downloading embedded SQL store from InfluxDB v2.1.x.
-6. [116](https://github.com/influxdata/influx-cli/pull/116): Add `--compression` flag to `backup` to support enabling/disabling GZIP compression of downloaded files.
-7. [121](https://github.com/influxdata/influx-cli/pull/121): Reimplement `restore` to support uploading embedded SQL store from InfluxDB v2.1.x.
-8. [191](https://github.com/influxdata/influx-cli/pull/191): Add `--password` flag to `user password` command to allow bypassing interactive prompt.
-9. [208](https://github.com/influxdata/influx-cli/pull/208): Bind `--skip-verify` flag to `INFLUX_SKIP_VERIFY` environment variable.
+1. [52](https://github.com/influxdata/influx-cli/pull/52): Add `bucket-schema` commands to manage explicit measurement schemas in InfluxDB Cloud.
+1. [52](https://github.com/influxdata/influx-cli/pull/52): Update `bucket create` to allow setting a schema type.
+1. [52](https://github.com/influxdata/influx-cli/pull/52): Update `bucket list` to display schema types.
+1. [116](https://github.com/influxdata/influx-cli/pull/116): Reimplement `backup` to support downloading embedded SQL store from InfluxDB v2.1.x.
+1. [116](https://github.com/influxdata/influx-cli/pull/116): Add `--compression` flag to `backup` to support enabling/disabling GZIP compression of downloaded files.
+1. [121](https://github.com/influxdata/influx-cli/pull/121): Reimplement `restore` to support uploading embedded SQL store from InfluxDB v2.1.x.
+1. [191](https://github.com/influxdata/influx-cli/pull/191): Add `--password` flag to `user password` command to allow bypassing interactive prompt.
+1. [208](https://github.com/influxdata/influx-cli/pull/208): Bind `--skip-verify` flag to `INFLUX_SKIP_VERIFY` environment variable.
 
 
 ### Bug Fixes
