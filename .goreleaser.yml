@@ -27,6 +27,7 @@ builds:
 
 nfpms:
   - id: influx-cli
+    package_name: influxdb2-cli
     formats:
       - deb
       - rpm
@@ -37,7 +38,7 @@ nfpms:
       deb:
         replaces:
           # Tells the deb system that it's ok for this package to overwrite files from versions of the `influxdb2`
-          # package prior to 2.0.8. Needed to support installing `influx-cli` next to `influxdb` without upgrading
+          # package prior to 2.0.8. Needed to support installing `influxdb2-cli` next to `influxdb2` without upgrading
           # the server.
           - influxdb2 (<< 2.0.8)
         file_name_template: influxdb2-client-{{if index .Env "IS_NIGHTLY"}}nightly{{else}}{{.Version}}{{end}}-{{ .Arch }}
