@@ -181,10 +181,12 @@ jobs:
           steps:
             - run:
                 name: Make a pseudo-tag for the nightly build
-                command: git tag nightly-$(date +%Y-%m-%d)
+                command: |
+                  latest_tag=$(git describe --tags --abbrev=0)
+                  git tag ${latest_tag}+nightly-$(date +%Y-%m-%d)
             - run:
                 name: Publish nightly snapshot release
-                command: IS_NIGHTLY=1 goreleaser release --rm-dist --skip-validate
+                command: IS_NIGHTLY=1 goreleaser release --rm-dist
       - unless:
           condition: << parameters.is-nightly >>
           steps:
