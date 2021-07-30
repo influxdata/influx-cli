@@ -28,6 +28,7 @@ var app = cli.App{
 	Usage:                "Influx Client",
 	UsageText:            "influx [command]",
 	EnableBashCompletion: true,
+	BashComplete:         cli.DefaultAppComplete,
 	Commands: []cli.Command{
 		newVersionCmd(),
 		newPingCmd(),
