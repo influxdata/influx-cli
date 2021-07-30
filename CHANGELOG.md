@@ -1,3 +1,9 @@
+## v2.2.0 [unreleased]
+
+### Bug Fixes
+
+1. [221](https://github.com/influxdata/influx-cli/pull/221): Fix shell completion for top-level `influx` commands.
+
 ## v2.1.0 [2021-07-29]
 
 ### New Repository
