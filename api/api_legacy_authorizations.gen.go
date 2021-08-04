@@ -13,7 +13,7 @@ package api
 import (
 	_context "context"
 	_fmt "fmt"
-	_ioutil "io/ioutil"
+	_io "io"
 	_nethttp "net/http"
 	_neturl "net/url"
 	"strings"
@@ -238,7 +238,7 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecute(r A
 			body.Close()
 			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return _fmt.Errorf("%s%w", errorPrefix, err)
@@ -431,7 +431,7 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -456,7 +456,7 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -583,7 +583,7 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiG
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -608,7 +608,7 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiG
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -749,7 +749,7 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -774,7 +774,7 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -903,7 +903,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -939,7 +939,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1078,7 +1078,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecu
 			body.Close()
 			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return _fmt.Errorf("%s%w", errorPrefix, err)

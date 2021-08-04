@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"errors"
 	"io"
-	"io/ioutil"
 	"strings"
 	"testing"
 
@@ -21,7 +20,7 @@ func TestGzipPipe(t *testing.T) {
 
 		data := strings.Repeat("Data data I'm some data\n", 1024)
 		reader := strings.NewReader(data)
-		pipe := pgzip.NewGzipPipe(ioutil.NopCloser(reader))
+		pipe := pgzip.NewGzipPipe(io.NopCloser(reader))
 		defer pipe.Close()
 		gunzip, err := gzip.NewReader(pipe)
 		require.NoError(t, err)
@@ -38,7 +37,7 @@ func TestGzipPipe(t *testing.T) {
 		t.Parallel()
 
 		reader := &failingReader{n: 3, err: errors.New("I BROKE")}
-		pipe := pgzip.NewGzipPipe(ioutil.NopCloser(reader))
+		pipe := pgzip.NewGzipPipe(io.NopCloser(reader))
 		defer pipe.Close()
 		gunzip, err := gzip.NewReader(pipe)
 		require.NoError(t, err)

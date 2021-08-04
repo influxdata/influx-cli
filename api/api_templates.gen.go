@@ -13,7 +13,7 @@ package api
 import (
 	_context "context"
 	_fmt "fmt"
-	_ioutil "io/ioutil"
+	_io "io"
 	_nethttp "net/http"
 	_neturl "net/url"
 )
@@ -175,7 +175,7 @@ func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (T
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -211,7 +211,7 @@ func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (T
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -325,7 +325,7 @@ func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) 
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -350,7 +350,7 @@ func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) 
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)

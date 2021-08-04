@@ -3,7 +3,6 @@ package api_test
 import (
 	"compress/gzip"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
@@ -28,7 +27,7 @@ func TestGunzipIfNeeded(t *testing.T) {
 		{
 			name: "no gzip",
 			getBody: func(t *testing.T) io.ReadCloser {
-				return ioutil.NopCloser(strings.NewReader(exampleResponse))
+				return io.NopCloser(strings.NewReader(exampleResponse))
 			},
 		},
 		{
@@ -67,7 +66,7 @@ func TestGunzipIfNeeded(t *testing.T) {
 			raw, err := api.GunzipIfNeeded(&resp)
 			require.NoError(t, err)
 			defer raw.Close()
-			body, err := ioutil.ReadAll(raw)
+			body, err := io.ReadAll(raw)
 			require.NoError(t, err)
 			require.Equal(t, exampleResponse, string(body))
 		})

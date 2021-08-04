@@ -13,7 +13,7 @@ package api
 import (
 	_context "context"
 	_fmt "fmt"
-	_ioutil "io/ioutil"
+	_io "io"
 	_nethttp "net/http"
 	_neturl "net/url"
 	"strings"
@@ -330,7 +330,7 @@ func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error 
 			body.Close()
 			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return _fmt.Errorf("%s%w", errorPrefix, err)
@@ -473,7 +473,7 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDReq
 			body.Close()
 			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return _fmt.Errorf("%s%w", errorPrefix, err)
@@ -678,7 +678,7 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -703,7 +703,7 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -830,7 +830,7 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -855,7 +855,7 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -982,7 +982,7 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1007,7 +1007,7 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1182,7 +1182,7 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1207,7 +1207,7 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1346,7 +1346,7 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1371,7 +1371,7 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1510,7 +1510,7 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1535,7 +1535,7 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1677,7 +1677,7 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1702,7 +1702,7 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1831,7 +1831,7 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1856,7 +1856,7 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -1994,7 +1994,7 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -2019,7 +2019,7 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -2169,7 +2169,7 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -2194,7 +2194,7 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)

@@ -2,7 +2,7 @@ package clients
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 )
@@ -19,7 +19,7 @@ func ReadQuery(filepath string, args []string) (string, error) {
 	}
 
 	readFile := func(path string) (string, error) {
-		queryBytes, err := ioutil.ReadFile(path)
+		queryBytes, err := os.ReadFile(path)
 		if err != nil {
 			return "", fmt.Errorf("failed to read query from %q: %w", path, err)
 		}
@@ -27,7 +27,7 @@ func ReadQuery(filepath string, args []string) (string, error) {
 	}
 
 	readStdin := func() (string, error) {
-		queryBytes, err := ioutil.ReadAll(os.Stdin)
+		queryBytes, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return "", fmt.Errorf("failed to read query from stdin: %w", err)
 		}

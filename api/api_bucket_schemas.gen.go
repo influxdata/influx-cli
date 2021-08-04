@@ -13,7 +13,7 @@ package api
 import (
 	_context "context"
 	_fmt "fmt"
-	_ioutil "io/ioutil"
+	_io "io"
 	_nethttp "net/http"
 	_neturl "net/url"
 	"strings"
@@ -241,7 +241,7 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -268,7 +268,7 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -419,7 +419,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -436,7 +436,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -587,7 +587,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -614,7 +614,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -776,7 +776,7 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -803,7 +803,7 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)

@@ -6,7 +6,6 @@ import (
 	"bytes"
 	_context "context"
 	_io "io"
-	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
 	_fmt "fmt"
@@ -278,7 +277,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	}
 {{/required}}
 	if localVarFile != nil {
-		fbs, _ := _ioutil.ReadAll(localVarFile)
+		fbs, _ := _io.ReadAll(localVarFile)
 		localVarFileBytes = fbs
 		localVarFileName = localVarFile.Name()
 		localVarFile.Close()
@@ -369,7 +368,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 			body.Close()
 			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
@@ -416,7 +415,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 		body.Close()
 		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)

@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"context"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
@@ -76,7 +75,7 @@ func TestRawResultPrinter_PrintQueryResults(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			in := ioutil.NopCloser(strings.NewReader(tc.rawTable))
+			in := io.NopCloser(strings.NewReader(tc.rawTable))
 			out := bytes.Buffer{}
 			require.NoError(t, query.RawResultPrinter.PrintQueryResults(in, &out))
 			require.Equal(t, tc.rawTable, out.String())
@@ -120,7 +119,7 @@ func TestQuery(t *testing.T) {
 						assert.Equal(t, fakeQuery, *body) &&
 						assert.Equal(t, orgID.String(), *in.GetOrgID()) &&
 						assert.Nil(t, in.GetOrg())
-				})).Return(&http.Response{Body: ioutil.NopCloser(strings.NewReader(fakeResults))}, nil)
+				})).Return(&http.Response{Body: io.NopCloser(strings.NewReader(fakeResults))}, nil)
 			},
 		},
 		{
@@ -140,7 +139,7 @@ func TestQuery(t *testing.T) {
 						assert.Equal(t, fakeQuery, *body) &&
 						assert.Equal(t, "my-org", *in.GetOrg()) &&
 						assert.Nil(t, in.GetOrgID())
-				})).Return(&http.Response{Body: ioutil.NopCloser(strings.NewReader(fakeResults))}, nil)
+				})).Return(&http.Response{Body: io.NopCloser(strings.NewReader(fakeResults))}, nil)
 			},
 		},
 		{
@@ -158,7 +157,7 @@ func TestQuery(t *testing.T) {
 						assert.Equal(t, fakeQuery, *body) &&
 						assert.Equal(t, "default-org", *in.GetOrg()) &&
 						assert.Nil(t, in.GetOrgID())
-				})).Return(&http.Response{Body: ioutil.NopCloser(strings.NewReader(fakeResults))}, nil)
+				})).Return(&http.Response{Body: io.NopCloser(strings.NewReader(fakeResults))}, nil)
 			},
 		},
 		{
@@ -189,7 +188,7 @@ func TestQuery(t *testing.T) {
 						assert.Equal(t, expectedBody, *body) &&
 						assert.Equal(t, "default-org", *in.GetOrg()) &&
 						assert.Nil(t, in.GetOrgID())
-				})).Return(&http.Response{Body: ioutil.NopCloser(strings.NewReader(fakeResults))}, nil)
+				})).Return(&http.Response{Body: io.NopCloser(strings.NewReader(fakeResults))}, nil)
 			},
 		},
 		{

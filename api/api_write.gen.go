@@ -13,7 +13,7 @@ package api
 import (
 	_context "context"
 	_fmt "fmt"
-	_ioutil "io/ioutil"
+	_io "io"
 	_nethttp "net/http"
 	_neturl "net/url"
 )
@@ -269,7 +269,7 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 			body.Close()
 			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return _fmt.Errorf("%s%w", errorPrefix, err)

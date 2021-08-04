@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -285,5 +284,5 @@ func (s ioStore) writeConfigs(cfgs Configs) error {
 	if err := (baseRW{w: &b1}).writeConfigs(cfgs); err != nil {
 		return err
 	}
-	return ioutil.WriteFile(s.Path, b1.Bytes(), 0600)
+	return os.WriteFile(s.Path, b1.Bytes(), 0600)
 }

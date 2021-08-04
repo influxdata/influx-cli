@@ -13,7 +13,7 @@ package api
 import (
 	_context "context"
 	_fmt "fmt"
-	_ioutil "io/ioutil"
+	_io "io"
 	_nethttp "net/http"
 	_neturl "net/url"
 	"strings"
@@ -225,7 +225,7 @@ func (a *BucketsApiService) DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) 
 			body.Close()
 			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return _fmt.Errorf("%s%w", errorPrefix, err)
@@ -441,7 +441,7 @@ func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, 
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -466,7 +466,7 @@ func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, 
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -593,7 +593,7 @@ func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucke
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -618,7 +618,7 @@ func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucke
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -759,7 +759,7 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -784,7 +784,7 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -913,7 +913,7 @@ func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket,
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -949,7 +949,7 @@ func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket,
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
