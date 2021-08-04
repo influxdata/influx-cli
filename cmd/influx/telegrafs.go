@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/influxdata/influx-cli/v2/clients/telegrafs"
@@ -213,7 +213,7 @@ Examples:
 
 func readConfig(file string) (string, error) {
 	if file != "" {
-		bb, err := ioutil.ReadFile(file)
+		bb, err := os.ReadFile(file)
 		if err != nil {
 			return "", fmt.Errorf("failed to read telegraf config from %q: %w", file, err)
 		}
@@ -221,7 +221,7 @@ func readConfig(file string) (string, error) {
 		return string(bb), nil
 	}
 
-	bb, err := ioutil.ReadAll(os.Stdin)
+	bb, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		return "", fmt.Errorf("failed to read telegraf config from stdin: %w", err)
 	}

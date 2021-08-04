@@ -14,7 +14,6 @@ import (
 	_context "context"
 	_fmt "fmt"
 	_io "io"
-	_ioutil "io/ioutil"
 	_nethttp "net/http"
 	_neturl "net/url"
 	"strings"
@@ -251,7 +250,7 @@ func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDR
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -276,7 +275,7 @@ func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDR
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -405,7 +404,7 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 			body.Close()
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -430,7 +429,7 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 		body.Close()
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
-	localVarBody, err := _ioutil.ReadAll(body)
+	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
@@ -581,7 +580,7 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 			body.Close()
 			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return _fmt.Errorf("%s%w", errorPrefix, err)
@@ -738,7 +737,7 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 			body.Close()
 			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return _fmt.Errorf("%s%w", errorPrefix, err)
@@ -907,7 +906,7 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 			body.Close()
 			return _fmt.Errorf("%s%w", errorPrefix, err)
 		}
-		localVarBody, err := _ioutil.ReadAll(body)
+		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			return _fmt.Errorf("%s%w", errorPrefix, err)

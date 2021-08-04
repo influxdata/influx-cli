@@ -3,7 +3,7 @@ package csv2lp
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"math"
 	"os"
@@ -283,7 +283,7 @@ func Test_NormalizeNumberString(t *testing.T) {
 func Test_CreateDecoder(t *testing.T) {
 	decoder, err := CreateDecoder("UTF-8")
 	toUtf8 := func(in []byte) string {
-		s, _ := ioutil.ReadAll(decoder(bytes.NewReader(in)))
+		s, _ := io.ReadAll(decoder(bytes.NewReader(in)))
 		return string(s)
 	}
 	require.NotNil(t, decoder)

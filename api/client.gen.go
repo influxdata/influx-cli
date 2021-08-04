@@ -18,7 +18,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -313,7 +312,7 @@ func (c *APIClient) prepareRequest(
 		// Set Content-Length
 		headerParams["Content-Length"] = fmt.Sprintf("%d", buf.Len())
 		w.Close()
-		body = ioutil.NopCloser(buf)
+		body = io.NopCloser(buf)
 	}
 
 	if strings.HasPrefix(headerParams["Content-Type"], "application/x-www-form-urlencoded") && len(formParams) > 0 {
@@ -322,7 +321,7 @@ func (c *APIClient) prepareRequest(
 		}
 		buf := &bytes.Buffer{}
 		buf.WriteString(formParams.Encode())
-		body = ioutil.NopCloser(buf)
+		body = io.NopCloser(buf)
 		// Set Content-Length
 		headerParams["Content-Length"] = fmt.Sprintf("%d", buf.Len())
 	}
@@ -455,7 +454,7 @@ func setBody(body interface{}, contentType string) (io.ReadCloser, error) {
 	if rc, ok := body.(io.ReadCloser); ok {
 		return rc, nil
 	} else if reader, ok := body.(io.Reader); ok {
-		return ioutil.NopCloser(reader), nil
+		return io.NopCloser(reader), nil
 	} else if fp, ok := body.(**os.File); ok {
 		return *fp, nil
 	}
@@ -482,7 +481,7 @@ func setBody(body interface{}, contentType string) (io.ReadCloser, error) {
 	if bodyBuf.Len() == 0 {
 		return nil, fmt.Errorf("invalid body type %s", contentType)
 	}
-	return ioutil.NopCloser(bodyBuf), nil
+	return io.NopCloser(bodyBuf), nil
 }
 
 // detectContentType method is used to figure out `Request.Body` content type for request header

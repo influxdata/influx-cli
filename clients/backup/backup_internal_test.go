@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -143,7 +142,7 @@ func TestBackup_DownloadMetadata(t *testing.T) {
 					}
 					require.NoError(t, writer.Close())
 
-					res := http.Response{Header: http.Header{}, Body: ioutil.NopCloser(&out)}
+					res := http.Response{Header: http.Header{}, Body: io.NopCloser(&out)}
 					res.Header.Add("Content-Type", fmt.Sprintf("multipart/mixed; boundary=%s", writer.Boundary()))
 					if tc.responseCompression == br.GzipCompression {
 						res.Header.Add("Content-Encoding", "gzip")
@@ -157,7 +156,7 @@ func TestBackup_DownloadMetadata(t *testing.T) {
 				baseName:  "test",
 			}
 
-			out, err := ioutil.TempDir("", "")
+			out, err := os.MkdirTemp("", "")
 			require.NoError(t, err)
 			defer os.RemoveAll(out)
 
@@ -180,7 +179,7 @@ func TestBackup_DownloadMetadata(t *testing.T) {
 				defer gzr.Close()
 				kvReader = gzr
 			}
-			kvBytes, err := ioutil.ReadAll(kvReader)
+			kvBytes, err := io.ReadAll(kvReader)
 			require.NoError(t, err)
 			require.Equal(t, fakeKV, string(kvBytes))
 
@@ -195,7 +194,7 @@ func TestBackup_DownloadMetadata(t *testing.T) {
 				defer gzr.Close()
 				sqlReader = gzr
 			}
-			sqlBytes, err := ioutil.ReadAll(sqlReader)
+			sqlBytes, err := io.ReadAll(sqlReader)
 			require.NoError(t, err)
 			require.Equal(t, fakeSQL, string(sqlBytes))
 		})
@@ -255,7 +254,7 @@ func TestBackup_DownloadShardData(t *testing.T) {
 					}
 					_, err := outW.Write([]byte(fakeTsm))
 					require.NoError(t, err)
-					res := http.Response{Header: http.Header{}, Body: ioutil.NopCloser(&out)}
+					res := http.Response{Header: http.Header{}, Body: io.NopCloser(&out)}
 					res.Header.Add("Content-Type", "application/octet-stream")
 					if tc.responseCompression == br.GzipCompression {
 						res.Header.Add("Content-Encoding", "gzip")
@@ -269,7 +268,7 @@ func TestBackup_DownloadShardData(t *testing.T) {
 				baseName:  "test",
 			}
 
-			out, err := ioutil.TempDir("", "")
+			out, err := os.MkdirTemp("", "")
 			require.NoError(t, err)
 			defer os.RemoveAll(out)
 
@@ -292,7 +291,7 @@ func TestBackup_DownloadShardData(t *testing.T) {
 				defer gzr.Close()
 				shardReader = gzr
 			}
-			shardBytes, err := ioutil.ReadAll(shardReader)
+			shardBytes, err := io.ReadAll(shardReader)
 			require.NoError(t, err)
 			require.Equal(t, fakeTsm, string(shardBytes))
 		})
@@ -314,7 +313,7 @@ func TestBackup_DownloadShardData(t *testing.T) {
 			baseName:  "test",
 		}
 
-		out, err := ioutil.TempDir("", "")
+		out, err := os.MkdirTemp("", "")
 		require.NoError(t, err)
 		defer os.RemoveAll(out)
 

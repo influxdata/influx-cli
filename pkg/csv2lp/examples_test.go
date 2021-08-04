@@ -2,7 +2,7 @@ package csv2lp
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"strings"
 	"testing"
 
@@ -184,7 +184,7 @@ func Test_Examples(t *testing.T) {
 			comma := example.normalize()
 			transformer := CsvToLineProtocol(strings.NewReader(example.csv))
 			transformer.SkipRowOnError(true)
-			result, err := ioutil.ReadAll(transformer)
+			result, err := io.ReadAll(transformer)
 			if err != nil {
 				require.Nil(t, fmt.Sprintf("%s", err))
 			}

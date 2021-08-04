@@ -2,7 +2,7 @@ package fluxcsv_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"strings"
 	"testing"
 	"time"
@@ -67,7 +67,7 @@ func TestQueryCVSResultSingleTable(t *testing.T) {
 	require.NoError(t, err)
 
 	reader := strings.NewReader(csvTable)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.True(t, queryResult.Next(), queryResult.Err())
 	require.Nil(t, queryResult.Err())
 
@@ -296,7 +296,7 @@ func TestQueryCVSResultMultiTables(t *testing.T) {
 	require.NoError(t, err)
 
 	reader := strings.NewReader(csvTable)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.True(t, queryResult.Next(), queryResult.Err())
 	require.Nil(t, queryResult.Err())
 
@@ -411,7 +411,7 @@ func TestQueryCVSResultSingleTableMultiColumnsNoValue(t *testing.T) {
 	require.NoError(t, err)
 
 	reader := strings.NewReader(csvTable)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.True(t, queryResult.Next(), queryResult.Err())
 	require.Nil(t, queryResult.Err())
 
@@ -439,7 +439,7 @@ func TestErrorInRow(t *testing.T) {
 		`,failed to create physical plan: invalid time bounds from procedure from: bounds contain zero time,897`}
 	csvTable := makeCSVstring(csvRowsError)
 	reader := strings.NewReader(csvTable)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 
 	require.False(t, queryResult.Next())
 	require.NotNil(t, queryResult.Err())
@@ -453,7 +453,7 @@ func TestErrorInRow(t *testing.T) {
 		`,failed to create physical plan: invalid time bounds from procedure from: bounds contain zero time,`}
 	csvTable = makeCSVstring(csvRowsErrorNoReference)
 	reader = strings.NewReader(csvTable)
-	queryResult = fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult = fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 
 	require.False(t, queryResult.Next())
 	require.NotNil(t, queryResult.Err())
@@ -467,7 +467,7 @@ func TestErrorInRow(t *testing.T) {
 		`,,`}
 	csvTable = makeCSVstring(csvRowsErrorNoMessage)
 	reader = strings.NewReader(csvTable)
-	queryResult = fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult = fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 
 	require.False(t, queryResult.Next())
 	require.NotNil(t, queryResult.Err())
@@ -484,7 +484,7 @@ func TestInvalidDataType(t *testing.T) {
 `
 
 	reader := strings.NewReader(csvTable)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.False(t, queryResult.Next())
 	require.NotNil(t, queryResult.Err())
 	require.Equal(t, "unknown data type int", queryResult.Err().Error())
@@ -546,7 +546,7 @@ func TestReorderedAnnotations(t *testing.T) {
 
 `
 	reader := strings.NewReader(csvTable1)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.True(t, queryResult.Next(), queryResult.Err())
 	require.Nil(t, queryResult.Err())
 
@@ -572,7 +572,7 @@ func TestReorderedAnnotations(t *testing.T) {
 
 `
 	reader = strings.NewReader(csvTable2)
-	queryResult = fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult = fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.True(t, queryResult.Next(), queryResult.Err())
 	require.Nil(t, queryResult.Err())
 
@@ -644,7 +644,7 @@ func TestDatatypeOnlyAnnotation(t *testing.T) {
 
 `
 	reader := strings.NewReader(csvTable1)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.True(t, queryResult.Next(), queryResult.Err())
 	require.Nil(t, queryResult.Err())
 
@@ -672,7 +672,7 @@ func TestMissingDatatypeAnnotation(t *testing.T) {
 `
 
 	reader := strings.NewReader(csvTable1)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.False(t, queryResult.Next())
 	require.NotNil(t, queryResult.Err())
 	require.Equal(t, "parsing error, datatype annotation not found", queryResult.Err().Error())
@@ -686,7 +686,7 @@ func TestMissingDatatypeAnnotation(t *testing.T) {
 `
 
 	reader = strings.NewReader(csvTable2)
-	queryResult = fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult = fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.False(t, queryResult.Next())
 	require.NotNil(t, queryResult.Err())
 	require.Equal(t, "parsing error, datatype annotation not found", queryResult.Err().Error())
@@ -700,7 +700,7 @@ func TestMissingAnnotations(t *testing.T) {
 
 `
 	reader := strings.NewReader(csvTable3)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.False(t, queryResult.Next())
 	require.NotNil(t, queryResult.Err())
 	require.Equal(t, "parsing error, annotations not found", queryResult.Err().Error())
@@ -715,7 +715,7 @@ func TestDifferentNumberOfColumns(t *testing.T) {
 `
 
 	reader := strings.NewReader(csvTable)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.False(t, queryResult.Next())
 	require.NotNil(t, queryResult.Err())
 	require.Equal(t, "parsing error, row has different number of columns than the table: 11 vs 10", queryResult.Err().Error())
@@ -728,7 +728,7 @@ func TestDifferentNumberOfColumns(t *testing.T) {
 `
 
 	reader = strings.NewReader(csvTable2)
-	queryResult = fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult = fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.False(t, queryResult.Next())
 	require.NotNil(t, queryResult.Err())
 	require.Equal(t, "parsing error, row has different number of columns than the table: 8 vs 10", queryResult.Err().Error())
@@ -741,7 +741,7 @@ func TestDifferentNumberOfColumns(t *testing.T) {
 `
 
 	reader = strings.NewReader(csvTable3)
-	queryResult = fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult = fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 	require.False(t, queryResult.Next())
 	require.NotNil(t, queryResult.Err())
 	require.Equal(t, "parsing error, row has different number of columns than the table: 10 vs 8", queryResult.Err().Error())
@@ -758,7 +758,7 @@ func TestEmptyValue(t *testing.T) {
 `
 
 	reader := strings.NewReader(csvTable)
-	queryResult := fluxcsv.NewQueryTableResult(ioutil.NopCloser(reader))
+	queryResult := fluxcsv.NewQueryTableResult(io.NopCloser(reader))
 
 	require.True(t, queryResult.Next(), queryResult.Err())
 	require.Nil(t, queryResult.Err())

@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -30,7 +29,7 @@ func readLines(reader io.Reader) []string {
 func createTempFile(t *testing.T, suffix string, contents []byte, compress bool) string {
 	t.Helper()
 
-	file, err := ioutil.TempFile("", "influx_writeTest*."+suffix)
+	file, err := os.CreateTemp("", "influx_writeTest*."+suffix)
 	require.NoError(t, err)
 	defer file.Close()
 
@@ -77,7 +76,7 @@ func (c *mockClient) Do(req *http.Request) (*http.Response, error) {
 		}
 		_, err := writer.Write([]byte(data))
 		require.NoError(c.t, err)
-		resp.Body = ioutil.NopCloser(&body)
+		resp.Body = io.NopCloser(&body)
 	}
 
 	return &resp, nil

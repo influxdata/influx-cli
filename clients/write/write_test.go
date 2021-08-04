@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"context"
 	"io"
-	"io/ioutil"
 	"strings"
 	"testing"
 
@@ -25,7 +24,7 @@ type bufferReader struct {
 }
 
 func (pr *bufferReader) Open(context.Context) (io.Reader, io.Closer, error) {
-	return &pr.buf, ioutil.NopCloser(nil), nil
+	return &pr.buf, io.NopCloser(nil), nil
 }
 
 type noopThrottler struct {

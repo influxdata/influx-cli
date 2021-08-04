@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -200,7 +199,7 @@ func Test_CsvToLineProtocol_LogTableColumns(t *testing.T) {
 	require.False(t, reader.skipRowOnError)
 	require.True(t, reader.logTableDataColumns)
 	// read all the data
-	ioutil.ReadAll(reader)
+	io.ReadAll(reader)
 
 	out := buf.String()
 	// fmt.Println(out)
@@ -228,7 +227,7 @@ func Test_CsvToLineProtocol_LogTimeZoneWarning(t *testing.T) {
 		"_measurement,a,b\ncpu,1,1"
 
 	reader := CsvToLineProtocol(strings.NewReader(csv))
-	bytes, _ := ioutil.ReadAll(reader)
+	bytes, _ := io.ReadAll(reader)
 
 	out := buf.String()
 	// fmt.Println(out) // "::PREFIX::WARNING:  #timezone annotation: unknown time zone 1
@@ -258,7 +257,7 @@ func Test_CsvToLineProtocol_SkipRowOnError(t *testing.T) {
 	require.Equal(t, reader.skipRowOnError, true)
 	require.Equal(t, reader.logTableDataColumns, false)
 	// read all the data
-	ioutil.ReadAll(reader)
+	io.ReadAll(reader)
 
 	out := buf.String()
 	// fmt.Println(out)
@@ -315,7 +314,7 @@ func Test_CsvToLineProtocol_RowSkipped(t *testing.T) {
 		})
 	}
 	// read all the data
-	ioutil.ReadAll(reader)
+	io.ReadAll(reader)
 
 	out := buf.String()
 	require.Empty(t, out, "No log messages expected because RowSkipped handler is set")
@@ -410,7 +409,7 @@ cpu;3a
 		})
 	}
 	// read all the data
-	ioutil.ReadAll(reader)
+	io.ReadAll(reader)
 
 	out := buf.String()
 	require.Empty(t, out, "No log messages expected because RowSkipped handler is set")
@@ -445,7 +444,7 @@ func Test_CsvToLineProtocol_LineEndingWarning(t *testing.T) {
 		"1549240000000000000,xx:xx:xx:xx:xx:xx,2nd Floor Open Plan DS,0,test"
 
 	reader := CsvToLineProtocol(strings.NewReader(csv))
-	bytes, _ := ioutil.ReadAll(reader)
+	bytes, _ := io.ReadAll(reader)
 
 	out := buf.String()
 	messages := strings.Count(out, prefix)
@@ -475,7 +474,7 @@ func Test_CsvToLineProtocol_WindowsLineEndings(t *testing.T) {
 		"1549240000000000000,a,b,0,test"
 
 	reader := CsvToLineProtocol(strings.NewReader(csv))
-	bytes, _ := ioutil.ReadAll(reader)
+	bytes, _ := io.ReadAll(reader)
 
 	out := buf.String()
 	messages := strings.Count(out, prefix)

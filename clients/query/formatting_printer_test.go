@@ -2,7 +2,7 @@ package query_test
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"strings"
 	"testing"
 
@@ -141,7 +141,7 @@ Table: keys: [_start, _stop, _field, _measurement, bar]
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			in := ioutil.NopCloser(strings.NewReader(tc.in))
+			in := io.NopCloser(strings.NewReader(tc.in))
 			out := bytes.Buffer{}
 			require.NoError(t, query.NewFormattingPrinter().PrintQueryResults(in, &out))
 			require.Equal(t, tc.expected, out.String())
