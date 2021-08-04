@@ -40,12 +40,8 @@ bin/$(GOOS)/influx: $(SOURCES)
 .DEFAULT_GOAL := influx
 influx: bin/$(GOOS)/influx
 
-vendor: go.mod go.sum
-	go mod vendor
-
 clean:
 	$(RM) -r bin
-	$(RM) -r vendor
 
 ### Linters
 checkfmt:
@@ -57,7 +53,7 @@ checktidy:
 checkopenapi:
 	./etc/checkopenapi.sh
 
-staticcheck: $(SOURCES) vendor
+staticcheck: $(SOURCES)
 	go run honnef.co/go/tools/cmd/staticcheck -go $(GOVERSION) ./...
 
 vet:

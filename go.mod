@@ -21,5 +21,5 @@ require (
 	golang.org/x/text v0.3.3
 	golang.org/x/tools v0.1.0
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
-	honnef.co/go/tools v0.1.3
+	honnef.co/go/tools v0.2.0
 )
