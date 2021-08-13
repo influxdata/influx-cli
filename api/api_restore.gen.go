@@ -350,7 +350,7 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/restore/bucket-metadata"
+	localVarPath := localBasePath + "/restore/bucketMetadata"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
