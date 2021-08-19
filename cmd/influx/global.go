@@ -203,7 +203,6 @@ func coreFlags() []cli.Flag {
 		},
 		&cli.BoolFlag{
 			Name:   httpDebugFlagName,
-			Hidden: true,
 		},
 	}
 }
