@@ -202,7 +202,7 @@ func coreFlags() []cli.Flag {
 			EnvVar: "INFLUX_TRACE_DEBUG_ID",
 		},
 		&cli.BoolFlag{
-			Name:   httpDebugFlagName,
+			Name: httpDebugFlagName,
 		},
 	}
 }
