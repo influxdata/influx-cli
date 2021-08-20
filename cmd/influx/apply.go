@@ -164,7 +164,7 @@ https://github.com/influxdata/community-templates.
 				Value: &params.filters,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			parsedParams := apply.Params{
 				OrgId:              params.orgId,

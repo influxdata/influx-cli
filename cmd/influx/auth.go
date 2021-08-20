@@ -149,7 +149,7 @@ func newCreateCommand() cli.Command {
 		Name:   "create",
 		Usage:  "Create authorization",
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			params.WriteBucketIds = ctx.StringSlice("write-bucket")
 			params.ReadBucketIds = ctx.StringSlice("read-bucket")
@@ -178,7 +178,7 @@ func newDeleteCommand() cli.Command {
 				Required: true,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := auth.Client{
@@ -217,7 +217,7 @@ func newListCommand() cli.Command {
 		Usage:   "List authorizations",
 		Aliases: []string{"find", "ls"},
 		Flags:   flags,
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := auth.Client{
@@ -242,7 +242,7 @@ func newSetActiveCommand() cli.Command {
 				Required: true,
 			},
 		},
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := auth.Client{
@@ -267,7 +267,7 @@ func newSetInactiveCommand() cli.Command {
 				Required: true,
 			},
 		},
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := auth.Client{

@@ -118,7 +118,7 @@ func newTemplateCmd() cli.Command {
 				Destination: &params.noTableBorders,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			parsedParams := template.SummarizeParams{
 				OrgId:              params.orgId,
@@ -149,7 +149,7 @@ func newTemplateValidateCmd() cli.Command {
 		Name:   "validate",
 		Usage:  "Validate the provided template",
 		Flags:  append(commonFlagsNoPrint(), templateFlags(&params)...),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			parsedParams := template.ValidateParams{
 				OrgId:   params.orgId,
