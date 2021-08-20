@@ -14,8 +14,11 @@ ifdef COMMIT
 endif
 export GO_BUILD=go build -ldflags "$(LDFLAGS)"
 
+# SOURCES are the files that affect building the main binary.
 SOURCES := $(shell find . -name '*.go' -not -name '*_test.go') go.mod go.sum
-SOURCES_NO_VENDOR := $(shell find . -path ./vendor -prune -o -name "*.go" -not -name '*_test.go' -print)
+
+# FMT_FILES are all files that should be formatted according to our rules.
+FMT_FILES := $(shell find . -path ./vendor -prune -o -name "*.go" -print)
 
 # Allow for `go test` to be swapped out by other tooling, i.e. `gotestsum`
 export GO_TEST=go test
@@ -26,7 +29,7 @@ GO_TEST_PATHS=./...
 openapi:
 	./etc/generate-openapi.sh
 
-fmt: $(SOURCES_NO_VENDOR)
+fmt: $(FMT_FILES)
 	# Format everything, but the import-format doesn't match our desired pattern.
 	gofmt -w -s $^
 	# Remove unused imports.

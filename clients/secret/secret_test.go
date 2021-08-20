@@ -17,8 +17,8 @@ import (
 
 const (
 	defaultOrgName = "default org"
-	fakeResults = "data data data"
-	fakeKey = "key1"
+	fakeResults    = "data data data"
+	fakeKey        = "key1"
 )
 
 func TestSecret_List(t *testing.T) {
@@ -29,12 +29,12 @@ func TestSecret_List(t *testing.T) {
 	require.NoError(t, err)
 
 	testCases := []struct {
-		name string
-		params secret.ListParams
-		defaultOrgName string
+		name                 string
+		params               secret.ListParams
+		defaultOrgName       string
 		registerExpectations func(t *testing.T, secretApi *mock.MockSecretsApi, orgApi *mock.MockOrganizationsApi)
-		expectMatcher string
-		expectError string
+		expectMatcher        string
+		expectError          string
 	}{
 		{
 			name: "org id",
@@ -50,7 +50,7 @@ func TestSecret_List(t *testing.T) {
 				secretApi.EXPECT().GetOrgsIDSecretsExecute(gomock.Eq(req)).
 					Return(api.SecretKeysResponse{Secrets: &[]string{fakeResults}}, nil)
 			},
-			expectMatcher: printHeader+fakeResults+"\t"+id.String()+"\n",
+			expectMatcher: printHeader + fakeResults + "\t" + id.String() + "\n",
 		},
 		{
 			name: "default org",
@@ -102,7 +102,7 @@ func TestSecret_List(t *testing.T) {
 					},
 					StdIO: stdio,
 				},
-				SecretsApi: secretsApi,
+				SecretsApi:       secretsApi,
 				OrganizationsApi: organizationsApi,
 			}
 
@@ -126,12 +126,12 @@ func TestSecret_Delete(t *testing.T) {
 	require.NoError(t, err)
 
 	testCases := []struct {
-		name string
-		params secret.DeleteParams
-		defaultOrgName string
+		name                 string
+		params               secret.DeleteParams
+		defaultOrgName       string
 		registerExpectations func(t *testing.T, secretApi *mock.MockSecretsApi)
-		expectMatcher string
-		expectError string
+		expectMatcher        string
+		expectError          string
 	}{
 		{
 			name: "delete",
@@ -139,7 +139,7 @@ func TestSecret_Delete(t *testing.T) {
 				OrgParams: clients.OrgParams{
 					OrgID: id,
 				},
-				Key:       fakeKey,
+				Key: fakeKey,
 			},
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi) {
@@ -149,7 +149,7 @@ func TestSecret_Delete(t *testing.T) {
 				secretApi.EXPECT().PostOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
 				secretApi.EXPECT().PostOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
 			},
-			expectMatcher: printHeader+fakeKey+"\t"+id.String()+"\ttrue\n",
+			expectMatcher: printHeader + fakeKey + "\t" + id.String() + "\ttrue\n",
 		},
 		{
 			// This situation cannot happen since the CLI will stop it.
@@ -168,7 +168,7 @@ func TestSecret_Delete(t *testing.T) {
 				secretApi.EXPECT().PostOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
 				secretApi.EXPECT().PostOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
 			},
-			expectMatcher: printHeader+"\t"+id.String()+"\ttrue\n",
+			expectMatcher: printHeader + "\t" + id.String() + "\ttrue\n",
 		},
 		{
 			name: "delete no org",
@@ -224,12 +224,12 @@ func TestSecret_Update(t *testing.T) {
 	require.NoError(t, err)
 
 	testCases := []struct {
-		name string
-		params secret.UpdateParams
-		defaultOrgName string
+		name                 string
+		params               secret.UpdateParams
+		defaultOrgName       string
 		registerExpectations func(t *testing.T, secretApi *mock.MockSecretsApi, stdio *mock.MockStdIO)
-		expectMatcher string
-		expectError string
+		expectMatcher        string
+		expectError          string
 	}{
 		{
 			name: "update",
@@ -237,8 +237,8 @@ func TestSecret_Update(t *testing.T) {
 				OrgParams: clients.OrgParams{
 					OrgID: id,
 				},
-				Key:       fakeKey,
-				Value:     fakeValue,
+				Key:   fakeKey,
+				Value: fakeValue,
 			},
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi, stdio *mock.MockStdIO) {
@@ -248,7 +248,7 @@ func TestSecret_Update(t *testing.T) {
 				secretApi.EXPECT().PatchOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
 				secretApi.EXPECT().PatchOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
 			},
-			expectMatcher: printHeader+fakeKey+"\t"+id.String()+"\n",
+			expectMatcher: printHeader + fakeKey + "\t" + id.String() + "\n",
 		},
 		{
 			name: "update no key",
@@ -256,7 +256,7 @@ func TestSecret_Update(t *testing.T) {
 				OrgParams: clients.OrgParams{
 					OrgID: id,
 				},
-				Value:     fakeValue,
+				Value: fakeValue,
 			},
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi, stdio *mock.MockStdIO) {
@@ -266,7 +266,7 @@ func TestSecret_Update(t *testing.T) {
 				secretApi.EXPECT().PatchOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
 				secretApi.EXPECT().PatchOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
 			},
-			expectMatcher: printHeader+"\t"+id.String()+"\n",
+			expectMatcher: printHeader + "\t" + id.String() + "\n",
 		},
 		{
 			name: "update no value",
@@ -274,7 +274,7 @@ func TestSecret_Update(t *testing.T) {
 				OrgParams: clients.OrgParams{
 					OrgID: id,
 				},
-				Key:       fakeKey,
+				Key: fakeKey,
 			},
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi, stdio *mock.MockStdIO) {
@@ -286,7 +286,7 @@ func TestSecret_Update(t *testing.T) {
 				secretApi.EXPECT().PatchOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
 				secretApi.EXPECT().PatchOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
 			},
-			expectMatcher: printHeader+fakeKey+"\t"+id.String()+"\n",
+			expectMatcher: printHeader + fakeKey + "\t" + id.String() + "\n",
 		},
 		{
 			name: "update no org",
