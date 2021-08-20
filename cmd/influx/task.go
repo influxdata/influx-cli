@@ -81,7 +81,7 @@ func newTaskFindCmd() cli.Command {
 		Usage:   "List tasks",
 		Aliases: []string{"find", "ls"},
 		Flags:   flags,
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := task.Client{
@@ -135,7 +135,7 @@ func newTaskRetryFailedCmd() cli.Command {
 		Usage:   "Retry failed runs",
 		Aliases: []string{"rtf"},
 		Flags:   flags,
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := task.Client{
@@ -173,7 +173,7 @@ func newTaskUpdateCmd() cli.Command {
 		Usage:     "Update task status or script. Provide a Flux script via the first argument or a file.",
 		ArgsUsage: "[flux script or '-' for stdin]",
 		Flags:     flags,
-		Before:    middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:    middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := task.Client{
@@ -207,7 +207,7 @@ func newTaskDeleteCmd() cli.Command {
 		Name:   "delete",
 		Usage:  "Delete tasks",
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := task.Client{
@@ -250,7 +250,7 @@ func newTaskLogFindCmd() cli.Command {
 		Usage:   "List logs for a task",
 		Aliases: []string{"find", "ls"},
 		Flags:   flags,
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := task.Client{
@@ -310,7 +310,7 @@ func newTaskRunFindCmd() cli.Command {
 		Usage:   "List runs for a tasks",
 		Aliases: []string{"find", "ls"},
 		Flags:   flags,
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := task.Client{
@@ -343,7 +343,7 @@ func newTaskRunRetryCmd() cli.Command {
 		Name:   "retry",
 		Usage:  "Retry a run",
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := task.Client{

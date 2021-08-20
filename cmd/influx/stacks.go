@@ -36,7 +36,7 @@ Examples:
 
 For information about Stacks and how they integrate with InfluxDB templates, see
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/stacks/`,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{

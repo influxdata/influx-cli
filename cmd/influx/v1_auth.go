@@ -77,7 +77,7 @@ func newCreateV1AuthCmd() cli.Command {
 		Name:   "create",
 		Usage:  "Create authorization",
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			params.ReadBucket = ctx.StringSlice("read-bucket")
 			params.WriteBucket = ctx.StringSlice("write-bucket")
@@ -100,7 +100,7 @@ func newRemoveV1AuthCmd() cli.Command {
 		Name:   "delete",
 		Usage:  "Delete authorization",
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			if err := params.AuthLookupParams.Validate(); err != nil {
 				return err
@@ -139,7 +139,7 @@ func newListV1AuthCmd() cli.Command {
 		Usage:   "List authorizations",
 		Aliases: []string{"ls", "find"},
 		Flags:   flags,
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := v1_auth.Client{
@@ -160,7 +160,7 @@ func newSetActiveV1AuthCmd() cli.Command {
 		Name:   "set-active",
 		Usage:  "Change the status of an authorization to active",
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			if err := params.AuthLookupParams.Validate(); err != nil {
 				return err
@@ -185,7 +185,7 @@ func newSetInactiveV1AuthCmd() cli.Command {
 		Name:   "set-inactive",
 		Usage:  "Change the status of an authorization to inactive",
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			if err := params.AuthLookupParams.Validate(); err != nil {
 				return err
@@ -218,7 +218,7 @@ func newSetPswdV1AuthCmd() cli.Command {
 		Name:   "set-password",
 		Usage:  "Set a password for an existing authorization",
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := v1_auth.Client{

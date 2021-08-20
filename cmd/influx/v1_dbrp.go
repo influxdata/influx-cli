@@ -55,7 +55,7 @@ func newV1DBRPListCmd() cli.Command {
 				Destination: &params.RP,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := v1dbrps.Client{
@@ -100,7 +100,7 @@ func newV1DBRPCreateCmd() cli.Command {
 				Required:    true,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := v1dbrps.Client{
@@ -129,7 +129,7 @@ func newV1DBRPDeleteCmd() cli.Command {
 				Required:    true,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := v1dbrps.Client{
@@ -167,7 +167,7 @@ func newV1DBRPUpdateCmd() cli.Command {
 				Destination: &params.RP,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := v1dbrps.Client{

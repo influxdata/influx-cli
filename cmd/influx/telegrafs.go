@@ -39,7 +39,7 @@ Examples:
 			newUpdateTelegrafCmd(),
 		},
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := telegrafs.Client{
@@ -87,7 +87,7 @@ Examples:
 	cat $CONFIG_FILE | influx telegrafs create -n $CFG_NAME -d $CFG_DESC
 `,
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			conf, err := readConfig(ctx.String("file"))
 			if err != nil {
@@ -133,7 +133,7 @@ Examples:
 `,
 		Aliases: []string{"remove"},
 		Flags:   flags,
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			rawIds := ctx.StringSlice("id")
 			params.Ids = rawIds
@@ -193,7 +193,7 @@ Examples:
 	cat $CONFIG_FILE | influx telegrafs update -i $ID  -n $CFG_NAME -d $CFG_DESC
 `,
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			conf, err := readConfig(ctx.String("file"))
 			if err != nil {
