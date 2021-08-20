@@ -27,10 +27,7 @@ func newBucketCreateCmd() cli.Command {
 	return cli.Command{
 		Name:  "create",
 		Usage: "Create bucket",
-		Before: middleware.WithBeforeFns(
-			withCli(),
-			withApi(true),
-		),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
@@ -90,7 +87,7 @@ func newBucketDeleteCmd() cli.Command {
 	return cli.Command{
 		Name:   "delete",
 		Usage:  "Delete bucket",
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
@@ -134,7 +131,7 @@ func newBucketListCmd() cli.Command {
 		Name:    "list",
 		Usage:   "List buckets",
 		Aliases: []string{"find", "ls"},
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
@@ -178,7 +175,7 @@ func newBucketUpdateCmd() cli.Command {
 		Name:    "update",
 		Usage:   "Update bucket",
 		Aliases: []string{"find", "ls"},
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{

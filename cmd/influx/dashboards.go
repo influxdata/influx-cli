@@ -29,7 +29,7 @@ Examples:
 	influx dashboards -i $ID1 -i $ID2
 `,
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			rawIds := ctx.StringSlice("id")
 			params.Ids = rawIds

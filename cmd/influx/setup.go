@@ -11,7 +11,7 @@ func newSetupCmd() cli.Command {
 	return cli.Command{
 		Name:   "setup",
 		Usage:  "Setup instance with initial user, org, bucket",
-		Before: middleware.WithBeforeFns(withCli(), withApi(false)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(false), middleware.NoArgs),
 		Flags: append(
 			commonFlagsNoToken(),
 			&cli.StringFlag{

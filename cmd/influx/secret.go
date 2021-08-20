@@ -31,7 +31,7 @@ func newDeleteSecretCmd() cli.Command {
 		Name:   "delete",
 		Usage:  "Delete secret",
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := secret.Client{
@@ -52,7 +52,7 @@ func newListSecretCmd() cli.Command {
 		Usage:   "List secrets",
 		Aliases: []string{"find", "ls"},
 		Flags:   flags,
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := secret.Client{
@@ -85,7 +85,7 @@ func newUpdateSecretCmd() cli.Command {
 		Name:   "update",
 		Usage:  "Update secret",
 		Flags:  flags,
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := secret.Client{

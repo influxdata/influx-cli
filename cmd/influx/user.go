@@ -53,7 +53,7 @@ func newUserCreateCmd() cli.Command {
 				Destination: &params.Password,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := user.Client{
@@ -80,7 +80,7 @@ func newUserDeleteCmd() cli.Command {
 				Value:    &id,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			client := user.Client{CLI: getCLI(ctx), UsersApi: getAPI(ctx).UsersApi}
 			return client.Delete(getContext(ctx), id)
@@ -107,7 +107,7 @@ func newUserListCmd() cli.Command {
 				Destination: &params.Name,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			client := user.Client{CLI: getCLI(ctx), UsersApi: getAPI(ctx).UsersApi}
 			return client.List(getContext(ctx), &params)
@@ -133,7 +133,7 @@ func newUserUpdateCmd() cli.Command {
 				Destination: &params.Name,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			client := user.Client{CLI: getCLI(ctx), UsersApi: getAPI(ctx).UsersApi}
 			return client.Update(getContext(ctx), &params)
@@ -163,7 +163,7 @@ func newUserSetPasswordCmd() cli.Command {
 				Destination: &params.Password,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			client := user.Client{CLI: getCLI(ctx), UsersApi: getAPI(ctx).UsersApi}
 			return client.SetPassword(getContext(ctx), &params)

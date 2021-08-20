@@ -317,7 +317,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 				Value: &params.filters,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			parsedParams := export.AllParams{
 				OrgId:   params.orgId,

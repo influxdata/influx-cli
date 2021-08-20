@@ -14,6 +14,7 @@ func withBucketSchemaClient() cli.BeforeFunc {
 	return middleware.WithBeforeFns(
 		withCli(),
 		withApi(true),
+		middleware.NoArgs,
 		func(ctx *cli.Context) error {
 			client := getAPI(ctx)
 			ctx.App.Metadata["measurement_schema"] = bucket_schema.Client{
