@@ -51,7 +51,7 @@ func TestGzipPipe(t *testing.T) {
 }
 
 type failingReader struct {
-	n int
+	n   int
 	err error
 }
 

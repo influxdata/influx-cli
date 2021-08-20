@@ -427,8 +427,8 @@ spec:
 			tmpl, err := source.Read(context.Background())
 			require.NoError(t, err)
 			expected := api.TemplateApplyTemplate{
-				Sources:     []string{source.Name},
-				Contents:    parsed,
+				Sources:  []string{source.Name},
+				Contents: parsed,
 			}
 			require.Equal(t, expected, tmpl)
 		})
