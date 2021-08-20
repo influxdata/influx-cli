@@ -25,8 +25,8 @@ func newBucketCreateCmd() cli.Command {
 		SchemaType: api.SCHEMATYPE_IMPLICIT,
 	}
 	return cli.Command{
-		Name:  "create",
-		Usage: "Create bucket",
+		Name:   "create",
+		Usage:  "Create bucket",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlags(),
