@@ -413,11 +413,14 @@ func (c Client) printAuth(opts printParams) error {
 }
 
 func makePermResource(permType string, id string, orgId string) api.PermissionResource {
-	return api.PermissionResource{
-		Type:  permType,
-		Id:    &id,
-		OrgID: &orgId,
+	pr := api.PermissionResource{Type: permType}
+	if id != "" {
+		pr.Id = &id
 	}
+	if orgId != "" {
+		pr.OrgID = &orgId
+	}
+	return pr
 }
 
 func (c Client) getOrgID(ctx context.Context, params clients.OrgParams) (string, error) {
