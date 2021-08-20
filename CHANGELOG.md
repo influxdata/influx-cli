@@ -4,6 +4,7 @@
 
 1. [221](https://github.com/influxdata/influx-cli/pull/221): Fix shell completion for top-level `influx` commands.
 1. [228](https://github.com/influxdata/influx-cli/pull/228): Make global `--http-debug` flag visible in help text.
+1. [232](https://github.com/influxdata/influx-cli/pull/232): Don't set empty strings for IDs in permission resources.
 
 ## v2.1.0 [2021-07-29]
 
