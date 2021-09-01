@@ -1,5 +1,9 @@
 ## v2.2.0 [unreleased]
 
+### Go Version
+
+This release upgrades the project to `go` version 1.17.
+
 ### Bug Fixes
 
 1. [221](https://github.com/influxdata/influx-cli/pull/221): Fix shell completion for top-level `influx` commands.
