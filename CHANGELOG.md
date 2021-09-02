@@ -6,6 +6,7 @@
 1. [261](https://github.com/influxdata/influx-cli/pull/261): Make global `--http-debug` flag visible in help text.
 1. [262](https://github.com/influxdata/influx-cli/pull/262): Don't set empty strings for IDs in permission resources.
 1. [263](https://github.com/influxdata/influx-cli/pull/263): Detect and error out on incorrect positional args.
+1. [264](https://github.com/influxdata/influx-cli/pull/264): Respect value of `--host` flag when writing CLI configs in `setup`.
 
 ## v2.1.0 [2021-07-29]
 
