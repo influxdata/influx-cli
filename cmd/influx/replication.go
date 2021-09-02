@@ -1,0 +1,94 @@
+package main
+
+import (
+	"fmt"
+
+	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
+	"github.com/urfave/cli"
+)
+
+func newReplicationCmd() cli.Command {
+	return cli.Command{
+		Name:   "replication",
+		Usage:  "Replication stream management commands",
+		Hidden: true, // Remove this line when all subcommands are completed
+		Subcommands: []cli.Command{
+			newReplicationCreateCmd(),
+			newReplicationDeleteCmd(),
+			newReplicationListCmd(),
+			newReplicationMetricsCmd(),
+			newReplicationUpdateCmd(),
+		},
+	}
+}
+
+func newReplicationCreateCmd() cli.Command {
+	return cli.Command{
+		Name:   "create",
+		Usage:  "Create a new replication stream",
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
+		Flags: append(
+			commonFlags(),
+		),
+		Action: func(ctx *cli.Context) {
+			fmt.Println("replication create command was called")
+		},
+	}
+}
+
+func newReplicationDeleteCmd() cli.Command {
+	return cli.Command{
+		Name:   "delete",
+		Usage:  "Delete an existing replication stream",
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
+		Flags: append(
+			commonFlags(),
+		),
+		Action: func(ctx *cli.Context) {
+			fmt.Println("replication delete command was called")
+		},
+	}
+}
+
+func newReplicationListCmd() cli.Command {
+	return cli.Command{
+		Name:    "list",
+		Usage:   "List all replication streams",
+		Aliases: []string{"find", "ls"},
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
+		Flags: append(
+			commonFlags(),
+		),
+		Action: func(ctx *cli.Context) {
+			fmt.Println("replication list command was called")
+		},
+	}
+}
+
+func newReplicationMetricsCmd() cli.Command {
+	return cli.Command{
+		Name:   "metrics",
+		Usage:  "Show queue information for each replication stream",
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
+		Flags: append(
+			commonFlags(),
+		),
+		Action: func(ctx *cli.Context) {
+			fmt.Println("replication metrics command was called")
+		},
+	}
+}
+
+func newReplicationUpdateCmd() cli.Command {
+	return cli.Command{
+		Name:   "update",
+		Usage:  "Update an existing replication stream",
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
+		Flags: append(
+			commonFlags(),
+		),
+		Action: func(ctx *cli.Context) {
+			fmt.Println("replication update command was called")
+		},
+	}
+}
