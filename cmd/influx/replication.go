@@ -16,7 +16,6 @@ func newReplicationCmd() cli.Command {
 			newReplicationCreateCmd(),
 			newReplicationDeleteCmd(),
 			newReplicationListCmd(),
-			newReplicationMetricsCmd(),
 			newReplicationUpdateCmd(),
 		},
 	}
@@ -53,7 +52,7 @@ func newReplicationDeleteCmd() cli.Command {
 func newReplicationListCmd() cli.Command {
 	return cli.Command{
 		Name:    "list",
-		Usage:   "List all replication streams",
+		Usage:   "List all replication streams and corresponding metrics",
 		Aliases: []string{"find", "ls"},
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
@@ -61,20 +60,6 @@ func newReplicationListCmd() cli.Command {
 		),
 		Action: func(ctx *cli.Context) {
 			fmt.Println("replication list command was called")
-		},
-	}
-}
-
-func newReplicationMetricsCmd() cli.Command {
-	return cli.Command{
-		Name:   "metrics",
-		Usage:  "Show queue information for each replication stream",
-		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags: append(
-			commonFlags(),
-		),
-		Action: func(ctx *cli.Context) {
-			fmt.Println("replication metrics command was called")
 		},
 	}
 }
