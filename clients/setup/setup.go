@@ -36,6 +36,7 @@ type Params struct {
 	Retention  string
 	Force      bool
 	ConfigName string
+	Host       string
 }
 
 func (c Client) Setup(ctx context.Context, params *Params) error {
@@ -66,12 +67,15 @@ func (c Client) Setup(ctx context.Context, params *Params) error {
 
 	cfg := config.Config{
 		Name:  config.DefaultConfig.Name,
-		Host:  c.ActiveConfig.Host,
+		Host:  config.DefaultConfig.Host,
 		Token: *resp.Auth.Token,
 		Org:   resp.Org.Name,
 	}
 	if params.ConfigName != "" {
 		cfg.Name = params.ConfigName
+	}
+	if params.Host != "" {
+		cfg.Host = params.Host
 	}
 
 	if _, err := c.ConfigService.CreateConfig(cfg); err != nil {
