@@ -57,6 +57,9 @@ func newSetupCmd() cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if ctx.IsSet(hostFlagName) {
+				params.Host = ctx.String(hostFlagName)
+			}
 			client := setup.Client{
 				CLI:      getCLI(ctx),
 				SetupApi: getAPINoToken(ctx).SetupApi,

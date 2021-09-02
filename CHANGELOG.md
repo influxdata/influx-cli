@@ -10,6 +10,7 @@ This release upgrades the project to `go` version 1.17.
 1. [228](https://github.com/influxdata/influx-cli/pull/228): Make global `--http-debug` flag visible in help text.
 1. [232](https://github.com/influxdata/influx-cli/pull/232): Don't set empty strings for IDs in permission resources.
 1. [236](https://github.com/influxdata/influx-cli/pull/236): Detect and error out on incorrect positional args.
+1. [255](https://github.com/influxdata/influx-cli/pull/255): Respect value of `--host` flag when writing CLI configs in `setup`.
 
 ## v2.1.0 [2021-07-29]
 
