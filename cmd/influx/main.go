@@ -54,6 +54,8 @@ var app = cli.App{
 		newApplyCmd(),
 		newStacksCmd(),
 		newTemplateCmd(),
+		newRemoteCmd(),
+		newReplicationCmd(),
 	},
 	Before: withContext(),
 }
