@@ -26,9 +26,7 @@ func newRemoteCreateCmd() cli.Command {
 		Name:   "create",
 		Usage:  "Create a new remote connection",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags: append(
-			commonFlags(),
-		),
+		Flags:  commonFlags(),
 		Action: func(ctx *cli.Context) {
 			fmt.Println("remote create command was called")
 		},
@@ -40,9 +38,7 @@ func newRemoteDeleteCmd() cli.Command {
 		Name:   "delete",
 		Usage:  "Delete an existing remote connection",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags: append(
-			commonFlags(),
-		),
+		Flags:  commonFlags(),
 		Action: func(ctx *cli.Context) {
 			fmt.Println("remote delete command was called")
 		},
@@ -55,9 +51,7 @@ func newRemoteListCmd() cli.Command {
 		Usage:   "List all remote connections",
 		Aliases: []string{"find", "ls"},
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags: append(
-			commonFlags(),
-		),
+		Flags:   commonFlags(),
 		Action: func(ctx *cli.Context) {
 			fmt.Println("remote list command was called")
 		},
@@ -69,9 +63,7 @@ func newRemoteUpdateCmd() cli.Command {
 		Name:   "update",
 		Usage:  "Update an existing remote connection",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags: append(
-			commonFlags(),
-		),
+		Flags:  commonFlags(),
 		Action: func(ctx *cli.Context) {
 			fmt.Println("remote update command was called")
 		},

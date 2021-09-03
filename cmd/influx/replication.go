@@ -26,9 +26,7 @@ func newReplicationCreateCmd() cli.Command {
 		Name:   "create",
 		Usage:  "Create a new replication stream",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags: append(
-			commonFlags(),
-		),
+		Flags:  commonFlags(),
 		Action: func(ctx *cli.Context) {
 			fmt.Println("replication create command was called")
 		},
@@ -40,9 +38,7 @@ func newReplicationDeleteCmd() cli.Command {
 		Name:   "delete",
 		Usage:  "Delete an existing replication stream",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags: append(
-			commonFlags(),
-		),
+		Flags:  commonFlags(),
 		Action: func(ctx *cli.Context) {
 			fmt.Println("replication delete command was called")
 		},
@@ -55,9 +51,7 @@ func newReplicationListCmd() cli.Command {
 		Usage:   "List all replication streams and corresponding metrics",
 		Aliases: []string{"find", "ls"},
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags: append(
-			commonFlags(),
-		),
+		Flags:   commonFlags(),
 		Action: func(ctx *cli.Context) {
 			fmt.Println("replication list command was called")
 		},
@@ -69,9 +63,7 @@ func newReplicationUpdateCmd() cli.Command {
 		Name:   "update",
 		Usage:  "Update an existing replication stream",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags: append(
-			commonFlags(),
-		),
+		Flags:  commonFlags(),
 		Action: func(ctx *cli.Context) {
 			fmt.Println("replication update command was called")
 		},
