@@ -33,7 +33,7 @@ func newDeleteCmd() cli.Command {
 				Value:  &params.BucketID,
 			},
 			&cli.StringFlag{
-				Name:        "bucket",
+				Name:        "bucket, b",
 				Usage:       "The name of the bucket to delete from",
 				EnvVar:      "INFLUX_BUCKET_NAME",
 				Destination: &params.BucketName,
