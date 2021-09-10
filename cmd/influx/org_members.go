@@ -23,7 +23,7 @@ func newOrgMembersAddCmd() cli.Command {
 	return cli.Command{
 		Name:   "add",
 		Usage:  "Add organization member",
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlagsNoPrint(),
 			&cli.GenericFlag{
@@ -61,7 +61,7 @@ func newOrgMembersListCmd() cli.Command {
 		Name:    "list",
 		Aliases: []string{"find", "ls"},
 		Usage:   "List organization members",
-		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
@@ -93,7 +93,7 @@ func newOrgMembersRemoveCmd() cli.Command {
 	return cli.Command{
 		Name:   "remove",
 		Usage:  "Remove organization member",
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlagsNoPrint(),
 			&cli.GenericFlag{

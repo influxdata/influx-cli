@@ -58,7 +58,7 @@ func newDeleteCmd() cli.Command {
 				Destination: &params.Predicate,
 			},
 		),
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
+		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			client := delete.Client{CLI: getCLI(ctx), DeleteApi: getAPI(ctx).DeleteApi}
 			return client.Delete(getContext(ctx), &params)

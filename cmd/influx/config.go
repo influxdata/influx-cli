@@ -7,6 +7,7 @@ import (
 
 	cmd "github.com/influxdata/influx-cli/v2/clients/config"
 	"github.com/influxdata/influx-cli/v2/config"
+	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
 )
 
@@ -84,7 +85,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/
 and
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/create/
 `,
-		Before: withCli(),
+		Before: middleware.WithBeforeFns(withCli(), middleware.NoArgs),
 		Flags: append(
 			configPathAndPrintFlags,
 			&cli.StringFlag{
@@ -176,7 +177,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/
 and
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/set/
 `,
-		Before: withCli(),
+		Before: middleware.WithBeforeFns(withCli(), middleware.NoArgs),
 		Flags: append(
 			configPathAndPrintFlags,
 			&cli.StringFlag{
@@ -236,7 +237,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/
 and
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/list/
 `,
-		Before: withCli(),
+		Before: middleware.WithBeforeFns(withCli(), middleware.NoArgs),
 		Flags:  configPathAndPrintFlags,
 		Action: func(ctx *cli.Context) error {
 			client := cmd.Client{CLI: getCLI(ctx)}
