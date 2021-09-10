@@ -3,6 +3,7 @@
 ### Bug Fixes
 
 1. [260](https://github.com/influxdata/influx-cli/pull/260): Fix shell completion for top-level `influx` commands.
+1. [261](https://github.com/influxdata/influx-cli/pull/261): Make global `--http-debug` flag visible in help text.
 
 ## v2.1.0 [2021-07-29]
 
