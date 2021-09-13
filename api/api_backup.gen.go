@@ -28,7 +28,7 @@ var (
 type BackupApi interface {
 
 	/*
-	 * GetBackupKV Download snapshot of metadata stored in the server's embedded KV store. Should not be used in versions > 2.1.x, as it doesn't include metadata stored in embedded SQL.
+	 * GetBackupKV Download snapshot of metadata stored in the server's embedded KV store. Should not be used in versions greater than 2.1.x, as it doesn't include metadata stored in embedded SQL.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetBackupKVRequest
 	 */
@@ -110,7 +110,7 @@ func (r ApiGetBackupKVRequest) Execute() (*_nethttp.Response, error) {
 }
 
 /*
- * GetBackupKV Download snapshot of metadata stored in the server's embedded KV store. Should not be used in versions > 2.1.x, as it doesn't include metadata stored in embedded SQL.
+ * GetBackupKV Download snapshot of metadata stored in the server's embedded KV store. Should not be used in versions greater than 2.1.x, as it doesn't include metadata stored in embedded SQL.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetBackupKVRequest
  */
