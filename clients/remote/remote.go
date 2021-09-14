@@ -48,7 +48,6 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 	// send post request
 	res, err := c.PostRemoteConnection(ctx).RemoteConnectionCreationRequest(body).Execute()
-	fmt.Printf("response: %+v\n", res)
 	if err != nil {
 		return fmt.Errorf("failed to create remote connection %q: %w", params.Name, err)
 	}
