@@ -13,7 +13,6 @@ package mock
 //go:generate go run github.com/golang/mock/mockgen -package mock -destination api_backup.gen.go github.com/influxdata/influx-cli/v2/api BackupApi
 //go:generate go run github.com/golang/mock/mockgen -package mock -destination api_secret.gen.go github.com/influxdata/influx-cli/v2/api SecretsApi
 //go:generate go run github.com/golang/mock/mockgen -package mock -destination api_v1dbrps.gen.go github.com/influxdata/influx-cli/v2/api DBRPsApi
-//go:generate go run github.com/golang/mock/mockgen -package mock -destination api_remote_connections.gen.go github.com/influxdata/influx-cli/v2/api RemoteConnectionsApi
 
 // Other mocks
 //go:generate go run github.com/golang/mock/mockgen -package mock -destination config.gen.go -mock_names Service=MockConfigService github.com/influxdata/influx-cli/v2/config Service

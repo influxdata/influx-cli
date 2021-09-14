@@ -10,7 +10,6 @@ import (
 
 type Client struct {
 	clients.CLI
-	api.OrganizationsApi
 	api.RemoteConnectionsApi
 }
 
@@ -34,12 +33,22 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		RemoteOrgID: params.RemoteOrgID,
 		AllowInsecureTLS: params.AllowInsecureTLS,
 	}
+
 	if params.Description != "" {
 		body.Description = &params.Description
 	}
 
+	if body.OrgID == "" && c.ActiveConfig.Org == "" {
+		return clients.ErrMustSpecifyOrg
+	}
+
+	if body.OrgID == "" {
+		body.OrgID = c.ActiveConfig.Org
+	}
+
 	// send post request
 	res, err := c.PostRemoteConnection(ctx).RemoteConnectionCreationRequest(body).Execute()
+	fmt.Printf("response: %+v\n", res)
 	if err != nil {
 		return fmt.Errorf("failed to create remote connection %q: %w", params.Name, err)
 	}
@@ -64,7 +73,7 @@ func (c Client) printRemote(opts printRemoteOpts) error {
 		return c.PrintJSON(v)
 	}
 
-	headers := []string{"ID", "Name"}
+	headers := []string{"Remote ID", "Name"}
 	if opts.deleted {
 		headers = append(headers, "Deleted")
 	}
@@ -76,7 +85,7 @@ func (c Client) printRemote(opts printRemoteOpts) error {
 	var rows []map[string]interface{}
 	for _, r := range opts.remotes {
 		row := map[string]interface{}{
-			"ID":   r.GetId(),
+			"Remote ID":   r.GetId(),
 			"Name": r.GetName(),
 		}
 		if opts.deleted {
