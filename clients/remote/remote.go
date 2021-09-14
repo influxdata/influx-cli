@@ -26,11 +26,11 @@ type CreateParams struct {
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	// set up a struct with required params
 	body := api.RemoteConnectionCreationRequest{
-		Name: params.Name,
-		OrgID: params.OrgID,
-		RemoteURL: params.RemoteURL,
-		RemoteAPIToken: params.RemoteAPIToken,
-		RemoteOrgID: params.RemoteOrgID,
+		Name:             params.Name,
+		OrgID:            params.OrgID,
+		RemoteURL:        params.RemoteURL,
+		RemoteAPIToken:   params.RemoteAPIToken,
+		RemoteOrgID:      params.RemoteOrgID,
 		AllowInsecureTLS: params.AllowInsecureTLS,
 	}
 
@@ -57,8 +57,8 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 }
 
 type printRemoteOpts struct {
-	remote     *api.RemoteConnection
-	remotes    []api.RemoteConnection
+	remote  *api.RemoteConnection
+	remotes []api.RemoteConnection
 	deleted bool
 }
 
@@ -85,8 +85,8 @@ func (c Client) printRemote(opts printRemoteOpts) error {
 	var rows []map[string]interface{}
 	for _, r := range opts.remotes {
 		row := map[string]interface{}{
-			"Remote ID":   r.GetId(),
-			"Name": r.GetName(),
+			"Remote ID": r.GetId(),
+			"Name":      r.GetName(),
 		}
 		if opts.deleted {
 			row["Deleted"] = true

@@ -50,7 +50,7 @@ func newRemoteCreateCmd() cli.Command {
 			&cli.StringFlag{
 				Name:        "remote-url",
 				Usage:       "The url for the remote database",
-				Required: true,
+				Required:    true,
 				Destination: &params.RemoteURL,
 			},
 			&cli.StringFlag{
@@ -61,7 +61,7 @@ func newRemoteCreateCmd() cli.Command {
 			&cli.StringFlag{
 				Name:        "remote-org-id",
 				Usage:       "The ID of the remote organization",
-				Required: true,
+				Required:    true,
 				Destination: &params.RemoteOrgID,
 			},
 			&cli.BoolFlag{
@@ -72,7 +72,7 @@ func newRemoteCreateCmd() cli.Command {
 		),
 		Action: func(ctx *cli.Context) error {
 			client := remote.Client{
-				CLI:              getCLI(ctx),
+				CLI:                  getCLI(ctx),
 				RemoteConnectionsApi: getAPI(ctx).RemoteConnectionsApi,
 			}
 
