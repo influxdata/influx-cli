@@ -12,7 +12,15 @@ endif
 ifdef COMMIT
 	LDFLAGS += -X main.commit=$(COMMIT)
 endif
-export GO_BUILD=go build -ldflags "$(LDFLAGS)"
+
+# Use default flags, but allow adding -gcflags "..." if desired. Eg, for debug
+# builds, may want to use GCFLAGS="all=-N -l" in the build environment.
+GCFLAGS ?=
+ifneq ($(GCFLAGS),)
+GCFLAGS := -gcflags "$(GCFLAGS)"
+endif
+
+export GO_BUILD=go build $(GCFLAGS) -ldflags "$(LDFLAGS)"
 
 # SOURCES are the files that affect building the main binary.
 SOURCES := $(shell find . -name '*.go' -not -name '*_test.go') go.mod go.sum
