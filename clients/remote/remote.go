@@ -11,12 +11,14 @@ import (
 type Client struct {
 	clients.CLI
 	api.RemoteConnectionsApi
+	api.OrganizationsApi
 }
 
 type CreateParams struct {
 	Name             string
 	Description      string
 	OrgID            string
+	OrgName          string
 	RemoteURL        string
 	RemoteAPIToken   string
 	RemoteOrgID      string
@@ -24,6 +26,28 @@ type CreateParams struct {
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
+
+	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
+		return clients.ErrMustSpecifyOrg
+	}
+
+	// get org id via org name
+	if params.OrgID == "" {
+		name := params.OrgName
+		if name == "" {
+			name = c.ActiveConfig.Org
+		}
+		res, err := c.GetOrgs(ctx).Org(name).Execute()
+		if err != nil {
+			return fmt.Errorf("failed to lookup ID of org %q: %w", name, err)
+		}
+		orgs := res.GetOrgs()
+		if len(orgs) == 0 {
+			return fmt.Errorf("no organization found with name %q", name)
+		}
+		params.OrgID = orgs[0].GetId()
+	}
+
 	// set up a struct with required params
 	body := api.RemoteConnectionCreationRequest{
 		Name:             params.Name,
@@ -36,14 +60,6 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 	if params.Description != "" {
 		body.Description = &params.Description
-	}
-
-	if body.OrgID == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-
-	if body.OrgID == "" {
-		body.OrgID = c.ActiveConfig.Org
 	}
 
 	// send post request
@@ -72,7 +88,7 @@ func (c Client) printRemote(opts printRemoteOpts) error {
 		return c.PrintJSON(v)
 	}
 
-	headers := []string{"Remote ID", "Name"}
+	headers := []string{"Org ID", "Remote URL", "Remote Org ID", "Allow Insecure TLS"}
 	if opts.deleted {
 		headers = append(headers, "Deleted")
 	}
@@ -84,8 +100,10 @@ func (c Client) printRemote(opts printRemoteOpts) error {
 	var rows []map[string]interface{}
 	for _, r := range opts.remotes {
 		row := map[string]interface{}{
-			"Remote ID": r.GetId(),
-			"Name":      r.GetName(),
+			"Org ID":             r.OrgID,
+			"Remote URL":         r.RemoteURL,
+			"Remote Org ID":      r.RemoteOrgID,
+			"Allow Insecure TLS": r.AllowInsecureTLS,
 		}
 		if opts.deleted {
 			row["Deleted"] = true

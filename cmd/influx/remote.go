@@ -48,6 +48,12 @@ func newRemoteCreateCmd() cli.Command {
 				Destination: &params.OrgID,
 			},
 			&cli.StringFlag{
+				Name:        "org, o",
+				Usage:       "The name of the organization",
+				EnvVar:      "INFLUX_ORG",
+				Destination: &params.OrgName,
+			},
+			&cli.StringFlag{
 				Name:        "remote-url",
 				Usage:       "The url for the remote database",
 				Required:    true,
@@ -56,6 +62,7 @@ func newRemoteCreateCmd() cli.Command {
 			&cli.StringFlag{
 				Name:        "remote-api-token",
 				Usage:       "The API token for the remote database",
+				Required:    true,
 				Destination: &params.RemoteAPIToken,
 			},
 			&cli.StringFlag{
@@ -74,6 +81,7 @@ func newRemoteCreateCmd() cli.Command {
 			client := remote.Client{
 				CLI:                  getCLI(ctx),
 				RemoteConnectionsApi: getAPI(ctx).RemoteConnectionsApi,
+				OrganizationsApi:     getAPI(ctx).OrganizationsApi,
 			}
 
 			return client.Create(getContext(ctx), &params)
