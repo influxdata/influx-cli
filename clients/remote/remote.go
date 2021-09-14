@@ -88,7 +88,7 @@ func (c Client) printRemote(opts printRemoteOpts) error {
 		return c.PrintJSON(v)
 	}
 
-	headers := []string{"Org ID", "Remote URL", "Remote Org ID", "Allow Insecure TLS"}
+	headers := []string{"ID", "Name", "Org ID", "Remote URL", "Remote Org ID", "Allow Insecure TLS"}
 	if opts.deleted {
 		headers = append(headers, "Deleted")
 	}
@@ -100,6 +100,8 @@ func (c Client) printRemote(opts printRemoteOpts) error {
 	var rows []map[string]interface{}
 	for _, r := range opts.remotes {
 		row := map[string]interface{}{
+			"ID":                 r.GetId(),
+			"Name":               r.GetName(),
 			"Org ID":             r.OrgID,
 			"Remote URL":         r.RemoteURL,
 			"Remote Org ID":      r.RemoteOrgID,
