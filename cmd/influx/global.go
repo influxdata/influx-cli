@@ -270,22 +270,14 @@ OPTIONS:
 	cli.HelpPrinter = func(w io.Writer, templ string, data interface{}) {
 		customFunc := make(map[string]interface{})
 		customFunc["iscommon"] = func(flag cli.Flag) bool {
-			if _, ok := flag.(*CommonBoolFlag); ok {
+			switch flag.(type) {
+			case CommonBoolFlag:
 				return true
-			}
-			if _, ok := flag.(*CommonStringFlag); ok {
+			case CommonStringFlag:
 				return true
+			default:
+				return false
 			}
-			return false
-		}
-		customFunc["has"] = func(flag cli.Flag) bool {
-			if _, ok := flag.(*CommonBoolFlag); ok {
-				return true
-			}
-			if _, ok := flag.(*CommonStringFlag); ok {
-				return true
-			}
-			return false
 		}
 		cli.HelpPrinterCustom(w, templ, data, customFunc)
 	}
