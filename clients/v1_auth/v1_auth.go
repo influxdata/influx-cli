@@ -357,9 +357,9 @@ func (c Client) printV1Tokens(params *v1PrintOpts) error {
 	headers := []string{
 		"ID",
 		"Description",
-		"Name / Token",
-		"User Name",
-		"User ID",
+		"Username",
+		"v2 User Name",
+		"v2 User ID",
 		"Permissions",
 	}
 	if params.deleted {
@@ -374,9 +374,9 @@ func (c Client) printV1Tokens(params *v1PrintOpts) error {
 		row := map[string]interface{}{
 			"ID":           u.ID,
 			"Description":  u.Description,
-			"Name / Token": u.Token,
-			"User Name":    u.UserName,
-			"User ID":      u.UserID,
+			"Username":     u.Token,
+			"v2 User Name": u.UserName,
+			"v2 User ID":   u.UserID,
 			"Permissions":  u.Permissions,
 		}
 		if params.deleted {

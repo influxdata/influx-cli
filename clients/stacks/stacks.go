@@ -25,8 +25,6 @@ type ListParams struct {
 	StackNames []string
 }
 
-
-
 func (c Client) List(ctx context.Context, params *ListParams) error {
 	if params.OrgId == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return clients.ErrMustSpecifyOrg

@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/influxdata/influx-cli/v2/api"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/internal/tabwriter"
+	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 )
 
@@ -59,7 +59,7 @@ func (c *CLI) GetOrgId(ctx context.Context, paramOrgId, paramOrgName string, org
 		return "", fmt.Errorf("failed to lookup org with name %q: %w", orgName, err)
 	}
 	if len(res.GetOrgs()) == 0 {
-		return "", fmt.Errorf("no organization with name %q: %w", orgName)
+		return "", fmt.Errorf("no organization with name %q", orgName)
 	}
 	return res.GetOrgs()[0].GetId(), nil
 }
