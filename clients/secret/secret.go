@@ -151,22 +151,5 @@ func (c Client) printSecrets(opts secretPrintOpt) error {
 }
 
 func (c Client) getOrgID(ctx context.Context, params clients.OrgParams) (string, error) {
-	if params.OrgID.Valid() || params.OrgName != "" || c.ActiveConfig.Org != "" {
-		if params.OrgID.Valid() {
-			return params.OrgID.String(), nil
-		}
-		for _, name := range []string{params.OrgName, c.ActiveConfig.Org} {
-			if name != "" {
-				org, err := c.GetOrgs(ctx).Org(name).Execute()
-				if err != nil {
-					return "", fmt.Errorf("failed to lookup org with name %q: %w", name, err)
-				}
-				if len(org.GetOrgs()) == 0 {
-					return "", fmt.Errorf("no organization with name %q: %w", name, err)
-				}
-				return org.GetOrgs()[0].GetId(), nil
-			}
-		}
-	}
-	return "", fmt.Errorf("org or org-id must be provided")
+	return c.GetOrgIdI(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
 }
