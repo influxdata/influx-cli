@@ -156,20 +156,5 @@ func (c Client) printTelegrafs(opts telegrafPrintOpts) error {
 }
 
 func (c Client) getOrgID(ctx context.Context, orgID influxid.ID, orgName string) (string, error) {
-	if orgID.Valid() {
-		return orgID.String(), nil
-	} else {
-		if orgName == "" {
-			orgName = c.ActiveConfig.Org
-		}
-		resp, err := c.GetOrgs(ctx).Org(orgName).Execute()
-		if err != nil {
-			return "", fmt.Errorf("failed to lookup ID of org %q: %w", orgName, err)
-		}
-		orgs := resp.GetOrgs()
-		if len(orgs) == 0 {
-			return "", fmt.Errorf("no organization found with name %q", orgName)
-		}
-		return orgs[0].GetId(), nil
-	}
+	return c.GetOrgIdI(ctx, orgID, orgName, c.OrganizationsApi)
 }

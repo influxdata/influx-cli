@@ -25,25 +25,16 @@ type ListParams struct {
 	StackNames []string
 }
 
+
+
 func (c Client) List(ctx context.Context, params *ListParams) error {
 	if params.OrgId == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return clients.ErrMustSpecifyOrg
 	}
 
-	orgId := params.OrgId
-	if orgId == "" {
-		orgName := params.OrgName
-		if orgName == "" {
-			orgName = c.ActiveConfig.Org
-		}
-		res, err := c.GetOrgs(ctx).Org(orgName).Execute()
-		if err != nil {
-			return fmt.Errorf("failed to lookup org with name %q: %w", orgName, err)
-		}
-		if len(res.GetOrgs()) == 0 {
-			return fmt.Errorf("no organization with name %q: %w", orgName, err)
-		}
-		orgId = res.GetOrgs()[0].GetId()
+	orgId, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	res, err := c.ListStacks(ctx).OrgID(orgId).Name(params.StackNames).StackID(params.StackIds).Execute()
@@ -68,20 +59,9 @@ func (c Client) Init(ctx context.Context, params *InitParams) error {
 		return clients.ErrMustSpecifyOrg
 	}
 
-	orgId := params.OrgId
-	if orgId == "" {
-		orgName := params.OrgName
-		if orgName == "" {
-			orgName = c.ActiveConfig.Org
-		}
-		res, err := c.GetOrgs(ctx).Org(orgName).Execute()
-		if err != nil {
-			return fmt.Errorf("failed to lookup org with name %q: %w", orgName, err)
-		}
-		if len(res.GetOrgs()) == 0 {
-			return fmt.Errorf("no organization with name %q: %w", orgName, err)
-		}
-		orgId = res.GetOrgs()[0].GetId()
+	orgId, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	req := api.StackPostRequest{
@@ -114,20 +94,9 @@ func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
 		return clients.ErrMustSpecifyOrg
 	}
 
-	orgId := params.OrgId
-	if orgId == "" {
-		orgName := params.OrgName
-		if orgName == "" {
-			orgName = c.ActiveConfig.Org
-		}
-		res, err := c.GetOrgs(ctx).Org(orgName).Execute()
-		if err != nil {
-			return fmt.Errorf("failed to lookup org with name %q: %w", orgName, err)
-		}
-		if len(res.GetOrgs()) == 0 {
-			return fmt.Errorf("no organization with name %q: %w", orgName, err)
-		}
-		orgId = res.GetOrgs()[0].GetId()
+	orgId, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	stacks, err := c.ListStacks(ctx).OrgID(orgId).StackID(params.Ids).Execute()

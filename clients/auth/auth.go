@@ -424,22 +424,5 @@ func makePermResource(permType string, id string, orgId string) api.PermissionRe
 }
 
 func (c Client) getOrgID(ctx context.Context, params clients.OrgParams) (string, error) {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return "", clients.ErrMustSpecifyOrg
-	}
-	if params.OrgID.Valid() {
-		return params.OrgID.String(), nil
-	}
-	name := params.OrgName
-	if name == "" {
-		name = c.ActiveConfig.Org
-	}
-	org, err := c.GetOrgs(ctx).Org(name).Execute()
-	if err != nil {
-		return "", fmt.Errorf("failed to lookup org with name %q: %w", name, err)
-	}
-	if len(org.GetOrgs()) == 0 {
-		return "", fmt.Errorf("no organization with name %q: %w", name, err)
-	}
-	return org.GetOrgs()[0].GetId(), nil
+	return c.GetOrgIdI(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
 }
