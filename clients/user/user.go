@@ -25,36 +25,12 @@ type CreateParams struct {
 
 var ErrMustSpecifyUser = errors.New("must specify user ID or user name")
 
-func getOrgID(ctx context.Context, params *clients.OrgParams, c clients.CLI, orgApi api.OrganizationsApi) (string, error) {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return "", clients.ErrMustSpecifyOrg
-	}
-	orgID := params.OrgID.String()
-	if !params.OrgID.Valid() {
-		req := orgApi.GetOrgs(ctx)
-		if params.OrgName != "" {
-			req = req.Org(params.OrgName)
-		} else {
-			req = req.Org(c.ActiveConfig.Org)
-		}
-		orgs, err := req.Execute()
-		if err != nil {
-			return "", fmt.Errorf("failed to find org %q: %w", params.OrgName, err)
-		}
-		if orgs.Orgs == nil || len(*orgs.Orgs) == 0 {
-			return "", fmt.Errorf("no org found with name %q", params.OrgName)
-		}
-		orgID = (*orgs.Orgs)[0].GetId()
-	}
-	return orgID, nil
-}
-
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	if params.Password != "" && len(params.Password) < stdio.MinPasswordLen {
 		return clients.ErrPasswordIsTooShort
 	}
 
-	orgID, err := getOrgID(ctx, &params.OrgParams, c.CLI, c.OrganizationsApi)
+	orgID, err := c.GetOrgIdI(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
