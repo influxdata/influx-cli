@@ -2,6 +2,7 @@ package remote
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/influxdata/influx-cli/v2/api"
@@ -67,8 +68,69 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	if err != nil {
 		return fmt.Errorf("failed to create remote connection %q: %w", params.Name, err)
 	}
+
 	// print confirmation of new connection
 	return c.printRemote(printRemoteOpts{remote: &res})
+}
+
+type ListParams struct {
+	Name      string
+	OrgID     string
+	OrgName   string
+	RemoteURL string
+}
+
+func (c Client) List(ctx context.Context, params *ListParams) error {
+
+	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
+		return clients.ErrMustSpecifyOrg
+	}
+
+	// get org id via org name
+	if params.OrgID == "" {
+		name := params.OrgName
+		if name == "" {
+			name = c.ActiveConfig.Org
+		}
+		res, err := c.GetOrgs(ctx).Org(name).Execute()
+		if err != nil {
+			return fmt.Errorf("failed to lookup ID of org %q: %w", name, err)
+		}
+		orgs := res.GetOrgs()
+		if len(orgs) == 0 {
+			return fmt.Errorf("no organization found with name %q", name)
+		}
+		params.OrgID = orgs[0].GetId()
+	}
+
+	// set up query params
+	req := c.GetRemoteConnections(ctx)
+
+	req = req.OrgID(params.OrgID)
+
+	if params.Name != "" {
+		req = req.Name(params.Name)
+	}
+
+	if params.RemoteURL != "" {
+		req = req.RemoteURL(params.RemoteURL)
+	}
+
+	// send get request
+	res, err := req.Execute()
+	if err != nil {
+		return fmt.Errorf("failed to get remote connections: %w", err)
+	}
+
+	// print connections
+	printOpts := printRemoteOpts{}
+	if res.Remotes != nil {
+		printOpts.remotes = *res.Remotes
+	} else {
+		return errors.New("no remote connections found for specified parameters")
+	}
+
+	return c.printRemote(printOpts)
 }
 
 type printRemoteOpts struct {
