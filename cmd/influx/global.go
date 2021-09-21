@@ -271,9 +271,9 @@ OPTIONS:
 		customFunc := make(map[string]interface{})
 		customFunc["iscommon"] = func(flag cli.Flag) bool {
 			switch flag.(type) {
-			case CommonBoolFlag:
+			case *CommonBoolFlag:
 				return true
-			case CommonStringFlag:
+			case *CommonStringFlag:
 				return true
 			default:
 				return false
