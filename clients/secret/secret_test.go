@@ -76,7 +76,7 @@ func TestSecret_List(t *testing.T) {
 			params: secret.ListParams{
 				OrgParams: clients.OrgParams{},
 			},
-			expectError: "org or org-id must be provided",
+			expectError: "must specify org ID or org name",
 		},
 	}
 
@@ -175,7 +175,7 @@ func TestSecret_Delete(t *testing.T) {
 			params: secret.DeleteParams{
 				Key: fakeKey,
 			},
-			expectError: "org or org-id must be provided",
+			expectError: "must specify org ID or org name",
 		},
 	}
 
@@ -294,7 +294,7 @@ func TestSecret_Update(t *testing.T) {
 				Key:   fakeKey,
 				Value: fakeValue,
 			},
-			expectError: "org or org-id must be provided",
+			expectError: "must specify org ID or org name",
 		},
 	}
 

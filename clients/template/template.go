@@ -26,23 +26,9 @@ type SummarizeParams struct {
 }
 
 func (c Client) Summarize(ctx context.Context, params *SummarizeParams) error {
-	if params.OrgId == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-	orgID := params.OrgId
-	if orgID == "" {
-		orgName := params.OrgName
-		if orgName == "" {
-			orgName = c.ActiveConfig.Org
-		}
-		orgs, err := c.GetOrgs(ctx).Org(orgName).Execute()
-		if err != nil {
-			return fmt.Errorf("failed to get ID for org %q: %w", orgName, err)
-		}
-		if len(orgs.GetOrgs()) == 0 {
-			return fmt.Errorf("no orgs found with name %q: %w", orgName, err)
-		}
-		orgID = orgs.GetOrgs()[0].GetId()
+	orgID, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	templates, err := template.ReadSources(ctx, params.Sources)
@@ -75,23 +61,9 @@ type ValidateParams struct {
 }
 
 func (c Client) Validate(ctx context.Context, params *ValidateParams) error {
-	if params.OrgId == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-	orgID := params.OrgId
-	if orgID == "" {
-		orgName := params.OrgName
-		if orgName == "" {
-			orgName = c.ActiveConfig.Org
-		}
-		orgs, err := c.GetOrgs(ctx).Org(orgName).Execute()
-		if err != nil {
-			return fmt.Errorf("failed to get ID for org %q: %w", orgName, err)
-		}
-		if len(orgs.GetOrgs()) == 0 {
-			return fmt.Errorf("no orgs found with name %q: %w", orgName, err)
-		}
-		orgID = orgs.GetOrgs()[0].GetId()
+	orgID, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	templates, err := template.ReadSources(ctx, params.Sources)
