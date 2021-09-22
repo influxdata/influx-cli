@@ -15,6 +15,7 @@ This release upgrades the project to `go` version 1.17.
 1. [232](https://github.com/influxdata/influx-cli/pull/232): Don't set empty strings for IDs in permission resources.
 1. [236](https://github.com/influxdata/influx-cli/pull/236): Detect and error out on incorrect positional args.
 1. [255](https://github.com/influxdata/influx-cli/pull/255): Respect value of `--host` flag when writing CLI configs in `setup`.
+1. [272](https://github.com/influxdata/influx-cli/pull/272): Reduce overuse of "token" in help text.
 
 ## v2.1.0 [2021-07-29]
 

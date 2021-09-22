@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/url"
 	"runtime"
 
@@ -161,6 +162,14 @@ func getAPINoToken(ctx *cli.Context) *api.APIClient {
 	return i
 }
 
+type CommonBoolFlag struct {
+	cli.BoolFlag
+}
+
+type CommonStringFlag struct {
+	cli.StringFlag
+}
+
 // NOTE: urfave/cli has dedicated support for global flags, but it only parses those flags
 // if they're specified before any command names. This is incompatible with the old influx
 // CLI, which repeatedly registered common flags on every "leaf" command, forcing the flags
@@ -170,65 +179,107 @@ func getAPINoToken(ctx *cli.Context) *api.APIClient {
 
 // configPathFlag returns the flag used by commands that access the CLI's local config store.
 func configPathFlag() cli.Flag {
-	return &cli.StringFlag{
-		Name:   configPathFlagName,
-		Usage:  "Path to the influx CLI configurations",
-		EnvVar: "INFLUX_CONFIGS_PATH",
+	return &CommonStringFlag{
+		cli.StringFlag{
+			Name:   configPathFlagName,
+			Usage:  "Path to the influx CLI configurations",
+			EnvVar: "INFLUX_CONFIGS_PATH",
+		},
 	}
 }
 
 // coreFlags returns flags used by all CLI commands that make HTTP requests.
 func coreFlags() []cli.Flag {
 	return []cli.Flag{
-		&cli.StringFlag{
+		&CommonStringFlag{cli.StringFlag{
 			Name:   hostFlagName,
 			Usage:  "HTTP address of InfluxDB",
 			EnvVar: "INFLUX_HOST",
-		},
-		&cli.BoolFlag{
+		}},
+		&CommonBoolFlag{cli.BoolFlag{
 			Name:   skipVerifyFlagName,
 			Usage:  "Skip TLS certificate chain and host name verification",
 			EnvVar: "INFLUX_SKIP_VERIFY",
-		},
+		}},
 		configPathFlag(),
-		&cli.StringFlag{
+		&CommonStringFlag{cli.StringFlag{
 			Name:   configNameFlagName + ", c",
 			Usage:  "Config name to use for command",
 			EnvVar: "INFLUX_ACTIVE_CONFIG",
-		},
-		&cli.StringFlag{
+		}},
+		&CommonStringFlag{cli.StringFlag{
 			Name:   traceIdFlagName,
 			Hidden: true,
 			EnvVar: "INFLUX_TRACE_DEBUG_ID",
-		},
-		&cli.BoolFlag{
+		}},
+		&CommonBoolFlag{cli.BoolFlag{
 			Name: httpDebugFlagName,
-		},
+		}},
 	}
 }
 
 // printFlags returns flags used by commands that display API resources to the user.
 func printFlags() []cli.Flag {
 	return []cli.Flag{
-		&cli.BoolFlag{
+		&CommonBoolFlag{cli.BoolFlag{
 			Name:   printJsonFlagName,
 			Usage:  "Output data as JSON",
 			EnvVar: "INFLUX_OUTPUT_JSON",
-		},
-		&cli.BoolFlag{
+		}},
+		&CommonBoolFlag{cli.BoolFlag{
 			Name:   hideHeadersFlagName,
 			Usage:  "Hide the table headers in output data",
 			EnvVar: "INFLUX_HIDE_HEADERS",
-		},
+		}},
 	}
 }
 
 // commonTokenFlag returns the flag used by commands that hit an authenticated API.
 func commonTokenFlag() cli.Flag {
-	return &cli.StringFlag{
+	return &CommonStringFlag{cli.StringFlag{
 		Name:   tokenFlagName + ", t",
-		Usage:  "Authentication token",
+		Usage:  "Token to authenticate request",
 		EnvVar: "INFLUX_TOKEN",
+	}}
+}
+
+func init() {
+
+	// SubcommandHelpTemplate is the text template for the subcommand help topic.
+	// cli.go uses text/template to render templates. You can
+	// render custom help text by setting this variable.
+	cli.CommandHelpTemplate = `NAME:
+   {{.HelpName}} - {{.Usage}}
+
+USAGE:
+   {{if .UsageText}}{{.UsageText}}{{else}}{{.HelpName}}{{if .VisibleFlags}} [command options]{{end}} {{if .ArgsUsage}}{{.ArgsUsage}}{{else}}[arguments...]{{end}}{{end}}{{if .Category}}
+
+CATEGORY:
+   {{.Category}}{{end}}{{if .Description}}
+
+DESCRIPTION:
+   {{.Description}}{{end}}{{if .VisibleFlags}}
+
+COMMON OPTIONS:
+   {{range .VisibleFlags}}{{if iscommon .}}{{.}}
+   {{end}}{{end}}
+OPTIONS:
+   {{range .VisibleFlags}}{{if not (iscommon .)}}{{.}}
+   {{end}}{{end}}{{end}}
+`
+	cli.HelpPrinter = func(w io.Writer, templ string, data interface{}) {
+		customFunc := make(map[string]interface{})
+		customFunc["iscommon"] = func(flag cli.Flag) bool {
+			switch flag.(type) {
+			case *CommonBoolFlag:
+				return true
+			case *CommonStringFlag:
+				return true
+			default:
+				return false
+			}
+		}
+		cli.HelpPrinterCustom(w, templ, data, customFunc)
 	}
 }
 

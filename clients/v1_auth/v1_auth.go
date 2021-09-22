@@ -357,9 +357,9 @@ func (c Client) printV1Tokens(params *v1PrintOpts) error {
 	headers := []string{
 		"ID",
 		"Description",
-		"Name / Token",
-		"User Name",
-		"User ID",
+		"Username",
+		"v2 User Name",
+		"v2 User ID",
 		"Permissions",
 	}
 	if params.deleted {
@@ -374,9 +374,9 @@ func (c Client) printV1Tokens(params *v1PrintOpts) error {
 		row := map[string]interface{}{
 			"ID":           u.ID,
 			"Description":  u.Description,
-			"Name / Token": u.Token,
-			"User Name":    u.UserName,
-			"User ID":      u.UserID,
+			"Username":     u.Token,
+			"v2 User Name": u.UserName,
+			"v2 User ID":   u.UserID,
 			"Permissions":  u.Permissions,
 		}
 		if params.deleted {
@@ -403,22 +403,5 @@ func (c Client) getAuthReqID(ctx context.Context, params *AuthLookupParams) (id 
 }
 
 func (c Client) getOrgID(ctx context.Context, params clients.OrgParams) (string, error) {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return "", clients.ErrMustSpecifyOrg
-	}
-	if params.OrgID.Valid() {
-		return params.OrgID.String(), nil
-	}
-	name := params.OrgName
-	if name == "" {
-		name = c.ActiveConfig.Org
-	}
-	org, err := c.GetOrgs(ctx).Org(name).Execute()
-	if err != nil {
-		return "", fmt.Errorf("failed to lookup org with name %q: %w", name, err)
-	}
-	if len(org.GetOrgs()) == 0 {
-		return "", fmt.Errorf("no organization with name %q: %w", name, err)
-	}
-	return org.GetOrgs()[0].GetId(), nil
+	return c.GetOrgIdI(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
 }

@@ -211,7 +211,7 @@ func TestClient_Create(t *testing.T) {
 					return assert.Equal(t, "my-default-org", *in.GetOrg())
 				})).Return(api.Organizations{Orgs: &[]api.Organization{}}, nil)
 			},
-			expectedErr: "no org found",
+			expectedErr: `no organization with name "my-default-org"`,
 		},
 		{
 			name: "assigning membership failed",
