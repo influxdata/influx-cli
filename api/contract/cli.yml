@@ -113,6 +113,12 @@ paths:
     $ref: "./openapi/src/oss/paths/remotes_remoteID.yml"
   /remotes/{remoteID}/validate:
     $ref: "./openapi/src/oss/paths/remotes_remoteID_validate.yml"
+  /replications:
+    $ref: "./openapi/src/oss/paths/replications.yml"
+  /replications/{replicationID}:
+    $ref: "./openapi/src/oss/paths/replications_replicationID.yml"
+  /replications/{replicationID}/validate:
+    $ref: "./openapi/src/oss/paths/replications_replicationID_validate.yml"
 components:
   parameters:
     TraceSpan:
@@ -431,3 +437,11 @@ components:
       $ref: "./openapi/src/oss/schemas/RemoteConnectionUpdateRequest.yml"
     RemoteConnections:
       $ref: "./openapi/src/oss/schemas/RemoteConnections.yml"
+    Replication:
+      $ref: "./openapi/src/oss/schemas/Replication.yml"
+    ReplicationCreationRequest:
+      $ref: "./openapi/src/oss/schemas/ReplicationCreationRequest.yml"
+    ReplicationUpdateRequest:
+      $ref: "./openapi/src/oss/schemas/ReplicationUpdateRequest.yml"
+    Replications:
+      $ref: "./openapi/src/oss/schemas/Replications.yml"
