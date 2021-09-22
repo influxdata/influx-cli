@@ -20,6 +20,15 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   --outfile /api/cli.gen.yml \
   --type yaml
 
+# Merge extras to a separate file
+docker run --rm -it -u "$(id -u):$(id -g)" \
+  -v "${API_DIR}":/api \
+  ${MERGE_DOCKER_IMG} \
+  swagger-cli bundle /api/contract/cli-extras.yml \
+  --outfile /api/cli-extras.gen.yml \
+  --type yaml
+
+
 # Run the generator - This produces many more files than we want to track in git.
 docker run --rm -it -u "$(id -u):$(id -g)" \
   -v "${API_DIR}":/api \
@@ -31,10 +40,23 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   -t /api/templates \
   --additional-properties packageName=api,enumClassPrefix=true,generateInterfaces=true
 
+# Run the generator for extras
+docker run --rm -it -u "$(id -u):$(id -g)" \
+  -v "${API_DIR}":/api \
+  ${GENERATOR_DOCKER_IMG} \
+  generate \
+  -g go \
+  -i /api/cli-extras.gen.yml \
+  -o /api/extras \
+  -t /api/templates \
+  --additional-properties packageName=api,enumClassPrefix=true,generateInterfaces=true
+
+
 # Edit the generated files.
+for DIR in "${API_DIR}" "${API_DIR}/extras" ; do
 (
   # Clean up files we don't care about.
-  cd "${API_DIR}"
+  cd $DIR
   rm -rf go.mod go.sum git_push.sh api docs .openapi-generator .travis.yml .gitignore
 
   # Change extension of generated files.
@@ -42,8 +64,9 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
     base=$(basename ${f} .go)
     mv ${f} ${base}.gen.go
   done
-
-  # Clean up the generated code.
-  cd "${ROOT_DIR}"
-  >/dev/null make fmt
 )
+done
+
+# Clean up the generated code.
+cd "${ROOT_DIR}"
+>/dev/null make fmt
