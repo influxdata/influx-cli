@@ -78,10 +78,12 @@ func newRemoteCreateCmd() cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+
 			client := remote.Client{
 				CLI:                  getCLI(ctx),
-				RemoteConnectionsApi: getAPI(ctx).RemoteConnectionsApi,
-				OrganizationsApi:     getAPI(ctx).OrganizationsApi,
+				RemoteConnectionsApi: api.RemoteConnectionsApi,
+				OrganizationsApi:     api.OrganizationsApi,
 			}
 
 			return client.Create(getContext(ctx), &params)
@@ -102,14 +104,47 @@ func newRemoteDeleteCmd() cli.Command {
 }
 
 func newRemoteListCmd() cli.Command {
+	var params remote.ListParams
 	return cli.Command{
 		Name:    "list",
 		Usage:   "List all remote connections",
 		Aliases: []string{"find", "ls"},
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags:   commonFlags(),
-		Action: func(ctx *cli.Context) {
-			fmt.Println("remote list command was called")
+		Flags: append(
+			commonFlags(),
+			&cli.StringFlag{
+				Name:        "name, n",
+				Usage:       "Filter results to only connections with a specific name",
+				Destination: &params.Name,
+			},
+			&cli.StringFlag{
+				Name:        "org-id",
+				Usage:       "Local org ID",
+				EnvVar:      "INFLUX_ORG_ID",
+				Destination: &params.OrgID,
+			},
+			&cli.StringFlag{
+				Name:        "org, o",
+				Usage:       "Local org name",
+				EnvVar:      "INFLUX_ORG",
+				Destination: &params.OrgName,
+			},
+			&cli.StringFlag{
+				Name:        "remote-url",
+				Usage:       "Filter results to only connections for a specific remote URL",
+				Destination: &params.RemoteURL,
+			},
+		),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+
+			client := remote.Client{
+				CLI:                  getCLI(ctx),
+				RemoteConnectionsApi: api.RemoteConnectionsApi,
+				OrganizationsApi:     api.OrganizationsApi,
+			}
+
+			return client.List(getContext(ctx), &params)
 		},
 	}
 }
