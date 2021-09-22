@@ -28,31 +28,15 @@ type CreateParams struct {
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
-	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-
-	// get org id via org name
-	if params.OrgID == "" {
-		name := params.OrgName
-		if name == "" {
-			name = c.ActiveConfig.Org
-		}
-		res, err := c.GetOrgs(ctx).Org(name).Execute()
-		if err != nil {
-			return fmt.Errorf("failed to lookup ID of org %q: %w", name, err)
-		}
-		orgs := res.GetOrgs()
-		if len(orgs) == 0 {
-			return fmt.Errorf("no organization found with name %q", name)
-		}
-		params.OrgID = orgs[0].GetId()
+	orgID, err := c.GetOrgId(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	// set up a struct with required params
 	body := api.RemoteConnectionCreationRequest{
 		Name:             params.Name,
-		OrgID:            params.OrgID,
+		OrgID:            orgID,
 		RemoteURL:        params.RemoteURL,
 		RemoteAPIToken:   params.RemoteAPIToken,
 		RemoteOrgID:      params.RemoteOrgID,
@@ -82,31 +66,15 @@ type ListParams struct {
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
 
-	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-
-	// get org id via org name
-	if params.OrgID == "" {
-		name := params.OrgName
-		if name == "" {
-			name = c.ActiveConfig.Org
-		}
-		res, err := c.GetOrgs(ctx).Org(name).Execute()
-		if err != nil {
-			return fmt.Errorf("failed to lookup ID of org %q: %w", name, err)
-		}
-		orgs := res.GetOrgs()
-		if len(orgs) == 0 {
-			return fmt.Errorf("no organization found with name %q", name)
-		}
-		params.OrgID = orgs[0].GetId()
+	orgID, err := c.GetOrgId(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	// set up query params
 	req := c.GetRemoteConnections(ctx)
 
-	req = req.OrgID(params.OrgID)
+	req = req.OrgID(orgID)
 
 	if params.Name != "" {
 		req = req.Name(params.Name)

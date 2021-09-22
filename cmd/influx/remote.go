@@ -78,10 +78,12 @@ func newRemoteCreateCmd() cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+
 			client := remote.Client{
 				CLI:                  getCLI(ctx),
-				RemoteConnectionsApi: getAPI(ctx).RemoteConnectionsApi,
-				OrganizationsApi:     getAPI(ctx).OrganizationsApi,
+				RemoteConnectionsApi: api.RemoteConnectionsApi,
+				OrganizationsApi:     api.OrganizationsApi,
 			}
 
 			return client.Create(getContext(ctx), &params)
@@ -112,7 +114,7 @@ func newRemoteListCmd() cli.Command {
 			commonFlags(),
 			&cli.StringFlag{
 				Name:        "name, n",
-				Usage:       "Name filter for remote connections list",
+				Usage:       "Filter results to only connections with a specific name",
 				Destination: &params.Name,
 			},
 			&cli.StringFlag{
@@ -129,15 +131,17 @@ func newRemoteListCmd() cli.Command {
 			},
 			&cli.StringFlag{
 				Name:        "remote-url",
-				Usage:       "Remote URL filter for remote connections list",
+				Usage:       "Filter results to only connections for a specific remote URL",
 				Destination: &params.RemoteURL,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+
 			client := remote.Client{
 				CLI:                  getCLI(ctx),
-				RemoteConnectionsApi: getAPI(ctx).RemoteConnectionsApi,
-				OrganizationsApi:     getAPI(ctx).OrganizationsApi,
+				RemoteConnectionsApi: api.RemoteConnectionsApi,
+				OrganizationsApi:     api.OrganizationsApi,
 			}
 
 			return client.List(getContext(ctx), &params)
