@@ -1,4 +1,6 @@
-## v2.1.1 [unreleased]
+## v2.1.2 [unreleased]
+
+## v2.1.1 [2021-09-22]
 
 ### Go Version
 
