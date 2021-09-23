@@ -40,7 +40,7 @@ type DBRPsApi interface {
 	DeleteDBRPIDExecute(r ApiDeleteDBRPIDRequest) error
 
 	/*
-	 * GetDBRPs List all database retention policy mappings
+	 * GetDBRPs List database retention policy mappings
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetDBRPsRequest
 	 */
@@ -365,7 +365,7 @@ func (r ApiGetDBRPsRequest) Execute() (DBRPs, error) {
 }
 
 /*
- * GetDBRPs List all database retention policy mappings
+ * GetDBRPs List database retention policy mappings
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetDBRPsRequest
  */

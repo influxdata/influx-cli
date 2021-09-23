@@ -109,7 +109,7 @@ func NewConfiguration() *Configuration {
 		OperationServers: map[string]ServerConfigurations{
 			"HealthApiService.GetHealth": {
 				{
-					URL:         "",
+					URL:         "/",
 					Description: "No description provided",
 				},
 			},

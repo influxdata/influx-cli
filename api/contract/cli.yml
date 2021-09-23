@@ -285,6 +285,8 @@ components:
       $ref: "./openapi/src/oss/schemas/BucketShardMappings.yml"
     BucketShardMapping:
       $ref: "./openapi/src/oss/schemas/BucketShardMapping.yml"
+    PostRestoreKVResponse:
+      $ref: "./openapi/src/oss/schemas/PostRestoreKVResponse.yml"
     Telegrafs:
       $ref: "./openapi/src/common/schemas/Telegrafs.yml"
     TelegrafRequest:
