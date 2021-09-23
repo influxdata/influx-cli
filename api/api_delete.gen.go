@@ -26,7 +26,7 @@ var (
 type DeleteApi interface {
 
 	/*
-	 * PostDelete Delete time series data from InfluxDB
+	 * PostDelete Delete data
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiPostDeleteRequest
 	 */
@@ -125,7 +125,7 @@ func (r ApiPostDeleteRequest) Execute() error {
 }
 
 /*
- * PostDelete Delete time series data from InfluxDB
+ * PostDelete Delete data
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiPostDeleteRequest
  */

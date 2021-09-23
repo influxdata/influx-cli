@@ -169,7 +169,8 @@ func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error
 	if !legacy {
 		kvReq = kvReq.ContentEncoding("gzip")
 	}
-	if err := kvReq.Execute(); err != nil {
+	// TODO: Use the response object for something here.
+	if _, err := kvReq.Execute(); err != nil {
 		return fmt.Errorf("failed to restore KV snapshot: %w", err)
 	}
 
