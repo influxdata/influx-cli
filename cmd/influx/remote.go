@@ -92,13 +92,29 @@ func newRemoteCreateCmd() cli.Command {
 }
 
 func newRemoteDeleteCmd() cli.Command {
+	var remoteID string
 	return cli.Command{
 		Name:   "delete",
 		Usage:  "Delete an existing remote connection",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags:  commonFlags(),
-		Action: func(ctx *cli.Context) {
-			fmt.Println("remote delete command was called")
+		Flags: append(
+			commonFlags(),
+			&cli.StringFlag{
+				Name:        "remote-id, id",
+				Usage:       "ID of the remote connection to be deleted",
+				Required:    true,
+				Destination: &remoteID,
+			},
+		),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+
+			client := remote.Client{
+				CLI:                  getCLI(ctx),
+				RemoteConnectionsApi: api.RemoteConnectionsApi,
+			}
+
+			return client.Delete(getContext(ctx), remoteID)
 		},
 	}
 }

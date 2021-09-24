@@ -101,6 +101,29 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	return c.printRemote(printOpts)
 }
 
+func (c Client) Delete(ctx context.Context, remoteID string) error {
+	connection, err := c.GetRemoteConnectionByID(ctx, remoteID).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to delete remote connection %q: %w", remoteID, err)
+	}
+
+	req := c.DeleteRemoteConnectionByID(ctx, remoteID)
+
+	// send delete request
+	err = req.Execute()
+	if err != nil {
+		return fmt.Errorf("failed to delete remote connection %q: %w", remoteID, err)
+	}
+
+	// print deleted connection info
+	printOpts := printRemoteOpts{
+		remote:  &connection,
+		deleted: true,
+	}
+
+	return c.printRemote(printOpts)
+}
+
 type printRemoteOpts struct {
 	remote  *api.RemoteConnection
 	remotes []api.RemoteConnection
