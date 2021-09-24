@@ -71,6 +71,57 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	return c.printRemote(printRemoteOpts{remote: &res})
 }
 
+type UpdateParams struct {
+	RemoteID         string
+	Name             string
+	Description      string
+	RemoteURL        string
+	RemoteAPIToken   string
+	RemoteOrgID      string
+	AllowInsecureTLS bool
+}
+
+func (c Client) Update(ctx context.Context, params *UpdateParams) error {
+	// build request
+	body := api.RemoteConnenctionUpdateRequest{}
+
+	if params.Name != "" {
+		body.SetName(params.Name)
+	}
+
+	if params.Description != "" {
+		body.SetDescription(params.Description)
+	}
+
+	if params.RemoteURL != "" {
+		body.SetRemoteURL(params.RemoteURL)
+	}
+
+	if params.RemoteAPIToken != "" {
+		body.SetRemoteAPIToken(params.RemoteAPIToken)
+	}
+
+	if params.RemoteOrgID != "" {
+		body.SetRemoteOrgID(params.RemoteOrgID)
+	}
+
+	connection, err := c.GetRemoteConnectionByID(ctx, params.RemoteID).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to update remote connection %q: %w", params.RemoteID, err)
+	}
+	if connection.AllowInsecureTLS != params.AllowInsecureTLS {
+		body.SetAllowInsecureTLS(params.AllowInsecureTLS)
+	}
+
+	// send patch request
+	res, err := c.PatchRemoteConnectionByID(ctx, params.RemoteID).RemoteConnenctionUpdateRequest(body).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to update remote connection %q: %w", params.RemoteID, err)
+	}
+	// print updated remote connection info
+	return c.printRemote(printRemoteOpts{remote: &res})
+}
+
 type printRemoteOpts struct {
 	remote  *api.RemoteConnection
 	remotes []api.RemoteConnection
