@@ -63,6 +63,8 @@ paths:
     $ref: "./overrides/paths/backup_metadata.yml"
   /backup/shards/{shardID}:
     $ref: "./openapi/src/oss/paths/backup_shards_shardID.yml"
+  /resources:
+    $ref: "./openapi/src/common/paths/resources.yml"
   /restore/kv:
     $ref: "./openapi/src/oss/paths/restore_kv.yml"
   /restore/sql:

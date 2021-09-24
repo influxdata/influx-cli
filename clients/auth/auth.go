@@ -3,9 +3,9 @@ package auth
 import (
 	"context"
 	"fmt"
-	"github.com/influxdata/influx-cli/v2/api/extras"
 
 	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/api/extras"
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 )
@@ -15,6 +15,7 @@ type Client struct {
 	api.AuthorizationsApi
 	api.UsersApi
 	api.OrganizationsApi
+	api.ResourceListApi
 }
 
 const (
@@ -39,11 +40,11 @@ type printParams struct {
 }
 
 type ResourcePermission struct {
-	Name string
-	Read bool
-	Write bool
+	Name    string
+	Read    bool
+	Write   bool
 	IsCloud bool
-	IsOss bool
+	IsOss   bool
 }
 
 type CreateParams struct {
@@ -53,10 +54,11 @@ type CreateParams struct {
 
 	ResourcePermissions []*ResourcePermission
 
-	WriteBucketIds     []string
-	ReadBucketIds      []string
+	WriteBucketIds []string
+	ReadBucketIds  []string
 
 	OperatorPermission bool
+	AllAccess          bool
 }
 
 func BuildResourcePermissions() []*ResourcePermission {
@@ -74,7 +76,7 @@ func BuildResourcePermissions() []*ResourcePermission {
 	for _, val := range extras.ResourceEnumOSSValues() {
 		if _, ok := cloudResources[string(val)]; ok {
 			perms = append(perms, &ResourcePermission{
-				Name: string(val),
+				Name:    string(val),
 				IsCloud: true,
 				IsOss:   true,
 			})
@@ -85,8 +87,8 @@ func BuildResourcePermissions() []*ResourcePermission {
 	for _, val := range extras.ResourceEnumOSSValues() {
 		if _, ok := cloudResources[string(val)]; !ok {
 			perms = append(perms, &ResourcePermission{
-				Name: string(val),
-				IsOss:   true,
+				Name:  string(val),
+				IsOss: true,
 			})
 		}
 	}
@@ -95,8 +97,8 @@ func BuildResourcePermissions() []*ResourcePermission {
 	for _, val := range extras.ResourceEnumCloudValues() {
 		if _, ok := ossResources[string(val)]; !ok {
 			perms = append(perms, &ResourcePermission{
-				Name: string(val),
-				IsCloud:   true,
+				Name:    string(val),
+				IsCloud: true,
 			})
 		}
 	}
@@ -118,6 +120,13 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		{action: WriteAction, perms: params.WriteBucketIds},
 	}
 
+	// Get the user ID because the command only takes a username, not ID
+	users, err := c.UsersApi.GetUsers(ctx).Name(params.User).Execute()
+	if err != nil || len(users.GetUsers()) == 0 {
+		return fmt.Errorf("could not find user with name %q: %w", params.User, err)
+	}
+	userID := users.GetUsers()[0].GetId()
+
 	var permissions []api.Permission
 	for _, bp := range bucketPerms {
 		for _, p := range bp.perms {
@@ -135,17 +144,61 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	}
 
 	if params.OperatorPermission {
-		for _, resourcePermission := range BuildResourcePermissions() {
-			if !resourcePermission.IsOss {
-				// Operator access is only applicable to OSS, not cloud
-				continue
-			}
+		resources, err := c.GetResources(ctx).Execute()
+		if err != nil {
+			return err
+		}
+		for _, r := range resources {
 			for _, action := range []string{ReadAction, WriteAction} {
-				p := api.Permission{
+				permissions = append(permissions, api.Permission{
 					Action:   action,
-					Resource: makePermResource(resourcePermission.Name, "", ""),
+					Resource: makePermResource(r, "", ""),
+				})
+			}
+		}
+	} else if params.AllAccess {
+		resources, err := c.GetResources(ctx).Execute()
+		if err != nil {
+			return err
+		}
+		// FIXME: remove this hack when cloud stops returning 'sources' even though you can't set it
+		isCloud := false
+		for _, r := range resources {
+			if r == string(extras.RESOURCEENUMCLOUD_FLOWS) {
+				isCloud = true
+			}
+		}
+		for _, r := range resources {
+			if r == string(extras.RESOURCEENUMCLOUD_ORGS) {
+				// orgs are handled specifically - all access is for a single org, not global access to all orgs
+				permissions = append(permissions, api.Permission{
+					Action: ReadAction,
+					Resource: api.PermissionResource{
+						Type: r,
+						Id:   &orgID,
+					},
+				})
+			} else if r == string(extras.RESOURCEENUMCLOUD_USERS) {
+				// users are handled specifically - all access is for a single user, not global to all users
+				for _, action := range []string{ReadAction, WriteAction} {
+					permissions = append(permissions, api.Permission{
+						Action: action,
+						Resource: api.PermissionResource{
+							Type: r,
+							Id:   &userID,
+						},
+					})
 				}
-				permissions = append(permissions, p)
+			} else if isCloud && (r == string(extras.RESOURCEENUMOSS_SOURCES) || r == string(extras.RESOURCEENUMOSS_SCRAPERS)) {
+				// Unfortunately cloud returns sources and scrapers as valid even though this is OSS-only
+				continue
+			} else {
+				for _, action := range []string{ReadAction, WriteAction} {
+					permissions = append(permissions, api.Permission{
+						Action:   action,
+						Resource: makePermResource(r, "", orgID),
+					})
+				}
 			}
 		}
 	} else {
@@ -166,15 +219,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 				permissions = append(permissions, p)
 			}
 		}
-
 	}
-
-	// Get the user ID because the command only takes a username, not ID
-	users, err := c.UsersApi.GetUsers(ctx).Name(params.User).Execute()
-	if err != nil || len(users.GetUsers()) == 0 {
-		return fmt.Errorf("could not find user with name %q: %w", params.User, err)
-	}
-	userID := users.GetUsers()[0].GetId()
 
 	authReq := api.AuthorizationPostRequest{
 		OrgID:       orgID,

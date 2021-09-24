@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/influxdata/influx-cli/v2/clients/auth"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
@@ -22,9 +23,8 @@ func newAuthCommand() cli.Command {
 	}
 }
 
-
-func helpText(perm string) struct{readHelp, writeHelp string} {
-	var helpOverrides = map[string]struct{readHelp, writeHelp string}{
+func helpText(perm string) struct{ readHelp, writeHelp string } {
+	var helpOverrides = map[string]struct{ readHelp, writeHelp string }{
 		"user":      {"perform read actions against organization users", "perform mutative actions against organization users"},
 		"buckets":   {"perform mutative actions against organization buckets", "perform mutative actions against organization buckets"},
 		"telegrafs": {"read telegraf configs", "create telegraf configs"},
@@ -41,7 +41,7 @@ func helpText(perm string) struct{readHelp, writeHelp string} {
 	}
 
 	help.readHelp = "Grants the permission to " + help.readHelp
-	help.writeHelp = "Grants the permission to "+ help.writeHelp
+	help.writeHelp = "Grants the permission to " + help.writeHelp
 	return help
 }
 
@@ -70,9 +70,14 @@ func newCreateCommand() cli.Command {
 			Usage: "The bucket id",
 		},
 		&cli.BoolFlag{
-			Name:  "operator",
-			Usage: "Grants all OSS permissions in all organizations",
+			Name:        "operator",
+			Usage:       "Grants all permissions in all organizations",
 			Destination: &params.OperatorPermission,
+		},
+		&cli.BoolFlag{
+			Name:        "all-access",
+			Usage:       "Grants all permissions in a single organization",
+			Destination: &params.AllAccess,
 		},
 	)
 
@@ -114,6 +119,7 @@ func newCreateCommand() cli.Command {
 				AuthorizationsApi: api.AuthorizationsApi,
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
+				ResourceListApi:   api.ResourceListApi,
 			}
 			return client.Create(getContext(ctx), &params)
 		},
