@@ -468,15 +468,14 @@ func setBody(body interface{}, contentType string) (io.ReadCloser, error) {
 		err = json.NewEncoder(bodyBuf).Encode(body)
 	} else if xmlCheck.MatchString(contentType) {
 		err = xml.NewEncoder(bodyBuf).Encode(body)
+	} else {
+		err = fmt.Errorf("invalid body type %s", contentType)
 	}
 
 	if err != nil {
 		return nil, err
 	}
 
-	if bodyBuf.Len() == 0 {
-		return nil, fmt.Errorf("invalid body type %s", contentType)
-	}
 	return io.NopCloser(bodyBuf), nil
 }
 
