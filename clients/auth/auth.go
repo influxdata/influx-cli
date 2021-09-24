@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"fmt"
+	"github.com/influxdata/influx-cli/v2/api/extras"
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
@@ -37,43 +38,70 @@ type printParams struct {
 	tokens  []token
 }
 
+type ResourcePermission struct {
+	Name string
+	Read bool
+	Write bool
+	IsCloud bool
+	IsOss bool
+}
+
 type CreateParams struct {
 	clients.OrgParams
 	User        string
 	Description string
 
-	WriteUserPermission bool
-	ReadUserPermission  bool
+	ResourcePermissions []*ResourcePermission
 
-	WriteBucketsPermission bool
-	ReadBucketsPermission  bool
+	WriteBucketIds     []string
+	ReadBucketIds      []string
 
-	WriteBucketIds []string
-	ReadBucketIds  []string
+	OperatorPermission bool
+}
 
-	WriteTasksPermission bool
-	ReadTasksPermission  bool
+func BuildResourcePermissions() []*ResourcePermission {
+	cloudResources := make(map[string]struct{})
+	ossResources := make(map[string]struct{})
+	for _, val := range extras.ResourceEnumCloudValues() {
+		cloudResources[string(val)] = struct{}{}
+	}
+	for _, val := range extras.ResourceEnumOSSValues() {
+		ossResources[string(val)] = struct{}{}
+	}
 
-	WriteTelegrafsPermission bool
-	ReadTelegrafsPermission  bool
+	perms := make([]*ResourcePermission, 0, len(ossResources))
+	// First the common permissions in order
+	for _, val := range extras.ResourceEnumOSSValues() {
+		if _, ok := cloudResources[string(val)]; ok {
+			perms = append(perms, &ResourcePermission{
+				Name: string(val),
+				IsCloud: true,
+				IsOss:   true,
+			})
+		}
+	}
 
-	WriteOrganizationsPermission bool
-	ReadOrganizationsPermission  bool
+	// Then oss-only in order
+	for _, val := range extras.ResourceEnumOSSValues() {
+		if _, ok := cloudResources[string(val)]; !ok {
+			perms = append(perms, &ResourcePermission{
+				Name: string(val),
+				IsOss:   true,
+			})
+		}
+	}
 
-	WriteDashboardsPermission bool
-	ReadDashboardsPermission  bool
+	// Then cloud-only in order
+	for _, val := range extras.ResourceEnumCloudValues() {
+		if _, ok := ossResources[string(val)]; !ok {
+			perms = append(perms, &ResourcePermission{
+				Name: string(val),
+				IsCloud:   true,
+			})
+		}
+	}
 
-	WriteCheckPermission bool
-	ReadCheckPermission  bool
-
-	WriteNotificationRulePermission bool
-	ReadNotificationRulePermission  bool
-
-	WriteNotificationEndpointPermission bool
-	ReadNotificationEndpointPermission  bool
-
-	WriteDBRPPermission bool
-	ReadDBRPPermission  bool
+	return perms
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
@@ -106,78 +134,39 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		}
 	}
 
-	providedPerm := []struct {
-		readPerm, writePerm bool
-		resourceType        string
-	}{
-		{
-			readPerm:     params.ReadBucketsPermission,
-			writePerm:    params.WriteBucketsPermission,
-			resourceType: "buckets",
-		},
-		{
-			readPerm:     params.ReadCheckPermission,
-			writePerm:    params.WriteCheckPermission,
-			resourceType: "checks",
-		},
-		{
-			readPerm:     params.ReadDashboardsPermission,
-			writePerm:    params.WriteDashboardsPermission,
-			resourceType: "dashboards",
-		},
-		{
-			readPerm:     params.ReadNotificationEndpointPermission,
-			writePerm:    params.WriteNotificationEndpointPermission,
-			resourceType: "notificationEndpoints",
-		},
-		{
-			readPerm:     params.ReadNotificationRulePermission,
-			writePerm:    params.WriteNotificationRulePermission,
-			resourceType: "notificationRules",
-		},
-		{
-			readPerm:     params.ReadOrganizationsPermission,
-			writePerm:    params.WriteOrganizationsPermission,
-			resourceType: "orgs",
-		},
-		{
-			readPerm:     params.ReadTasksPermission,
-			writePerm:    params.WriteTasksPermission,
-			resourceType: "tasks",
-		},
-		{
-			readPerm:     params.ReadTelegrafsPermission,
-			writePerm:    params.WriteTelegrafsPermission,
-			resourceType: "telegrafs",
-		},
-		{
-			readPerm:     params.ReadUserPermission,
-			writePerm:    params.WriteUserPermission,
-			resourceType: "users",
-		},
-		{
-			readPerm:     params.ReadDBRPPermission,
-			writePerm:    params.WriteDBRPPermission,
-			resourceType: "dbrp",
-		},
-	}
-
-	for _, provided := range providedPerm {
-		var actions []string
-		if provided.readPerm {
-			actions = append(actions, ReadAction)
-		}
-		if provided.writePerm {
-			actions = append(actions, WriteAction)
-		}
-
-		for _, action := range actions {
-			p := api.Permission{
-				Action:   action,
-				Resource: makePermResource(provided.resourceType, "", orgID),
+	if params.OperatorPermission {
+		for _, resourcePermission := range BuildResourcePermissions() {
+			if !resourcePermission.IsOss {
+				// Operator access is only applicable to OSS, not cloud
+				continue
 			}
-			permissions = append(permissions, p)
+			for _, action := range []string{ReadAction, WriteAction} {
+				p := api.Permission{
+					Action:   action,
+					Resource: makePermResource(resourcePermission.Name, "", ""),
+				}
+				permissions = append(permissions, p)
+			}
 		}
+	} else {
+		for _, resourcePermission := range params.ResourcePermissions {
+			var actions []string
+			if resourcePermission.Read {
+				actions = append(actions, ReadAction)
+			}
+			if resourcePermission.Write {
+				actions = append(actions, WriteAction)
+			}
+
+			for _, action := range actions {
+				p := api.Permission{
+					Action:   action,
+					Resource: makePermResource(resourcePermission.Name, "", orgID),
+				}
+				permissions = append(permissions, p)
+			}
+		}
+
 	}
 
 	// Get the user ID because the command only takes a username, not ID

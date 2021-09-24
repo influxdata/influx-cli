@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/influxdata/influx-cli/v2/clients/auth"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
@@ -21,9 +22,34 @@ func newAuthCommand() cli.Command {
 	}
 }
 
+
+func helpText(perm string) struct{readHelp, writeHelp string} {
+	var helpOverrides = map[string]struct{readHelp, writeHelp string}{
+		"user":      {"perform read actions against organization users", "perform mutative actions against organization users"},
+		"buckets":   {"perform mutative actions against organization buckets", "perform mutative actions against organization buckets"},
+		"telegrafs": {"read telegraf configs", "create telegraf configs"},
+		"orgs":      {"read organizations", "create organizations"},
+		"dbrps":     {"read database retention policy mappings", "create database retention policy mappings"},
+	}
+
+	help := helpOverrides[perm]
+	if help.readHelp == "" {
+		help.readHelp = fmt.Sprintf("read %s", perm)
+	}
+	if help.writeHelp == "" {
+		help.writeHelp = fmt.Sprintf("create or update %s", perm)
+	}
+
+	help.readHelp = "Grants the permission to " + help.readHelp
+	help.writeHelp = "Grants the permission to "+ help.writeHelp
+	return help
+}
+
 func newCreateCommand() cli.Command {
 	var params auth.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
+
+	// default: create and update foo / reed foo
 	flags = append(flags,
 		&cli.StringFlag{
 			Name:        "user, u",
@@ -35,27 +61,6 @@ func newCreateCommand() cli.Command {
 			Usage:       "Token description",
 			Destination: &params.Description,
 		},
-
-		&cli.BoolFlag{
-			Name:        "write-user",
-			Usage:       "Grants the permission to perform mutative actions against organization users",
-			Destination: &params.WriteUserPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "read-user",
-			Usage:       "Grants the permission to perform read actions against organization users",
-			Destination: &params.ReadUserPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "write-buckets",
-			Usage:       "Grants the permission to perform mutative actions against organization buckets",
-			Destination: &params.WriteBucketsPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "read-buckets",
-			Usage:       "Grants the permission to perform read actions against organization buckets",
-			Destination: &params.ReadBucketsPermission,
-		},
 		&cli.StringSliceFlag{
 			Name:  "write-bucket",
 			Usage: "The bucket id",
@@ -65,86 +70,35 @@ func newCreateCommand() cli.Command {
 			Usage: "The bucket id",
 		},
 		&cli.BoolFlag{
-			Name:        "write-tasks",
-			Usage:       "Grants the permission to create tasks",
-			Destination: &params.WriteTasksPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "read-tasks",
-			Usage:       "Grants the permission to read tasks",
-			Destination: &params.ReadTasksPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "write-telegrafs",
-			Usage:       "Grants the permission to create telegraf configs",
-			Destination: &params.WriteTelegrafsPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "read-telegrafs",
-			Usage:       "Grants the permission to read telegraf configs",
-			Destination: &params.ReadTelegrafsPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "write-orgs",
-			Usage:       "Grants the permission to create organizations",
-			Destination: &params.WriteOrganizationsPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "read-orgs",
-			Usage:       "Grants the permission to read organizations",
-			Destination: &params.ReadOrganizationsPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "write-dashboards",
-			Usage:       "Grants the permission to create dashboards",
-			Destination: &params.WriteDashboardsPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "read-dashboards",
-			Usage:       "Grants the permission to read dashboards",
-			Destination: &params.ReadDashboardsPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "write-checks",
-			Usage:       "Grants the permission to create checks",
-			Destination: &params.WriteCheckPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "read-checks",
-			Usage:       "Grants the permission to read checks",
-			Destination: &params.ReadCheckPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "write-notificationRules",
-			Usage:       "Grants the permission to create notificationRules",
-			Destination: &params.WriteNotificationRulePermission,
-		},
-		&cli.BoolFlag{
-			Name:        "read-notificationRules",
-			Usage:       "Grants the permission to read notificationRules",
-			Destination: &params.ReadNotificationRulePermission,
-		},
-		&cli.BoolFlag{
-			Name:        "write-notificationEndpoints",
-			Usage:       "Grants the permission to create notificationEndpoints",
-			Destination: &params.WriteNotificationEndpointPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "read-notificationEndpoints",
-			Usage:       "Grants the permission to read notificationEndpoints",
-			Destination: &params.ReadNotificationEndpointPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "write-dbrps",
-			Usage:       "Grants the permission to create database retention policy mappings",
-			Destination: &params.WriteDBRPPermission,
-		},
-		&cli.BoolFlag{
-			Name:        "read-dbrps",
-			Usage:       "Grants the permission to read database retention policy mappings",
-			Destination: &params.ReadDBRPPermission,
+			Name:  "operator",
+			Usage: "Grants all OSS permissions in all organizations",
+			Destination: &params.OperatorPermission,
 		},
 	)
+
+	params.ResourcePermissions = auth.BuildResourcePermissions()
+	for _, perm := range params.ResourcePermissions {
+		help := helpText(perm.Name)
+		ossVsCloud := ""
+		if perm.IsCloud && !perm.IsOss {
+			ossVsCloud = " (Cloud only)"
+		}
+		if !perm.IsCloud && perm.IsOss {
+			ossVsCloud = " (OSS only)"
+		}
+		flags = append(flags,
+			&cli.BoolFlag{
+				Name:        "read-" + perm.Name,
+				Usage:       help.readHelp + ossVsCloud,
+				Destination: &perm.Read,
+			},
+			&cli.BoolFlag{
+				Name:        "write-" + perm.Name,
+				Usage:       help.writeHelp + ossVsCloud,
+				Destination: &perm.Write,
+			})
+	}
+
 	return cli.Command{
 		Name:   "create",
 		Usage:  "Create authorization",
