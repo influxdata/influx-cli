@@ -26,10 +26,23 @@ var (
 type WriteApi interface {
 
 	/*
-	 * PostWrite Write time series data into InfluxDB
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostWriteRequest
-	 */
+			 * PostWrite Write data
+			 * Writes data to a bucket.
+
+		To write data into InfluxDB, you need the following:
+		- **organization** – _See [View organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/view-orgs/#view-your-organization-id) for instructions on viewing your organization ID._
+		- **bucket** – _See [View buckets]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/view-buckets/) for
+		 instructions on viewing your bucket ID._
+		- **API token** – _See [View tokens]({{% INFLUXDB_DOCS_URL %}}/security/tokens/view-tokens/)
+		 for instructions on viewing your API token._
+		- **InfluxDB URL** – _See [InfluxDB URLs]({{% INFLUXDB_DOCS_URL %}}/reference/urls/)_.
+		- data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/line-protocol) format.
+
+		For more information and examples, see [Write data with the InfluxDB API]({{% INFLUXDB_DOCS_URL %}}/write-data/developer-tools/api).
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiPostWriteRequest
+	*/
 	PostWrite(ctx _context.Context) ApiPostWriteRequest
 
 	/*
@@ -161,10 +174,23 @@ func (r ApiPostWriteRequest) Execute() error {
 }
 
 /*
- * PostWrite Write time series data into InfluxDB
+ * PostWrite Write data
+ * Writes data to a bucket.
+
+To write data into InfluxDB, you need the following:
+- **organization** – _See [View organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/view-orgs/#view-your-organization-id) for instructions on viewing your organization ID._
+- **bucket** – _See [View buckets]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/view-buckets/) for
+ instructions on viewing your bucket ID._
+- **API token** – _See [View tokens]({{% INFLUXDB_DOCS_URL %}}/security/tokens/view-tokens/)
+ for instructions on viewing your API token._
+- **InfluxDB URL** – _See [InfluxDB URLs]({{% INFLUXDB_DOCS_URL %}}/reference/urls/)_.
+- data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/line-protocol) format.
+
+For more information and examples, see [Write data with the InfluxDB API]({{% INFLUXDB_DOCS_URL %}}/write-data/developer-tools/api).
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiPostWriteRequest
- */
+*/
 func (a *WriteApiService) PostWrite(ctx _context.Context) ApiPostWriteRequest {
 	return ApiPostWriteRequest{
 		ApiService: a,
@@ -300,7 +326,7 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 			newErr.model = &v
 			return newErr
 		}
-		if localVarHTTPResponse.StatusCode == 403 {
+		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {

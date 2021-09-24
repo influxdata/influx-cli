@@ -24,162 +24,157 @@ var (
 	_ _context.Context
 )
 
-type DBRPsApi interface {
+type ReplicationsApi interface {
 
 	/*
-	 * DeleteDBRPID Delete a database retention policy
+	 * DeleteReplicationByID Delete a replication
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param dbrpID The database retention policy mapping
-	 * @return ApiDeleteDBRPIDRequest
+	 * @param replicationID
+	 * @return ApiDeleteReplicationByIDRequest
 	 */
-	DeleteDBRPID(ctx _context.Context, dbrpID string) ApiDeleteDBRPIDRequest
+	DeleteReplicationByID(ctx _context.Context, replicationID string) ApiDeleteReplicationByIDRequest
 
 	/*
-	 * DeleteDBRPIDExecute executes the request
+	 * DeleteReplicationByIDExecute executes the request
 	 */
-	DeleteDBRPIDExecute(r ApiDeleteDBRPIDRequest) error
+	DeleteReplicationByIDExecute(r ApiDeleteReplicationByIDRequest) error
 
 	/*
-	 * GetDBRPs List database retention policy mappings
+	 * GetReplicationByID Retrieve a replication
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiGetDBRPsRequest
+	 * @param replicationID
+	 * @return ApiGetReplicationByIDRequest
 	 */
-	GetDBRPs(ctx _context.Context) ApiGetDBRPsRequest
+	GetReplicationByID(ctx _context.Context, replicationID string) ApiGetReplicationByIDRequest
 
 	/*
-	 * GetDBRPsExecute executes the request
-	 * @return DBRPs
+	 * GetReplicationByIDExecute executes the request
+	 * @return Replication
 	 */
-	GetDBRPsExecute(r ApiGetDBRPsRequest) (DBRPs, error)
+	GetReplicationByIDExecute(r ApiGetReplicationByIDRequest) (Replication, error)
 
 	/*
-	 * GetDBRPsID Retrieve a database retention policy mapping
+	 * GetReplications List all replications
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param dbrpID The database retention policy mapping ID
-	 * @return ApiGetDBRPsIDRequest
+	 * @return ApiGetReplicationsRequest
 	 */
-	GetDBRPsID(ctx _context.Context, dbrpID string) ApiGetDBRPsIDRequest
+	GetReplications(ctx _context.Context) ApiGetReplicationsRequest
 
 	/*
-	 * GetDBRPsIDExecute executes the request
-	 * @return DBRPGet
+	 * GetReplicationsExecute executes the request
+	 * @return Replications
 	 */
-	GetDBRPsIDExecute(r ApiGetDBRPsIDRequest) (DBRPGet, error)
+	GetReplicationsExecute(r ApiGetReplicationsRequest) (Replications, error)
 
 	/*
-	 * PatchDBRPID Update a database retention policy mapping
+	 * PatchReplicationByID Update a replication
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param dbrpID The database retention policy mapping.
-	 * @return ApiPatchDBRPIDRequest
+	 * @param replicationID
+	 * @return ApiPatchReplicationByIDRequest
 	 */
-	PatchDBRPID(ctx _context.Context, dbrpID string) ApiPatchDBRPIDRequest
+	PatchReplicationByID(ctx _context.Context, replicationID string) ApiPatchReplicationByIDRequest
 
 	/*
-	 * PatchDBRPIDExecute executes the request
-	 * @return DBRPGet
+	 * PatchReplicationByIDExecute executes the request
+	 * @return Replication
 	 */
-	PatchDBRPIDExecute(r ApiPatchDBRPIDRequest) (DBRPGet, error)
+	PatchReplicationByIDExecute(r ApiPatchReplicationByIDRequest) (Replication, error)
 
 	/*
-	 * PostDBRP Add a database retention policy mapping
+	 * PostReplication Register a new replication
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostDBRPRequest
+	 * @return ApiPostReplicationRequest
 	 */
-	PostDBRP(ctx _context.Context) ApiPostDBRPRequest
+	PostReplication(ctx _context.Context) ApiPostReplicationRequest
 
 	/*
-	 * PostDBRPExecute executes the request
-	 * @return DBRP
+	 * PostReplicationExecute executes the request
+	 * @return Replication
 	 */
-	PostDBRPExecute(r ApiPostDBRPRequest) (DBRP, error)
+	PostReplicationExecute(r ApiPostReplicationRequest) (Replication, error)
+
+	/*
+	 * PostValidateReplicationByID Validate a replication
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param replicationID
+	 * @return ApiPostValidateReplicationByIDRequest
+	 */
+	PostValidateReplicationByID(ctx _context.Context, replicationID string) ApiPostValidateReplicationByIDRequest
+
+	/*
+	 * PostValidateReplicationByIDExecute executes the request
+	 */
+	PostValidateReplicationByIDExecute(r ApiPostValidateReplicationByIDRequest) error
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
 	// servers.
-	OnlyOSS() DBRPsApi
+	OnlyOSS() ReplicationsApi
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on cloud
 	// servers.
-	OnlyCloud() DBRPsApi
+	OnlyCloud() ReplicationsApi
 }
 
-// DBRPsApiService DBRPsApi service
-type DBRPsApiService service
+// ReplicationsApiService ReplicationsApi service
+type ReplicationsApiService service
 
-func (a *DBRPsApiService) OnlyOSS() DBRPsApi {
+func (a *ReplicationsApiService) OnlyOSS() ReplicationsApi {
 	a.isOnlyOSS = true
 	return a
 }
 
-func (a *DBRPsApiService) OnlyCloud() DBRPsApi {
+func (a *ReplicationsApiService) OnlyCloud() ReplicationsApi {
 	a.isOnlyCloud = true
 	return a
 }
 
-type ApiDeleteDBRPIDRequest struct {
-	ctx          _context.Context
-	ApiService   DBRPsApi
-	dbrpID       string
-	zapTraceSpan *string
-	orgID        *string
-	org          *string
+type ApiDeleteReplicationByIDRequest struct {
+	ctx           _context.Context
+	ApiService    ReplicationsApi
+	replicationID string
+	zapTraceSpan  *string
 }
 
-func (r ApiDeleteDBRPIDRequest) DbrpID(dbrpID string) ApiDeleteDBRPIDRequest {
-	r.dbrpID = dbrpID
+func (r ApiDeleteReplicationByIDRequest) ReplicationID(replicationID string) ApiDeleteReplicationByIDRequest {
+	r.replicationID = replicationID
 	return r
 }
-func (r ApiDeleteDBRPIDRequest) GetDbrpID() string {
-	return r.dbrpID
+func (r ApiDeleteReplicationByIDRequest) GetReplicationID() string {
+	return r.replicationID
 }
 
-func (r ApiDeleteDBRPIDRequest) ZapTraceSpan(zapTraceSpan string) ApiDeleteDBRPIDRequest {
+func (r ApiDeleteReplicationByIDRequest) ZapTraceSpan(zapTraceSpan string) ApiDeleteReplicationByIDRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiDeleteDBRPIDRequest) GetZapTraceSpan() *string {
+func (r ApiDeleteReplicationByIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiDeleteDBRPIDRequest) OrgID(orgID string) ApiDeleteDBRPIDRequest {
-	r.orgID = &orgID
-	return r
-}
-func (r ApiDeleteDBRPIDRequest) GetOrgID() *string {
-	return r.orgID
-}
-
-func (r ApiDeleteDBRPIDRequest) Org(org string) ApiDeleteDBRPIDRequest {
-	r.org = &org
-	return r
-}
-func (r ApiDeleteDBRPIDRequest) GetOrg() *string {
-	return r.org
-}
-
-func (r ApiDeleteDBRPIDRequest) Execute() error {
-	return r.ApiService.DeleteDBRPIDExecute(r)
+func (r ApiDeleteReplicationByIDRequest) Execute() error {
+	return r.ApiService.DeleteReplicationByIDExecute(r)
 }
 
 /*
- * DeleteDBRPID Delete a database retention policy
+ * DeleteReplicationByID Delete a replication
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param dbrpID The database retention policy mapping
- * @return ApiDeleteDBRPIDRequest
+ * @param replicationID
+ * @return ApiDeleteReplicationByIDRequest
  */
-func (a *DBRPsApiService) DeleteDBRPID(ctx _context.Context, dbrpID string) ApiDeleteDBRPIDRequest {
-	return ApiDeleteDBRPIDRequest{
-		ApiService: a,
-		ctx:        ctx,
-		dbrpID:     dbrpID,
+func (a *ReplicationsApiService) DeleteReplicationByID(ctx _context.Context, replicationID string) ApiDeleteReplicationByIDRequest {
+	return ApiDeleteReplicationByIDRequest{
+		ApiService:    a,
+		ctx:           ctx,
+		replicationID: replicationID,
 	}
 }
 
 /*
  * Execute executes the request
  */
-func (a *DBRPsApiService) DeleteDBRPIDExecute(r ApiDeleteDBRPIDRequest) error {
+func (a *ReplicationsApiService) DeleteReplicationByIDExecute(r ApiDeleteReplicationByIDRequest) error {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -188,24 +183,18 @@ func (a *DBRPsApiService) DeleteDBRPIDExecute(r ApiDeleteDBRPIDRequest) error {
 		localVarFileBytes    []byte
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DBRPsApiService.DeleteDBRPID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.DeleteReplicationByID")
 	if err != nil {
 		return GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/dbrps/{dbrpID}"
-	localVarPath = strings.Replace(localVarPath, "{"+"dbrpID"+"}", _neturl.PathEscape(parameterToString(r.dbrpID, "")), -1)
+	localVarPath := localBasePath + "/replications/{replicationID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"replicationID"+"}", _neturl.PathEscape(parameterToString(r.replicationID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 
-	if r.orgID != nil {
-		localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
-	}
-	if r.org != nil {
-		localVarQueryParams.Add("org", parameterToString(*r.org, ""))
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -258,7 +247,7 @@ func (a *DBRPsApiService) DeleteDBRPIDExecute(r ApiDeleteDBRPIDRequest) error {
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
-		if localVarHTTPResponse.StatusCode == 400 {
+		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -283,94 +272,230 @@ func (a *DBRPsApiService) DeleteDBRPIDExecute(r ApiDeleteDBRPIDRequest) error {
 	return nil
 }
 
-type ApiGetDBRPsRequest struct {
-	ctx          _context.Context
-	ApiService   DBRPsApi
-	zapTraceSpan *string
-	orgID        *string
-	org          *string
-	id           *string
-	bucketID     *string
-	default_     *bool
-	db           *string
-	rp           *string
+type ApiGetReplicationByIDRequest struct {
+	ctx           _context.Context
+	ApiService    ReplicationsApi
+	replicationID string
+	zapTraceSpan  *string
 }
 
-func (r ApiGetDBRPsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetDBRPsRequest {
+func (r ApiGetReplicationByIDRequest) ReplicationID(replicationID string) ApiGetReplicationByIDRequest {
+	r.replicationID = replicationID
+	return r
+}
+func (r ApiGetReplicationByIDRequest) GetReplicationID() string {
+	return r.replicationID
+}
+
+func (r ApiGetReplicationByIDRequest) ZapTraceSpan(zapTraceSpan string) ApiGetReplicationByIDRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiGetDBRPsRequest) GetZapTraceSpan() *string {
+func (r ApiGetReplicationByIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetDBRPsRequest) OrgID(orgID string) ApiGetDBRPsRequest {
-	r.orgID = &orgID
-	return r
-}
-func (r ApiGetDBRPsRequest) GetOrgID() *string {
-	return r.orgID
-}
-
-func (r ApiGetDBRPsRequest) Org(org string) ApiGetDBRPsRequest {
-	r.org = &org
-	return r
-}
-func (r ApiGetDBRPsRequest) GetOrg() *string {
-	return r.org
-}
-
-func (r ApiGetDBRPsRequest) Id(id string) ApiGetDBRPsRequest {
-	r.id = &id
-	return r
-}
-func (r ApiGetDBRPsRequest) GetId() *string {
-	return r.id
-}
-
-func (r ApiGetDBRPsRequest) BucketID(bucketID string) ApiGetDBRPsRequest {
-	r.bucketID = &bucketID
-	return r
-}
-func (r ApiGetDBRPsRequest) GetBucketID() *string {
-	return r.bucketID
-}
-
-func (r ApiGetDBRPsRequest) Default_(default_ bool) ApiGetDBRPsRequest {
-	r.default_ = &default_
-	return r
-}
-func (r ApiGetDBRPsRequest) GetDefault_() *bool {
-	return r.default_
-}
-
-func (r ApiGetDBRPsRequest) Db(db string) ApiGetDBRPsRequest {
-	r.db = &db
-	return r
-}
-func (r ApiGetDBRPsRequest) GetDb() *string {
-	return r.db
-}
-
-func (r ApiGetDBRPsRequest) Rp(rp string) ApiGetDBRPsRequest {
-	r.rp = &rp
-	return r
-}
-func (r ApiGetDBRPsRequest) GetRp() *string {
-	return r.rp
-}
-
-func (r ApiGetDBRPsRequest) Execute() (DBRPs, error) {
-	return r.ApiService.GetDBRPsExecute(r)
+func (r ApiGetReplicationByIDRequest) Execute() (Replication, error) {
+	return r.ApiService.GetReplicationByIDExecute(r)
 }
 
 /*
- * GetDBRPs List database retention policy mappings
+ * GetReplicationByID Retrieve a replication
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiGetDBRPsRequest
+ * @param replicationID
+ * @return ApiGetReplicationByIDRequest
  */
-func (a *DBRPsApiService) GetDBRPs(ctx _context.Context) ApiGetDBRPsRequest {
-	return ApiGetDBRPsRequest{
+func (a *ReplicationsApiService) GetReplicationByID(ctx _context.Context, replicationID string) ApiGetReplicationByIDRequest {
+	return ApiGetReplicationByIDRequest{
+		ApiService:    a,
+		ctx:           ctx,
+		replicationID: replicationID,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return Replication
+ */
+func (a *ReplicationsApiService) GetReplicationByIDExecute(r ApiGetReplicationByIDRequest) (Replication, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  Replication
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.GetReplicationByID")
+	if err != nil {
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/replications/{replicationID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"replicationID"+"}", _neturl.PathEscape(parameterToString(r.replicationID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, err
+	}
+
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		}
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, newErr
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarReturnValue, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarReturnValue, newErr
+	}
+
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+	}
+	localVarBody, err := _io.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+	}
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
+		}
+		return localVarReturnValue, newErr
+	}
+
+	return localVarReturnValue, nil
+}
+
+type ApiGetReplicationsRequest struct {
+	ctx           _context.Context
+	ApiService    ReplicationsApi
+	orgID         *string
+	zapTraceSpan  *string
+	name          *string
+	remoteID      *string
+	localBucketID *string
+}
+
+func (r ApiGetReplicationsRequest) OrgID(orgID string) ApiGetReplicationsRequest {
+	r.orgID = &orgID
+	return r
+}
+func (r ApiGetReplicationsRequest) GetOrgID() *string {
+	return r.orgID
+}
+
+func (r ApiGetReplicationsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetReplicationsRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiGetReplicationsRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiGetReplicationsRequest) Name(name string) ApiGetReplicationsRequest {
+	r.name = &name
+	return r
+}
+func (r ApiGetReplicationsRequest) GetName() *string {
+	return r.name
+}
+
+func (r ApiGetReplicationsRequest) RemoteID(remoteID string) ApiGetReplicationsRequest {
+	r.remoteID = &remoteID
+	return r
+}
+func (r ApiGetReplicationsRequest) GetRemoteID() *string {
+	return r.remoteID
+}
+
+func (r ApiGetReplicationsRequest) LocalBucketID(localBucketID string) ApiGetReplicationsRequest {
+	r.localBucketID = &localBucketID
+	return r
+}
+func (r ApiGetReplicationsRequest) GetLocalBucketID() *string {
+	return r.localBucketID
+}
+
+func (r ApiGetReplicationsRequest) Execute() (Replications, error) {
+	return r.ApiService.GetReplicationsExecute(r)
+}
+
+/*
+ * GetReplications List all replications
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiGetReplicationsRequest
+ */
+func (a *ReplicationsApiService) GetReplications(ctx _context.Context) ApiGetReplicationsRequest {
+	return ApiGetReplicationsRequest{
 		ApiService: a,
 		ctx:        ctx,
 	}
@@ -378,49 +503,41 @@ func (a *DBRPsApiService) GetDBRPs(ctx _context.Context) ApiGetDBRPsRequest {
 
 /*
  * Execute executes the request
- * @return DBRPs
+ * @return Replications
  */
-func (a *DBRPsApiService) GetDBRPsExecute(r ApiGetDBRPsRequest) (DBRPs, error) {
+func (a *ReplicationsApiService) GetReplicationsExecute(r ApiGetReplicationsRequest) (Replications, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  DBRPs
+		localVarReturnValue  Replications
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DBRPsApiService.GetDBRPs")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.GetReplications")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/dbrps"
+	localVarPath := localBasePath + "/replications"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.orgID == nil {
+		return localVarReturnValue, reportError("orgID is required and must be specified")
+	}
 
-	if r.orgID != nil {
-		localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
+	localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
+	if r.name != nil {
+		localVarQueryParams.Add("name", parameterToString(*r.name, ""))
 	}
-	if r.org != nil {
-		localVarQueryParams.Add("org", parameterToString(*r.org, ""))
+	if r.remoteID != nil {
+		localVarQueryParams.Add("remoteID", parameterToString(*r.remoteID, ""))
 	}
-	if r.id != nil {
-		localVarQueryParams.Add("id", parameterToString(*r.id, ""))
-	}
-	if r.bucketID != nil {
-		localVarQueryParams.Add("bucketID", parameterToString(*r.bucketID, ""))
-	}
-	if r.default_ != nil {
-		localVarQueryParams.Add("default", parameterToString(*r.default_, ""))
-	}
-	if r.db != nil {
-		localVarQueryParams.Add("db", parameterToString(*r.db, ""))
-	}
-	if r.rp != nil {
-		localVarQueryParams.Add("rp", parameterToString(*r.rp, ""))
+	if r.localBucketID != nil {
+		localVarQueryParams.Add("localBucketID", parameterToString(*r.localBucketID, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -474,7 +591,7 @@ func (a *DBRPsApiService) GetDBRPsExecute(r ApiGetDBRPsRequest) (DBRPs, error) {
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
-		if localVarHTTPResponse.StatusCode == 400 {
+		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -518,295 +635,96 @@ func (a *DBRPsApiService) GetDBRPsExecute(r ApiGetDBRPsRequest) (DBRPs, error) {
 	return localVarReturnValue, nil
 }
 
-type ApiGetDBRPsIDRequest struct {
-	ctx          _context.Context
-	ApiService   DBRPsApi
-	dbrpID       string
-	zapTraceSpan *string
-	orgID        *string
-	org          *string
+type ApiPatchReplicationByIDRequest struct {
+	ctx                      _context.Context
+	ApiService               ReplicationsApi
+	replicationID            string
+	replicationUpdateRequest *ReplicationUpdateRequest
+	zapTraceSpan             *string
+	validate                 *bool
 }
 
-func (r ApiGetDBRPsIDRequest) DbrpID(dbrpID string) ApiGetDBRPsIDRequest {
-	r.dbrpID = dbrpID
+func (r ApiPatchReplicationByIDRequest) ReplicationID(replicationID string) ApiPatchReplicationByIDRequest {
+	r.replicationID = replicationID
 	return r
 }
-func (r ApiGetDBRPsIDRequest) GetDbrpID() string {
-	return r.dbrpID
+func (r ApiPatchReplicationByIDRequest) GetReplicationID() string {
+	return r.replicationID
 }
 
-func (r ApiGetDBRPsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiGetDBRPsIDRequest {
+func (r ApiPatchReplicationByIDRequest) ReplicationUpdateRequest(replicationUpdateRequest ReplicationUpdateRequest) ApiPatchReplicationByIDRequest {
+	r.replicationUpdateRequest = &replicationUpdateRequest
+	return r
+}
+func (r ApiPatchReplicationByIDRequest) GetReplicationUpdateRequest() *ReplicationUpdateRequest {
+	return r.replicationUpdateRequest
+}
+
+func (r ApiPatchReplicationByIDRequest) ZapTraceSpan(zapTraceSpan string) ApiPatchReplicationByIDRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiGetDBRPsIDRequest) GetZapTraceSpan() *string {
+func (r ApiPatchReplicationByIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetDBRPsIDRequest) OrgID(orgID string) ApiGetDBRPsIDRequest {
-	r.orgID = &orgID
+func (r ApiPatchReplicationByIDRequest) Validate(validate bool) ApiPatchReplicationByIDRequest {
+	r.validate = &validate
 	return r
 }
-func (r ApiGetDBRPsIDRequest) GetOrgID() *string {
-	return r.orgID
+func (r ApiPatchReplicationByIDRequest) GetValidate() *bool {
+	return r.validate
 }
 
-func (r ApiGetDBRPsIDRequest) Org(org string) ApiGetDBRPsIDRequest {
-	r.org = &org
-	return r
-}
-func (r ApiGetDBRPsIDRequest) GetOrg() *string {
-	return r.org
-}
-
-func (r ApiGetDBRPsIDRequest) Execute() (DBRPGet, error) {
-	return r.ApiService.GetDBRPsIDExecute(r)
+func (r ApiPatchReplicationByIDRequest) Execute() (Replication, error) {
+	return r.ApiService.PatchReplicationByIDExecute(r)
 }
 
 /*
- * GetDBRPsID Retrieve a database retention policy mapping
+ * PatchReplicationByID Update a replication
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param dbrpID The database retention policy mapping ID
- * @return ApiGetDBRPsIDRequest
+ * @param replicationID
+ * @return ApiPatchReplicationByIDRequest
  */
-func (a *DBRPsApiService) GetDBRPsID(ctx _context.Context, dbrpID string) ApiGetDBRPsIDRequest {
-	return ApiGetDBRPsIDRequest{
-		ApiService: a,
-		ctx:        ctx,
-		dbrpID:     dbrpID,
+func (a *ReplicationsApiService) PatchReplicationByID(ctx _context.Context, replicationID string) ApiPatchReplicationByIDRequest {
+	return ApiPatchReplicationByIDRequest{
+		ApiService:    a,
+		ctx:           ctx,
+		replicationID: replicationID,
 	}
 }
 
 /*
  * Execute executes the request
- * @return DBRPGet
+ * @return Replication
  */
-func (a *DBRPsApiService) GetDBRPsIDExecute(r ApiGetDBRPsIDRequest) (DBRPGet, error) {
-	var (
-		localVarHTTPMethod   = _nethttp.MethodGet
-		localVarPostBody     interface{}
-		localVarFormFileName string
-		localVarFileName     string
-		localVarFileBytes    []byte
-		localVarReturnValue  DBRPGet
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DBRPsApiService.GetDBRPsID")
-	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/dbrps/{dbrpID}"
-	localVarPath = strings.Replace(localVarPath, "{"+"dbrpID"+"}", _neturl.PathEscape(parameterToString(r.dbrpID, "")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := _neturl.Values{}
-	localVarFormParams := _neturl.Values{}
-
-	if r.orgID != nil {
-		localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
-	}
-	if r.org != nil {
-		localVarQueryParams.Add("org", parameterToString(*r.org, ""))
-	}
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.zapTraceSpan != nil {
-		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
-	}
-
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		body, err := GunzipIfNeeded(localVarHTTPResponse)
-		if err != nil {
-			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
-		}
-		localVarBody, err := _io.ReadAll(body)
-		body.Close()
-		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
-		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v Error
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
-			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-			newErr.model = &v
-			return localVarReturnValue, newErr
-		}
-		var v Error
-		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
-		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-		newErr.model = &v
-		return localVarReturnValue, newErr
-	}
-
-	body, err := GunzipIfNeeded(localVarHTTPResponse)
-	if err != nil {
-		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
-	}
-	localVarBody, err := _io.ReadAll(body)
-	body.Close()
-	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
-	}
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
-		}
-		return localVarReturnValue, newErr
-	}
-
-	return localVarReturnValue, nil
-}
-
-type ApiPatchDBRPIDRequest struct {
-	ctx          _context.Context
-	ApiService   DBRPsApi
-	dbrpID       string
-	dBRPUpdate   *DBRPUpdate
-	zapTraceSpan *string
-	orgID        *string
-	org          *string
-}
-
-func (r ApiPatchDBRPIDRequest) DbrpID(dbrpID string) ApiPatchDBRPIDRequest {
-	r.dbrpID = dbrpID
-	return r
-}
-func (r ApiPatchDBRPIDRequest) GetDbrpID() string {
-	return r.dbrpID
-}
-
-func (r ApiPatchDBRPIDRequest) DBRPUpdate(dBRPUpdate DBRPUpdate) ApiPatchDBRPIDRequest {
-	r.dBRPUpdate = &dBRPUpdate
-	return r
-}
-func (r ApiPatchDBRPIDRequest) GetDBRPUpdate() *DBRPUpdate {
-	return r.dBRPUpdate
-}
-
-func (r ApiPatchDBRPIDRequest) ZapTraceSpan(zapTraceSpan string) ApiPatchDBRPIDRequest {
-	r.zapTraceSpan = &zapTraceSpan
-	return r
-}
-func (r ApiPatchDBRPIDRequest) GetZapTraceSpan() *string {
-	return r.zapTraceSpan
-}
-
-func (r ApiPatchDBRPIDRequest) OrgID(orgID string) ApiPatchDBRPIDRequest {
-	r.orgID = &orgID
-	return r
-}
-func (r ApiPatchDBRPIDRequest) GetOrgID() *string {
-	return r.orgID
-}
-
-func (r ApiPatchDBRPIDRequest) Org(org string) ApiPatchDBRPIDRequest {
-	r.org = &org
-	return r
-}
-func (r ApiPatchDBRPIDRequest) GetOrg() *string {
-	return r.org
-}
-
-func (r ApiPatchDBRPIDRequest) Execute() (DBRPGet, error) {
-	return r.ApiService.PatchDBRPIDExecute(r)
-}
-
-/*
- * PatchDBRPID Update a database retention policy mapping
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param dbrpID The database retention policy mapping.
- * @return ApiPatchDBRPIDRequest
- */
-func (a *DBRPsApiService) PatchDBRPID(ctx _context.Context, dbrpID string) ApiPatchDBRPIDRequest {
-	return ApiPatchDBRPIDRequest{
-		ApiService: a,
-		ctx:        ctx,
-		dbrpID:     dbrpID,
-	}
-}
-
-/*
- * Execute executes the request
- * @return DBRPGet
- */
-func (a *DBRPsApiService) PatchDBRPIDExecute(r ApiPatchDBRPIDRequest) (DBRPGet, error) {
+func (a *ReplicationsApiService) PatchReplicationByIDExecute(r ApiPatchReplicationByIDRequest) (Replication, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  DBRPGet
+		localVarReturnValue  Replication
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DBRPsApiService.PatchDBRPID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.PatchReplicationByID")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/dbrps/{dbrpID}"
-	localVarPath = strings.Replace(localVarPath, "{"+"dbrpID"+"}", _neturl.PathEscape(parameterToString(r.dbrpID, "")), -1)
+	localVarPath := localBasePath + "/replications/{replicationID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"replicationID"+"}", _neturl.PathEscape(parameterToString(r.replicationID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
-	if r.dBRPUpdate == nil {
-		return localVarReturnValue, reportError("dBRPUpdate is required and must be specified")
+	if r.replicationUpdateRequest == nil {
+		return localVarReturnValue, reportError("replicationUpdateRequest is required and must be specified")
 	}
 
-	if r.orgID != nil {
-		localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
-	}
-	if r.org != nil {
-		localVarQueryParams.Add("org", parameterToString(*r.org, ""))
+	if r.validate != nil {
+		localVarQueryParams.Add("validate", parameterToString(*r.validate, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -829,7 +747,7 @@ func (a *DBRPsApiService) PatchDBRPIDExecute(r ApiPatchDBRPIDRequest) (DBRPGet, 
 		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
 	// body params
-	localVarPostBody = r.dBRPUpdate
+	localVarPostBody = r.replicationUpdateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, err
@@ -917,40 +835,49 @@ func (a *DBRPsApiService) PatchDBRPIDExecute(r ApiPatchDBRPIDRequest) (DBRPGet, 
 	return localVarReturnValue, nil
 }
 
-type ApiPostDBRPRequest struct {
-	ctx          _context.Context
-	ApiService   DBRPsApi
-	dBRPCreate   *DBRPCreate
-	zapTraceSpan *string
+type ApiPostReplicationRequest struct {
+	ctx                        _context.Context
+	ApiService                 ReplicationsApi
+	replicationCreationRequest *ReplicationCreationRequest
+	zapTraceSpan               *string
+	validate                   *bool
 }
 
-func (r ApiPostDBRPRequest) DBRPCreate(dBRPCreate DBRPCreate) ApiPostDBRPRequest {
-	r.dBRPCreate = &dBRPCreate
+func (r ApiPostReplicationRequest) ReplicationCreationRequest(replicationCreationRequest ReplicationCreationRequest) ApiPostReplicationRequest {
+	r.replicationCreationRequest = &replicationCreationRequest
 	return r
 }
-func (r ApiPostDBRPRequest) GetDBRPCreate() *DBRPCreate {
-	return r.dBRPCreate
+func (r ApiPostReplicationRequest) GetReplicationCreationRequest() *ReplicationCreationRequest {
+	return r.replicationCreationRequest
 }
 
-func (r ApiPostDBRPRequest) ZapTraceSpan(zapTraceSpan string) ApiPostDBRPRequest {
+func (r ApiPostReplicationRequest) ZapTraceSpan(zapTraceSpan string) ApiPostReplicationRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiPostDBRPRequest) GetZapTraceSpan() *string {
+func (r ApiPostReplicationRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiPostDBRPRequest) Execute() (DBRP, error) {
-	return r.ApiService.PostDBRPExecute(r)
+func (r ApiPostReplicationRequest) Validate(validate bool) ApiPostReplicationRequest {
+	r.validate = &validate
+	return r
+}
+func (r ApiPostReplicationRequest) GetValidate() *bool {
+	return r.validate
+}
+
+func (r ApiPostReplicationRequest) Execute() (Replication, error) {
+	return r.ApiService.PostReplicationExecute(r)
 }
 
 /*
- * PostDBRP Add a database retention policy mapping
+ * PostReplication Register a new replication
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiPostDBRPRequest
+ * @return ApiPostReplicationRequest
  */
-func (a *DBRPsApiService) PostDBRP(ctx _context.Context) ApiPostDBRPRequest {
-	return ApiPostDBRPRequest{
+func (a *ReplicationsApiService) PostReplication(ctx _context.Context) ApiPostReplicationRequest {
+	return ApiPostReplicationRequest{
 		ApiService: a,
 		ctx:        ctx,
 	}
@@ -958,32 +885,35 @@ func (a *DBRPsApiService) PostDBRP(ctx _context.Context) ApiPostDBRPRequest {
 
 /*
  * Execute executes the request
- * @return DBRP
+ * @return Replication
  */
-func (a *DBRPsApiService) PostDBRPExecute(r ApiPostDBRPRequest) (DBRP, error) {
+func (a *ReplicationsApiService) PostReplicationExecute(r ApiPostReplicationRequest) (Replication, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  DBRP
+		localVarReturnValue  Replication
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DBRPsApiService.PostDBRP")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.PostReplication")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/dbrps"
+	localVarPath := localBasePath + "/replications"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
-	if r.dBRPCreate == nil {
-		return localVarReturnValue, reportError("dBRPCreate is required and must be specified")
+	if r.replicationCreationRequest == nil {
+		return localVarReturnValue, reportError("replicationCreationRequest is required and must be specified")
 	}
 
+	if r.validate != nil {
+		localVarQueryParams.Add("validate", parameterToString(*r.validate, ""))
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
 
@@ -1005,7 +935,7 @@ func (a *DBRPsApiService) PostDBRPExecute(r ApiPostDBRPRequest) (DBRP, error) {
 		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
 	// body params
-	localVarPostBody = r.dBRPCreate
+	localVarPostBody = r.replicationCreationRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, err
@@ -1080,4 +1010,146 @@ func (a *DBRPsApiService) PostDBRPExecute(r ApiPostDBRPRequest) (DBRP, error) {
 	}
 
 	return localVarReturnValue, nil
+}
+
+type ApiPostValidateReplicationByIDRequest struct {
+	ctx           _context.Context
+	ApiService    ReplicationsApi
+	replicationID string
+	zapTraceSpan  *string
+}
+
+func (r ApiPostValidateReplicationByIDRequest) ReplicationID(replicationID string) ApiPostValidateReplicationByIDRequest {
+	r.replicationID = replicationID
+	return r
+}
+func (r ApiPostValidateReplicationByIDRequest) GetReplicationID() string {
+	return r.replicationID
+}
+
+func (r ApiPostValidateReplicationByIDRequest) ZapTraceSpan(zapTraceSpan string) ApiPostValidateReplicationByIDRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiPostValidateReplicationByIDRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiPostValidateReplicationByIDRequest) Execute() error {
+	return r.ApiService.PostValidateReplicationByIDExecute(r)
+}
+
+/*
+ * PostValidateReplicationByID Validate a replication
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param replicationID
+ * @return ApiPostValidateReplicationByIDRequest
+ */
+func (a *ReplicationsApiService) PostValidateReplicationByID(ctx _context.Context, replicationID string) ApiPostValidateReplicationByIDRequest {
+	return ApiPostValidateReplicationByIDRequest{
+		ApiService:    a,
+		ctx:           ctx,
+		replicationID: replicationID,
+	}
+}
+
+/*
+ * Execute executes the request
+ */
+func (a *ReplicationsApiService) PostValidateReplicationByIDExecute(r ApiPostValidateReplicationByIDRequest) error {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodPost
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.PostValidateReplicationByID")
+	if err != nil {
+		return GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/replications/{replicationID}/validate"
+	localVarPath = strings.Replace(localVarPath, "{"+"replicationID"+"}", _neturl.PathEscape(parameterToString(r.replicationID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return err
+	}
+
+	var errorPrefix string
+	if a.isOnlyOSS {
+		errorPrefix = "InfluxDB OSS-only command failed: "
+	} else if a.isOnlyCloud {
+		errorPrefix = "InfluxDB Cloud-only command failed: "
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			return _fmt.Errorf("%s%w", errorPrefix, err)
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			return _fmt.Errorf("%s%w", errorPrefix, err)
+		}
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return newErr
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return newErr
+	}
+
+	return nil
 }

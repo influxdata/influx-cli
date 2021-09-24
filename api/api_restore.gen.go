@@ -62,8 +62,9 @@ type RestoreApi interface {
 
 	/*
 	 * PostRestoreKVExecute executes the request
+	 * @return PostRestoreKVResponse
 	 */
-	PostRestoreKVExecute(r ApiPostRestoreKVRequest) error
+	PostRestoreKVExecute(r ApiPostRestoreKVRequest) (PostRestoreKVResponse, error)
 
 	/*
 	 * PostRestoreSQL Overwrite the embedded SQL store on the server with a backed-up snapshot.
@@ -487,7 +488,7 @@ func (r ApiPostRestoreKVRequest) GetContentType() *string {
 	return r.contentType
 }
 
-func (r ApiPostRestoreKVRequest) Execute() error {
+func (r ApiPostRestoreKVRequest) Execute() (PostRestoreKVResponse, error) {
 	return r.ApiService.PostRestoreKVExecute(r)
 }
 
@@ -505,19 +506,21 @@ func (a *RestoreApiService) PostRestoreKV(ctx _context.Context) ApiPostRestoreKV
 
 /*
  * Execute executes the request
+ * @return PostRestoreKVResponse
  */
-func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) error {
+func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) (PostRestoreKVResponse, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
+		localVarReturnValue  PostRestoreKVResponse
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RestoreApiService.PostRestoreKV")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/restore/kv"
@@ -526,7 +529,7 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.body == nil {
-		return reportError("body is required and must be specified")
+		return localVarReturnValue, reportError("body is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -559,12 +562,12 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 	localVarPostBody = r.body
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return localVarReturnValue, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarReturnValue, err
 	}
 
 	var errorPrefix string
@@ -578,12 +581,12 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -593,14 +596,33 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) erro
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarReturnValue, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarReturnValue, newErr
 	}
 
-	return nil
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+	}
+	localVarBody, err := _io.ReadAll(body)
+	body.Close()
+	if err != nil {
+		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+	}
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
+		}
+		return localVarReturnValue, newErr
+	}
+
+	return localVarReturnValue, nil
 }
 
 type ApiPostRestoreSQLRequest struct {
