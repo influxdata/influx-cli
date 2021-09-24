@@ -24,6 +24,10 @@ const (
 	SCHEMATYPE_EXPLICIT SchemaType = "explicit"
 )
 
+func SchemaTypeValues() []SchemaType {
+	return []SchemaType{"implicit", "explicit"}
+}
+
 func (v *SchemaType) UnmarshalJSON(src []byte) error {
 	var value string
 	err := json.Unmarshal(src, &value)

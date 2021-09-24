@@ -49,8 +49,9 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   -i /api/cli-extras.gen.yml \
   -o /api/extras \
   -t /api/templates \
-  --additional-properties packageName=api,enumClassPrefix=true,generateInterfaces=true
+  --additional-properties packageName=extras,enumClassPrefix=true,generateInterfaces=true
 
+rm ${API_DIR}/extras/{client.go,configuration.go,response.go}
 
 # Edit the generated files.
 for DIR in "${API_DIR}" "${API_DIR}/extras" ; do

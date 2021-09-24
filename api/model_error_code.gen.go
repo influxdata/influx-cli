@@ -35,6 +35,10 @@ const (
 	ERRORCODE_UNSUPPORTED_MEDIA_TYPE ErrorCode = "unsupported media type"
 )
 
+func ErrorCodeValues() []ErrorCode {
+	return []ErrorCode{"internal error", "not found", "conflict", "invalid", "unprocessable entity", "empty value", "unavailable", "forbidden", "too many requests", "unauthorized", "method not allowed", "request too large", "unsupported media type"}
+}
+
 func (v *ErrorCode) UnmarshalJSON(src []byte) error {
 	var value string
 	err := json.Unmarshal(src, &value)

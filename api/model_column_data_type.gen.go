@@ -27,6 +27,10 @@ const (
 	COLUMNDATATYPE_UNSIGNED ColumnDataType = "unsigned"
 )
 
+func ColumnDataTypeValues() []ColumnDataType {
+	return []ColumnDataType{"integer", "float", "boolean", "string", "unsigned"}
+}
+
 func (v *ColumnDataType) UnmarshalJSON(src []byte) error {
 	var value string
 	err := json.Unmarshal(src, &value)

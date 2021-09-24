@@ -24,6 +24,10 @@ const (
 	TASKSTATUSTYPE_INACTIVE TaskStatusType = "inactive"
 )
 
+func TaskStatusTypeValues() []TaskStatusType {
+	return []TaskStatusType{"active", "inactive"}
+}
+
 func (v *TaskStatusType) UnmarshalJSON(src []byte) error {
 	var value string
 	err := json.Unmarshal(src, &value)
