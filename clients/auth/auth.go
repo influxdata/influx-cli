@@ -161,13 +161,6 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		if err != nil {
 			return err
 		}
-		// FIXME: remove this hack when cloud stops returning 'sources' even though you can't set it
-		isCloud := false
-		for _, r := range resources {
-			if r == string(extras.RESOURCEENUMCLOUD_FLOWS) {
-				isCloud = true
-			}
-		}
 		for _, r := range resources {
 			if r == string(extras.RESOURCEENUMCLOUD_ORGS) {
 				// orgs are handled specifically - all access is for a single org, not global access to all orgs
@@ -189,9 +182,6 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 						},
 					})
 				}
-			} else if isCloud && (r == string(extras.RESOURCEENUMOSS_SOURCES) || r == string(extras.RESOURCEENUMOSS_SCRAPERS)) {
-				// Unfortunately cloud returns sources and scrapers as valid even though this is OSS-only
-				continue
 			} else {
 				for _, action := range []string{ReadAction, WriteAction} {
 					permissions = append(permissions, api.Permission{
