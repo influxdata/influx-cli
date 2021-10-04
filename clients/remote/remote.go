@@ -65,7 +65,7 @@ type UpdateParams struct {
 	RemoteAPIToken   string
 	RemoteOrgID      string
 	AllowInsecureTLS bool
-	TLSFlagIsSet	 bool
+	TLSFlagIsSet     bool
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
