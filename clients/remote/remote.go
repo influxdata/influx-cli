@@ -65,6 +65,7 @@ type UpdateParams struct {
 	RemoteAPIToken   string
 	RemoteOrgID      string
 	AllowInsecureTLS bool
+	TLSFlagIsSet	 bool
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
@@ -91,11 +92,7 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 		body.SetRemoteOrgID(params.RemoteOrgID)
 	}
 
-	connection, err := c.GetRemoteConnectionByID(ctx, params.RemoteID).Execute()
-	if err != nil {
-		return fmt.Errorf("failed to update remote connection %q: %w", params.RemoteID, err)
-	}
-	if connection.AllowInsecureTLS != params.AllowInsecureTLS {
+	if params.TLSFlagIsSet {
 		body.SetAllowInsecureTLS(params.AllowInsecureTLS)
 	}
 

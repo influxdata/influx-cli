@@ -165,27 +165,27 @@ func newRemoteUpdateCmd() cli.Command {
 			},
 			&cli.StringFlag{
 				Name:        "name, n",
-				Usage:       "Name for the remote connection",
+				Usage:       "New name for the remote connection",
 				Destination: &params.Name,
 			},
 			&cli.StringFlag{
 				Name:        "description, d",
-				Usage:       "Description for the remote connection",
+				Usage:       "New description for the remote connection",
 				Destination: &params.Description,
 			},
 			&cli.StringFlag{
 				Name:        "remote-url",
-				Usage:       "The url for the remote database",
+				Usage:       "New url for the remote database",
 				Destination: &params.RemoteURL,
 			},
 			&cli.StringFlag{
 				Name:        "remote-api-token",
-				Usage:       "The API token for the remote database",
+				Usage:       "New API token for the remote database",
 				Destination: &params.RemoteAPIToken,
 			},
 			&cli.StringFlag{
 				Name:        "remote-org-id",
-				Usage:       "The ID of the remote organization",
+				Usage:       "New ID of the remote organization",
 				Destination: &params.RemoteOrgID,
 			},
 			&cli.BoolFlag{
@@ -200,6 +200,10 @@ func newRemoteUpdateCmd() cli.Command {
 			client := remote.Client{
 				CLI:                  getCLI(ctx),
 				RemoteConnectionsApi: api.RemoteConnectionsApi,
+			}
+
+			if ctx.IsSet("allow-insecure-tls") {
+				params.TLSFlagIsSet = true
 			}
 
 			return client.Update(getContext(ctx), &params)
