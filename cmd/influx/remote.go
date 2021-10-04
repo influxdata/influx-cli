@@ -166,13 +166,61 @@ func newRemoteListCmd() cli.Command {
 }
 
 func newRemoteUpdateCmd() cli.Command {
+	var params remote.UpdateParams
 	return cli.Command{
 		Name:   "update",
 		Usage:  "Update an existing remote connection",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags:  commonFlags(),
-		Action: func(ctx *cli.Context) {
-			fmt.Println("remote update command was called")
+		Flags: append(
+			commonFlags(),
+			&cli.StringFlag{
+				Name:        "remote-id, id",
+				Usage:       "Remote connection ID",
+				Required:    true,
+				Destination: &params.RemoteID,
+			},
+			&cli.StringFlag{
+				Name:        "name, n",
+				Usage:       "New name for the remote connection",
+				Destination: &params.Name,
+			},
+			&cli.StringFlag{
+				Name:        "description, d",
+				Usage:       "New description for the remote connection",
+				Destination: &params.Description,
+			},
+			&cli.StringFlag{
+				Name:        "remote-url",
+				Usage:       "New url for the remote database",
+				Destination: &params.RemoteURL,
+			},
+			&cli.StringFlag{
+				Name:        "remote-api-token",
+				Usage:       "New API token for the remote database",
+				Destination: &params.RemoteAPIToken,
+			},
+			&cli.StringFlag{
+				Name:        "remote-org-id",
+				Usage:       "New ID of the remote organization",
+				Destination: &params.RemoteOrgID,
+			},
+			&cli.BoolFlag{
+				Name:        "allow-insecure-tls",
+				Usage:       "Allows insecure TLS",
+				Destination: &params.AllowInsecureTLS,
+			},
+		),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+
+			client := remote.Client{
+				CLI:                  getCLI(ctx),
+				RemoteConnectionsApi: api.RemoteConnectionsApi,
+			}
+
+			params.TLSFlagIsSet = ctx.IsSet("allow-insecure-tls")
+
+			return client.Update(getContext(ctx), &params)
 		},
 	}
 }
