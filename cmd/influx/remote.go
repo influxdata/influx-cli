@@ -202,9 +202,7 @@ func newRemoteUpdateCmd() cli.Command {
 				RemoteConnectionsApi: api.RemoteConnectionsApi,
 			}
 
-			if ctx.IsSet("allow-insecure-tls") {
-				params.TLSFlagIsSet = true
-			}
+			params.TLSFlagIsSet = ctx.IsSet("allow-insecure-tls")
 
 			return client.Update(getContext(ctx), &params)
 		},
