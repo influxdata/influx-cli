@@ -23,6 +23,10 @@ const (
 	LINEPROTOCOLLENGTHERRORCODE_INVALID LineProtocolLengthErrorCode = "invalid"
 )
 
+func LineProtocolLengthErrorCodeValues() []LineProtocolLengthErrorCode {
+	return []LineProtocolLengthErrorCode{"invalid"}
+}
+
 func (v *LineProtocolLengthErrorCode) UnmarshalJSON(src []byte) error {
 	var value string
 	err := json.Unmarshal(src, &value)

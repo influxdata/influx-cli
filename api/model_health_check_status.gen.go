@@ -24,6 +24,10 @@ const (
 	HEALTHCHECKSTATUS_FAIL HealthCheckStatus = "fail"
 )
 
+func HealthCheckStatusValues() []HealthCheckStatus {
+	return []HealthCheckStatus{"pass", "fail"}
+}
+
 func (v *HealthCheckStatus) UnmarshalJSON(src []byte) error {
 	var value string
 	err := json.Unmarshal(src, &value)

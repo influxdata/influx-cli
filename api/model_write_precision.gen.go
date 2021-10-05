@@ -26,6 +26,10 @@ const (
 	WRITEPRECISION_NS WritePrecision = "ns"
 )
 
+func WritePrecisionValues() []WritePrecision {
+	return []WritePrecision{"ms", "s", "us", "ns"}
+}
+
 func (v *WritePrecision) UnmarshalJSON(src []byte) error {
 	var value string
 	err := json.Unmarshal(src, &value)

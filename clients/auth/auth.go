@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/api/extras"
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 )
@@ -14,6 +15,7 @@ type Client struct {
 	api.AuthorizationsApi
 	api.UsersApi
 	api.OrganizationsApi
+	api.ResourceListApi
 }
 
 const (
@@ -37,43 +39,71 @@ type printParams struct {
 	tokens  []token
 }
 
+type ResourcePermission struct {
+	Name    string
+	Read    bool
+	Write   bool
+	IsCloud bool
+	IsOss   bool
+}
+
 type CreateParams struct {
 	clients.OrgParams
 	User        string
 	Description string
 
-	WriteUserPermission bool
-	ReadUserPermission  bool
-
-	WriteBucketsPermission bool
-	ReadBucketsPermission  bool
+	ResourcePermissions []*ResourcePermission
 
 	WriteBucketIds []string
 	ReadBucketIds  []string
 
-	WriteTasksPermission bool
-	ReadTasksPermission  bool
+	OperatorPermission bool
+	AllAccess          bool
+}
 
-	WriteTelegrafsPermission bool
-	ReadTelegrafsPermission  bool
+func BuildResourcePermissions() []*ResourcePermission {
+	cloudResources := make(map[string]struct{})
+	ossResources := make(map[string]struct{})
+	for _, val := range extras.ResourceEnumCloudValues() {
+		cloudResources[string(val)] = struct{}{}
+	}
+	for _, val := range extras.ResourceEnumOSSValues() {
+		ossResources[string(val)] = struct{}{}
+	}
 
-	WriteOrganizationsPermission bool
-	ReadOrganizationsPermission  bool
+	perms := make([]*ResourcePermission, 0, len(ossResources))
+	// First the common permissions in order
+	for _, val := range extras.ResourceEnumOSSValues() {
+		if _, ok := cloudResources[string(val)]; ok {
+			perms = append(perms, &ResourcePermission{
+				Name:    string(val),
+				IsCloud: true,
+				IsOss:   true,
+			})
+		}
+	}
 
-	WriteDashboardsPermission bool
-	ReadDashboardsPermission  bool
+	// Then oss-only in order
+	for _, val := range extras.ResourceEnumOSSValues() {
+		if _, ok := cloudResources[string(val)]; !ok {
+			perms = append(perms, &ResourcePermission{
+				Name:  string(val),
+				IsOss: true,
+			})
+		}
+	}
 
-	WriteCheckPermission bool
-	ReadCheckPermission  bool
+	// Then cloud-only in order
+	for _, val := range extras.ResourceEnumCloudValues() {
+		if _, ok := ossResources[string(val)]; !ok {
+			perms = append(perms, &ResourcePermission{
+				Name:    string(val),
+				IsCloud: true,
+			})
+		}
+	}
 
-	WriteNotificationRulePermission bool
-	ReadNotificationRulePermission  bool
-
-	WriteNotificationEndpointPermission bool
-	ReadNotificationEndpointPermission  bool
-
-	WriteDBRPPermission bool
-	ReadDBRPPermission  bool
+	return perms
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
@@ -89,6 +119,13 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		{action: ReadAction, perms: params.ReadBucketIds},
 		{action: WriteAction, perms: params.WriteBucketIds},
 	}
+
+	// Get the user ID because the command only takes a username, not ID
+	users, err := c.UsersApi.GetUsers(ctx).Name(params.User).Execute()
+	if err != nil || len(users.GetUsers()) == 0 {
+		return fmt.Errorf("could not find user with name %q: %w", params.User, err)
+	}
+	userID := users.GetUsers()[0].GetId()
 
 	var permissions []api.Permission
 	for _, bp := range bucketPerms {
@@ -106,86 +143,81 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		}
 	}
 
-	providedPerm := []struct {
-		readPerm, writePerm bool
-		resourceType        string
-	}{
-		{
-			readPerm:     params.ReadBucketsPermission,
-			writePerm:    params.WriteBucketsPermission,
-			resourceType: "buckets",
-		},
-		{
-			readPerm:     params.ReadCheckPermission,
-			writePerm:    params.WriteCheckPermission,
-			resourceType: "checks",
-		},
-		{
-			readPerm:     params.ReadDashboardsPermission,
-			writePerm:    params.WriteDashboardsPermission,
-			resourceType: "dashboards",
-		},
-		{
-			readPerm:     params.ReadNotificationEndpointPermission,
-			writePerm:    params.WriteNotificationEndpointPermission,
-			resourceType: "notificationEndpoints",
-		},
-		{
-			readPerm:     params.ReadNotificationRulePermission,
-			writePerm:    params.WriteNotificationRulePermission,
-			resourceType: "notificationRules",
-		},
-		{
-			readPerm:     params.ReadOrganizationsPermission,
-			writePerm:    params.WriteOrganizationsPermission,
-			resourceType: "orgs",
-		},
-		{
-			readPerm:     params.ReadTasksPermission,
-			writePerm:    params.WriteTasksPermission,
-			resourceType: "tasks",
-		},
-		{
-			readPerm:     params.ReadTelegrafsPermission,
-			writePerm:    params.WriteTelegrafsPermission,
-			resourceType: "telegrafs",
-		},
-		{
-			readPerm:     params.ReadUserPermission,
-			writePerm:    params.WriteUserPermission,
-			resourceType: "users",
-		},
-		{
-			readPerm:     params.ReadDBRPPermission,
-			writePerm:    params.WriteDBRPPermission,
-			resourceType: "dbrp",
-		},
-	}
-
-	for _, provided := range providedPerm {
+	for _, resourcePermission := range params.ResourcePermissions {
 		var actions []string
-		if provided.readPerm {
+		if resourcePermission.Read {
 			actions = append(actions, ReadAction)
 		}
-		if provided.writePerm {
+		if resourcePermission.Write {
 			actions = append(actions, WriteAction)
 		}
 
 		for _, action := range actions {
 			p := api.Permission{
 				Action:   action,
-				Resource: makePermResource(provided.resourceType, "", orgID),
+				Resource: makePermResource(resourcePermission.Name, "", orgID),
 			}
 			permissions = append(permissions, p)
 		}
 	}
 
-	// Get the user ID because the command only takes a username, not ID
-	users, err := c.UsersApi.GetUsers(ctx).Name(params.User).Execute()
-	if err != nil || len(users.GetUsers()) == 0 {
-		return fmt.Errorf("could not find user with name %q: %w", params.User, err)
+	if params.OperatorPermission {
+		if len(permissions) > 0 {
+			return fmt.Errorf("cannot compose other permissions with operator permissions")
+		}
+		resources, err := c.GetResources(ctx).Execute()
+		if err != nil {
+			return err
+		}
+		for _, r := range resources {
+			for _, action := range []string{ReadAction, WriteAction} {
+				permissions = append(permissions, api.Permission{
+					Action:   action,
+					Resource: makePermResource(r, "", ""),
+				})
+			}
+		}
 	}
-	userID := users.GetUsers()[0].GetId()
+
+	if params.AllAccess {
+		if len(permissions) > 0 {
+			return fmt.Errorf("cannot compose other permissions with all access permissions")
+		}
+		resources, err := c.GetResources(ctx).Execute()
+		if err != nil {
+			return err
+		}
+		for _, r := range resources {
+			if r == string(extras.RESOURCEENUMCLOUD_ORGS) {
+				// orgs are handled specifically - all access is for a single org, not global access to all orgs
+				permissions = append(permissions, api.Permission{
+					Action: ReadAction,
+					Resource: api.PermissionResource{
+						Type: r,
+						Id:   &orgID,
+					},
+				})
+			} else if r == string(extras.RESOURCEENUMCLOUD_USERS) {
+				// users are handled specifically - all access is for a single user, not global to all users
+				for _, action := range []string{ReadAction, WriteAction} {
+					permissions = append(permissions, api.Permission{
+						Action: action,
+						Resource: api.PermissionResource{
+							Type: r,
+							Id:   &userID,
+						},
+					})
+				}
+			} else {
+				for _, action := range []string{ReadAction, WriteAction} {
+					permissions = append(permissions, api.Permission{
+						Action:   action,
+						Resource: makePermResource(r, "", orgID),
+					})
+				}
+			}
+		}
+	}
 
 	authReq := api.AuthorizationPostRequest{
 		OrgID:       orgID,

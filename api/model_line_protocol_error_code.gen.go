@@ -28,6 +28,10 @@ const (
 	LINEPROTOCOLERRORCODE_UNAVAILABLE    LineProtocolErrorCode = "unavailable"
 )
 
+func LineProtocolErrorCodeValues() []LineProtocolErrorCode {
+	return []LineProtocolErrorCode{"internal error", "not found", "conflict", "invalid", "empty value", "unavailable"}
+}
+
 func (v *LineProtocolErrorCode) UnmarshalJSON(src []byte) error {
 	var value string
 	err := json.Unmarshal(src, &value)

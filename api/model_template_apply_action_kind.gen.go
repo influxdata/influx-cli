@@ -24,6 +24,10 @@ const (
 	TEMPLATEAPPLYACTIONKIND_SKIP_RESOURCE TemplateApplyActionKind = "skipResource"
 )
 
+func TemplateApplyActionKindValues() []TemplateApplyActionKind {
+	return []TemplateApplyActionKind{"skipKind", "skipResource"}
+}
+
 func (v *TemplateApplyActionKind) UnmarshalJSON(src []byte) error {
 	var value string
 	err := json.Unmarshal(src, &value)

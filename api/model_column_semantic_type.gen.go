@@ -25,6 +25,10 @@ const (
 	COLUMNSEMANTICTYPE_FIELD     ColumnSemanticType = "field"
 )
 
+func ColumnSemanticTypeValues() []ColumnSemanticType {
+	return []ColumnSemanticType{"timestamp", "tag", "field"}
+}
+
 func (v *ColumnSemanticType) UnmarshalJSON(src []byte) error {
 	var value string
 	err := json.Unmarshal(src, &value)

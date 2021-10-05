@@ -32,6 +32,9 @@ multiple locations.
 * Deleted `ContextOAuth2` key to match modification in client
 * Fixed error strings to be idiomatic according to staticcheck (lowercase, no punctuation)
 
+`model_enum.mustache`
+* Add a function to build and return a slice of the valid values for the enum, named <enum_name>Values
+
 `model_oneof.mustache`
 * Fixed error strings to be idiomatic according to staticcheck (lowercase, no punctuation)
 
