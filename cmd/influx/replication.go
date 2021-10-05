@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/influxdata/influx-cli/v2/clients/replication"
 
+	"github.com/influxdata/influx-cli/v2/clients/replication"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
 )
@@ -32,13 +32,13 @@ func newReplicationCreateCmd() cli.Command {
 			commonFlags(),
 			&cli.StringFlag{
 				Name:        "name, n",
-				Usage:       "Name for the new replication stream",
+				Usage:       "Name for new replication stream",
 				Required:    true,
 				Destination: &params.Name,
 			},
 			&cli.StringFlag{
 				Name:        "description, d",
-				Usage:       "Description for the new replication stream",
+				Usage:       "Description for new replication stream",
 				Destination: &params.Description,
 			},
 			&cli.StringFlag{
@@ -54,27 +54,27 @@ func newReplicationCreateCmd() cli.Command {
 				Destination: &params.OrgName,
 			},
 			&cli.StringFlag{
-				Name:        "remote-id, id",
-				Usage:       "Remote connection ID that new replication stream will be registered with",
+				Name:        "remote-id",
+				Usage:       "Remote connection ID new replication stream will be registered with",
 				Required:    true,
 				Destination: &params.RemoteID,
 			},
 			&cli.StringFlag{
-				Name:        "local-bucket-id",
+				Name:        "local-bucket",
 				Usage:       "Local bucket ID for new replication stream",
 				Required:    true,
 				Destination: &params.LocalBucketID,
 			},
 			&cli.StringFlag{
-				Name:        "remote-bucket-id",
+				Name:        "remote-bucket",
 				Usage:       "Remote bucket ID for new replication stream",
 				Required:    true,
 				Destination: &params.RemoteBucketID,
 			},
 			&cli.Int64Flag{
-				Name:		 "max-queue",
-				Usage: 		 "Max queue size in bytes",
-				Value: 		 67108860,
+				Name:        "max-queue",
+				Usage:       "Max queue size in bytes",
+				Value:       67108860,
 				Destination: &params.MaxQueueSize,
 			},
 		),
@@ -82,9 +82,9 @@ func newReplicationCreateCmd() cli.Command {
 			api := getAPI(ctx)
 
 			client := replication.Client{
-				CLI:                  getCLI(ctx),
-				ReplicationsApi: 	  api.ReplicationsApi,
-				OrganizationsApi:     api.OrganizationsApi,
+				CLI:              getCLI(ctx),
+				ReplicationsApi:  api.ReplicationsApi,
+				OrganizationsApi: api.OrganizationsApi,
 			}
 
 			return client.Create(getContext(ctx), &params)
