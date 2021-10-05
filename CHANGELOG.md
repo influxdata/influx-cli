@@ -7,6 +7,7 @@ This release upgrades the project to `go` version 1.17.
 ### Features
 
 1. [259](https://github.com/influxdata/influx-cli/pull/259): Add `-b` shorthand for `--bucket` to `delete`
+1. [285](https://github.com/influxdata/influx-cli/pull/285): Add short-hand `--all-access` and `--operator` options to `auth create`.
 
 ### Bug Fixes
 
