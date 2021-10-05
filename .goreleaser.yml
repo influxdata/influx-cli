@@ -38,15 +38,15 @@ nfpms:
       deb:
         replaces:
           # Tells the deb system that it's ok for this package to overwrite files from versions of the `influxdb2`
-          # package prior to 2.0.8. Needed to support installing `influxdb2-cli` next to `influxdb2` without upgrading
+          # package prior to 2.1.0. Needed to support installing `influxdb2-cli` next to `influxdb2` without upgrading
           # the server.
-          - influxdb2 (<< 2.0.8)
+          - influxdb2 (<< 2.1.0)
         file_name_template: influxdb2-client-{{if index .Env "IS_NIGHTLY"}}nightly{{else}}{{.Version}}{{end}}-{{ .Arch }}
       rpm:
         conflicts:
           # Tells the rpm system that this package can't be installed alongside versions of the `influxdb2` package
-          # prior to 2.0.8. This is as good as we can do for rpm; there's no equivalent to deb's "replaces" metadata.
-          - influxdb2 < 2.0.8
+          # prior to 2.1.0. This is as good as we can do for rpm; there's no equivalent to deb's "replaces" metadata.
+          - influxdb2 < 2.1.0
         replacements:
           amd64: x86_64
           arm64: aarch64
