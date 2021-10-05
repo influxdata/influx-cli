@@ -26,7 +26,7 @@ func newAuthCommand() cli.Command {
 func helpText(perm string) struct{ readHelp, writeHelp string } {
 	var helpOverrides = map[string]struct{ readHelp, writeHelp string }{
 		"user":      {"perform read actions against organization users", "perform mutative actions against organization users"},
-		"buckets":   {"perform mutative actions against organization buckets", "perform mutative actions against organization buckets"},
+		"buckets":   {"perform read actions against organization buckets", "perform mutative actions against organization buckets"},
 		"telegrafs": {"read telegraf configs", "create telegraf configs"},
 		"orgs":      {"read organizations", "create organizations"},
 		"dbrps":     {"read database retention policy mappings", "create database retention policy mappings"},
@@ -49,7 +49,6 @@ func newCreateCommand() cli.Command {
 	var params auth.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 
-	// default: create and update foo / reed foo
 	flags = append(flags,
 		&cli.StringFlag{
 			Name:        "user, u",
