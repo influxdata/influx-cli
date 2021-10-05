@@ -55,26 +55,26 @@ func newReplicationCreateCmd() cli.Command {
 			},
 			&cli.StringFlag{
 				Name:        "remote-id",
-				Usage:       "Remote connection ID new replication stream will be registered with",
+				Usage:       "Remote connection the new replication stream should send data to",
 				Required:    true,
 				Destination: &params.RemoteID,
 			},
 			&cli.StringFlag{
 				Name:        "local-bucket",
-				Usage:       "Local bucket ID for new replication stream",
+				Usage:       "ID of local bucket data should be replicated from",
 				Required:    true,
 				Destination: &params.LocalBucketID,
 			},
 			&cli.StringFlag{
 				Name:        "remote-bucket",
-				Usage:       "Remote bucket ID for new replication stream",
+				Usage:       "ID of remote bucket data should be replicated to",
 				Required:    true,
 				Destination: &params.RemoteBucketID,
 			},
 			&cli.Int64Flag{
-				Name:        "max-queue",
+				Name:        "max-queue-bytes",
 				Usage:       "Max queue size in bytes",
-				Value:       67108860,
+				Value:       67108860, // source: http://localhost:8086/docs#operation/PostReplication
 				Destination: &params.MaxQueueSize,
 			},
 		),
