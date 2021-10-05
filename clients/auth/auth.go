@@ -143,7 +143,28 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		}
 	}
 
+	for _, resourcePermission := range params.ResourcePermissions {
+		var actions []string
+		if resourcePermission.Read {
+			actions = append(actions, ReadAction)
+		}
+		if resourcePermission.Write {
+			actions = append(actions, WriteAction)
+		}
+
+		for _, action := range actions {
+			p := api.Permission{
+				Action:   action,
+				Resource: makePermResource(resourcePermission.Name, "", orgID),
+			}
+			permissions = append(permissions, p)
+		}
+	}
+
 	if params.OperatorPermission {
+		if len(permissions) > 0 {
+			return fmt.Errorf("cannot compose other permissions with operator permissions")
+		}
 		resources, err := c.GetResources(ctx).Execute()
 		if err != nil {
 			return err
@@ -156,7 +177,12 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 				})
 			}
 		}
-	} else if params.AllAccess {
+	}
+
+	if params.AllAccess {
+		if len(permissions) > 0 {
+			return fmt.Errorf("cannot compose other permissions with all access permissions")
+		}
 		resources, err := c.GetResources(ctx).Execute()
 		if err != nil {
 			return err
@@ -189,24 +215,6 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 						Resource: makePermResource(r, "", orgID),
 					})
 				}
-			}
-		}
-	} else {
-		for _, resourcePermission := range params.ResourcePermissions {
-			var actions []string
-			if resourcePermission.Read {
-				actions = append(actions, ReadAction)
-			}
-			if resourcePermission.Write {
-				actions = append(actions, WriteAction)
-			}
-
-			for _, action := range actions {
-				p := api.Permission{
-					Action:   action,
-					Resource: makePermResource(resourcePermission.Name, "", orgID),
-				}
-				permissions = append(permissions, p)
 			}
 		}
 	}
