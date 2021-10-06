@@ -158,7 +158,7 @@ jobs:
       - install-goreleaser
       - run:
           name: Cross-build all targets
-          command: goreleaser build --rm-dist --snapshot
+          command: goreleaser release --rm-dist --skip-publish --skip-sign --skip-validate
       - store_artifacts:
           path: dist
 
