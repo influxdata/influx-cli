@@ -7,9 +7,9 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/config"
-	"github.com/influxdata/influx-cli/v2/internal/tabwriter"
 	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/influxdata/influx-cli/v2/pkg/stdio"
+	"github.com/influxdata/influx-cli/v2/pkg/tabwriter"
 )
 
 // CLI is a container for common functionality used to execute commands.

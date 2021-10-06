@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/influxdata/influx-cli/v2/internal/tabwriter"
+	"github.com/influxdata/influx-cli/v2/pkg/tabwriter"
 	"github.com/stretchr/testify/require"
 )
 
