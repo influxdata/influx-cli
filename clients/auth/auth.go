@@ -152,10 +152,18 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 			actions = append(actions, WriteAction)
 		}
 
+		permOrgID := ""
+		switch resourcePermission.Name {
+		case string(extras.RESOURCEENUMCLOUD_ORGS):
+		case string(extras.RESOURCEENUMCLOUD_USERS):
+		default:
+			permOrgID = orgID
+		}
+
 		for _, action := range actions {
 			p := api.Permission{
 				Action:   action,
-				Resource: makePermResource(resourcePermission.Name, "", orgID),
+				Resource: makePermResource(resourcePermission.Name, "", permOrgID),
 			}
 			permissions = append(permissions, p)
 		}
