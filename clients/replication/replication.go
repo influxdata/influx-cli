@@ -95,7 +95,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 		return fmt.Errorf("failed to get replication streams: %w", err)
 	}
 
-	// print connections
+	// print replication stream info
 	printOpts := printReplicationOpts{}
 	if res.Replications != nil {
 		printOpts.replications = *res.Replications
