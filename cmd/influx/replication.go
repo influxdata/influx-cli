@@ -74,7 +74,7 @@ func newReplicationCreateCmd() cli.Command {
 			&cli.Int64Flag{
 				Name:        "max-queue-bytes",
 				Usage:       "Max queue size in bytes",
-				Value:       67108860, // source: http://localhost:8086/docs#operation/PostReplication
+				Value:       67108860, // source: https://github.com/influxdata/openapi/blob/588064fe68e7dfeebd019695aa805832632cbfb6/src/oss/schemas/ReplicationCreationRequest.yml#L19
 				Destination: &params.MaxQueueSize,
 			},
 		),
