@@ -152,14 +152,15 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 			actions = append(actions, WriteAction)
 		}
 
+		permOrgID := orgID
 		// Orgs and users are both "top-level" resources, not nested under any other org.
-		// Read/write permissions therefore must also be top-level.
-		permOrgID := ""
+		// Read/write permissions on those resource types must also be top-level to have an effect.
 		switch resourcePermission.Name {
 		case string(extras.RESOURCEENUMCLOUD_ORGS):
+			permOrgID = ""
 		case string(extras.RESOURCEENUMCLOUD_USERS):
+			permOrgID = ""
 		default:
-			permOrgID = orgID
 		}
 
 		for _, action := range actions {
