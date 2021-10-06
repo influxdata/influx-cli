@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/influxdata/influx-cli/v2/clients/replication"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
 )
@@ -22,13 +23,71 @@ func newReplicationCmd() cli.Command {
 }
 
 func newReplicationCreateCmd() cli.Command {
+	var params replication.CreateParams
 	return cli.Command{
 		Name:   "create",
 		Usage:  "Create a new replication stream",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags:  commonFlags(),
-		Action: func(ctx *cli.Context) {
-			fmt.Println("replication create command was called")
+		Flags: append(
+			commonFlags(),
+			&cli.StringFlag{
+				Name:        "name, n",
+				Usage:       "Name for new replication stream",
+				Required:    true,
+				Destination: &params.Name,
+			},
+			&cli.StringFlag{
+				Name:        "description, d",
+				Usage:       "Description for new replication stream",
+				Destination: &params.Description,
+			},
+			&cli.StringFlag{
+				Name:        "org-id",
+				Usage:       "The ID of the local organization",
+				EnvVar:      "INFLUX_ORG_ID",
+				Destination: &params.OrgID,
+			},
+			&cli.StringFlag{
+				Name:        "org, o",
+				Usage:       "The name of the local organization",
+				EnvVar:      "INFLUX_ORG",
+				Destination: &params.OrgName,
+			},
+			&cli.StringFlag{
+				Name:        "remote-id",
+				Usage:       "Remote connection the new replication stream should send data to",
+				Required:    true,
+				Destination: &params.RemoteID,
+			},
+			&cli.StringFlag{
+				Name:        "local-bucket",
+				Usage:       "ID of local bucket data should be replicated from",
+				Required:    true,
+				Destination: &params.LocalBucketID,
+			},
+			&cli.StringFlag{
+				Name:        "remote-bucket",
+				Usage:       "ID of remote bucket data should be replicated to",
+				Required:    true,
+				Destination: &params.RemoteBucketID,
+			},
+			&cli.Int64Flag{
+				Name:        "max-queue-bytes",
+				Usage:       "Max queue size in bytes",
+				Value:       67108860, // source: https://github.com/influxdata/openapi/blob/588064fe68e7dfeebd019695aa805832632cbfb6/src/oss/schemas/ReplicationCreationRequest.yml#L19
+				Destination: &params.MaxQueueSize,
+			},
+		),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+
+			client := replication.Client{
+				CLI:              getCLI(ctx),
+				ReplicationsApi:  api.ReplicationsApi,
+				OrganizationsApi: api.OrganizationsApi,
+			}
+
+			return client.Create(getContext(ctx), &params)
 		},
 	}
 }
