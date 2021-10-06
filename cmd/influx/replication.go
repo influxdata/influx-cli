@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/influxdata/influx-cli/v2/clients/replication"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
@@ -144,9 +145,9 @@ func newReplicationListCmd() cli.Command {
 			api := getAPI(ctx)
 
 			client := replication.Client{
-				CLI:                  getCLI(ctx),
-				ReplicationsApi: api.ReplicationsApi,
-				OrganizationsApi:     api.OrganizationsApi,
+				CLI:              getCLI(ctx),
+				ReplicationsApi:  api.ReplicationsApi,
+				OrganizationsApi: api.OrganizationsApi,
 			}
 
 			return client.List(getContext(ctx), &params)

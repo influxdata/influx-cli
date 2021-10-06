@@ -58,11 +58,11 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 }
 
 type ListParams struct {
-	Name           string
-	OrgID          string
-	OrgName        string
-	RemoteID       string
-	LocalBucketID  string
+	Name          string
+	OrgID         string
+	OrgName       string
+	RemoteID      string
+	LocalBucketID string
 }
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
