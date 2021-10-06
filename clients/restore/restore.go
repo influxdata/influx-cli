@@ -59,8 +59,6 @@ type Params struct {
 	// If true, replace all data on the server with the local backup.
 	// Otherwise only restore the requested org/bucket, leaving other data untouched.
 	Full bool
-
-	ConfigName string
 }
 
 func (p *Params) matches(bkt br.ManifestBucketEntry) bool {
