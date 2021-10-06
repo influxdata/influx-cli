@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/influxdata/influx-cli/v2/clients/replication"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
@@ -105,14 +104,52 @@ func newReplicationDeleteCmd() cli.Command {
 }
 
 func newReplicationListCmd() cli.Command {
+	var params replication.ListParams
 	return cli.Command{
 		Name:    "list",
 		Usage:   "List all replication streams and corresponding metrics",
 		Aliases: []string{"find", "ls"},
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags:   commonFlags(),
-		Action: func(ctx *cli.Context) {
-			fmt.Println("replication list command was called")
+		Flags: append(
+			commonFlags(),
+			&cli.StringFlag{
+				Name:        "name, n",
+				Usage:       "Filter results to only replication streams with a specific name",
+				Destination: &params.Name,
+			},
+			&cli.StringFlag{
+				Name:        "org-id",
+				Usage:       "Local org ID",
+				EnvVar:      "INFLUX_ORG_ID",
+				Destination: &params.OrgID,
+			},
+			&cli.StringFlag{
+				Name:        "org, o",
+				Usage:       "Local org name",
+				EnvVar:      "INFLUX_ORG",
+				Destination: &params.OrgName,
+			},
+			&cli.StringFlag{
+				Name:        "remote-id",
+				Usage:       "Filter results to only replication streams for a specific remote connection",
+				Destination: &params.RemoteID,
+			},
+			&cli.StringFlag{
+				Name:        "local-bucket",
+				Usage:       "Filter results to only replication streams for a specific local bucket",
+				Destination: &params.LocalBucketID,
+			},
+		),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+
+			client := replication.Client{
+				CLI:                  getCLI(ctx),
+				ReplicationsApi: api.ReplicationsApi,
+				OrganizationsApi:     api.OrganizationsApi,
+			}
+
+			return client.List(getContext(ctx), &params)
 		},
 	}
 }

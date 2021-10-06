@@ -2,6 +2,7 @@ package replication
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/influxdata/influx-cli/v2/api"
@@ -56,6 +57,55 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	return c.printReplication(printReplicationOpts{replication: &res})
 }
 
+type ListParams struct {
+	Name           string
+	OrgID          string
+	OrgName        string
+	RemoteID       string
+	LocalBucketID  string
+}
+
+func (c Client) List(ctx context.Context, params *ListParams) error {
+
+	orgID, err := c.GetOrgId(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
+	if err != nil {
+		return err
+	}
+
+	// set up params
+	req := c.GetReplications(ctx)
+
+	req = req.OrgID(orgID)
+
+	if params.Name != "" {
+		req = req.Name(params.Name)
+	}
+
+	if params.RemoteID != "" {
+		req = req.RemoteID(params.RemoteID)
+	}
+
+	if params.LocalBucketID != "" {
+		req = req.LocalBucketID(params.LocalBucketID)
+	}
+
+	// send get request
+	res, err := req.Execute()
+	if err != nil {
+		return fmt.Errorf("failed to get replication streams: %w", err)
+	}
+
+	// print connections
+	printOpts := printReplicationOpts{}
+	if res.Replications != nil {
+		printOpts.replications = *res.Replications
+	} else {
+		return errors.New("no replication streams found for specified parameters")
+	}
+
+	return c.printReplication(printOpts)
+}
+
 type printReplicationOpts struct {
 	replication  *api.Replication
 	replications []api.Replication
@@ -73,8 +123,8 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 		return c.PrintJSON(v)
 	}
 
-	headers := []string{"ID", "Name", "Org ID", "Remote ID", "Local Bucket ID", "Remote Bucket ID", "Max Queue Bytes",
-		"Current Queue Bytes", "Latest Status Code"}
+	headers := []string{"ID", "Name", "Org ID", "Remote ID", "Local Bucket ID", "Remote Bucket ID",
+		"Current Queue Bytes", "Max Queue Bytes", "Latest Status Code"}
 	if opts.deleted {
 		headers = append(headers, "Deleted")
 	}
@@ -92,8 +142,8 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 			"Remote ID":           r.GetRemoteID(),
 			"Local Bucket ID":     r.GetLocalBucketID(),
 			"Remote Bucket ID":    r.GetRemoteBucketID(),
-			"Max Queue Bytes":     r.GetMaxQueueSizeBytes(),
 			"Current Queue Bytes": r.GetCurrentQueueSizeBytes(),
+			"Max Queue Bytes":     r.GetMaxQueueSizeBytes(),
 			"Latest Status Code":  r.GetLatestResponseCode(),
 		}
 		if opts.deleted {
