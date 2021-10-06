@@ -19,12 +19,17 @@ import (
 	"github.com/influxdata/influx-cli/v2/pkg/gzip"
 )
 
+type ApiConfig interface {
+	GetConfig() *api.Configuration
+}
+
 type Client struct {
 	clients.CLI
 	api.HealthApi
 	api.RestoreApi
 	api.BucketsApi
 	api.OrganizationsApi
+	ApiConfig
 
 	manifest br.Manifest
 }
@@ -54,6 +59,8 @@ type Params struct {
 	// If true, replace all data on the server with the local backup.
 	// Otherwise only restore the requested org/bucket, leaving other data untouched.
 	Full bool
+
+	ConfigName string
 }
 
 func (p *Params) matches(bkt br.ManifestBucketEntry) bool {
@@ -169,9 +176,19 @@ func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error
 	if !legacy {
 		kvReq = kvReq.ContentEncoding("gzip")
 	}
-	// TODO: Use the response object for something here.
-	if _, err := kvReq.Execute(); err != nil {
+
+	// Deal with new token
+	newOperatorToken, err := kvReq.Execute()
+	if err != nil {
 		return fmt.Errorf("failed to restore KV snapshot: %w", err)
+	}
+	if newOperatorToken.Token != nil {
+		newAuthorization := fmt.Sprintf("Token %s", *newOperatorToken.Token)
+		const authorizationHeader = "Authorization"
+		if newAuthorization != c.ApiConfig.GetConfig().DefaultHeader[authorizationHeader] {
+			log.Println("WARN: Restoring KV snapshot overwrote the operator token, ensure following commands use the correct token")
+			c.ApiConfig.GetConfig().DefaultHeader[authorizationHeader] = newAuthorization
+		}
 	}
 
 	// TODO: Should we have some way of wiping out any existing SQL on the server-side in the case when there is no backup?
