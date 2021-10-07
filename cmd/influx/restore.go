@@ -91,6 +91,7 @@ Examples:
 				RestoreApi:       api.RestoreApi.OnlyOSS(),
 				BucketsApi:       api.BucketsApi,
 				OrganizationsApi: api.OrganizationsApi,
+				ApiConfig:        api,
 			}
 			return client.Restore(getContext(ctx), &params)
 		},

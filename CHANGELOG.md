@@ -5,6 +5,10 @@
 1. [259](https://github.com/influxdata/influx-cli/pull/259): Add `-b` shorthand for `--bucket` to `delete`
 1. [285](https://github.com/influxdata/influx-cli/pull/285): Add short-hand `--all-access` and `--operator` options to `auth create`.
 
+### Bug Fixes
+
+1. [297](https://github.com/influxdata/influx-cli/pull/297): Detect and warn when `restore --full` changes the operator token.
+
 ## v2.1.1 [2021-09-22]
 
 ### Go Version
