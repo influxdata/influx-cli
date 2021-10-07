@@ -120,9 +120,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	}
 
 	// set up query params
-	req := c.GetRemoteConnections(ctx)
-
-	req = req.OrgID(orgID)
+	req := c.GetRemoteConnections(ctx).OrgID(orgID)
 
 	if params.Name != "" {
 		req = req.Name(params.Name)

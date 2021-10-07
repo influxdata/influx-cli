@@ -73,9 +73,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	}
 
 	// set up params
-	req := c.GetReplications(ctx)
-
-	req = req.OrgID(orgID)
+	req := c.GetReplications(ctx).OrgID(orgID)
 
 	if params.Name != "" {
 		req = req.Name(params.Name)
