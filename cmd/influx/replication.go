@@ -93,13 +93,29 @@ func newReplicationCreateCmd() cli.Command {
 }
 
 func newReplicationDeleteCmd() cli.Command {
+	var replicationID string
 	return cli.Command{
 		Name:   "delete",
 		Usage:  "Delete an existing replication stream",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags:  commonFlags(),
-		Action: func(ctx *cli.Context) {
-			fmt.Println("replication delete command was called")
+		Flags: append(
+			commonFlags(),
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "ID of the replication stream to be deleted",
+				Required:    true,
+				Destination: &replicationID,
+			},
+		),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+
+			client := replication.Client{
+				CLI:             getCLI(ctx),
+				ReplicationsApi: api.ReplicationsApi,
+			}
+
+			return client.Delete(getContext(ctx), replicationID)
 		},
 	}
 }

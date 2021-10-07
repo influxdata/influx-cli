@@ -104,6 +104,29 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	return c.printReplication(printOpts)
 }
 
+func (c Client) Delete(ctx context.Context, replicationID string) error {
+	connection, err := c.GetReplicationByID(ctx, replicationID).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to delete replication stream %q: %w", replicationID, err)
+	}
+
+	req := c.DeleteReplicationByID(ctx, replicationID)
+
+	// send delete request
+	err = req.Execute()
+	if err != nil {
+		return fmt.Errorf("failed to delete replication stream %q: %w", replicationID, err)
+	}
+
+	// print deleted replication stream info
+	printOpts := printReplicationOpts{
+		replication: &connection,
+		deleted:     true,
+	}
+
+	return c.printReplication(printOpts)
+}
+
 type printReplicationOpts struct {
 	replication  *api.Replication
 	replications []api.Replication
