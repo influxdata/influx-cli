@@ -157,8 +157,13 @@ jobs:
       - setup
       - install-goreleaser
       - run:
+          name: Make a pseudo-tag for the snapshot build
+          command: |
+            latest_tag=$(git describe --tags --abbrev=0)
+            git tag ${latest_tag}+SNAPSHOT.$(git rev-parse --short HEAD)
+      - run:
           name: Cross-build all targets
-          command: goreleaser build --rm-dist --snapshot
+          command: IS_SNAPSHOT=1 goreleaser release --rm-dist --skip-publish --skip-sign --skip-validate
       - store_artifacts:
           path: dist
 
