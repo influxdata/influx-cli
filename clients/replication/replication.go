@@ -105,16 +105,14 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 }
 
 func (c Client) Delete(ctx context.Context, replicationID string) error {
+	// get replication stream via ID
 	connection, err := c.GetReplicationByID(ctx, replicationID).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to delete replication stream %q: %w", replicationID, err)
+		return fmt.Errorf("could not find replication stream with ID %q: %w", replicationID, err)
 	}
 
-	req := c.DeleteReplicationByID(ctx, replicationID)
-
 	// send delete request
-	err = req.Execute()
-	if err != nil {
+	if err := c.DeleteReplicationByID(ctx, replicationID).Execute(); err != nil {
 		return fmt.Errorf("failed to delete replication stream %q: %w", replicationID, err)
 	}
 
