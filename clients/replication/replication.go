@@ -104,6 +104,48 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	return c.printReplication(printOpts)
 }
 
+type UpdateParams struct {
+	ReplicationID  string
+	Name           string
+	Description    string
+	RemoteID       string
+	RemoteBucketID string
+	MaxQueueSize   int64
+}
+
+func (c Client) Update(ctx context.Context, params *UpdateParams) error {
+	// build request
+	body := api.ReplicationUpdateRequest{}
+
+	if params.Name != "" {
+		body.SetName(params.Name)
+	}
+
+	if params.Description != "" {
+		body.SetDescription(params.Description)
+	}
+
+	if params.RemoteID != "" {
+		body.SetRemoteID(params.RemoteID)
+	}
+
+	if params.RemoteBucketID != "" {
+		body.SetRemoteBucketID(params.RemoteBucketID)
+	}
+
+	if params.MaxQueueSize != 0 {
+		body.SetMaxQueueSizeBytes(params.MaxQueueSize)
+	}
+
+	// send patch request
+	res, err := c.PatchReplicationByID(ctx, params.ReplicationID).ReplicationUpdateRequest(body).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to update replication stream %q: %w", params.ReplicationID, err)
+	}
+	// print updated replication stream info
+	return c.printReplication(printReplicationOpts{replication: &res})
+}
+
 type printReplicationOpts struct {
 	replication  *api.Replication
 	replications []api.Replication
