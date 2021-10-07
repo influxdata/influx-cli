@@ -1,5 +1,9 @@
 ## v2.2.0 [unreleased]
 
+### Bug Fixes
+
+1. [297](https://github.com/influxdata/influx-cli/pull/297): fix: restore when changing tokens works
+
 ### Features
 
 1. [259](https://github.com/influxdata/influx-cli/pull/259): Add `-b` shorthand for `--bucket` to `delete`
