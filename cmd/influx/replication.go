@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/influxdata/influx-cli/v2/clients/replication"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
