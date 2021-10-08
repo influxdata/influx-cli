@@ -98,7 +98,7 @@ func newRemoteDeleteCmd() cli.Command {
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
-				Name:        "remote-id, id",
+				Name:        "id, i",
 				Usage:       "ID of the remote connection to be deleted",
 				Required:    true,
 				Destination: &remoteID,
@@ -172,7 +172,7 @@ func newRemoteUpdateCmd() cli.Command {
 		Flags: append(
 			commonFlags(),
 			&cli.StringFlag{
-				Name:        "remote-id, id",
+				Name:        "id, i",
 				Usage:       "Remote connection ID",
 				Required:    true,
 				Destination: &params.RemoteID,
