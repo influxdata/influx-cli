@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/influxdata/influx-cli/v2/clients/replication"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
@@ -172,13 +170,54 @@ func newReplicationListCmd() cli.Command {
 }
 
 func newReplicationUpdateCmd() cli.Command {
+	var params replication.UpdateParams
 	return cli.Command{
 		Name:   "update",
 		Usage:  "Update an existing replication stream",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
-		Flags:  commonFlags(),
-		Action: func(ctx *cli.Context) {
-			fmt.Println("replication update command was called")
+		Flags: append(
+			commonFlags(),
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "ID of the replication stream to be updated",
+				Required:    true,
+				Destination: &params.ReplicationID,
+			},
+			&cli.StringFlag{
+				Name:        "name, n",
+				Usage:       "New name for the replication stream",
+				Destination: &params.Name,
+			},
+			&cli.StringFlag{
+				Name:        "description, d",
+				Usage:       "New description for the replication stream",
+				Destination: &params.Description,
+			},
+			&cli.StringFlag{
+				Name:        "remote-id",
+				Usage:       "New ID of remote connection the replication stream should send data to",
+				Destination: &params.RemoteID,
+			},
+			&cli.StringFlag{
+				Name:        "remote-bucket",
+				Usage:       "New ID of remote bucket that data should be replicated to",
+				Destination: &params.RemoteBucketID,
+			},
+			&cli.Int64Flag{
+				Name:        "max-queue-bytes",
+				Usage:       "New max queue size in bytes",
+				Destination: &params.MaxQueueSize,
+			},
+		),
+		Action: func(ctx *cli.Context) error {
+			api := getAPI(ctx)
+
+			client := replication.Client{
+				CLI:             getCLI(ctx),
+				ReplicationsApi: api.ReplicationsApi,
+			}
+
+			return client.Update(getContext(ctx), &params)
 		},
 	}
 }
