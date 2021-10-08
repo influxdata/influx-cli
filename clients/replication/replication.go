@@ -144,6 +144,7 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	}
 	// print updated replication stream info
 	return c.printReplication(printReplicationOpts{replication: &res})
+}
 
 func (c Client) Delete(ctx context.Context, replicationID string) error {
 	// get replication stream via ID
