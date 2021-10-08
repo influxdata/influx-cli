@@ -181,7 +181,7 @@ func newReplicationUpdateCmd() cli.Command {
 			},
 			&cli.StringFlag{
 				Name:        "remote-id",
-				Usage:       "New ID for remote connection the replication stream should send data to",
+				Usage:       "New ID of remote connection the replication stream should send data to",
 				Destination: &params.RemoteID,
 			},
 			&cli.StringFlag{
