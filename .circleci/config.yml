@@ -1,25 +1,29 @@
 version: "2.1"
 
 executors:
+  cross-builder:
+    docker:
+      # NOTE: To upgrade the Go version, first push the upgrade to the cross-builder Dockerfile in the edge repo,
+      # then update the version here to match. Until we finish the migration to using the cross-builder image,
+      # you'll also need to update references to `cimg/go` and `GO_VERSION` in this file.
+      - image: quay.io/influxdb/cross-builder:go1.17.2-f7b4e805fa9588c1c2fa4562ea29e576557fb797
+    resource_class: medium
   linux-amd64:
     machine:
-      image: ubuntu-2004:202104-01
-
+      image: ubuntu-2004:202107-02
   linux-arm64:
     machine:
       image: ubuntu-2004:202104-01
-    resource_class: arm.medium
-
+      resource_class: arm.medium
   mac:
     macos:
       xcode: 12.4.0
-    resource_class: medium
+      resource_class: medium
     shell: /bin/bash -eo pipefail
-
   windows:
     machine:
       image: windows-server-2019-vs2019:stable
-    resource_class: windows.medium
+      resource_class: windows.medium
     shell: bash.exe -eo pipefail
 
 workflows:
@@ -29,14 +33,37 @@ workflows:
       - lint
       - check-openapi
       - build-all
-      - test:
+      - test-race:
+          name: test-linux-amd64
+      - test-build:
           matrix:
             parameters:
-              executor:
-                - linux-amd64
-                - linux-arm64
-                - mac
-                - windows
+              os: [ linux, darwin, windows ]
+              arch: [ amd64, arm64 ]
+            exclude:
+              - os: darwin
+                arch: arm64
+              - os: windows
+                arch: arm64
+              # linux/amd64 can be tested directly from our cross-builder image
+              # to save time & enable running with the race detector.
+              - os: linux
+                arch: amd64
+      - test-prebuilt:
+          name: test-linux-arm64
+          executor: linux-arm64
+          requires:
+            - test-build-arm64-linux
+      - test-prebuilt:
+          name: test-mac
+          executor: mac
+          requires:
+            - test-build-amd64-darwin
+      - test-prebuilt:
+          name: test-windows
+          executor: windows
+          requires:
+            - test-build-amd64-windows
   release-nightly:
     triggers:
       - schedule:
@@ -48,21 +75,46 @@ workflows:
     jobs:
       - lint
       - check-openapi
-      - test:
-          requires:
-            - lint
-            - check-openapi
+      - test-race:
+          name: test-linux-amd64
+      - test-build:
           matrix:
             parameters:
-              executor:
-                - linux-amd64
-                - linux-arm64
-                - mac
-                - windows
+              os: [ linux, darwin, windows ]
+              arch: [ amd64, arm64 ]
+            exclude:
+              - os: darwin
+                arch: arm64
+              - os: windows
+                arch: arm64
+              # linux/amd64 can be tested directly from our cross-builder image
+              # to save time & enable running with the race detector.
+              - os: linux
+                arch: amd64
+      - test-prebuilt:
+          name: test-linux-arm64
+          executor: linux-arm64
+          requires:
+            - test-build-arm64-linux
+      - test-prebuilt:
+          name: test-mac
+          executor: mac
+          requires:
+            - test-build-amd64-darwin
+      - test-prebuilt:
+          name: test-windows
+          executor: windows
+          requires:
+            - test-build-amd64-windows
       - release:
           is-nightly: true
           requires:
-            - test
+            - lint
+            - check-openapi
+            - test-linux-amd64
+            - test-linux-arm64
+            - test-mac
+            - test-windows
   release-tag:
     jobs:
       - lint:
@@ -77,10 +129,14 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
-      - test:
-          requires:
-            - lint
-            - check-openapi
+      - test-race:
+          name: test-linux-amd64
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+      - test-build:
           filters:
             branches:
               ignore: /.*/
@@ -88,11 +144,47 @@ workflows:
               only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
           matrix:
             parameters:
-              executor:
-                - linux-amd64
-                - linux-arm64
-                - mac
-                - windows
+              os: [ linux, darwin, windows ]
+              arch: [ amd64, arm64 ]
+            exclude:
+              - os: darwin
+                arch: arm64
+              - os: windows
+                arch: arm64
+              # linux/amd64 can be tested directly from our cross-builder image
+              # to save time & enable running with the race detector.
+              - os: linux
+                arch: amd64
+      - test-prebuilt:
+          name: test-linux-arm64
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          executor: linux-arm64
+          requires:
+            - test-build-arm64-linux
+      - test-prebuilt:
+          name: test-mac
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          executor: mac
+          requires:
+            - test-build-amd64-darwin
+      - test-prebuilt:
+          name: test-windows
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          executor: windows
+          requires:
+            - test-build-amd64-windows
       - release:
           filters:
             branches:
@@ -101,7 +193,12 @@ workflows:
               only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
           is-nightly: false
           requires:
-            - test
+            - lint
+            - check-openapi
+            - test-linux-amd64
+            - test-linux-arm64
+            - test-mac
+            - test-windows
 
 commands:
   setup:
@@ -131,14 +228,25 @@ commands:
 
 jobs:
   lint:
-    executor: linux-amd64
+    executor: cross-builder
     steps:
       - checkout
-      - setup
-      - run: make vet
-      - run: make checkfmt
-      - run: make checktidy
-      - run: make staticcheck
+      - run:
+          name: vet
+          command: make vet
+          when: always
+      - run:
+          name: Check formatting
+          command: make checkfmt
+          when: always
+      - run:
+          name: Check mod tidy
+          command: make checktidy
+          when: always
+      - run:
+          name: staticcheck
+          command: make staticcheck
+          when: always
 
   check-openapi:
     executor: linux-amd64
@@ -201,31 +309,51 @@ jobs:
       - store_artifacts:
           path: dist
 
-  test:
+  test-build:
+    executor: cross-builder
+    parameters:
+      os:
+        type: string
+      arch:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Build test binaries
+          command: |
+            export GOOS=<< parameters.os >>
+            export GOARCH=<< parameters.arch >>
+            ./scripts/ci/build-tests.sh ./test-bin
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./test-bin
+
+  test-prebuilt:
     parameters:
       executor:
         type: executor
     executor: << parameters.executor >>
     steps:
       - checkout
-      - setup
+      - attach_workspace:
+          at: .
       - run:
-          name: Download gotestsum
-          command: |
-            GOTESTSUM_VERSION=1.6.4
-            GOTESTSUM_ARCHIVE=gotestsum_${GOTESTSUM_VERSION}_$(go env GOOS)_$(go env GOARCH).tar.gz
-            GOTESTSUM_URL=https://github.com/gotestyourself/gotestsum/releases/download/v${GOTESTSUM_VERSION}/${GOTESTSUM_ARCHIVE}
+          name: Run tests
+          command: ./scripts/ci/run-prebuilt-tests.sh $(pwd)/test-bin $(pwd)/test-results
+      - store_artifacts:
+          path: ./test-results
+          destination: raw-test-output
+      - store_test_results:
+          path: ./test-results
 
-            wget ${GOTESTSUM_URL}
-            tar xzf ${GOTESTSUM_ARCHIVE}
-            install gotestsum ${GOPATH}/bin/
+  test-race:
+    executor: cross-builder
+    steps:
+      - checkout
       - run:
-          name: Run parallel race tests
-          command: |
-            mkdir -p test-results
-            GO_TEST_CMD="gotestsum --format standard-quiet --junitfile ./test-results/gotestsum.xml --"
-            TESTFILES=($(go list ./... | circleci tests split --split-by=timings))
-            make GO_TEST="$GO_TEST_CMD" GO_TEST_PATHS="${TESTFILES[*]}" test-race
+          name: Run race tests
+          command: ./scripts/ci/run-race-tests.sh $(pwd)/test-results
       - store_artifacts:
           path: ./test-results
           destination: raw-test-output
