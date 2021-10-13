@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -exo pipefail
 
+function build_test_binaries () {
+    local tags=""
+    if [ "$(go env GOOS)" = windows ]; then
+        tags="-tags timetzdata"
+    fi
+
+    CGO_ENABLED=0 go-test-compile ${tags} -o "${1}/" ./...
+}
+
 function build_test_tools () {
     # Copy pre-built gotestsum out of the cross-builder.
     local ext=""
@@ -31,8 +40,7 @@ function main () {
     mkdir -p "$out_dir"
 
     # Build all test binaries.
-    CGO_ENABLED=0 go-test-compile -o "${out_dir}/" ./...
-
+    build_test_binaries "${out_dir}/"
     # Build gotestsum and test2json so downstream jobs can use it without needing `go`.
     build_test_tools "$out_dir"
     # Write other metadata needed for testing.

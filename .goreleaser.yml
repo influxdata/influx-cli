@@ -21,6 +21,8 @@ builds:
     main: ./cmd/influx
     env:
       - CGO_ENABLED=0
+    flags:
+      - -tags={{if eq .Os "windows"}}timetzdata{{end}}
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}
     binary: influx
