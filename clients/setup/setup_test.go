@@ -145,7 +145,8 @@ func Test_SetupSuccessNoninteractive(t *testing.T) {
 		return assert.Equal(t, params.ConfigName, in.Name) &&
 			assert.Equal(t, params.AuthToken, in.Token) &&
 			assert.Equal(t, config.DefaultConfig.Host, in.Host) &&
-			assert.Equal(t, params.Org, in.Org)
+			assert.Equal(t, params.Org, in.Org) &&
+			assert.True(t, in.Active)
 	})).DoAndReturn(func(in config.Config) (config.Config, error) {
 		return in, nil
 	})
@@ -203,7 +204,8 @@ func Test_SetupSuccessInteractive(t *testing.T) {
 		return assert.Equal(t, config.DefaultConfig.Name, in.Name) &&
 			assert.Equal(t, token, in.Token) &&
 			assert.Equal(t, config.DefaultConfig.Host, in.Host) &&
-			assert.Equal(t, org, in.Org)
+			assert.Equal(t, org, in.Org) &&
+			assert.True(t, in.Active)
 	})).DoAndReturn(func(in config.Config) (config.Config, error) {
 		return in, nil
 	})
@@ -338,7 +340,8 @@ func Test_SetupNonDefaultHost(t *testing.T) {
 		return assert.Equal(t, params.ConfigName, in.Name) &&
 			assert.Equal(t, params.AuthToken, in.Token) &&
 			assert.Equal(t, params.Host, in.Host) &&
-			assert.Equal(t, params.Org, in.Org)
+			assert.Equal(t, params.Org, in.Org) &&
+			assert.True(t, in.Active)
 	})).DoAndReturn(func(in config.Config) (config.Config, error) {
 		return in, nil
 	})
