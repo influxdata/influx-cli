@@ -9,6 +9,7 @@
 
 1. [297](https://github.com/influxdata/influx-cli/pull/297): Detect and warn when `restore --full` changes the operator token.
 1. [302](https://github.com/influxdata/influx-cli/pull/302): Set newly-created config as active in `setup`.
+1. [305](https://github.com/influxdata/influx-cli/pull/305): Embed timezone data into Windows builds to avoid errors.
 
 ## v2.1.1 [2021-09-22]
 
