@@ -66,10 +66,11 @@ func (c Client) Setup(ctx context.Context, params *Params) error {
 	}
 
 	cfg := config.Config{
-		Name:  config.DefaultConfig.Name,
-		Host:  config.DefaultConfig.Host,
-		Token: *resp.Auth.Token,
-		Org:   resp.Org.Name,
+		Name:   config.DefaultConfig.Name,
+		Host:   config.DefaultConfig.Host,
+		Token:  *resp.Auth.Token,
+		Org:    resp.Org.Name,
+		Active: true,
 	}
 	if params.ConfigName != "" {
 		cfg.Name = params.ConfigName
