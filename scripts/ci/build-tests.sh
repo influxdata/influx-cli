@@ -33,6 +33,7 @@ function write_test_metadata () {
 function main () {
     if [[ $# != 1 ]]; then
         >&2 echo Usage: $0 '<output-dir>'
+        >&2 echo '<output-dir>' will be created if it does not already exist
         exit 1
     fi
     local -r out_dir="$1"

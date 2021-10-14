@@ -33,6 +33,7 @@ function test_package () {
 function main () {
     if [[ $# != 2 ]]; then
         >&2 echo Usage: $0 '<test-bin-dir>' '<result-dir>'
+        >&2 echo '<result-dir>' will be created if it does not already exist
         exit 1
     fi
     local -r bin_dir="$1" result_dir="$2"
