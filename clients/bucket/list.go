@@ -4,14 +4,19 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 )
 
 type BucketsListParams struct {
-	OrgID   string
-	OrgName string
-	Name    string
-	ID      string
+	OrgID    string
+	OrgName  string
+	Name     string
+	ID       string
+	Limit    int
+	After    string
+	Offset   int
+	PageSize int
 }
 
 func (c Client) List(ctx context.Context, params *BucketsListParams) error {
@@ -29,16 +34,70 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 	if params.OrgID == "" && params.OrgName == "" {
 		req = req.Org(c.ActiveConfig.Org)
 	}
-	if params.Name != "" {
-		req = req.Name(params.Name)
+	if params.Name != "" || params.ID != "" {
+		return c.findOneBucket(params, req)
 	}
+
+	printOpts := bucketPrintOptions{}
+	limit := params.PageSize
+	if params.Limit != 0 && params.Limit < limit {
+		limit = params.Limit
+	}
+	offset := params.Offset
+	after := params.After
+	for {
+		req := req
+		if limit != 0 {
+			req = req.Limit(int32(limit))
+		}
+		if offset != 0 {
+			req = req.Offset(int32(offset))
+		}
+		if after != "" {
+			req = req.After(after)
+		}
+
+		res, err := req.Execute()
+		if err != nil {
+			return fmt.Errorf("failed to list buckets: %w", err)
+		}
+		var buckets []api.Bucket
+		if res.Buckets != nil {
+			buckets = *res.Buckets
+		}
+		printOpts.buckets = append(printOpts.buckets, buckets...)
+		if len(buckets) == 0 || len(buckets) < params.PageSize {
+			break
+		}
+
+		if params.Limit != 0 && len(printOpts.buckets) == params.Limit {
+			break
+		}
+		if params.Limit != 0 && len(printOpts.buckets)+limit > params.Limit {
+			limit = params.Limit - len(printOpts.buckets)
+		}
+		// Use `after`-based pagination following the initial request.
+		after = *buckets[len(buckets)-1].Id
+		offset = 0
+	}
+	return c.printBuckets(printOpts)
+}
+
+// findOneBucket queries for a single bucket resoruce using the list API.
+// Used to look up buckets by ID or name.
+func (c Client) findOneBucket(params *BucketsListParams, req api.ApiGetBucketsRequest) error {
+	var description string
 	if params.ID != "" {
 		req = req.Id(params.ID)
+		description = " by ID"
+	} else if params.Name != "" {
+		req = req.Name(params.Name)
+		description = " by name"
 	}
 
 	buckets, err := req.Execute()
 	if err != nil {
-		return fmt.Errorf("failed to list buckets: %w", err)
+		return fmt.Errorf("failed to find bucket%s: %w", description, err)
 	}
 
 	printOpts := bucketPrintOptions{}

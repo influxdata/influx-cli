@@ -156,6 +156,27 @@ func newBucketListCmd() cli.Command {
 				EnvVar:      "INFLUX_ORG",
 				Destination: &params.OrgName,
 			},
+			&cli.IntFlag{
+				Name:        "limit",
+				Usage:       "Total number of buckets to fetch from the server, or 0 to return all buckets",
+				Destination: &params.Limit,
+			},
+			&cli.StringFlag{
+				Name:        "after-id",
+				Usage:       "If set, only fetch buckets with IDs that follow the given ID",
+				Destination: &params.After,
+			},
+			&cli.IntFlag{
+				Name:        "offset",
+				Usage:       "Number of buckets to skip over in the list",
+				Destination: &params.Offset,
+			},
+			&cli.IntFlag{
+				Name:        "page-size",
+				Usage:       "Number of buckets to fetch per request to the server",
+				Value:       20,
+				Destination: &params.PageSize,
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
