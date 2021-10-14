@@ -42,6 +42,11 @@ function main () {
 
     local -r test_packages="$(cat "${bin_dir}/tests.list" | circleci tests split --split-by=timings --timings-type=classname)"
 
+    # Pre-built test binaries will exit with a nonzero return code if the tests they encapsulate fail.
+    # We don't want to fail-fast the first time a test fails, so (elsewhere in the script) we `set +e` before running
+    # anything. By default that would cause the script to exit with success even when tests fail, which we don't want
+    # either. To work around this, we track the final return code for this script in the `rc` file. The code is
+    # initialized to 0, and overwritten to be 1 if any test binary fails.
     echo 0 > "${result_dir}/rc"
     for pkg in ${test_packages[@]}; do
         test_package "$pkg" "$bin_dir" "$result_dir"
