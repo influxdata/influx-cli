@@ -4,6 +4,7 @@
 
 1. [259](https://github.com/influxdata/influx-cli/pull/259): Add `-b` shorthand for `--bucket` to `delete`
 1. [285](https://github.com/influxdata/influx-cli/pull/285): Add short-hand `--all-access` and `--operator` options to `auth create`.
+1. [307](https://github.com/influxdata/influx-cli/pull/307): Handle pagination in `bucket list` to support displaying more than 20 buckets.
 
 ### Bug Fixes
 
