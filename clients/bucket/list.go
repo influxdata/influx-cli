@@ -45,6 +45,14 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 	}
 	offset := params.Offset
 	after := params.After
+
+	// To guard against infinite loops from bugs in/incomplete implementations of server-side pagination,
+	// we track the IDs we see in each request and bail out if we get a duplicate.
+	seenIds := map[string]struct{}{}
+	if after != "" {
+		seenIds[after] = struct{}{}
+	}
+
 	for {
 		req := req
 		if limit != 0 {
@@ -65,8 +73,17 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 		if res.Buckets != nil {
 			buckets = *res.Buckets
 		}
-		printOpts.buckets = append(printOpts.buckets, buckets...)
-		if len(buckets) == 0 || len(buckets) < params.PageSize {
+		bailOut := false
+		for _, b := range buckets {
+			id := *b.Id
+			if _, alreadySeen := seenIds[id]; alreadySeen {
+				bailOut = true
+			} else {
+				printOpts.buckets = append(printOpts.buckets, b)
+				seenIds[id] = struct{}{}
+			}
+		}
+		if bailOut || len(buckets) == 0 || len(buckets) < params.PageSize {
 			break
 		}
 
