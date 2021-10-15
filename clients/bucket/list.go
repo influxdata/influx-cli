@@ -39,7 +39,14 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 	}
 
 	printOpts := bucketPrintOptions{}
+
+	// Set the limit for the number of items to return per HTTP request.
+	// NOTE this is not the same as the `--limit` option to the CLI, which sets
+	// the max number of rows to pull across _all_ HTTP requests in total.
 	limit := params.PageSize
+	// Adjust if the total limit < the per-request limit.
+	// This is convenient for users, since the per-request limit has a default
+	// value that people might not want to override on every CLI call.
 	if params.Limit != 0 && params.Limit < limit {
 		limit = params.Limit
 	}
@@ -83,13 +90,18 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 				seenIds[id] = struct{}{}
 			}
 		}
+		// If pagination appears to be broken OR if the server returned fewer results than we asked for,
+		// break out of the loop because making additional requests won't give us any more information.
 		if bailOut || len(buckets) == 0 || len(buckets) < params.PageSize {
 			break
 		}
-
+		// If we've collected as many results as the user asked for, break out of the loop.
 		if params.Limit != 0 && len(printOpts.buckets) == params.Limit {
 			break
 		}
+
+		// Adjust the page-size for the next request (if needed) so we don't pull down more information
+		// than the user requested.
 		if params.Limit != 0 && len(printOpts.buckets)+limit > params.Limit {
 			limit = params.Limit - len(printOpts.buckets)
 		}
@@ -97,6 +109,7 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 		after = *buckets[len(buckets)-1].Id
 		offset = 0
 	}
+
 	return c.printBuckets(printOpts)
 }
 
