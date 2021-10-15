@@ -14,7 +14,6 @@ type BucketsListParams struct {
 	Name     string
 	ID       string
 	Limit    int
-	After    string
 	Offset   int
 	PageSize int
 }
@@ -51,15 +50,28 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 		limit = params.Limit
 	}
 	offset := params.Offset
-	after := params.After
 
 	// To guard against infinite loops from bugs in/incomplete implementations of server-side pagination,
 	// we track the IDs we see in each request and bail out if we get a duplicate.
 	seenIds := map[string]struct{}{}
-	if after != "" {
-		seenIds[after] = struct{}{}
-	}
 
+	// Iteratively fetch pages of bucket metadata.
+	//
+	// NOTE: This algorithm used an `offset`-based pagination. The API also documents that an `after`-based
+	// approach would work. Pagination via `after` would typically be much more efficient than the `offset`-
+	// based approach used here, but we still use `offset` because:
+	//   1. As of this writing (10/15/2021) Cloud doesn't support pagination via `after` when filtering by org.
+	//      Versions of OSS prior to v2.1 had the same restriction. Both Cloud and OSS have supported `offset`-
+	//      based pagination since before the OSS/Cloud split.
+	//   2. Listing buckets-by-org uses a secondary index on orgID+bucketName in both OSS and Cloud. Since bucket
+	//      ID isn't part of the index, implementing pagination via `after` requires scanning the subset of the
+	//      index for the target org until the given ID is found. This is just as (in)efficient as the implementation
+	//      of `offset`-based filtering.
+	//
+	// If you are thinking of copy-paste-adjusting this code for another command, CONSIDER USING `after` INSTEAD OF
+	// `offset`! The conditions that make `offset` OK for buckets probably aren't present for other resource types.
+	//
+	// We should eventually convert this to use `after` for consistency across the CLI.
 	for {
 		req := req
 		if limit != 0 {
@@ -67,9 +79,6 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 		}
 		if offset != 0 {
 			req = req.Offset(int32(offset))
-		}
-		if after != "" {
-			req = req.After(after)
 		}
 
 		res, err := req.Execute()
@@ -105,9 +114,8 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 		if params.Limit != 0 && len(printOpts.buckets)+limit > params.Limit {
 			limit = params.Limit - len(printOpts.buckets)
 		}
-		// Use `after`-based pagination following the initial request.
-		after = *buckets[len(buckets)-1].Id
-		offset = 0
+		// Bump the offset for the next request to pull the next page.
+		offset = offset + len(buckets)
 	}
 
 	return c.printBuckets(printOpts)

@@ -90,62 +90,6 @@ func TestBucketsList(t *testing.T) {
 			},
 		},
 		{
-			name: "pagination via 'after'",
-			params: bucket.BucketsListParams{
-				PageSize: 2,
-				After:    "111",
-			},
-			configOrgName: "my-default-org",
-			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
-				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
-				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
-					return assert.Equal(t, "my-default-org", *in.GetOrg()) &&
-						assert.Equal(t, int32(2), *in.GetLimit()) &&
-						assert.Equal(t, "111", *in.GetAfter())
-				})).Return(api.Buckets{
-					Buckets: &[]api.Bucket{
-						{
-							Id:    api.PtrString("222"),
-							Name:  "my-bucket2",
-							OrgID: api.PtrString("456"),
-							RetentionRules: []api.RetentionRule{
-								{EverySeconds: 2400},
-							},
-						},
-						{
-							Id:    api.PtrString("333"),
-							Name:  "my-bucket3",
-							OrgID: api.PtrString("456"),
-							RetentionRules: []api.RetentionRule{
-								{EverySeconds: 3600},
-							},
-						},
-					},
-				}, nil)
-				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
-					return assert.Equal(t, "my-default-org", *in.GetOrg()) &&
-						assert.Equal(t, int32(2), *in.GetLimit()) &&
-						assert.Equal(t, "333", *in.GetAfter())
-				})).Return(api.Buckets{
-					Buckets: &[]api.Bucket{
-						{
-							Id:    api.PtrString("444"),
-							Name:  "my-bucket4",
-							OrgID: api.PtrString("456"),
-							RetentionRules: []api.RetentionRule{
-								{EverySeconds: 4800},
-							},
-						},
-					},
-				}, nil)
-			},
-			expectedStdoutPatterns: []string{
-				`222\s+my-bucket2\s+40m0s\s+n/a\s+456`,
-				`333\s+my-bucket3\s+1h0m0s\s+n/a\s+456`,
-				`444\s+my-bucket4\s+1h20m0s\s+n/a\s+456`,
-			},
-		},
-		{
 			name: "pagination via 'offset'",
 			params: bucket.BucketsListParams{
 				PageSize: 2,
@@ -181,7 +125,7 @@ func TestBucketsList(t *testing.T) {
 				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
 					return assert.Equal(t, "my-default-org", *in.GetOrg()) &&
 						assert.Equal(t, int32(2), *in.GetLimit()) &&
-						assert.Equal(t, "333", *in.GetAfter())
+						assert.Equal(t, int32(3), *in.GetOffset())
 				})).Return(api.Buckets{
 					Buckets: &[]api.Bucket{
 						{
@@ -237,7 +181,7 @@ func TestBucketsList(t *testing.T) {
 				bucketsApi.EXPECT().GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
 					return assert.Equal(t, "my-default-org", *in.GetOrg()) &&
 						assert.Equal(t, int32(2), *in.GetLimit()) &&
-						assert.Equal(t, "333", *in.GetAfter())
+						assert.Equal(t, int32(3), *in.GetOffset())
 				})).Return(api.Buckets{
 					Buckets: &[]api.Bucket{
 						{

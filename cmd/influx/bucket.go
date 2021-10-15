@@ -161,11 +161,6 @@ func newBucketListCmd() cli.Command {
 				Usage:       "Total number of buckets to fetch from the server, or 0 to return all buckets",
 				Destination: &params.Limit,
 			},
-			&cli.StringFlag{
-				Name:        "after-id",
-				Usage:       "If set, only fetch buckets with IDs that follow the given ID",
-				Destination: &params.After,
-			},
 			&cli.IntFlag{
 				Name:        "offset",
 				Usage:       "Number of buckets to skip over in the list",
