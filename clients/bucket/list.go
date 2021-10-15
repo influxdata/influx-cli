@@ -37,8 +37,6 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 		return c.findOneBucket(params, req)
 	}
 
-	printOpts := bucketPrintOptions{}
-
 	// Set the limit for the number of items to return per HTTP request.
 	// NOTE this is not the same as the `--limit` option to the CLI, which sets
 	// the max number of rows to pull across _all_ HTTP requests in total.
@@ -51,9 +49,7 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 	}
 	offset := params.Offset
 
-	// To guard against infinite loops from bugs in/incomplete implementations of server-side pagination,
-	// we track the IDs we see in each request and bail out if we get a duplicate.
-	seenIds := map[string]struct{}{}
+	printOpts := bucketPrintOptions{}
 
 	// Iteratively fetch pages of bucket metadata.
 	//
@@ -89,23 +85,13 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 		if res.Buckets != nil {
 			buckets = *res.Buckets
 		}
-		bailOut := false
-		for _, b := range buckets {
-			id := *b.Id
-			if _, alreadySeen := seenIds[id]; alreadySeen {
-				bailOut = true
-			} else {
-				printOpts.buckets = append(printOpts.buckets, b)
-				seenIds[id] = struct{}{}
-			}
-		}
-		// If pagination appears to be broken OR if the server returned fewer results than we asked for,
-		// break out of the loop because making additional requests won't give us any more information.
-		if bailOut || len(buckets) == 0 || len(buckets) < params.PageSize {
-			break
-		}
-		// If we've collected as many results as the user asked for, break out of the loop.
-		if params.Limit != 0 && len(printOpts.buckets) == params.Limit {
+		printOpts.buckets = append(printOpts.buckets, buckets...)
+
+		// Break out of the loop if:
+		//   * The server returned less than a full page of results
+		//   * We've collected as many results as the user asked for
+		if len(buckets) == 0 || len(buckets) < params.PageSize ||
+			(params.Limit != 0 && len(printOpts.buckets) == params.Limit) {
 			break
 		}
 
