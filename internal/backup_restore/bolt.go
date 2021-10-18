@@ -62,7 +62,7 @@ func ExtractBucketMetadata(boltPath string) ([]api.BucketMetadataManifest, error
 	// Read raw metadata needed to construct a manifest.
 	var buckets []influxdbBucketSchema
 	orgNamesById := map[string]string{}
-	dbInfoByBucketId := map[string]DatabaseInfo{}
+	dbInfoByBucketId := map[string]*DatabaseInfo{}
 
 	if err := db.View(func(tx *bbolt.Tx) error {
 		bucketDB := tx.Bucket(bucketsBoltBucket)
@@ -113,7 +113,7 @@ func ExtractBucketMetadata(boltPath string) ([]api.BucketMetadataManifest, error
 			return fmt.Errorf("failed to unmarshal v1 database info: %w", err)
 		}
 		for _, rawDBI := range pb.GetDatabases() {
-			dbInfoByBucketId[*rawDBI.Name] = *rawDBI
+			dbInfoByBucketId[*rawDBI.Name] = rawDBI
 		}
 
 		return nil
@@ -137,7 +137,7 @@ func ExtractBucketMetadata(boltPath string) ([]api.BucketMetadataManifest, error
 	return manifests, nil
 }
 
-func combineMetadata(bucket influxdbBucketSchema, orgName string, dbi DatabaseInfo) api.BucketMetadataManifest {
+func combineMetadata(bucket influxdbBucketSchema, orgName string, dbi *DatabaseInfo) api.BucketMetadataManifest {
 	m := api.BucketMetadataManifest{
 		OrganizationID:         bucket.OrgID,
 		OrganizationName:       orgName,
@@ -150,12 +150,12 @@ func combineMetadata(bucket influxdbBucketSchema, orgName string, dbi DatabaseIn
 		m.Description = bucket.Description
 	}
 	for i, rp := range dbi.RetentionPolicies {
-		m.RetentionPolicies[i] = convertRPI(*rp)
+		m.RetentionPolicies[i] = convertRPI(rp)
 	}
 	return m
 }
 
-func convertRPI(rpi RetentionPolicyInfo) api.RetentionPolicyManifest {
+func convertRPI(rpi *RetentionPolicyInfo) api.RetentionPolicyManifest {
 	m := api.RetentionPolicyManifest{
 		Name:               *rpi.Name,
 		ReplicaN:           int32(*rpi.ReplicaN),
@@ -165,7 +165,7 @@ func convertRPI(rpi RetentionPolicyInfo) api.RetentionPolicyManifest {
 		Subscriptions:      make([]api.SubscriptionManifest, len(rpi.Subscriptions)),
 	}
 	for i, sg := range rpi.ShardGroups {
-		m.ShardGroups[i] = convertSGI(*sg)
+		m.ShardGroups[i] = convertSGI(sg)
 	}
 	for i, s := range rpi.Subscriptions {
 		m.Subscriptions[i] = api.SubscriptionManifest{
@@ -177,7 +177,7 @@ func convertRPI(rpi RetentionPolicyInfo) api.RetentionPolicyManifest {
 	return m
 }
 
-func convertSGI(sgi ShardGroupInfo) api.ShardGroupManifest {
+func convertSGI(sgi *ShardGroupInfo) api.ShardGroupManifest {
 	var deleted, truncated *time.Time
 	if sgi.DeletedAt != nil {
 		d := time.Unix(0, *sgi.DeletedAt).UTC()
@@ -197,12 +197,12 @@ func convertSGI(sgi ShardGroupInfo) api.ShardGroupManifest {
 		Shards:      make([]api.ShardManifest, len(sgi.Shards)),
 	}
 	for i, s := range sgi.Shards {
-		m.Shards[i] = convertShard(*s)
+		m.Shards[i] = convertShard(s)
 	}
 	return m
 }
 
-func convertShard(shard ShardInfo) api.ShardManifest {
+func convertShard(shard *ShardInfo) api.ShardManifest {
 	m := api.ShardManifest{
 		Id:          int64(*shard.ID),
 		ShardOwners: make([]api.ShardOwner, len(shard.Owners)),
