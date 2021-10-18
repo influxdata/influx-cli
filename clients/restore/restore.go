@@ -12,11 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
 	"github.com/influxdata/influx-cli/v2/pkg/gzip"
+	"google.golang.org/protobuf/proto"
 )
 
 type ApiConfig interface {
@@ -329,7 +329,7 @@ func (c Client) restoreBucketLegacy(ctx context.Context, bkt br.ManifestBucketEn
 	}
 
 	dbi := bucketToDBI(bkt)
-	dbiBytes, err := proto.Marshal(&dbi)
+	dbiBytes, err := proto.Marshal(dbi)
 	if err != nil {
 		return nil, err
 	}
@@ -370,7 +370,7 @@ func (c Client) restoreOrg(ctx context.Context, name string) (string, error) {
 	return *orgs.GetOrgs()[0].Id, nil
 }
 
-func bucketToDBI(b br.ManifestBucketEntry) br.DatabaseInfo {
+func bucketToDBI(b br.ManifestBucketEntry) *br.DatabaseInfo {
 	dbi := br.DatabaseInfo{
 		Name:                   &b.BucketID,
 		DefaultRetentionPolicy: &b.DefaultRetentionPolicy,
@@ -379,12 +379,12 @@ func bucketToDBI(b br.ManifestBucketEntry) br.DatabaseInfo {
 	}
 	for i, rp := range b.RetentionPolicies {
 		converted := retentionPolicyToRPI(rp)
-		dbi.RetentionPolicies[i] = &converted
+		dbi.RetentionPolicies[i] = converted
 	}
-	return dbi
+	return &dbi
 }
 
-func retentionPolicyToRPI(rp br.ManifestRetentionPolicy) br.RetentionPolicyInfo {
+func retentionPolicyToRPI(rp br.ManifestRetentionPolicy) *br.RetentionPolicyInfo {
 	replicaN := uint32(rp.ReplicaN)
 	rpi := br.RetentionPolicyInfo{
 		Name:               &rp.Name,
@@ -396,7 +396,7 @@ func retentionPolicyToRPI(rp br.ManifestRetentionPolicy) br.RetentionPolicyInfo 
 	}
 	for i, sg := range rp.ShardGroups {
 		converted := shardGroupToSGI(sg)
-		rpi.ShardGroups[i] = &converted
+		rpi.ShardGroups[i] = converted
 	}
 	for i, s := range rp.Subscriptions {
 		converted := br.SubscriptionInfo{
@@ -406,10 +406,10 @@ func retentionPolicyToRPI(rp br.ManifestRetentionPolicy) br.RetentionPolicyInfo 
 		}
 		rpi.Subscriptions[i] = &converted
 	}
-	return rpi
+	return &rpi
 }
 
-func shardGroupToSGI(sg br.ManifestShardGroup) br.ShardGroupInfo {
+func shardGroupToSGI(sg br.ManifestShardGroup) *br.ShardGroupInfo {
 	id := uint64(sg.ID)
 	start := sg.StartTime.UnixNano()
 	end := sg.EndTime.UnixNano()
@@ -430,12 +430,12 @@ func shardGroupToSGI(sg br.ManifestShardGroup) br.ShardGroupInfo {
 	}
 	for i, s := range sg.Shards {
 		converted := shardToSI(s)
-		sgi.Shards[i] = &converted
+		sgi.Shards[i] = converted
 	}
-	return sgi
+	return &sgi
 }
 
-func shardToSI(shard br.ManifestShardEntry) br.ShardInfo {
+func shardToSI(shard br.ManifestShardEntry) *br.ShardInfo {
 	id := uint64(shard.ID)
 	si := br.ShardInfo{
 		ID:     &id,
@@ -446,7 +446,7 @@ func shardToSI(shard br.ManifestShardEntry) br.ShardInfo {
 		converted := br.ShardOwner{NodeID: &oid}
 		si.Owners[i] = &converted
 	}
-	return si
+	return &si
 }
 
 // readFileGzipped opens a local file and returns a reader of its contents,

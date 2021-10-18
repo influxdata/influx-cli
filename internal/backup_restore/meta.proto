@@ -1,8 +1,10 @@
 // NOTE: This is a snapshot of the schema used to serialize V1 database info
 // in the 2.0.x line of InfluxDB. The copy is here so we can support backing
 // up from older DB versions, it's not intended to be kept up-to-date.
+syntax = "proto2";
 
 package internal;
+option go_package = ".;backup_restore";
 
 //========================================================================
 //
