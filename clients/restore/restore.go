@@ -12,11 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	br "github.com/influxdata/influx-cli/v2/internal/backup_restore"
 	"github.com/influxdata/influx-cli/v2/pkg/gzip"
+	"google.golang.org/protobuf/proto"
 )
 
 type ApiConfig interface {

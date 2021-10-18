@@ -12,8 +12,8 @@ package influxcli
 
 import (
 	_ "github.com/daixiang0/gci"
-	_ "github.com/gogo/protobuf/protoc-gen-gogo"
 	_ "github.com/golang/mock/mockgen"
 	_ "golang.org/x/tools/cmd/goimports"
+	_ "google.golang.org/protobuf/cmd/protoc-gen-go"
 	_ "honnef.co/go/tools/cmd/staticcheck"
 )

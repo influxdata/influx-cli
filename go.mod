@@ -10,7 +10,6 @@ require (
 	github.com/fatih/color v1.9.0
 	github.com/fujiwara/shapeio v1.0.0
 	github.com/gocarina/gocsv v0.0.0-20210408192840-02d7211d929d
-	github.com/gogo/protobuf v1.3.2
 	github.com/golang/mock v1.5.0
 	github.com/google/go-jsonnet v0.17.0
 	github.com/mattn/go-isatty v0.0.13
@@ -20,6 +19,7 @@ require (
 	go.etcd.io/bbolt v1.3.6
 	golang.org/x/text v0.3.3
 	golang.org/x/tools v0.1.0
+	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 	honnef.co/go/tools v0.2.0
 )
@@ -27,6 +27,7 @@ require (
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect

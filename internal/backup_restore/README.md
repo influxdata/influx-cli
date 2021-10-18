@@ -8,5 +8,5 @@ and into this repository. This file isn't intended to be modified.
 
 If `meta.pb.go` ever needs to be re-generated, follow these steps:
 1. Install `protoc` (i.e. via `brew install protobuf`)
-2. Run `go install github.com/gogo/protobuf/protoc-gen-gogo` from within this repository
+2. Run `go install google.golang.org/protobuf/cmd/protoc-gen-go` from within this repository
 3. Run `go generate <path to internal/backup_restore>`

@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/influxdata/influx-cli/v2/api"
 	"go.etcd.io/bbolt"
+	"google.golang.org/protobuf/proto"
 )
 
-//go:generate protoc --gogo_out=. meta.proto
+//go:generate protoc --go_out=. meta.proto
 
 // NOTE: An unfortunate naming collision below. Bolt calls its databases "buckets".
 // These are the names that were used in the metadata DB for 2.0.x versions of influxdb.
