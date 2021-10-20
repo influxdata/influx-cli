@@ -35,6 +35,7 @@ func TestNewAPIClient(t *testing.T) {
 				assert.Equal(t, "localhost:8086", c.GetConfig().Host)
 				assert.Equal(t, "http", c.GetConfig().Scheme)
 				assert.True(t, strings.HasPrefix(c.GetConfig().UserAgent, "influx/"))
+				assert.NotContains(t, c.GetConfig().DefaultHeader, "Authorization")
 				assert.Equal(t, false, c.GetConfig().Debug)
 				transport := c.GetConfig().HTTPClient.Transport.(*http.Transport)
 				assert.Equal(t, false, transport.TLSClientConfig.InsecureSkipVerify)
