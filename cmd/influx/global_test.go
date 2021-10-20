@@ -103,7 +103,7 @@ func TestNewAPIClient(t *testing.T) {
 				f.Apply(flagSet)
 			}
 			for _, f := range tc.flags {
-				flagSet.Set(f[0], f[1])
+				require.NoError(t, flagSet.Set(f[0], f[1]))
 			}
 			ctx := cli.NewContext(nil, flagSet, nil)
 			ctx.Command = cmd
