@@ -58,6 +58,14 @@ var app = cli.App{
 		newReplicationCmd(),
 	},
 	Before: withContext(),
+	CommandNotFound: func(c *cli.Context, command string) {
+		_, _ = fmt.Fprintf(
+			os.Stderr,
+			"Error: command %q not recognized. Run `%v --help` to see the list of commands\n",
+			command,
+			os.Args[0],
+		)
+	},
 }
 
 func main() {
