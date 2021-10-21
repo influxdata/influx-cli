@@ -148,7 +148,7 @@ func TestNewAPIClientErrors(t *testing.T) {
 				Org:    "test",
 			},
 			injectToken:           true,
-			expectedErrorContains: "influx token required",
+			expectedErrorContains: "API token required",
 		},
 	}
 
