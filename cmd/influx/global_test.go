@@ -95,6 +95,8 @@ func TestNewAPIClient(t *testing.T) {
 		tc := tc
 
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			ctrl := gomock.NewController(t)
 
 			cmd := cli.Command{Name: "TEST", Flags: commonFlagsNoPrint()}
@@ -154,6 +156,8 @@ func TestNewAPIClientErrors(t *testing.T) {
 		tc := tc
 
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			ctrl := gomock.NewController(t)
 
 			flagSet := flag.NewFlagSet("", flag.ContinueOnError)
