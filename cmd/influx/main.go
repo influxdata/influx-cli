@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
 )
 
@@ -57,15 +58,7 @@ var app = cli.App{
 		newRemoteCmd(),
 		newReplicationCmd(),
 	},
-	Before: withContext(),
-	CommandNotFound: func(c *cli.Context, command string) {
-		_, _ = fmt.Fprintf(
-			os.Stderr,
-			"Error: command %q not recognized. Run `%v --help` to see the list of commands\n",
-			command,
-			os.Args[0],
-		)
-	},
+	Before: middleware.WithBeforeFns(withContext(), middleware.NoArgs),
 }
 
 func main() {
