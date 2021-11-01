@@ -85,9 +85,6 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 	configParams.Host = parsedHost
 
 	if injectToken {
-		if cfg.Token == "" {
-			return nil, fmt.Errorf("API token required. Pass `--token`, set `INFLUX_TOKEN`, or use `influx config set --token` to specify your token value")
-		}
 		configParams.Token = &cfg.Token
 	}
 	if ctx.IsSet(traceIdFlagName) {
