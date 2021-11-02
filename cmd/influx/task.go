@@ -11,8 +11,9 @@ const TaskMaxPageSize = 500
 
 func newTaskCommand() cli.Command {
 	return cli.Command{
-		Name:  "task",
-		Usage: "Task management commands",
+		Name:   "task",
+		Usage:  "Task management commands",
+		Before: middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newTaskLogCmd(),
 			newTaskRunCmd(),
@@ -264,8 +265,9 @@ func newTaskLogFindCmd() cli.Command {
 
 func newTaskRunCmd() cli.Command {
 	return cli.Command{
-		Name:  "run",
-		Usage: "Run related commands",
+		Name:   "run",
+		Usage:  "Run related commands",
+		Before: middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newTaskRunFindCmd(),
 			newTaskRunRetryCmd(),

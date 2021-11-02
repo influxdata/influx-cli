@@ -1,3 +1,9 @@
+## v2.3.0 [unreleased]
+
+### Bug Fixes
+
+1. [316](https://github.com/influxdata/influx-cli/pull/316): Return a better error message on unknown subcommands. Thanks @slai!
+
 ## v2.2.0 [2021-10-21]
 
 ### Features

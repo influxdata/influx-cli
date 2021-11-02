@@ -8,8 +8,9 @@ import (
 
 func newOrgMembersCmd() cli.Command {
 	return cli.Command{
-		Name:  "members",
-		Usage: "Organization membership commands",
+		Name:   "members",
+		Usage:  "Organization membership commands",
+		Before: middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newOrgMembersAddCmd(),
 			newOrgMembersListCmd(),

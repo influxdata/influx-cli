@@ -9,8 +9,9 @@ import (
 
 func newUserCmd() cli.Command {
 	return cli.Command{
-		Name:  "user",
-		Usage: "User management commands",
+		Name:   "user",
+		Usage:  "User management commands",
+		Before: middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newUserCreateCmd(),
 			newUserDeleteCmd(),

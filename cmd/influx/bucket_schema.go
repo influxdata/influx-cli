@@ -36,8 +36,9 @@ func getBucketSchemaClient(ctx *cli.Context) bucket_schema.Client {
 
 func newBucketSchemaCmd() cli.Command {
 	return cli.Command{
-		Name:  "bucket-schema",
-		Usage: "Bucket schema management commands",
+		Name:   "bucket-schema",
+		Usage:  "Bucket schema management commands",
+		Before: middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newBucketSchemaCreateCmd(),
 			newBucketSchemaUpdateCmd(),

@@ -8,8 +8,9 @@ import (
 
 func newV1DBRPCmd() cli.Command {
 	return cli.Command{
-		Name:  "dbrp",
-		Usage: "Commands to manage database and retention policy mappings for v1 APIs",
+		Name:   "dbrp",
+		Usage:  "Commands to manage database and retention policy mappings for v1 APIs",
+		Before: middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newV1DBRPListCmd(),
 			newV1DBRPCreateCmd(),

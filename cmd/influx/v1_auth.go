@@ -28,6 +28,7 @@ func newV1AuthCommand() cli.Command {
 		Name:    "auth",
 		Usage:   "Authorization management commands for v1 APIs",
 		Aliases: []string{"authorization"},
+		Before:  middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newCreateV1AuthCmd(),
 			newRemoveV1AuthCmd(),

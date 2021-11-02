@@ -11,6 +11,7 @@ func newRemoteCmd() cli.Command {
 		Name:   "remote",
 		Usage:  "Remote connection management commands",
 		Hidden: true, // Remove this line when all subcommands are completed
+		Before: middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newRemoteCreateCmd(),
 			newRemoteDeleteCmd(),
