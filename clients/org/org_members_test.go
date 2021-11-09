@@ -352,7 +352,7 @@ func TestClient_RemoveMembers(t *testing.T) {
 			registerExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
 				req := api.ApiDeleteOrgsIDMembersIDRequest{ApiService: orgApi}.OrgID(id1.String()).UserID(id2.String())
 				orgApi.EXPECT().
-					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id1.String()), gomock.Eq(id2.String())).Return(req)
+					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id2.String()), gomock.Eq(id1.String())).Return(req)
 				orgApi.EXPECT().DeleteOrgsIDMembersIDExecute(gomock.Eq(req)).Return(nil)
 			},
 			expectedOut: "user \"2222222222222222\" has been removed from org \"1111111111111111\"",
@@ -374,7 +374,7 @@ func TestClient_RemoveMembers(t *testing.T) {
 
 				req := api.ApiDeleteOrgsIDMembersIDRequest{ApiService: orgApi}.OrgID(id1.String()).UserID(id2.String())
 				orgApi.EXPECT().
-					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id1.String()), gomock.Eq(id2.String())).Return(req)
+					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id2.String()), gomock.Eq(id1.String())).Return(req)
 				orgApi.EXPECT().DeleteOrgsIDMembersIDExecute(gomock.Eq(req)).Return(nil)
 			},
 			expectedOut: "user \"2222222222222222\" has been removed from org \"1111111111111111\"",
@@ -395,7 +395,7 @@ func TestClient_RemoveMembers(t *testing.T) {
 
 				req := api.ApiDeleteOrgsIDMembersIDRequest{ApiService: orgApi}.OrgID(id1.String()).UserID(id2.String())
 				orgApi.EXPECT().
-					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id1.String()), gomock.Eq(id2.String())).Return(req)
+					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id2.String()), gomock.Eq(id1.String()), ).Return(req)
 				orgApi.EXPECT().DeleteOrgsIDMembersIDExecute(gomock.Eq(req)).Return(nil)
 			},
 			expectedOut: "user \"2222222222222222\" has been removed from org \"1111111111111111\"",
