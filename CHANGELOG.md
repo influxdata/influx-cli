@@ -3,6 +3,7 @@
 ### Bug Fixes
 
 1. [316](https://github.com/influxdata/influx-cli/pull/316): Return a better error message on unknown subcommands. Thanks @slai!
+1. [318](https://github.com/influxdata/influx-cli/pull/318): Fix accidental swap of userID and orgID in `org members remove` API calls. Thanks @geek981108!
 
 ## v2.2.0 [2021-10-21]
 
