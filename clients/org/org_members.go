@@ -136,7 +136,7 @@ func (c Client) RemoveMember(ctx context.Context, params *RemoveMemberParams) (e
 		}
 	}
 
-	if err = c.DeleteOrgsIDMembersID(ctx, orgID, params.MemberId.String()).Execute(); err != nil {
+	if err = c.DeleteOrgsIDMembersID(ctx, params.MemberId.String(), orgID).Execute(); err != nil {
 		return fmt.Errorf("failed to remove member %q from org %q", params.MemberId, orgID)
 	}
 
