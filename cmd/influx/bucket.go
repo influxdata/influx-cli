@@ -9,8 +9,9 @@ import (
 
 func newBucketCmd() cli.Command {
 	return cli.Command{
-		Name:  "bucket",
-		Usage: "Bucket management commands",
+		Name:   "bucket",
+		Usage:  "Bucket management commands",
+		Before: middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newBucketCreateCmd(),
 			newBucketDeleteCmd(),

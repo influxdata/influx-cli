@@ -8,8 +8,9 @@ import (
 
 func newSecretCommand() cli.Command {
 	return cli.Command{
-		Name:  "secret",
-		Usage: "Secret management commands",
+		Name:   "secret",
+		Usage:  "Secret management commands",
+		Before: middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newDeleteSecretCmd(),
 			newListSecretCmd(),

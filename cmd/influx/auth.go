@@ -13,6 +13,7 @@ func newAuthCommand() cli.Command {
 		Name:    "auth",
 		Usage:   "Authorization management commands",
 		Aliases: []string{"authorization"},
+		Before:  middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newCreateCommand(),
 			newDeleteCommand(),

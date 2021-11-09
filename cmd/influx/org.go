@@ -12,6 +12,7 @@ func newOrgCmd() cli.Command {
 		Name:    "org",
 		Aliases: []string{"organization"},
 		Usage:   "Organization management commands",
+		Before:  middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newOrgCreateCmd(),
 			newOrgDeleteCmd(),

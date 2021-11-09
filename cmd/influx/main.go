@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
 )
 
@@ -57,7 +58,7 @@ var app = cli.App{
 		newRemoteCmd(),
 		newReplicationCmd(),
 	},
-	Before: withContext(),
+	Before: middleware.WithBeforeFns(withContext(), middleware.NoArgs),
 }
 
 func main() {
