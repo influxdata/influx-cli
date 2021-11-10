@@ -16,10 +16,9 @@ type Client struct {
 }
 
 type CreateParams struct {
+	clients.OrgParams
 	Name           string
 	Description    string
-	OrgID          string
-	OrgName        string
 	RemoteID       string
 	LocalBucketID  string
 	RemoteBucketID string
@@ -27,7 +26,7 @@ type CreateParams struct {
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
-	orgID, err := c.GetOrgId(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -58,16 +57,14 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 }
 
 type ListParams struct {
+	clients.OrgParams
 	Name          string
-	OrgID         string
-	OrgName       string
 	RemoteID      string
 	LocalBucketID string
 }
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
-
-	orgID, err := c.GetOrgId(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}

@@ -120,7 +120,7 @@ func BuildExternAST(profilers []string) *api.Extern {
 }
 
 func (c Client) Query(ctx context.Context, params *Params) error {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
+	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return clients.ErrMustSpecifyOrg
 	}
 
@@ -130,8 +130,8 @@ func (c Client) Query(ctx context.Context, params *Params) error {
 	}
 
 	req := c.PostQuery(ctx).Query(query).AcceptEncoding("gzip")
-	if params.OrgID.Valid() {
-		req = req.OrgID(params.OrgID.String())
+	if params.OrgID != "" {
+		req = req.OrgID(params.OrgID)
 	} else if params.OrgName != "" {
 		req = req.Org(params.OrgName)
 	} else {

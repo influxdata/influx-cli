@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/influxdata/influx-cli/v2/api"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
+	"github.com/influxdata/influx-cli/v2/clients"
 )
 
 type CreateParams struct {
@@ -25,30 +25,29 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	return c.printOrgs(printOrgOpts{org: &res})
 }
 
-func (c Client) Delete(ctx context.Context, id influxid.ID) error {
-	org, err := c.GetOrgsID(ctx, id.String()).Execute()
+func (c Client) Delete(ctx context.Context, id string) error {
+	org, err := c.GetOrgsID(ctx, id).Execute()
 	if err != nil {
 		return fmt.Errorf("org %q not found: %w", id, err)
 
 	}
-	if err := c.DeleteOrgsID(ctx, id.String()).Execute(); err != nil {
+	if err := c.DeleteOrgsID(ctx, id).Execute(); err != nil {
 		return fmt.Errorf("failed to delete org %q: %w", id, err)
 	}
 	return c.printOrgs(printOrgOpts{org: &org, deleted: true})
 }
 
 type ListParams struct {
-	Name string
-	ID   influxid.ID
+	clients.OrgParams
 }
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
 	req := c.GetOrgs(ctx)
-	if params.Name != "" {
-		req = req.Org(params.Name)
+	if params.OrgName != "" {
+		req = req.Org(params.OrgName)
 	}
-	if params.ID.Valid() {
-		req = req.OrgID(params.ID.String())
+	if params.OrgID != "" {
+		req = req.OrgID(params.OrgID)
 	}
 	orgs, err := req.Execute()
 	if err != nil {
@@ -62,23 +61,22 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 }
 
 type UpdateParams struct {
-	ID          influxid.ID
-	Name        string
+	clients.OrgParams
 	Description string
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	body := api.PatchOrganizationRequest{}
-	if params.Name != "" {
-		body.Name = &params.Name
+	if params.OrgName != "" {
+		body.Name = &params.OrgName
 	}
 	if params.Description != "" {
 		body.Description = &params.Description
 	}
 
-	res, err := c.PatchOrgsID(ctx, params.ID.String()).PatchOrganizationRequest(body).Execute()
+	res, err := c.PatchOrgsID(ctx, params.OrgID).PatchOrganizationRequest(body).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to update org %q: %w", params.ID, err)
+		return fmt.Errorf("failed to update org %q: %w", params.OrgID, err)
 	}
 	return c.printOrgs(printOrgOpts{org: &res})
 }

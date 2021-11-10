@@ -6,32 +6,24 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 )
 
 type AddMemberParams struct {
-	MemberId influxid.ID
-	OrgName  string
-	OrgID    influxid.ID
+	clients.OrgParams
+	MemberId string
 }
 
 func (c Client) AddMember(ctx context.Context, params *AddMemberParams) (err error) {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-
-	orgID := params.OrgID.String()
-	if !params.OrgID.Valid() {
-		if orgID, err = c.getOrgId(ctx, params.OrgName); err != nil {
-			return err
-		}
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	member, err := c.PostOrgsIDMembers(ctx, orgID).
-		AddResourceMemberRequestBody(*api.NewAddResourceMemberRequestBody(params.MemberId.String())).
+		AddResourceMemberRequestBody(*api.NewAddResourceMemberRequestBody(params.MemberId)).
 		Execute()
 	if err != nil {
-		return fmt.Errorf("failed to add user %q to org %q: %w", params.MemberId.String(), orgID, err)
+		return fmt.Errorf("failed to add user %q to org %q: %w", params.MemberId, orgID, err)
 	}
 
 	_, err = c.StdIO.Write([]byte(fmt.Sprintf("user %q has been added as a member of org %q\n", *member.Id, orgID)))
@@ -39,22 +31,15 @@ func (c Client) AddMember(ctx context.Context, params *AddMemberParams) (err err
 }
 
 type ListMemberParams struct {
-	OrgName string
-	OrgID   influxid.ID
+	clients.OrgParams
 }
 
 const maxConcurrentGetUserRequests = 10
 
 func (c Client) ListMembers(ctx context.Context, params *ListMemberParams) (err error) {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-
-	orgID := params.OrgID.String()
-	if !params.OrgID.Valid() {
-		if orgID, err = c.getOrgId(ctx, params.OrgName); err != nil {
-			return err
-		}
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	members, err := c.GetOrgsIDMembers(ctx, orgID).Execute()
@@ -119,44 +104,20 @@ func (c Client) ListMembers(ctx context.Context, params *ListMemberParams) (err 
 }
 
 type RemoveMemberParams struct {
-	MemberId influxid.ID
-	OrgName  string
-	OrgID    influxid.ID
+	clients.OrgParams
+	MemberId string
 }
 
 func (c Client) RemoveMember(ctx context.Context, params *RemoveMemberParams) (err error) {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
-	orgID := params.OrgID.String()
-	if !params.OrgID.Valid() {
-		if orgID, err = c.getOrgId(ctx, params.OrgName); err != nil {
-			return err
-		}
-	}
-
-	if err = c.DeleteOrgsIDMembersID(ctx, params.MemberId.String(), orgID).Execute(); err != nil {
+	if err = c.DeleteOrgsIDMembersID(ctx, params.MemberId, orgID).Execute(); err != nil {
 		return fmt.Errorf("failed to remove member %q from org %q", params.MemberId, orgID)
 	}
 
 	_, err = c.StdIO.Write([]byte(fmt.Sprintf("user %q has been removed from org %q\n", params.MemberId, orgID)))
 	return err
-}
-
-func (c Client) getOrgId(ctx context.Context, orgName string) (string, error) {
-	req := c.GetOrgs(ctx)
-	if orgName != "" {
-		req = req.Org(orgName)
-	} else {
-		req = req.Org(c.ActiveConfig.Org)
-	}
-	orgs, err := req.Execute()
-	if err != nil {
-		return "", fmt.Errorf("failed to find org %q: %w", orgName, err)
-	}
-	if orgs.Orgs == nil || len(*orgs.Orgs) == 0 {
-		return "", fmt.Errorf("no org found with name %q", orgName)
-	}
-	return *(*orgs.Orgs)[0].Id, nil
 }

@@ -7,7 +7,6 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/influxdata/influx-cli/v2/pkg/stdio"
 )
 
@@ -30,7 +29,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		return clients.ErrPasswordIsTooShort
 	}
 
-	orgID, err := c.GetOrgIdI(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -61,26 +60,26 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	return nil
 }
 
-func (c Client) Delete(ctx context.Context, id influxid.ID) error {
-	user, err := c.GetUsersID(ctx, id.String()).Execute()
+func (c Client) Delete(ctx context.Context, id string) error {
+	user, err := c.GetUsersID(ctx, id).Execute()
 	if err != nil {
 		return fmt.Errorf("user %q not found: %w", id, err)
 	}
-	if err := c.DeleteUsersID(ctx, id.String()).Execute(); err != nil {
+	if err := c.DeleteUsersID(ctx, id).Execute(); err != nil {
 		return fmt.Errorf("failed to delete user %q: %w", id, err)
 	}
 	return c.printUsers(printUserOpts{user: &user, deleted: true})
 }
 
 type ListParams struct {
-	Id   influxid.ID
+	Id   string
 	Name string
 }
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
 	req := c.GetUsers(ctx)
-	if params.Id.Valid() {
-		req = req.Id(params.Id.String())
+	if params.Id != "" {
+		req = req.Id(params.Id)
 	}
 	if params.Name != "" {
 		req = req.Name(params.Name)
@@ -96,17 +95,17 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	return c.printUsers(printOpts)
 }
 
-type UpdateParmas struct {
-	Id   influxid.ID
+type UpdateParams struct {
+	Id   string
 	Name string
 }
 
-func (c Client) Update(ctx context.Context, params *UpdateParmas) error {
+func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	update := api.User{}
 	if params.Name != "" {
 		update.SetName(params.Name)
 	}
-	user, err := c.PatchUsersID(ctx, params.Id.String()).User(update).Execute()
+	user, err := c.PatchUsersID(ctx, params.Id).User(update).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to update user %q: %w", params.Id, err)
 	}
@@ -114,18 +113,18 @@ func (c Client) Update(ctx context.Context, params *UpdateParmas) error {
 }
 
 type SetPasswordParams struct {
-	Id       influxid.ID
+	Id       string
 	Name     string
 	Password string
 }
 
 func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) (err error) {
-	if !params.Id.Valid() && params.Name == "" {
+	if params.Id == "" && params.Name == "" {
 		return ErrMustSpecifyUser
 	}
-	id := params.Id.String()
+	id := params.Id
 	displayName := id
-	if !params.Id.Valid() {
+	if params.Id == "" {
 		displayName = params.Name
 		users, err := c.GetUsers(ctx).Name(params.Name).Execute()
 		if err != nil {
@@ -147,7 +146,7 @@ func (c Client) SetPassword(ctx context.Context, params *SetPasswordParams) (err
 
 	body := api.PasswordResetBody{Password: password}
 	if err := c.PostUsersIDPassword(ctx, id).PasswordResetBody(body).Execute(); err != nil {
-		return fmt.Errorf("failed to set password for user %q: %w", params.Id.String(), err)
+		return fmt.Errorf("failed to set password for user %q: %w", params.Id, err)
 	}
 	_, err = c.StdIO.Write([]byte(fmt.Sprintf("Successfully updated password for user %q\n", displayName)))
 	return err

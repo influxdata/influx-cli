@@ -9,10 +9,7 @@ import (
 )
 
 type BucketsListParams struct {
-	OrgID    string
-	OrgName  string
-	Name     string
-	ID       string
+	clients.OrgBucketParams
 	Limit    int
 	Offset   int
 	PageSize int
@@ -33,7 +30,7 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 	if params.OrgID == "" && params.OrgName == "" {
 		req = req.Org(c.ActiveConfig.Org)
 	}
-	if params.Name != "" || params.ID != "" {
+	if params.BucketName != "" || params.BucketID != "" {
 		return c.findOneBucket(params, req)
 	}
 
@@ -111,11 +108,11 @@ func (c Client) List(ctx context.Context, params *BucketsListParams) error {
 // Used to look up buckets by ID or name.
 func (c Client) findOneBucket(params *BucketsListParams, req api.ApiGetBucketsRequest) error {
 	var description string
-	if params.ID != "" {
-		req = req.Id(params.ID)
+	if params.BucketID != "" {
+		req = req.Id(params.BucketID)
 		description = " by ID"
-	} else if params.Name != "" {
-		req = req.Name(params.Name)
+	} else if params.BucketName != "" {
+		req = req.Name(params.BucketName)
 		description = " by name"
 	}
 

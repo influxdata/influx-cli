@@ -16,8 +16,7 @@ type Client struct {
 }
 
 type SummarizeParams struct {
-	OrgId   string
-	OrgName string
+	clients.OrgParams
 
 	Sources []template.Source
 
@@ -26,7 +25,7 @@ type SummarizeParams struct {
 }
 
 func (c Client) Summarize(ctx context.Context, params *SummarizeParams) error {
-	orgID, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -54,14 +53,13 @@ func (c Client) Summarize(ctx context.Context, params *SummarizeParams) error {
 }
 
 type ValidateParams struct {
-	OrgId   string
-	OrgName string
+	clients.OrgParams
 
 	Sources []template.Source
 }
 
 func (c Client) Validate(ctx context.Context, params *ValidateParams) error {
-	orgID, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}

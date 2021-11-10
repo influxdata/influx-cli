@@ -21,8 +21,7 @@ type Client struct {
 }
 
 type Params struct {
-	OrgId   string
-	OrgName string
+	clients.OrgParams
 
 	StackId   string
 	Sources   []template.Source
@@ -46,7 +45,7 @@ type ResourceFilter struct {
 }
 
 func (c Client) Apply(ctx context.Context, params *Params) error {
-	orgID, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -164,7 +163,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 		}
 		for _, l := range labels {
 			var oldRow, newRow []string
-			hexId := influxid.ID(l.Id).String()
+			hexId := influxid.Encode(l.Id)
 			if l.Old != nil {
 				oldRow = buildRow(l.TemplateMetaName, hexId, *l.Old)
 			}
@@ -196,7 +195,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 		}
 		for _, b := range bkts {
 			var oldRow, newRow []string
-			hexId := influxid.ID(b.Id).String()
+			hexId := influxid.Encode(b.Id)
 			if b.Old != nil {
 				oldRow = buildRow(b.TemplateMetaName, hexId, *b.Old)
 			}
@@ -220,7 +219,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 		}
 		for _, c := range checks {
 			var oldRow, newRow []string
-			hexId := influxid.ID(c.Id).String()
+			hexId := influxid.Encode(c.Id)
 			if c.Old != nil {
 				oldRow = buildRow(c.TemplateMetaName, hexId, *c.Old)
 			}
@@ -244,7 +243,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 		}
 		for _, d := range dashboards {
 			var oldRow, newRow []string
-			hexId := influxid.ID(d.Id).String()
+			hexId := influxid.Encode(d.Id)
 			if d.Old != nil {
 				oldRow = buildRow(d.TemplateMetaName, hexId, *d.Old)
 			}
@@ -264,7 +263,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 		}
 		for _, e := range endpoints {
 			var oldRow, newRow []string
-			hexId := influxid.ID(e.Id).String()
+			hexId := influxid.Encode(e.Id)
 			if e.Old != nil {
 				oldRow = buildRow(e.TemplateMetaName, hexId, *e.Old)
 			}
@@ -284,12 +283,12 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if nrf.Description != nil {
 				desc = *nrf.Description
 			}
-			eid := influxid.ID(nrf.EndpointID).String()
+			eid := influxid.Encode(nrf.EndpointID)
 			return []string{metaName, id, nrf.Name, desc, nrf.Every, nrf.Offset, nrf.EndpointName, eid, nrf.EndpointType}
 		}
 		for _, r := range rules {
 			var oldRow, newRow []string
-			hexId := influxid.ID(r.Id).String()
+			hexId := influxid.Encode(r.Id)
 			if r.Old != nil {
 				oldRow = buildRow(r.TemplateMetaName, hexId, *r.Old)
 			}
@@ -313,7 +312,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 		}
 		for _, t := range teles {
 			var oldRow, newRow []string
-			hexId := influxid.ID(t.Id).String()
+			hexId := influxid.Encode(t.Id)
 			if t.Old != nil {
 				oldRow = buildRow(t.TemplateMetaName, hexId, *t.Old)
 			}
@@ -348,7 +347,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 		}
 		for _, t := range tasks {
 			var oldRow, newRow []string
-			hexId := influxid.ID(t.Id).String()
+			hexId := influxid.Encode(t.Id)
 			if t.Old != nil {
 				oldRow = buildRow(t.TemplateMetaName, hexId, *t.Old)
 			}
@@ -375,7 +374,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 		}
 		for _, v := range vars {
 			var oldRow, newRow []string
-			hexId := influxid.ID(v.Id).String()
+			hexId := influxid.Encode(v.Id)
 			if v.Old != nil {
 				oldRow = buildRow(v.TemplateMetaName, hexId, *v.Old)
 			}
@@ -394,8 +393,8 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			SetHeaders("Resource Type", "Resource Meta Name", "Resource Name", "Resource ID", "Label Package Name", "Label Name", "Label ID")
 
 		for _, m := range mappings {
-			resId := influxid.ID(m.ResourceID).String()
-			labelId := influxid.ID(m.LabelID).String()
+			resId := influxid.Encode(m.ResourceID)
+			labelId := influxid.Encode(m.LabelID)
 			row := []string{m.ResourceType, m.ResourceName, resId, m.LabelTemplateMetaName, m.LabelName, labelId}
 			switch m.StateStatus {
 			case "new":

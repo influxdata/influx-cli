@@ -2,7 +2,6 @@ package delete
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -22,14 +21,12 @@ type Params struct {
 	Stop      string
 }
 
-var ErrMustSpecifyBucket = errors.New("must specify bucket ID or bucket name")
-
 func (c Client) Delete(ctx context.Context, params *Params) error {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
+	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return clients.ErrMustSpecifyOrg
 	}
-	if !params.BucketID.Valid() && params.BucketName == "" {
-		return ErrMustSpecifyBucket
+	if params.BucketID == "" && params.BucketName == "" {
+		return clients.ErrMustSpecifyBucket
 	}
 	start, err := time.Parse(time.RFC3339Nano, params.Start)
 	if err != nil {
@@ -46,15 +43,15 @@ func (c Client) Delete(ctx context.Context, params *Params) error {
 	}
 
 	req := c.PostDelete(ctx).DeletePredicateRequest(*reqBody)
-	if params.OrgID.Valid() {
-		req = req.OrgID(params.OrgID.String())
+	if params.OrgID != "" {
+		req = req.OrgID(params.OrgID)
 	} else if params.OrgName != "" {
 		req = req.Org(params.OrgName)
 	} else {
 		req = req.Org(c.ActiveConfig.Org)
 	}
-	if params.BucketID.Valid() {
-		req = req.BucketID(params.BucketID.String())
+	if params.BucketID != "" {
+		req = req.BucketID(params.BucketID)
 	} else {
 		req = req.Bucket(params.BucketName)
 	}

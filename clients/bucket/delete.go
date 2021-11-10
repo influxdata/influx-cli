@@ -9,27 +9,24 @@ import (
 )
 
 type BucketsDeleteParams struct {
-	ID      string
-	Name    string
-	OrgID   string
-	OrgName string
+	clients.OrgBucketParams
 }
 
 func (c Client) Delete(ctx context.Context, params *BucketsDeleteParams) error {
-	if params.ID == "" && params.Name == "" {
+	if params.BucketID == "" && params.BucketName == "" {
 		return clients.ErrMustSpecifyBucket
 	}
 
 	var bucket api.Bucket
 	var getReq api.ApiGetBucketsRequest
-	if params.ID != "" {
-		getReq = c.GetBuckets(ctx).Id(params.ID)
+	if params.BucketID != "" {
+		getReq = c.GetBuckets(ctx).Id(params.BucketID)
 	} else {
 		if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 			return ErrMustSpecifyOrgDeleteByName
 		}
 		getReq = c.GetBuckets(ctx)
-		getReq = getReq.Name(params.Name)
+		getReq = getReq.Name(params.BucketName)
 		if params.OrgID != "" {
 			getReq = getReq.OrgID(params.OrgID)
 		}
@@ -41,9 +38,9 @@ func (c Client) Delete(ctx context.Context, params *BucketsDeleteParams) error {
 		}
 	}
 
-	displayId := params.ID
+	displayId := params.BucketID
 	if displayId == "" {
-		displayId = params.Name
+		displayId = params.BucketName
 	}
 
 	resp, err := getReq.Execute()

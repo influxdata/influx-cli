@@ -31,7 +31,7 @@ type DeleteParams struct {
 }
 
 func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
-	orgID, err := c.getOrgID(ctx, params.OrgParams)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -60,8 +60,7 @@ type ListParams struct {
 }
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
-
-	orgID, err := c.getOrgID(ctx, params.OrgParams)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -89,7 +88,7 @@ type UpdateParams struct {
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
-	orgID, err := c.getOrgID(ctx, params.OrgParams)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -148,8 +147,4 @@ func (c Client) printSecrets(opts secretPrintOpt) error {
 		rows = append(rows, row)
 	}
 	return c.PrintTable(headers, rows...)
-}
-
-func (c Client) getOrgID(ctx context.Context, params clients.OrgParams) (string, error) {
-	return c.GetOrgIdI(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
 }

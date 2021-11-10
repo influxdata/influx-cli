@@ -107,8 +107,7 @@ func BuildResourcePermissions() []*ResourcePermission {
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
-
-	orgID, err := c.getOrgID(ctx, params.OrgParams)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -131,7 +130,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	for _, bp := range bucketPerms {
 		for _, p := range bp.perms {
 			// verify the input ID
-			if _, err := influxid.IDFromString(p); err != nil {
+			if err := influxid.Validate(p); err != nil {
 				return fmt.Errorf("invalid bucket ID '%s': %w (did you pass a bucket name instead of an ID?)", p, err)
 			}
 
@@ -307,8 +306,8 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	if params.OrgName != "" {
 		req.Org(params.OrgName)
 	}
-	if params.OrgID.Valid() {
-		req.OrgID(params.OrgID.String())
+	if params.OrgID != "" {
+		req.OrgID(params.OrgID)
 	}
 
 	auths, err := req.Execute()
@@ -453,8 +452,4 @@ func makePermResource(permType string, id string, orgId string) api.PermissionRe
 		pr.OrgID = &orgId
 	}
 	return pr
-}
-
-func (c Client) getOrgID(ctx context.Context, params clients.OrgParams) (string, error) {
-	return c.GetOrgIdI(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
 }

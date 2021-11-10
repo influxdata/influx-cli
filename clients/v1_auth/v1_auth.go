@@ -17,21 +17,21 @@ type Client struct {
 }
 
 type AuthLookupParams struct {
-	ID       influxid.ID
+	ID       string
 	Username string
 }
 
 func (p AuthLookupParams) Validate() (err error) {
-	if p.Username == "" && !p.ID.Valid() {
+	if p.Username == "" && p.ID == "" {
 		err = fmt.Errorf("id or username required")
-	} else if p.Username != "" && p.ID.Valid() {
+	} else if p.Username != "" && p.ID != "" {
 		err = fmt.Errorf("specify id or username, not both")
 	}
 	return
 }
 
 func (p AuthLookupParams) IsSet() bool {
-	return p.ID.Valid() || p.Username != ""
+	return p.ID != "" || p.Username != ""
 }
 
 type v1PrintOpts struct {
@@ -65,7 +65,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		return fmt.Errorf("only one of --password and --no-password may be specified")
 	}
 
-	orgID, err := c.getOrgID(ctx, params.OrgParams)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -101,7 +101,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	for _, bp := range bucketPerms {
 		for _, p := range bp.perms {
 			// verify the input ID
-			if _, err := influxid.IDFromString(p); err != nil {
+			if err := influxid.Validate(p); err != nil {
 				return fmt.Errorf("invalid bucket ID '%s': %w (did you pass a bucket name instead of an ID?)", p, err)
 			}
 
@@ -220,8 +220,8 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	if params.UserID != "" {
 		req = req.UserID(params.UserID)
 	}
-	if params.OrgID.Valid() {
-		req = req.OrgID(params.OrgID.String())
+	if params.OrgID != "" {
+		req = req.OrgID(params.OrgID)
 	}
 	if params.OrgName != "" {
 		req = req.Org(params.OrgName)
@@ -229,8 +229,8 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	if params.Username != "" {
 		req = req.Token(params.Username)
 	}
-	if params.ID.Valid() {
-		req = req.AuthID(params.ID.String())
+	if params.ID != "" {
+		req = req.AuthID(params.ID)
 	}
 
 	auths, err := req.Execute()
@@ -388,8 +388,8 @@ func (c Client) printV1Tokens(params *v1PrintOpts) error {
 }
 
 func (c Client) getAuthReqID(ctx context.Context, params *AuthLookupParams) (id string, err error) {
-	if params.ID.Valid() {
-		id = params.ID.String()
+	if params.ID != "" {
+		id = params.ID
 	} else {
 		var auths api.Authorizations
 		auths, err = c.LegacyAuthorizationsApi.GetLegacyAuthorizations(ctx).Token(params.Username).Execute()
@@ -400,8 +400,4 @@ func (c Client) getAuthReqID(ctx context.Context, params *AuthLookupParams) (id 
 		}
 	}
 	return
-}
-
-func (c Client) getOrgID(ctx context.Context, params clients.OrgParams) (string, error) {
-	return c.GetOrgIdI(ctx, params.OrgID, params.OrgName, c.OrganizationsApi)
 }

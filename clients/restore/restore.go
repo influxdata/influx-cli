@@ -40,8 +40,7 @@ type Params struct {
 
 	// Original ID/name of the organization to restore.
 	// If not set, all orgs will be restored.
-	OrgID string
-	Org   string
+	clients.OrgParams
 
 	// New name to use for the restored organization.
 	// If not set, the org will be restored using its backed-up name.
@@ -49,8 +48,7 @@ type Params struct {
 
 	// Original ID/name of the bucket to restore.
 	// If not set, all buckets within the org filter will be restored.
-	BucketID string
-	Bucket   string
+	clients.BucketParams
 
 	// New name to use for the restored bucket.
 	// If not set, the bucket will be restored using its backed-up name.
@@ -65,13 +63,13 @@ func (p *Params) matches(bkt br.ManifestBucketEntry) bool {
 	if p.OrgID != "" && bkt.OrganizationID != p.OrgID {
 		return false
 	}
-	if p.Org != "" && bkt.OrganizationName != p.Org {
+	if p.OrgName != "" && bkt.OrganizationName != p.OrgName {
 		return false
 	}
 	if p.BucketID != "" && bkt.BucketID != p.BucketID {
 		return false
 	}
-	if p.Bucket != "" && bkt.BucketName != p.Bucket {
+	if p.BucketName != "" && bkt.BucketName != p.BucketName {
 		return false
 	}
 	return true

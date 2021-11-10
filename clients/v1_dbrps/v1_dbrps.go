@@ -29,18 +29,18 @@ type ListParams struct {
 }
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
+	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return clients.ErrMustSpecifyOrg
 	}
 
 	req := c.GetDBRPs(ctx)
-	if params.OrgID.Valid() {
-		req = req.OrgID(params.OrgID.String())
+	if params.OrgID != "" {
+		req = req.OrgID(params.OrgID)
 	}
 	if params.OrgName != "" {
 		req = req.Org(params.OrgName)
 	}
-	if !params.OrgID.Valid() && params.OrgName == "" {
+	if params.OrgID == "" && params.OrgName == "" {
 		req = req.Org(c.ActiveConfig.Org)
 	}
 
@@ -83,34 +83,16 @@ type CreateParams struct {
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
+	orgId, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	reqBody := api.DBRPCreate{
+		OrgID:           &orgId,
 		BucketID:        params.BucketID,
 		Database:        params.DB,
 		RetentionPolicy: params.RP,
-	}
-
-	// For compatibility with the cloud API for creating a DBRP, an org ID must be
-	// provided. The ID will be obtained based on the org name if an
-	// org name is provided but no ID is.
-	if params.OrgID.Valid() {
-		reqBody.OrgID = api.PtrString(params.OrgID.String())
-	} else {
-		orgName := params.OrgName
-		if orgName == "" {
-			orgName = c.ActiveConfig.Org
-		}
-		res, err := c.GetOrgs(ctx).Org(orgName).Execute()
-		if err != nil {
-			return fmt.Errorf("failed to look up ID for org %q: %w", orgName, err)
-		}
-		if len(res.GetOrgs()) == 0 {
-			return fmt.Errorf("no org found with name %q", orgName)
-		}
-		reqBody.OrgID = api.PtrString(res.GetOrgs()[0].GetId())
 	}
 
 	dbrp, err := c.PostDBRP(ctx).DBRPCreate(reqBody).Execute()
@@ -131,7 +113,7 @@ type UpdateParams struct {
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
+	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return clients.ErrMustSpecifyOrg
 	}
 
@@ -144,13 +126,13 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	}
 
 	req := c.PatchDBRPID(ctx, params.ID)
-	if params.OrgID.Valid() {
-		req = req.OrgID(params.OrgID.String())
+	if params.OrgID != "" {
+		req = req.OrgID(params.OrgID)
 	}
 	if params.OrgName != "" {
 		req = req.Org(params.OrgName)
 	}
-	if !params.OrgID.Valid() && params.OrgName == "" {
+	if params.OrgID == "" && params.OrgName == "" {
 		req = req.Org(c.ActiveConfig.Org)
 	}
 
@@ -171,7 +153,7 @@ type DeleteParams struct {
 }
 
 func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
+	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return clients.ErrMustSpecifyOrg
 	}
 
@@ -182,15 +164,15 @@ func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
 
 	// The org name or ID must be set on requests for OSS because of how the OSS
 	// authorization mechanism currently works.
-	if params.OrgID.Valid() {
-		getReq = getReq.OrgID(params.OrgID.String())
-		deleteReq = deleteReq.OrgID(params.OrgID.String())
+	if params.OrgID != "" {
+		getReq = getReq.OrgID(params.OrgID)
+		deleteReq = deleteReq.OrgID(params.OrgID)
 	}
 	if params.OrgName != "" {
 		getReq = getReq.Org(params.OrgName)
 		deleteReq = deleteReq.Org(params.OrgName)
 	}
-	if !params.OrgID.Valid() && params.OrgName == "" {
+	if params.OrgID == "" && params.OrgName == "" {
 		getReq = getReq.Org(c.ActiveConfig.Org)
 		deleteReq = deleteReq.Org(c.ActiveConfig.Org)
 	}

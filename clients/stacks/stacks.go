@@ -18,19 +18,14 @@ type Client struct {
 }
 
 type ListParams struct {
-	OrgId   string
-	OrgName string
+	clients.OrgParams
 
 	StackIds   []string
 	StackNames []string
 }
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
-	if params.OrgId == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-
-	orgId, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	orgId, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -44,8 +39,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 }
 
 type InitParams struct {
-	OrgId   string
-	OrgName string
+	clients.OrgParams
 
 	Name        string
 	Description string
@@ -53,11 +47,7 @@ type InitParams struct {
 }
 
 func (c Client) Init(ctx context.Context, params *InitParams) error {
-	if params.OrgId == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-
-	orgId, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	orgId, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -80,19 +70,14 @@ func (c Client) Init(ctx context.Context, params *InitParams) error {
 }
 
 type RemoveParams struct {
-	OrgId   string
-	OrgName string
+	clients.OrgParams
 
 	Ids   []string
 	Force bool
 }
 
 func (c Client) Remove(ctx context.Context, params *RemoveParams) error {
-	if params.OrgId == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-
-	orgId, err := c.GetOrgId(ctx, params.OrgId, params.OrgName, c.OrganizationsApi)
+	orgId, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
