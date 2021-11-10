@@ -46,6 +46,16 @@ func helpText(perm string) struct{ readHelp, writeHelp string } {
 	return help
 }
 
+func hidden(perm string) bool {
+	var hiddenTypes = map[string]struct{}{
+		"functions":    {},
+		"remotes":      {},
+		"replications": {},
+	}
+	_, ok := hiddenTypes[perm]
+	return ok
+}
+
 func newCreateCommand() cli.Command {
 	var params auth.CreateParams
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
@@ -96,11 +106,13 @@ func newCreateCommand() cli.Command {
 				Name:        "read-" + perm.Name,
 				Usage:       help.readHelp + ossVsCloud,
 				Destination: &perm.Read,
+				Hidden:      hidden(perm.Name),
 			},
 			&cli.BoolFlag{
 				Name:        "write-" + perm.Name,
 				Usage:       help.writeHelp + ossVsCloud,
 				Destination: &perm.Write,
+				Hidden:      hidden(perm.Name),
 			})
 	}
 
@@ -119,7 +131,7 @@ func newCreateCommand() cli.Command {
 				AuthorizationsApi: api.AuthorizationsApi,
 				UsersApi:          api.UsersApi,
 				OrganizationsApi:  api.OrganizationsApi,
-				ResourceListApi:   api.ResourceListApi,
+				ResourcesApi:      api.ResourcesApi,
 			}
 			return client.Create(getContext(ctx), &params)
 		},

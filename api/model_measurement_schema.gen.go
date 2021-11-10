@@ -17,8 +17,12 @@ import (
 
 // MeasurementSchema The schema definition for a single measurement
 type MeasurementSchema struct {
-	Id   string `json:"id" yaml:"id"`
-	Name string `json:"name" yaml:"name"`
+	Id string `json:"id" yaml:"id"`
+	// ID of organization that the measurement schema is associated with.
+	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
+	// ID of the bucket that the measurement schema is associated with.
+	BucketID *string `json:"bucketID,omitempty" yaml:"bucketID,omitempty"`
+	Name     string  `json:"name" yaml:"name"`
 	// An ordered collection of column definitions
 	Columns   []MeasurementSchemaColumn `json:"columns" yaml:"columns"`
 	CreatedAt time.Time                 `json:"createdAt" yaml:"createdAt"`
@@ -69,6 +73,70 @@ func (o *MeasurementSchema) GetIdOk() (*string, bool) {
 // SetId sets field value
 func (o *MeasurementSchema) SetId(v string) {
 	o.Id = v
+}
+
+// GetOrgID returns the OrgID field value if set, zero value otherwise.
+func (o *MeasurementSchema) GetOrgID() string {
+	if o == nil || o.OrgID == nil {
+		var ret string
+		return ret
+	}
+	return *o.OrgID
+}
+
+// GetOrgIDOk returns a tuple with the OrgID field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *MeasurementSchema) GetOrgIDOk() (*string, bool) {
+	if o == nil || o.OrgID == nil {
+		return nil, false
+	}
+	return o.OrgID, true
+}
+
+// HasOrgID returns a boolean if a field has been set.
+func (o *MeasurementSchema) HasOrgID() bool {
+	if o != nil && o.OrgID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetOrgID gets a reference to the given string and assigns it to the OrgID field.
+func (o *MeasurementSchema) SetOrgID(v string) {
+	o.OrgID = &v
+}
+
+// GetBucketID returns the BucketID field value if set, zero value otherwise.
+func (o *MeasurementSchema) GetBucketID() string {
+	if o == nil || o.BucketID == nil {
+		var ret string
+		return ret
+	}
+	return *o.BucketID
+}
+
+// GetBucketIDOk returns a tuple with the BucketID field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *MeasurementSchema) GetBucketIDOk() (*string, bool) {
+	if o == nil || o.BucketID == nil {
+		return nil, false
+	}
+	return o.BucketID, true
+}
+
+// HasBucketID returns a boolean if a field has been set.
+func (o *MeasurementSchema) HasBucketID() bool {
+	if o != nil && o.BucketID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetBucketID gets a reference to the given string and assigns it to the BucketID field.
+func (o *MeasurementSchema) SetBucketID(v string) {
+	o.BucketID = &v
 }
 
 // GetName returns the Name field value
@@ -171,6 +239,12 @@ func (o MeasurementSchema) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
 		toSerialize["id"] = o.Id
+	}
+	if o.OrgID != nil {
+		toSerialize["orgID"] = o.OrgID
+	}
+	if o.BucketID != nil {
+		toSerialize["bucketID"] = o.BucketID
 	}
 	if true {
 		toSerialize["name"] = o.Name

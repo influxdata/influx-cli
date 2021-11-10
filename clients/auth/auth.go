@@ -15,7 +15,7 @@ type Client struct {
 	api.AuthorizationsApi
 	api.UsersApi
 	api.OrganizationsApi
-	api.ResourceListApi
+	api.ResourcesApi
 }
 
 const (
