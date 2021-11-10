@@ -25,7 +25,7 @@ func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor 
 	if labels := summary.Labels; len(labels) > 0 {
 		printer := newPrinter("LABELS", []string{"Description", "Color"})
 		for _, l := range labels {
-			id := influxid.ID(l.Id).String()
+			id := influxid.Encode(l.Id)
 			var desc string
 			if l.Properties.Description != nil {
 				desc = *l.Properties.Description
@@ -39,7 +39,7 @@ func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor 
 	if buckets := summary.Buckets; len(buckets) > 0 {
 		printer := newPrinter("BUCKETS", []string{"Retention", "Description", "Schema Type"})
 		for _, b := range buckets {
-			id := influxid.ID(b.Id).String()
+			id := influxid.Encode(b.Id)
 			var desc string
 			if b.Description != nil {
 				desc = *b.Description
@@ -61,7 +61,7 @@ func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor 
 	if checks := summary.Checks; len(checks) > 0 {
 		printer := newPrinter("CHECKS", []string{"Description"})
 		for _, c := range checks {
-			id := influxid.ID(c.Id).String()
+			id := influxid.Encode(c.Id)
 			var desc string
 			if c.Description != nil {
 				desc = *c.Description
@@ -75,7 +75,7 @@ func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor 
 	if dashboards := summary.Dashboards; len(dashboards) > 0 {
 		printer := newPrinter("DASHBOARDS", []string{"Description"})
 		for _, d := range dashboards {
-			id := influxid.ID(d.Id).String()
+			id := influxid.Encode(d.Id)
 			var desc string
 			if d.Description != nil {
 				desc = *d.Description
@@ -89,7 +89,7 @@ func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor 
 	if endpoints := summary.NotificationEndpoints; len(endpoints) > 0 {
 		printer := newPrinter("NOTIFICATION ENDPOINTS", []string{"Description", "Status"})
 		for _, e := range endpoints {
-			id := influxid.ID(e.Id).String()
+			id := influxid.Encode(e.Id)
 			var desc string
 			if e.Description != nil {
 				desc = *e.Description
@@ -103,8 +103,8 @@ func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor 
 	if rules := summary.NotificationRules; len(rules) > 0 {
 		printer := newPrinter("NOTIFICATION RULES", []string{"Description", "Every", "Offset", "Endpoint Name", "Endpoint ID", "Endpoint Type"})
 		for _, r := range rules {
-			id := influxid.ID(r.Id).String()
-			eid := influxid.ID(r.EndpointID).String()
+			id := influxid.Encode(r.Id)
+			eid := influxid.Encode(r.EndpointID)
 			var desc string
 			if r.Description != nil {
 				desc = *r.Description
@@ -118,7 +118,7 @@ func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor 
 	if tasks := summary.Tasks; len(tasks) > 0 {
 		printer := newPrinter("TASKS", []string{"Description", "Cycle"})
 		for _, t := range tasks {
-			id := influxid.ID(t.Id).String()
+			id := influxid.Encode(t.Id)
 			var desc string
 			if t.Description != nil {
 				desc = *t.Description
@@ -156,7 +156,7 @@ func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor 
 	if vars := summary.Variables; len(vars) > 0 {
 		printer := newPrinter("VARIABLES", []string{"Description", "Arg Type", "Arg Values"})
 		for _, v := range vars {
-			id := influxid.ID(v.Id).String()
+			id := influxid.Encode(v.Id)
 			var desc string
 			if v.Description != nil {
 				desc = *v.Description
@@ -176,8 +176,8 @@ func PrintSummary(summary api.TemplateSummaryResources, out io.Writer, useColor 
 			Title("LABEL ASSOCIATIONS").
 			SetHeaders("Resource Type", "Resource Name", "Resource ID", "Label Name", "Label ID")
 		for _, m := range mappings {
-			rid := influxid.ID(m.ResourceID).String()
-			lid := influxid.ID(m.LabelID).String()
+			rid := influxid.Encode(m.ResourceID)
+			lid := influxid.Encode(m.LabelID)
 			printer.Append([]string{m.ResourceType, m.ResourceName, rid, m.LabelName, lid})
 		}
 		printer.Render()

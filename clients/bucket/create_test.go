@@ -252,7 +252,7 @@ func TestBucketsCreate(t *testing.T) {
 				orgApi.EXPECT().GetOrgs(gomock.Any()).Return(api.ApiGetOrgsRequest{ApiService: orgApi})
 				orgApi.EXPECT().GetOrgsExecute(gomock.Any()).Return(api.Organizations{}, nil)
 			},
-			expectedInErr: "no organization found",
+			expectedInErr: "no organization with name \"fake-org\"",
 		},
 	}
 
