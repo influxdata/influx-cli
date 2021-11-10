@@ -10,10 +10,10 @@ import (
 // and can specify to require one but not both.
 func getAuthLookupFlags(params *v1_auth.AuthLookupParams) []cli.Flag {
 	return []cli.Flag{
-		&cli.GenericFlag{
-			Name:  "id",
-			Usage: "The ID of the authorization",
-			Value: &params.ID,
+		&cli.StringFlag{
+			Name:        "id",
+			Usage:       "The ID of the authorization",
+			Destination: &params.ID,
 		},
 		&cli.StringFlag{
 			Name:        "username",

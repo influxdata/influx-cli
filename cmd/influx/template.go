@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/template"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	pkgtmpl "github.com/influxdata/influx-cli/v2/pkg/template"
@@ -13,28 +14,15 @@ import (
 )
 
 type templateParams struct {
-	orgId    string
-	orgName  string
-	files    cli.StringSlice
-	urls     cli.StringSlice
-	recurse  bool
-	encoding pkgtmpl.Encoding
+	orgParams clients.OrgParams
+	files     cli.StringSlice
+	urls      cli.StringSlice
+	recurse   bool
+	encoding  pkgtmpl.Encoding
 }
 
 func templateFlags(params *templateParams) []cli.Flag {
-	return []cli.Flag{
-		&cli.StringFlag{
-			Name:        "org-id",
-			Usage:       "The ID of the organization",
-			EnvVar:      "INFLUX_ORG_ID",
-			Destination: &params.orgId,
-		},
-		&cli.StringFlag{
-			Name:        "org, o",
-			Usage:       "The name of the organization",
-			EnvVar:      "INFLUX_ORG",
-			Destination: &params.orgName,
-		},
+	return append(getOrgFlags(&params.orgParams), []cli.Flag{
 		&cli.StringSliceFlag{
 			Name:      "file, f",
 			Usage:     "Path to template file; Supports file paths or (deprecated) HTTP(S) URLs",
@@ -56,7 +44,7 @@ func templateFlags(params *templateParams) []cli.Flag {
 			Usage: "Encoding for the input stream. If a file is provided will gather encoding type from file extension. If extension provided will override.",
 			Value: &params.encoding,
 		},
-	}
+	}...)
 }
 
 func (params templateParams) parseSources() ([]pkgtmpl.Source, error) {
@@ -121,8 +109,7 @@ func newTemplateCmd() cli.Command {
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			parsedParams := template.SummarizeParams{
-				OrgId:              params.orgId,
-				OrgName:            params.orgName,
+				OrgParams:          params.orgParams,
 				RenderTableColors:  !params.noColor,
 				RenderTableBorders: !params.noTableBorders,
 			}
@@ -152,8 +139,7 @@ func newTemplateValidateCmd() cli.Command {
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			parsedParams := template.ValidateParams{
-				OrgId:   params.orgId,
-				OrgName: params.orgName,
+				OrgParams: params.orgParams,
 			}
 			sources, err := params.parseSources()
 			if err != nil {

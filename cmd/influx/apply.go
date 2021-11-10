@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/apply"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/template"
@@ -16,8 +17,7 @@ import (
 
 func newApplyCmd() cli.Command {
 	var params struct {
-		orgId          string
-		orgName        string
+		orgParams      clients.OrgParams
 		stackId        string
 		inPaths        cli.StringSlice
 		inUrls         cli.StringSlice
@@ -89,19 +89,7 @@ For more templates created by the community, see
 https://github.com/influxdata/community-templates.
 `,
 		Flags: append(
-			commonFlags(),
-			&cli.StringFlag{
-				Name:        "org-id",
-				Usage:       "The ID of the organization",
-				EnvVar:      "INFLUX_ORG_ID",
-				Destination: &params.orgId,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.orgName,
-			},
+			append(commonFlags(), getOrgFlags(&params.orgParams)...),
 			&cli.StringFlag{
 				Name:        "stack-id",
 				Usage:       "Stack ID to associate with template application",
@@ -167,8 +155,7 @@ https://github.com/influxdata/community-templates.
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			parsedParams := apply.Params{
-				OrgId:              params.orgId,
-				OrgName:            params.orgName,
+				OrgParams:          params.orgParams,
 				StackId:            params.stackId,
 				Recursive:          params.recursive,
 				Quiet:              params.quiet,

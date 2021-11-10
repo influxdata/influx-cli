@@ -38,19 +38,7 @@ For information about Stacks and how they integrate with InfluxDB templates, see
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/stacks/`,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
-			commonFlags(),
-			&cli.StringFlag{
-				Name:        "org-id",
-				Usage:       "The ID of the organization",
-				EnvVar:      "INFLUX_ORG_ID",
-				Destination: &params.OrgId,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.OrgName,
-			},
+			append(commonFlags(), getOrgFlags(&params.OrgParams)...),
 			&cli.StringSliceFlag{
 				Name:  "stack-id",
 				Usage: "Stack ID to filter by",
@@ -103,19 +91,7 @@ and
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/stacks/init/`,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
-			commonFlags(),
-			&cli.StringFlag{
-				Name:        "org-id",
-				Usage:       "The ID of the organization",
-				EnvVar:      "INFLUX_ORG_ID",
-				Destination: &params.OrgId,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.OrgName,
-			},
+			append(commonFlags(), getOrgFlags(&params.OrgParams)...),
 			&cli.StringFlag{
 				Name:        "stack-name, n",
 				Usage:       "Name given to created stack",
@@ -152,19 +128,7 @@ func newStacksRemoveCmd() cli.Command {
 		Usage:   "Remove a stack(s) and all associated resources",
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
-			commonFlags(),
-			&cli.StringFlag{
-				Name:        "org-id",
-				Usage:       "The ID of the organization",
-				EnvVar:      "INFLUX_ORG_ID",
-				Destination: &params.OrgId,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.OrgName,
-			},
+			append(commonFlags(), getOrgFlags(&params.OrgParams)...),
 			&cli.StringSliceFlag{
 				Name:     "stack-id",
 				Usage:    "Stack IDs to be removed",

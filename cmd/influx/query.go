@@ -19,19 +19,7 @@ func newQueryCmd() cli.Command {
 		ArgsUsage:   "[query literal or '-' for stdin]",
 		Before:      middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
-			commonFlagsNoPrint(),
-			&cli.GenericFlag{
-				Name:   "org-id",
-				Usage:  "The ID of the organization",
-				EnvVar: "INFLUX_ORG_ID",
-				Value:  &orgParams.OrgID,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &orgParams.OrgName,
-			},
+			append(commonFlagsNoPrint(), getOrgFlags(&orgParams)...),
 			&cli.StringFlag{
 				Name:      "file, f",
 				Usage:     "Path to Flux query file",
