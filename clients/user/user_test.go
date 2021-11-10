@@ -14,14 +14,13 @@ import (
 	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
-var id1, _ = influxid.IDFromString("1111111111111111")
-var id2, _ = influxid.IDFromString("2222222222222222")
+var id1 = "1111111111111111"
+var id2 = "2222222222222222"
 
 func TestClient_Create(t *testing.T) {
 	t.Parallel()
@@ -52,27 +51,27 @@ func TestClient_Create(t *testing.T) {
 				userApi.EXPECT().PostUsersExecute(tmock.MatchedBy(func(in api.ApiPostUsersRequest) bool {
 					body := in.GetUser()
 					return assert.NotNil(t, body) && assert.Equal(t, "my-user", body.GetName())
-				})).Return(api.UserResponse{Id: api.PtrString(id2.String()), Name: "my-user"}, nil)
+				})).Return(api.UserResponse{Id: api.PtrString(id2), Name: "my-user"}, nil)
 
-				userApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
-					Return(api.ApiPostUsersIDPasswordRequest{ApiService: userApi}.UserID(id2.String()))
+				userApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2)).
+					Return(api.ApiPostUsersIDPasswordRequest{ApiService: userApi}.UserID(id2))
 				userApi.EXPECT().
 					PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
 						body := in.GetPasswordResetBody()
 						return assert.NotNil(t, body) &&
-							assert.Equal(t, id2.String(), in.GetUserID()) &&
+							assert.Equal(t, id2, in.GetUserID()) &&
 							assert.Equal(t, "my-password", body.GetPassword())
 					})).Return(nil)
 			},
 			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).
-					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String()))
+				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).
+					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1))
 				orgApi.EXPECT().PostOrgsIDMembersExecute(tmock.MatchedBy(func(in api.ApiPostOrgsIDMembersRequest) bool {
 					body := in.GetAddResourceMemberRequestBody()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id1.String(), in.GetOrgID()) &&
-						assert.Equal(t, id2.String(), body.GetId())
-				})).Return(api.ResourceMember{Id: api.PtrString(id2.String())}, nil)
+						assert.Equal(t, id1, in.GetOrgID()) &&
+						assert.Equal(t, id2, body.GetId())
+				})).Return(api.ResourceMember{Id: api.PtrString(id2)}, nil)
 			},
 			expectedOut: `2222222222222222\s+my-user`,
 		},
@@ -91,15 +90,15 @@ func TestClient_Create(t *testing.T) {
 				userApi.EXPECT().PostUsersExecute(tmock.MatchedBy(func(in api.ApiPostUsersRequest) bool {
 					body := in.GetUser()
 					return assert.NotNil(t, body) && assert.Equal(t, "my-user", body.GetName())
-				})).Return(api.UserResponse{Id: api.PtrString(id2.String()), Name: "my-user"}, nil)
+				})).Return(api.UserResponse{Id: api.PtrString(id2), Name: "my-user"}, nil)
 
-				userApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
-					Return(api.ApiPostUsersIDPasswordRequest{ApiService: userApi}.UserID(id2.String()))
+				userApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2)).
+					Return(api.ApiPostUsersIDPasswordRequest{ApiService: userApi}.UserID(id2))
 				userApi.EXPECT().
 					PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
 						body := in.GetPasswordResetBody()
 						return assert.NotNil(t, body) &&
-							assert.Equal(t, id2.String(), in.GetUserID()) &&
+							assert.Equal(t, id2, in.GetUserID()) &&
 							assert.Equal(t, "my-password", body.GetPassword())
 					})).Return(nil)
 			},
@@ -107,16 +106,16 @@ func TestClient_Create(t *testing.T) {
 				orgApi.EXPECT().GetOrgs(gomock.Any()).Return(api.ApiGetOrgsRequest{ApiService: orgApi})
 				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
 					return assert.Equal(t, "my-org", *in.GetOrg())
-				})).Return(api.Organizations{Orgs: &[]api.Organization{{Id: api.PtrString(id1.String())}}}, nil)
+				})).Return(api.Organizations{Orgs: &[]api.Organization{{Id: api.PtrString(id1)}}}, nil)
 
-				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).
-					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String()))
+				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).
+					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1))
 				orgApi.EXPECT().PostOrgsIDMembersExecute(tmock.MatchedBy(func(in api.ApiPostOrgsIDMembersRequest) bool {
 					body := in.GetAddResourceMemberRequestBody()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id1.String(), in.GetOrgID()) &&
-						assert.Equal(t, id2.String(), body.GetId())
-				})).Return(api.ResourceMember{Id: api.PtrString(id2.String())}, nil)
+						assert.Equal(t, id1, in.GetOrgID()) &&
+						assert.Equal(t, id2, body.GetId())
+				})).Return(api.ResourceMember{Id: api.PtrString(id2)}, nil)
 			},
 			expectedOut: `2222222222222222\s+my-user`,
 		},
@@ -132,15 +131,15 @@ func TestClient_Create(t *testing.T) {
 				userApi.EXPECT().PostUsersExecute(tmock.MatchedBy(func(in api.ApiPostUsersRequest) bool {
 					body := in.GetUser()
 					return assert.NotNil(t, body) && assert.Equal(t, "my-user", body.GetName())
-				})).Return(api.UserResponse{Id: api.PtrString(id2.String()), Name: "my-user"}, nil)
+				})).Return(api.UserResponse{Id: api.PtrString(id2), Name: "my-user"}, nil)
 
-				userApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
-					Return(api.ApiPostUsersIDPasswordRequest{ApiService: userApi}.UserID(id2.String()))
+				userApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2)).
+					Return(api.ApiPostUsersIDPasswordRequest{ApiService: userApi}.UserID(id2))
 				userApi.EXPECT().
 					PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
 						body := in.GetPasswordResetBody()
 						return assert.NotNil(t, body) &&
-							assert.Equal(t, id2.String(), in.GetUserID()) &&
+							assert.Equal(t, id2, in.GetUserID()) &&
 							assert.Equal(t, "my-password", body.GetPassword())
 					})).Return(nil)
 			},
@@ -148,16 +147,16 @@ func TestClient_Create(t *testing.T) {
 				orgApi.EXPECT().GetOrgs(gomock.Any()).Return(api.ApiGetOrgsRequest{ApiService: orgApi})
 				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
 					return assert.Equal(t, "my-default-org", *in.GetOrg())
-				})).Return(api.Organizations{Orgs: &[]api.Organization{{Id: api.PtrString(id1.String())}}}, nil)
+				})).Return(api.Organizations{Orgs: &[]api.Organization{{Id: api.PtrString(id1)}}}, nil)
 
-				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).
-					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String()))
+				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).
+					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1))
 				orgApi.EXPECT().PostOrgsIDMembersExecute(tmock.MatchedBy(func(in api.ApiPostOrgsIDMembersRequest) bool {
 					body := in.GetAddResourceMemberRequestBody()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id1.String(), in.GetOrgID()) &&
-						assert.Equal(t, id2.String(), body.GetId())
-				})).Return(api.ResourceMember{Id: api.PtrString(id2.String())}, nil)
+						assert.Equal(t, id1, in.GetOrgID()) &&
+						assert.Equal(t, id2, body.GetId())
+				})).Return(api.ResourceMember{Id: api.PtrString(id2)}, nil)
 			},
 			expectedOut: `2222222222222222\s+my-user`,
 		},
@@ -175,17 +174,17 @@ func TestClient_Create(t *testing.T) {
 				userApi.EXPECT().PostUsersExecute(tmock.MatchedBy(func(in api.ApiPostUsersRequest) bool {
 					body := in.GetUser()
 					return assert.NotNil(t, body) && assert.Equal(t, "my-user", body.GetName())
-				})).Return(api.UserResponse{Id: api.PtrString(id2.String()), Name: "my-user"}, nil)
+				})).Return(api.UserResponse{Id: api.PtrString(id2), Name: "my-user"}, nil)
 			},
 			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).
-					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String()))
+				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).
+					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1))
 				orgApi.EXPECT().PostOrgsIDMembersExecute(tmock.MatchedBy(func(in api.ApiPostOrgsIDMembersRequest) bool {
 					body := in.GetAddResourceMemberRequestBody()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id1.String(), in.GetOrgID()) &&
-						assert.Equal(t, id2.String(), body.GetId())
-				})).Return(api.ResourceMember{Id: api.PtrString(id2.String())}, nil)
+						assert.Equal(t, id1, in.GetOrgID()) &&
+						assert.Equal(t, id2, body.GetId())
+				})).Return(api.ResourceMember{Id: api.PtrString(id2)}, nil)
 			},
 			expectedOut:    `2222222222222222\s+my-user`,
 			expectedStderr: `initial password not set`,
@@ -228,16 +227,16 @@ func TestClient_Create(t *testing.T) {
 				userApi.EXPECT().PostUsersExecute(tmock.MatchedBy(func(in api.ApiPostUsersRequest) bool {
 					body := in.GetUser()
 					return assert.NotNil(t, body) && assert.Equal(t, "my-user", body.GetName())
-				})).Return(api.UserResponse{Id: api.PtrString(id2.String()), Name: "my-user"}, nil)
+				})).Return(api.UserResponse{Id: api.PtrString(id2), Name: "my-user"}, nil)
 			},
 			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).
-					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String()))
+				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).
+					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1))
 				orgApi.EXPECT().PostOrgsIDMembersExecute(tmock.MatchedBy(func(in api.ApiPostOrgsIDMembersRequest) bool {
 					body := in.GetAddResourceMemberRequestBody()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id1.String(), in.GetOrgID()) &&
-						assert.Equal(t, id2.String(), body.GetId())
+						assert.Equal(t, id1, in.GetOrgID()) &&
+						assert.Equal(t, id2, body.GetId())
 				})).Return(api.ResourceMember{}, errors.New("I broke"))
 			},
 			expectedOut:    `2222222222222222\s+my-user`,
@@ -259,27 +258,27 @@ func TestClient_Create(t *testing.T) {
 				userApi.EXPECT().PostUsersExecute(tmock.MatchedBy(func(in api.ApiPostUsersRequest) bool {
 					body := in.GetUser()
 					return assert.NotNil(t, body) && assert.Equal(t, "my-user", body.GetName())
-				})).Return(api.UserResponse{Id: api.PtrString(id2.String()), Name: "my-user"}, nil)
+				})).Return(api.UserResponse{Id: api.PtrString(id2), Name: "my-user"}, nil)
 
-				userApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
-					Return(api.ApiPostUsersIDPasswordRequest{ApiService: userApi}.UserID(id2.String()))
+				userApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2)).
+					Return(api.ApiPostUsersIDPasswordRequest{ApiService: userApi}.UserID(id2))
 				userApi.EXPECT().
 					PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
 						body := in.GetPasswordResetBody()
 						return assert.NotNil(t, body) &&
-							assert.Equal(t, id2.String(), in.GetUserID()) &&
+							assert.Equal(t, id2, in.GetUserID()) &&
 							assert.Equal(t, "my-password", body.GetPassword())
 					})).Return(errors.New("I broke"))
 			},
 			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).
-					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String()))
+				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).
+					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1))
 				orgApi.EXPECT().PostOrgsIDMembersExecute(tmock.MatchedBy(func(in api.ApiPostOrgsIDMembersRequest) bool {
 					body := in.GetAddResourceMemberRequestBody()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id1.String(), in.GetOrgID()) &&
-						assert.Equal(t, id2.String(), body.GetId())
-				})).Return(api.ResourceMember{Id: api.PtrString(id2.String())}, nil)
+						assert.Equal(t, id1, in.GetOrgID()) &&
+						assert.Equal(t, id2, body.GetId())
+				})).Return(api.ResourceMember{Id: api.PtrString(id2)}, nil)
 			},
 			expectedOut: `2222222222222222\s+my-user`,
 			expectedErr: "I broke",
@@ -358,14 +357,14 @@ func TestClient_Delete(t *testing.T) {
 
 			cli := user.Client{CLI: clients.CLI{StdIO: stdio}, UsersApi: userApi}
 
-			getReq := api.ApiGetUsersIDRequest{ApiService: userApi}.UserID(id2.String())
-			userApi.EXPECT().GetUsersID(gomock.Any(), gomock.Eq(id2.String())).Return(getReq)
+			getReq := api.ApiGetUsersIDRequest{ApiService: userApi}.UserID(id2)
+			userApi.EXPECT().GetUsersID(gomock.Any(), gomock.Eq(id2)).Return(getReq)
 			userApi.EXPECT().GetUsersIDExecute(gomock.Eq(getReq)).
 				DoAndReturn(func(api.ApiGetUsersIDRequest) (api.UserResponse, error) {
 					if tc.notFound {
 						return api.UserResponse{}, &api.Error{Code: api.ERRORCODE_NOT_FOUND}
 					}
-					return api.UserResponse{Id: api.PtrString(id2.String()), Name: "my-user"}, nil
+					return api.UserResponse{Id: api.PtrString(id2), Name: "my-user"}, nil
 				})
 
 			if tc.notFound {
@@ -374,8 +373,8 @@ func TestClient_Delete(t *testing.T) {
 				return
 			}
 
-			delReq := api.ApiDeleteUsersIDRequest{ApiService: userApi}.UserID(id2.String())
-			userApi.EXPECT().DeleteUsersID(gomock.Any(), gomock.Eq(id2.String())).Return(delReq)
+			delReq := api.ApiDeleteUsersIDRequest{ApiService: userApi}.UserID(id2)
+			userApi.EXPECT().DeleteUsersID(gomock.Any(), gomock.Eq(id2)).Return(delReq)
 			userApi.EXPECT().DeleteUsersIDExecute(delReq).Return(nil)
 
 			err := cli.Delete(context.Background(), id2)
@@ -438,10 +437,10 @@ func TestClient_List(t *testing.T) {
 			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
 				usersApi.EXPECT().GetUsers(gomock.Any()).Return(api.ApiGetUsersRequest{ApiService: usersApi})
 				usersApi.EXPECT().GetUsersExecute(tmock.MatchedBy(func(in api.ApiGetUsersRequest) bool {
-					return assert.Equal(t, id2.String(), *in.GetId()) && assert.Nil(t, in.GetName())
+					return assert.Equal(t, id2, *in.GetId()) && assert.Nil(t, in.GetName())
 				})).Return(api.Users{
 					Users: &[]api.UserResponse{
-						{Id: api.PtrString(id2.String()), Name: "user11"},
+						{Id: api.PtrString(id2), Name: "user11"},
 					},
 				}, nil)
 			},
@@ -477,21 +476,21 @@ func TestClient_Update(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	userApi := mock.NewMockUsersApi(ctrl)
-	userApi.EXPECT().PatchUsersID(gomock.Any(), gomock.Eq(id2.String())).
-		Return(api.ApiPatchUsersIDRequest{ApiService: userApi}.UserID(id2.String()))
+	userApi.EXPECT().PatchUsersID(gomock.Any(), gomock.Eq(id2)).
+		Return(api.ApiPatchUsersIDRequest{ApiService: userApi}.UserID(id2))
 	userApi.EXPECT().PatchUsersIDExecute(tmock.MatchedBy(func(in api.ApiPatchUsersIDRequest) bool {
 		body := in.GetUser()
 		return assert.NotNil(t, body) &&
-			assert.Equal(t, id2.String(), in.GetUserID()) &&
+			assert.Equal(t, id2, in.GetUserID()) &&
 			assert.Equal(t, newName, body.GetName())
-	})).Return(api.UserResponse{Id: api.PtrString(id2.String()), Name: newName}, nil)
+	})).Return(api.UserResponse{Id: api.PtrString(id2), Name: newName}, nil)
 
 	stdout := bytes.Buffer{}
 	stdio := mock.NewMockStdIO(ctrl)
 	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(stdout.Write).AnyTimes()
 
 	cli := user.Client{CLI: clients.CLI{StdIO: stdio}, UsersApi: userApi}
-	require.NoError(t, cli.Update(context.Background(), &user.UpdateParmas{Id: id2, Name: newName}))
+	require.NoError(t, cli.Update(context.Background(), &user.UpdateParams{Id: id2, Name: newName}))
 	testutils.MatchLines(t, []string{`ID\s+Name`, `2222222222222222\s+my-new-name`}, strings.Split(stdout.String(), "\n"))
 }
 
@@ -511,12 +510,12 @@ func TestClient_SetPassword(t *testing.T) {
 				Id: id2,
 			},
 			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
-				usersApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
-					Return(api.ApiPostUsersIDPasswordRequest{ApiService: usersApi}.UserID(id2.String()))
+				usersApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2)).
+					Return(api.ApiPostUsersIDPasswordRequest{ApiService: usersApi}.UserID(id2))
 				usersApi.EXPECT().PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
 					body := in.GetPasswordResetBody()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id2.String(), in.GetUserID()) &&
+						assert.Equal(t, id2, in.GetUserID()) &&
 						assert.Equal(t, "mypassword", body.GetPassword())
 				})).Return(nil)
 			},
@@ -530,14 +529,14 @@ func TestClient_SetPassword(t *testing.T) {
 				usersApi.EXPECT().GetUsers(gomock.Any()).Return(api.ApiGetUsersRequest{ApiService: usersApi})
 				usersApi.EXPECT().GetUsersExecute(tmock.MatchedBy(func(in api.ApiGetUsersRequest) bool {
 					return assert.Equal(t, "my-user", *in.GetName())
-				})).Return(api.Users{Users: &[]api.UserResponse{{Id: api.PtrString(id2.String())}}}, nil)
+				})).Return(api.Users{Users: &[]api.UserResponse{{Id: api.PtrString(id2)}}}, nil)
 
-				usersApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
-					Return(api.ApiPostUsersIDPasswordRequest{ApiService: usersApi}.UserID(id2.String()))
+				usersApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2)).
+					Return(api.ApiPostUsersIDPasswordRequest{ApiService: usersApi}.UserID(id2))
 				usersApi.EXPECT().PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
 					body := in.GetPasswordResetBody()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id2.String(), in.GetUserID()) &&
+						assert.Equal(t, id2, in.GetUserID()) &&
 						assert.Equal(t, "mypassword", body.GetPassword())
 				})).Return(nil)
 			},
@@ -550,12 +549,12 @@ func TestClient_SetPassword(t *testing.T) {
 			},
 			noExpectAsk: true,
 			registerExpectations: func(t *testing.T, usersApi *mock.MockUsersApi) {
-				usersApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2.String())).
-					Return(api.ApiPostUsersIDPasswordRequest{ApiService: usersApi}.UserID(id2.String()))
+				usersApi.EXPECT().PostUsersIDPassword(gomock.Any(), gomock.Eq(id2)).
+					Return(api.ApiPostUsersIDPasswordRequest{ApiService: usersApi}.UserID(id2))
 				usersApi.EXPECT().PostUsersIDPasswordExecute(tmock.MatchedBy(func(in api.ApiPostUsersIDPasswordRequest) bool {
 					body := in.GetPasswordResetBody()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id2.String(), in.GetUserID()) &&
+						assert.Equal(t, id2, in.GetUserID()) &&
 						assert.Equal(t, "mypassword", body.GetPassword())
 				})).Return(nil)
 			},

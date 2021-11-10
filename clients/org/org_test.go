@@ -13,13 +13,12 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients/org"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
-var id, _ = influxid.IDFromString("1111111111111111")
+var id = "1111111111111111"
 
 func TestClient_Create(t *testing.T) {
 	t.Parallel()
@@ -121,14 +120,14 @@ func TestClient_Delete(t *testing.T) {
 
 			cli := org.Client{CLI: clients.CLI{StdIO: stdio}, OrganizationsApi: orgApi}
 
-			getReq := api.ApiGetOrgsIDRequest{ApiService: orgApi}.OrgID(id.String())
-			orgApi.EXPECT().GetOrgsID(gomock.Any(), gomock.Eq(id.String())).Return(getReq)
+			getReq := api.ApiGetOrgsIDRequest{ApiService: orgApi}.OrgID(id)
+			orgApi.EXPECT().GetOrgsID(gomock.Any(), gomock.Eq(id)).Return(getReq)
 			orgApi.EXPECT().GetOrgsIDExecute(gomock.Eq(getReq)).
 				DoAndReturn(func(request api.ApiGetOrgsIDRequest) (api.Organization, error) {
 					if tc.notFound {
 						return api.Organization{}, &api.Error{Code: api.ERRORCODE_NOT_FOUND}
 					}
-					return api.Organization{Id: api.PtrString(id.String()), Name: "my-org"}, nil
+					return api.Organization{Id: api.PtrString(id), Name: "my-org"}, nil
 				})
 
 			if tc.notFound {
@@ -137,8 +136,8 @@ func TestClient_Delete(t *testing.T) {
 				return
 			}
 
-			delReq := api.ApiDeleteOrgsIDRequest{ApiService: orgApi}.OrgID(id.String())
-			orgApi.EXPECT().DeleteOrgsID(gomock.Any(), gomock.Eq(id.String())).Return(delReq)
+			delReq := api.ApiDeleteOrgsIDRequest{ApiService: orgApi}.OrgID(id)
+			orgApi.EXPECT().DeleteOrgsID(gomock.Any(), gomock.Eq(id)).Return(delReq)
 			orgApi.EXPECT().DeleteOrgsIDExecute(gomock.Eq(delReq)).Return(nil)
 
 			require.NoError(t, cli.Delete(context.Background(), id))
@@ -180,8 +179,10 @@ func TestClient_List(t *testing.T) {
 			outLines: []string{`123\s+org1`, `456\s+org2`},
 		},
 		{
-			name:   "by name",
-			params: org.ListParams{Name: "org1"},
+			name: "by name",
+			params: org.ListParams{
+				OrgParams: clients.OrgParams{OrgName: "org1"},
+			},
 			registerExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
 				orgApi.EXPECT().GetOrgs(gomock.Any()).Return(api.ApiGetOrgsRequest{ApiService: orgApi})
 				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
@@ -195,15 +196,17 @@ func TestClient_List(t *testing.T) {
 			outLines: []string{`123\s+org1`},
 		},
 		{
-			name:   "by ID",
-			params: org.ListParams{ID: id},
+			name: "by ID",
+			params: org.ListParams{
+				OrgParams: clients.OrgParams{OrgID: id},
+			},
 			registerExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
 				orgApi.EXPECT().GetOrgs(gomock.Any()).Return(api.ApiGetOrgsRequest{ApiService: orgApi})
 				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
-					return assert.Nil(t, in.GetOrg()) && assert.Equal(t, id.String(), *in.GetOrgID())
+					return assert.Nil(t, in.GetOrg()) && assert.Equal(t, id, *in.GetOrgID())
 				})).Return(api.Organizations{
 					Orgs: &[]api.Organization{
-						{Id: api.PtrString(id.String()), Name: "org3"},
+						{Id: api.PtrString(id), Name: "org3"},
 					},
 				}, nil)
 			},
@@ -242,36 +245,44 @@ func TestClient_Update(t *testing.T) {
 		outLine              string
 	}{
 		{
-			name:   "name",
-			params: org.UpdateParams{ID: id, Name: "my-org"},
+			name: "name",
+			params: org.UpdateParams{
+				OrgParams: clients.OrgParams{
+					OrgID:   id,
+					OrgName: "my-org",
+				},
+			},
 			registerExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				orgApi.EXPECT().PatchOrgsID(gomock.Any(), gomock.Eq(id.String())).
-					Return(api.ApiPatchOrgsIDRequest{ApiService: orgApi}.OrgID(id.String()))
+				orgApi.EXPECT().PatchOrgsID(gomock.Any(), gomock.Eq(id)).
+					Return(api.ApiPatchOrgsIDRequest{ApiService: orgApi}.OrgID(id))
 				orgApi.EXPECT().PatchOrgsIDExecute(tmock.MatchedBy(func(in api.ApiPatchOrgsIDRequest) bool {
 					body := in.GetPatchOrganizationRequest()
-					return assert.Equal(t, id.String(), in.GetOrgID()) &&
+					return assert.Equal(t, id, in.GetOrgID()) &&
 						assert.NotNil(t, body) &&
 						assert.Equal(t, "my-org", body.GetName()) &&
 						assert.Nil(t, body.Description)
-				})).Return(api.Organization{Id: api.PtrString(id.String()), Name: "my-org"}, nil)
+				})).Return(api.Organization{Id: api.PtrString(id), Name: "my-org"}, nil)
 			},
-			outLine: fmt.Sprintf(`%s\s+my-org`, id.String()),
+			outLine: fmt.Sprintf(`%s\s+my-org`, id),
 		},
 		{
-			name:   "description",
-			params: org.UpdateParams{ID: id, Description: "my cool org"},
+			name: "description",
+			params: org.UpdateParams{
+				OrgParams:   clients.OrgParams{OrgID: id},
+				Description: "my cool org",
+			},
 			registerExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				orgApi.EXPECT().PatchOrgsID(gomock.Any(), gomock.Eq(id.String())).
-					Return(api.ApiPatchOrgsIDRequest{ApiService: orgApi}.OrgID(id.String()))
+				orgApi.EXPECT().PatchOrgsID(gomock.Any(), gomock.Eq(id)).
+					Return(api.ApiPatchOrgsIDRequest{ApiService: orgApi}.OrgID(id))
 				orgApi.EXPECT().PatchOrgsIDExecute(tmock.MatchedBy(func(in api.ApiPatchOrgsIDRequest) bool {
 					body := in.GetPatchOrganizationRequest()
-					return assert.Equal(t, id.String(), in.GetOrgID()) &&
+					return assert.Equal(t, id, in.GetOrgID()) &&
 						assert.NotNil(t, body) &&
 						assert.Nil(t, body.Name) &&
 						assert.Equal(t, "my cool org", body.GetDescription())
-				})).Return(api.Organization{Id: api.PtrString(id.String()), Name: "my-org"}, nil)
+				})).Return(api.Organization{Id: api.PtrString(id), Name: "my-org"}, nil)
 			},
-			outLine: fmt.Sprintf(`%s\s+my-org`, id.String()),
+			outLine: fmt.Sprintf(`%s\s+my-org`, id),
 		},
 	}
 

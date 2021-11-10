@@ -15,7 +15,6 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients/query"
 	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -92,8 +91,7 @@ func TestQuery(t *testing.T) {
 	fakeQuery := query.BuildDefaultAST("I'm a query!")
 	fakeResults := "data data data"
 
-	orgID, err := influxid.IDFromString("1111111111111111")
-	require.NoError(t, err)
+	orgID := "1111111111111111"
 
 	testCases := []struct {
 		name                 string
@@ -117,7 +115,7 @@ func TestQuery(t *testing.T) {
 					body := in.GetQuery()
 					return assert.NotNil(t, body) &&
 						assert.Equal(t, fakeQuery, *body) &&
-						assert.Equal(t, orgID.String(), *in.GetOrgID()) &&
+						assert.Equal(t, orgID, *in.GetOrgID()) &&
 						assert.Nil(t, in.GetOrg())
 				})).Return(&http.Response{Body: io.NopCloser(strings.NewReader(fakeResults))}, nil)
 			},
@@ -206,7 +204,7 @@ func TestQuery(t *testing.T) {
 					body := in.GetQuery()
 					return assert.NotNil(t, body) &&
 						assert.Equal(t, fakeQuery, *body) &&
-						assert.Equal(t, orgID.String(), *in.GetOrgID()) &&
+						assert.Equal(t, orgID, *in.GetOrgID()) &&
 						assert.Nil(t, in.GetOrg())
 				})).DoAndReturn(func(api.ApiPostQueryRequest) (*http.Response, error) {
 					pr, pw := io.Pipe()

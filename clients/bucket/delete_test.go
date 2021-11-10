@@ -33,7 +33,9 @@ func TestBucketsDelete(t *testing.T) {
 			name:          "by ID",
 			configOrgName: "my-default-org",
 			params: bucket.BucketsDeleteParams{
-				ID: "123",
+				OrgBucketParams: clients.OrgBucketParams{
+					BucketParams: clients.BucketParams{BucketID: "123"},
+				},
 			},
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
 				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
@@ -67,8 +69,10 @@ func TestBucketsDelete(t *testing.T) {
 			name:          "by name and org ID",
 			configOrgName: "my-default-org",
 			params: bucket.BucketsDeleteParams{
-				Name:  "my-bucket",
-				OrgID: "456",
+				OrgBucketParams: clients.OrgBucketParams{
+					BucketParams: clients.BucketParams{BucketName: "my-bucket"},
+					OrgParams:    clients.OrgParams{OrgID: "456"},
+				},
 			},
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
 				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
@@ -102,8 +106,10 @@ func TestBucketsDelete(t *testing.T) {
 			name:          "by name and org name",
 			configOrgName: "my-default-org",
 			params: bucket.BucketsDeleteParams{
-				Name:    "my-bucket",
-				OrgName: "my-org",
+				OrgBucketParams: clients.OrgBucketParams{
+					BucketParams: clients.BucketParams{BucketName: "my-bucket"},
+					OrgParams:    clients.OrgParams{OrgName: "my-org"},
+				},
 			},
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
 				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
@@ -137,7 +143,9 @@ func TestBucketsDelete(t *testing.T) {
 			name:          "by name in default org",
 			configOrgName: "my-default-org",
 			params: bucket.BucketsDeleteParams{
-				Name: "my-bucket",
+				OrgBucketParams: clients.OrgBucketParams{
+					BucketParams: clients.BucketParams{BucketName: "my-bucket"},
+				},
 			},
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
 				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})
@@ -170,14 +178,18 @@ func TestBucketsDelete(t *testing.T) {
 		{
 			name: "by name without org",
 			params: bucket.BucketsDeleteParams{
-				Name: "my-bucket",
+				OrgBucketParams: clients.OrgBucketParams{
+					BucketParams: clients.BucketParams{BucketName: "my-bucket"},
+				},
 			},
 			expectedInErr: "must specify org ID or org name",
 		},
 		{
 			name: "no such bucket",
 			params: bucket.BucketsDeleteParams{
-				ID: "123",
+				OrgBucketParams: clients.OrgBucketParams{
+					BucketParams: clients.BucketParams{BucketID: "123"},
+				},
 			},
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
 				bucketsApi.EXPECT().GetBuckets(gomock.Any()).Return(api.ApiGetBucketsRequest{ApiService: bucketsApi})

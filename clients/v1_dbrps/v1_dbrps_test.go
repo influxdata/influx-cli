@@ -14,12 +14,11 @@ import (
 	v1dbrps "github.com/influxdata/influx-cli/v2/clients/v1_dbrps"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/stretchr/testify/require"
 )
 
 var (
-	id1, _     = influxid.IDFromString("1111111111111111")
+	id1        = "1111111111111111"
 	errApiTest = errors.New("api error for testing")
 )
 

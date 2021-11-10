@@ -33,8 +33,8 @@ func TestBucketsCreate(t *testing.T) {
 		{
 			name: "minimal",
 			params: bucket.BucketsCreateParams{
-				OrgID: "123",
-				Name:  "my-bucket",
+				OrgParams: clients.OrgParams{OrgID: "123"},
+				Name:      "my-bucket",
 			},
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
 				bucketsApi.EXPECT().PostBuckets(gomock.Any()).Return(api.ApiPostBucketsRequest{ApiService: bucketsApi})
@@ -59,7 +59,7 @@ func TestBucketsCreate(t *testing.T) {
 		{
 			name: "fully specified",
 			params: bucket.BucketsCreateParams{
-				OrgID:              "123",
+				OrgParams:          clients.OrgParams{OrgID: "123"},
 				Name:               "my-bucket",
 				Description:        "my cool bucket",
 				Retention:          "24h",
@@ -92,7 +92,7 @@ func TestBucketsCreate(t *testing.T) {
 		{
 			name: "retention but not shard-group duration",
 			params: bucket.BucketsCreateParams{
-				OrgID:     "123",
+				OrgParams: clients.OrgParams{OrgID: "123"},
 				Name:      "my-bucket",
 				Retention: "24h",
 			},
@@ -120,7 +120,7 @@ func TestBucketsCreate(t *testing.T) {
 		{
 			name: "create bucket with explicit schema",
 			params: bucket.BucketsCreateParams{
-				OrgID:      "123",
+				OrgParams:  clients.OrgParams{OrgID: "123"},
 				Name:       "my-bucket",
 				SchemaType: api.SCHEMATYPE_EXPLICIT,
 			},
@@ -148,7 +148,7 @@ func TestBucketsCreate(t *testing.T) {
 		{
 			name: "look up org by name",
 			params: bucket.BucketsCreateParams{
-				OrgName:            "my-org",
+				OrgParams:          clients.OrgParams{OrgName: "my-org"},
 				Name:               "my-bucket",
 				Description:        "my cool bucket",
 				Retention:          "24h",
@@ -242,8 +242,8 @@ func TestBucketsCreate(t *testing.T) {
 		{
 			name: "no such org",
 			params: bucket.BucketsCreateParams{
+				OrgParams:          clients.OrgParams{OrgName: "fake-org"},
 				Name:               "my-bucket",
-				OrgName:            "fake-org",
 				Description:        "my cool bucket",
 				Retention:          "24h",
 				ShardGroupDuration: "1h",
