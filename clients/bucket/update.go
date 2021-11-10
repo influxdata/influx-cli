@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/api"
+	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/pkg/duration"
 )
 
 type BucketsUpdateParams struct {
-	ID                 string
-	Name               string
+	clients.BucketParams
 	Description        string
 	Retention          string
 	ShardGroupDuration string
@@ -19,8 +19,8 @@ type BucketsUpdateParams struct {
 
 func (c Client) Update(ctx context.Context, params *BucketsUpdateParams) error {
 	reqBody := api.PatchBucketRequest{}
-	if params.Name != "" {
-		reqBody.SetName(params.Name)
+	if params.BucketName != "" {
+		reqBody.SetName(params.BucketName)
 	}
 	if params.Description != "" {
 		reqBody.SetDescription(params.Description)
@@ -44,9 +44,9 @@ func (c Client) Update(ctx context.Context, params *BucketsUpdateParams) error {
 		reqBody.SetRetentionRules([]api.PatchRetentionRule{*patchRule})
 	}
 
-	bucket, err := c.PatchBucketsID(ctx, params.ID).PatchBucketRequest(reqBody).Execute()
+	bucket, err := c.PatchBucketsID(ctx, params.BucketID).PatchBucketRequest(reqBody).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to update bucket %q: %w", params.ID, err)
+		return fmt.Errorf("failed to update bucket %q: %w", params.BucketID, err)
 	}
 
 	return c.printBuckets(bucketPrintOptions{bucket: &bucket})

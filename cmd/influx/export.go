@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/export"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/template"
@@ -252,10 +253,9 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/`,
 
 func newExportAllCmd() cli.Command {
 	var params struct {
-		out     string
-		orgId   string
-		orgName string
-		filters cli.StringSlice
+		orgParams clients.OrgParams
+		out       string
+		filters   cli.StringSlice
 	}
 	return cli.Command{
 		Name:  "all",
@@ -293,19 +293,7 @@ and
 https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 `,
 		Flags: append(
-			commonFlagsNoPrint(),
-			&cli.StringFlag{
-				Name:        "org-id",
-				Usage:       "The ID of the organization",
-				EnvVar:      "INFLUX_ORG_ID",
-				Destination: &params.orgId,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.orgName,
-			},
+			append(commonFlagsNoPrint(), getOrgFlags(&params.orgParams)...),
 			&cli.StringFlag{
 				Name:        "file, f",
 				Usage:       "Output file for created template; defaults to std out if no file provided; the extension of provided file (.yml/.json) will dictate encoding",
@@ -320,8 +308,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
 			parsedParams := export.AllParams{
-				OrgId:   params.orgId,
-				OrgName: params.orgName,
+				OrgParams: params.orgParams,
 			}
 
 			for _, filter := range params.filters.Value() {

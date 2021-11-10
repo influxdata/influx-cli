@@ -11,8 +11,7 @@ import (
 )
 
 type BucketsCreateParams struct {
-	OrgID              string
-	OrgName            string
+	clients.OrgParams
 	Name               string
 	Description        string
 	Retention          string
@@ -21,8 +20,9 @@ type BucketsCreateParams struct {
 }
 
 func (c Client) Create(ctx context.Context, params *BucketsCreateParams) error {
-	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
+	orgId, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	rp, err := duration.RawDurationToTimeDuration(params.Retention)
@@ -35,7 +35,7 @@ func (c Client) Create(ctx context.Context, params *BucketsCreateParams) error {
 	}
 
 	reqBody := api.PostBucketRequest{
-		OrgID:          params.OrgID,
+		OrgID:          orgId,
 		Name:           params.Name,
 		RetentionRules: []api.RetentionRule{},
 		SchemaType:     &params.SchemaType,
@@ -58,21 +58,6 @@ func (c Client) Create(ctx context.Context, params *BucketsCreateParams) error {
 			rule.SetShardGroupDurationSeconds(int64(sgd.Round(time.Second) / time.Second))
 		}
 		reqBody.RetentionRules = append(reqBody.RetentionRules, *rule)
-	}
-	if reqBody.OrgID == "" {
-		name := params.OrgName
-		if name == "" {
-			name = c.ActiveConfig.Org
-		}
-		resp, err := c.GetOrgs(ctx).Org(name).Execute()
-		if err != nil {
-			return fmt.Errorf("failed to lookup ID of org %q: %w", name, err)
-		}
-		orgs := resp.GetOrgs()
-		if len(orgs) == 0 {
-			return fmt.Errorf("no organization found with name %q", name)
-		}
-		reqBody.OrgID = orgs[0].GetId()
 	}
 
 	bucket, err := c.PostBuckets(ctx).PostBucketRequest(reqBody).Execute()

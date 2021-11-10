@@ -62,32 +62,16 @@ func (c Client) Export(ctx context.Context, params *Params) error {
 type AllParams struct {
 	template.OutParams
 
-	OrgId   string
-	OrgName string
+	clients.OrgParams
 
 	LabelFilters []string
 	KindFilters  []string
 }
 
 func (c Client) ExportAll(ctx context.Context, params *AllParams) error {
-	if params.OrgId == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
-		return clients.ErrMustSpecifyOrg
-	}
-
-	orgId := params.OrgId
-	if orgId == "" {
-		orgName := params.OrgName
-		if orgName == "" {
-			orgName = c.ActiveConfig.Org
-		}
-		res, err := c.GetOrgs(ctx).Org(orgName).Execute()
-		if err != nil {
-			return fmt.Errorf("failed to look up ID for org %q: %w", orgName, err)
-		}
-		if len(res.GetOrgs()) == 0 {
-			return fmt.Errorf("no org found with name %q", orgName)
-		}
-		orgId = res.GetOrgs()[0].GetId()
+	orgId, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
+	if err != nil {
+		return err
 	}
 
 	orgExport := api.TemplateExportOrgIDs{OrgID: &orgId}

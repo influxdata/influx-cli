@@ -28,7 +28,7 @@ func newRemoteCreateCmd() cli.Command {
 		Usage:  "Create a new remote connection",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
-			commonFlags(),
+			append(commonFlags(), getOrgFlags(&params.OrgParams)...),
 			&cli.StringFlag{
 				Name:        "name, n",
 				Usage:       "Name for the new remote connection",
@@ -39,18 +39,6 @@ func newRemoteCreateCmd() cli.Command {
 				Name:        "description, d",
 				Usage:       "Description for the new remote connection",
 				Destination: &params.Description,
-			},
-			&cli.StringFlag{
-				Name:        "org-id",
-				Usage:       "The ID of the local organization",
-				EnvVar:      "INFLUX_ORG_ID",
-				Destination: &params.OrgID,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.OrgName,
 			},
 			&cli.StringFlag{
 				Name:        "remote-url",

@@ -32,13 +32,11 @@ type Client struct {
 type Params struct {
 	// Organization containing TSM data to back up.
 	// If not set, all orgs will be included.
-	OrgID string
-	Org   string
+	clients.OrgParams
 
 	// Bucket containing TSM data to back up.
 	// If not set, all buckets within the org filter will be included.
-	BucketID string
-	Bucket   string
+	clients.BucketParams
 
 	// Path to the directory where backup files should be written.
 	Path string
@@ -51,13 +49,13 @@ func (p *Params) matches(bkt api.BucketMetadataManifest) bool {
 	if p.OrgID != "" && bkt.OrganizationID != p.OrgID {
 		return false
 	}
-	if p.Org != "" && bkt.OrganizationName != p.Org {
+	if p.OrgName != "" && bkt.OrganizationName != p.OrgName {
 		return false
 	}
 	if p.BucketID != "" && bkt.BucketID != p.BucketID {
 		return false
 	}
-	if p.Bucket != "" && bkt.BucketName != p.Bucket {
+	if p.BucketName != "" && bkt.BucketName != p.BucketName {
 		return false
 	}
 	return true

@@ -64,7 +64,7 @@ func (p *writeParams) makeErrorFile() (*os.File, error) {
 }
 
 func (p *writeParams) Flags() []cli.Flag {
-	return []cli.Flag{
+	return append(getOrgFlags(&p.OrgParams), []cli.Flag{
 		&cli.StringFlag{
 			Name:        "bucket-id",
 			Usage:       "The ID of destination bucket",
@@ -76,18 +76,6 @@ func (p *writeParams) Flags() []cli.Flag {
 			Usage:       "The name of destination bucket",
 			EnvVar:      "INFLUX_BUCKET_NAME",
 			Destination: &p.BucketName,
-		},
-		&cli.StringFlag{
-			Name:        "org-id",
-			Usage:       "The ID of the organization",
-			EnvVar:      "INFLUX_ORG_ID",
-			Destination: &p.OrgID,
-		},
-		&cli.StringFlag{
-			Name:        "org, o",
-			Usage:       "The name of the organization",
-			EnvVar:      "INFLUX_ORG",
-			Destination: &p.OrgName,
 		},
 		&cli.GenericFlag{
 			Name:   "precision, p",
@@ -167,7 +155,7 @@ func (p *writeParams) Flags() []cli.Flag {
 			Usage: "Input compression, either 'none' or 'gzip'",
 			Value: &p.Compression,
 		},
-	}
+	}...)
 }
 
 func newWriteCmd() cli.Command {

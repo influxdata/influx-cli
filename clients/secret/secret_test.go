@@ -11,7 +11,6 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients/secret"
 	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,8 +24,7 @@ func TestSecret_List(t *testing.T) {
 	t.Parallel()
 
 	printHeader := "Key\t\tOrganization ID\n"
-	id, err := influxid.IDFromString("1111111111111111")
-	require.NoError(t, err)
+	id := "1111111111111111"
 
 	testCases := []struct {
 		name                 string
@@ -45,12 +43,12 @@ func TestSecret_List(t *testing.T) {
 			},
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi, orgApi *mock.MockOrganizationsApi) {
-				req := api.ApiGetOrgsIDSecretsRequest{ApiService: secretApi}.OrgID(id.String())
-				secretApi.EXPECT().GetOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
+				req := api.ApiGetOrgsIDSecretsRequest{ApiService: secretApi}.OrgID(id)
+				secretApi.EXPECT().GetOrgsIDSecrets(gomock.Any(), gomock.Eq(id)).Return(req)
 				secretApi.EXPECT().GetOrgsIDSecretsExecute(gomock.Eq(req)).
 					Return(api.SecretKeysResponse{Secrets: &[]string{fakeResults}}, nil)
 			},
-			expectMatcher: printHeader + fakeResults + "\t" + id.String() + "\n",
+			expectMatcher: printHeader + fakeResults + "\t" + id + "\n",
 		},
 		{
 			name: "default org",
@@ -122,8 +120,7 @@ func TestSecret_Delete(t *testing.T) {
 	t.Parallel()
 
 	printHeader := "Key\tOrganization ID\t\tDeleted\n"
-	id, err := influxid.IDFromString("1111111111111111")
-	require.NoError(t, err)
+	id := "1111111111111111"
 
 	testCases := []struct {
 		name                 string
@@ -144,12 +141,12 @@ func TestSecret_Delete(t *testing.T) {
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi) {
 				req := api.ApiPostOrgsIDSecretsRequest{ApiService: secretApi}.
-					OrgID(id.String()).
+					OrgID(id).
 					SecretKeys(api.SecretKeys{Secrets: &[]string{"key1"}})
-				secretApi.EXPECT().PostOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
+				secretApi.EXPECT().PostOrgsIDSecrets(gomock.Any(), gomock.Eq(id)).Return(req)
 				secretApi.EXPECT().PostOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
 			},
-			expectMatcher: printHeader + fakeKey + "\t" + id.String() + "\ttrue\n",
+			expectMatcher: printHeader + fakeKey + "\t" + id + "\ttrue\n",
 		},
 		{
 			// This situation cannot happen since the CLI will stop it.
@@ -163,12 +160,12 @@ func TestSecret_Delete(t *testing.T) {
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi) {
 				req := api.ApiPostOrgsIDSecretsRequest{ApiService: secretApi}.
-					OrgID(id.String()).
+					OrgID(id).
 					SecretKeys(api.SecretKeys{Secrets: &[]string{""}})
-				secretApi.EXPECT().PostOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
+				secretApi.EXPECT().PostOrgsIDSecrets(gomock.Any(), gomock.Eq(id)).Return(req)
 				secretApi.EXPECT().PostOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
 			},
-			expectMatcher: printHeader + "\t" + id.String() + "\ttrue\n",
+			expectMatcher: printHeader + "\t" + id + "\ttrue\n",
 		},
 		{
 			name: "delete no org",
@@ -220,8 +217,7 @@ func TestSecret_Update(t *testing.T) {
 
 	printHeader := "Key\tOrganization ID\n"
 	fakeValue := "someValue"
-	id, err := influxid.IDFromString("1111111111111111")
-	require.NoError(t, err)
+	id := "1111111111111111"
 
 	testCases := []struct {
 		name                 string
@@ -243,12 +239,12 @@ func TestSecret_Update(t *testing.T) {
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi, stdio *mock.MockStdIO) {
 				req := api.ApiPatchOrgsIDSecretsRequest{ApiService: secretApi}.
-					OrgID(id.String()).
+					OrgID(id).
 					RequestBody(map[string]string{fakeKey: fakeValue})
-				secretApi.EXPECT().PatchOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
+				secretApi.EXPECT().PatchOrgsIDSecrets(gomock.Any(), gomock.Eq(id)).Return(req)
 				secretApi.EXPECT().PatchOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
 			},
-			expectMatcher: printHeader + fakeKey + "\t" + id.String() + "\n",
+			expectMatcher: printHeader + fakeKey + "\t" + id + "\n",
 		},
 		{
 			name: "update no key",
@@ -261,12 +257,12 @@ func TestSecret_Update(t *testing.T) {
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi, stdio *mock.MockStdIO) {
 				req := api.ApiPatchOrgsIDSecretsRequest{ApiService: secretApi}.
-					OrgID(id.String()).
+					OrgID(id).
 					RequestBody(map[string]string{"": fakeValue})
-				secretApi.EXPECT().PatchOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
+				secretApi.EXPECT().PatchOrgsIDSecrets(gomock.Any(), gomock.Eq(id)).Return(req)
 				secretApi.EXPECT().PatchOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
 			},
-			expectMatcher: printHeader + "\t" + id.String() + "\n",
+			expectMatcher: printHeader + "\t" + id + "\n",
 		},
 		{
 			name: "update no value",
@@ -281,12 +277,12 @@ func TestSecret_Update(t *testing.T) {
 				stdio.EXPECT().GetSecret(gomock.Eq("Please type your secret"), gomock.Eq(0)).Return(fakeValue, nil)
 
 				req := api.ApiPatchOrgsIDSecretsRequest{ApiService: secretApi}.
-					OrgID(id.String()).
+					OrgID(id).
 					RequestBody(map[string]string{fakeKey: fakeValue})
-				secretApi.EXPECT().PatchOrgsIDSecrets(gomock.Any(), gomock.Eq(id.String())).Return(req)
+				secretApi.EXPECT().PatchOrgsIDSecrets(gomock.Any(), gomock.Eq(id)).Return(req)
 				secretApi.EXPECT().PatchOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
 			},
-			expectMatcher: printHeader + fakeKey + "\t" + id.String() + "\n",
+			expectMatcher: printHeader + fakeKey + "\t" + id + "\n",
 		},
 		{
 			name: "update no org",

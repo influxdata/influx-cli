@@ -14,11 +14,11 @@ func newDeleteCmd() cli.Command {
 		Description: "Delete points from InfluxDB, by specify start, end time and a sql like predicate string",
 		Flags: append(
 			commonFlagsNoPrint(),
-			&cli.GenericFlag{
-				Name:   "org-id",
-				Usage:  "The ID of the organization that owns the bucket",
-				EnvVar: "INFLUX_ORG_ID",
-				Value:  &params.OrgID,
+			&cli.StringFlag{
+				Name:        "org-id",
+				Usage:       "The ID of the organization that owns the bucket",
+				EnvVar:      "INFLUX_ORG_ID",
+				Destination: &params.OrgID,
 			},
 			&cli.StringFlag{
 				Name:        "org, o",
@@ -26,11 +26,11 @@ func newDeleteCmd() cli.Command {
 				EnvVar:      "INFLUX_ORG",
 				Destination: &params.OrgName,
 			},
-			&cli.GenericFlag{
-				Name:   "bucket-id",
-				Usage:  "The ID of the bucket to delete from",
-				EnvVar: "INFLUX_BUCKET_ID",
-				Value:  &params.BucketID,
+			&cli.StringFlag{
+				Name:        "bucket-id",
+				Usage:       "The ID of the bucket to delete from",
+				EnvVar:      "INFLUX_BUCKET_ID",
+				Destination: &params.BucketID,
 			},
 			&cli.StringFlag{
 				Name:        "bucket, b",

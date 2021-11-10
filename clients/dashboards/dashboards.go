@@ -19,20 +19,20 @@ type Params struct {
 }
 
 func (c Client) List(ctx context.Context, params *Params) error {
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" && len(params.Ids) == 0 {
+	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" && len(params.Ids) == 0 {
 		return fmt.Errorf("at least one of org, org-id, or id must be provided")
 	}
 
 	const limit = 100
 	req := c.GetDashboards(ctx)
 	req = req.Limit(limit)
-	if params.OrgID.Valid() {
-		req = req.OrgID(params.OrgID.String())
+	if params.OrgID != "" {
+		req = req.OrgID(params.OrgID)
 	}
 	if params.OrgName != "" {
 		req = req.Org(params.OrgName)
 	}
-	if !params.OrgID.Valid() && params.OrgName == "" {
+	if params.OrgID == "" && params.OrgName == "" {
 		req = req.Org(c.ActiveConfig.Org)
 	}
 	dashboards, err := req.Id(params.Ids).Execute()

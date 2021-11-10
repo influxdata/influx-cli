@@ -52,8 +52,8 @@ func addOrg(n NameOrID, g api.ApiGetTasksRequest) api.ApiGetTasksRequest {
 }
 
 func (c Client) getOrg(params *clients.OrgParams) (NameOrID, error) {
-	if params.OrgID.Valid() {
-		return NameOrID{ID: params.OrgID.String()}, nil
+	if params.OrgID != "" {
+		return NameOrID{ID: params.OrgID}, nil
 	}
 	if params.OrgName != "" {
 		return NameOrID{Name: params.OrgName}, nil

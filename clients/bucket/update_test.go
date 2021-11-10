@@ -29,8 +29,10 @@ func TestBucketsUpdate(t *testing.T) {
 		{
 			name: "name",
 			params: bucket.BucketsUpdateParams{
-				ID:   "123",
-				Name: "cold-storage",
+				BucketParams: clients.BucketParams{
+					BucketID:   "123",
+					BucketName: "cold-storage",
+				},
 			},
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
 				bucketsApi.EXPECT().PatchBucketsID(gomock.Any(), gomock.Eq("123")).
@@ -53,8 +55,8 @@ func TestBucketsUpdate(t *testing.T) {
 		{
 			name: "description",
 			params: bucket.BucketsUpdateParams{
-				ID:          "123",
-				Description: "a very useful description",
+				BucketParams: clients.BucketParams{BucketID: "123"},
+				Description:  "a very useful description",
 			},
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
 				bucketsApi.EXPECT().PatchBucketsID(gomock.Any(), gomock.Eq("123")).
@@ -78,8 +80,8 @@ func TestBucketsUpdate(t *testing.T) {
 		{
 			name: "retention",
 			params: bucket.BucketsUpdateParams{
-				ID:        "123",
-				Retention: "3w",
+				BucketParams: clients.BucketParams{BucketID: "123"},
+				Retention:    "3w",
 			},
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
 				bucketsApi.EXPECT().PatchBucketsID(gomock.Any(), gomock.Eq("123")).
@@ -107,7 +109,7 @@ func TestBucketsUpdate(t *testing.T) {
 		{
 			name: "shard-group duration",
 			params: bucket.BucketsUpdateParams{
-				ID:                 "123",
+				BucketParams:       clients.BucketParams{BucketID: "123"},
 				ShardGroupDuration: "10h30m",
 			},
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {

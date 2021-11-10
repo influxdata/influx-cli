@@ -27,11 +27,11 @@ func newOrgMembersAddCmd() cli.Command {
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlagsNoPrint(),
-			&cli.GenericFlag{
-				Name:     "member, m",
-				Usage:    "The member ID",
-				Required: true,
-				Value:    &params.MemberId,
+			&cli.StringFlag{
+				Name:        "member, m",
+				Usage:       "The member ID",
+				Required:    true,
+				Destination: &params.MemberId,
 			},
 			&cli.StringFlag{
 				Name:        "name, n",
@@ -39,11 +39,11 @@ func newOrgMembersAddCmd() cli.Command {
 				EnvVar:      "INFLUX_ORG",
 				Destination: &params.OrgName,
 			},
-			&cli.GenericFlag{
-				Name:   "id, i",
-				Usage:  "The organization ID",
-				EnvVar: "INFLUX_ORG_ID",
-				Value:  &params.OrgID,
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "The organization ID",
+				EnvVar:      "INFLUX_ORG_ID",
+				Destination: &params.OrgID,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
@@ -71,11 +71,11 @@ func newOrgMembersListCmd() cli.Command {
 				EnvVar:      "INFLUX_ORG",
 				Destination: &params.OrgName,
 			},
-			&cli.GenericFlag{
-				Name:   "id, i",
-				Usage:  "The organization ID",
-				EnvVar: "INFLUX_ORG_ID",
-				Value:  &params.OrgID,
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "The organization ID",
+				EnvVar:      "INFLUX_ORG_ID",
+				Destination: &params.OrgID,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
@@ -97,11 +97,11 @@ func newOrgMembersRemoveCmd() cli.Command {
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlagsNoPrint(),
-			&cli.GenericFlag{
-				Name:     "member, m",
-				Usage:    "The member ID",
-				Required: true,
-				Value:    &params.MemberId,
+			&cli.StringFlag{
+				Name:        "member, m",
+				Usage:       "The member ID",
+				Required:    true,
+				Destination: &params.MemberId,
 			},
 			&cli.StringFlag{
 				Name:        "name, n",
@@ -109,11 +109,11 @@ func newOrgMembersRemoveCmd() cli.Command {
 				EnvVar:      "INFLUX_ORG",
 				Destination: &params.OrgName,
 			},
-			&cli.GenericFlag{
-				Name:   "id, i",
-				Usage:  "The organization ID",
-				EnvVar: "INFLUX_ORG_ID",
-				Value:  &params.OrgID,
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "The organization ID",
+				EnvVar:      "INFLUX_ORG_ID",
+				Destination: &params.OrgID,
 			},
 		),
 		Action: func(ctx *cli.Context) error {

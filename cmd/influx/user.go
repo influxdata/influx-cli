@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/influxdata/influx-cli/v2/clients/user"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/urfave/cli"
 )
 
@@ -28,19 +27,7 @@ func newUserCreateCmd() cli.Command {
 		Name:  "create",
 		Usage: "Create user",
 		Flags: append(
-			commonFlags(),
-			&cli.GenericFlag{
-				Name:   "org-id",
-				Usage:  "The ID of the organization",
-				EnvVar: "INFLUX_ORG_ID",
-				Value:  &params.OrgID,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.OrgName,
-			},
+			append(commonFlags(), getOrgFlags(&params.OrgParams)...),
 			&cli.StringFlag{
 				Name:        "name, n",
 				Usage:       "The user name",
@@ -68,17 +55,17 @@ func newUserCreateCmd() cli.Command {
 }
 
 func newUserDeleteCmd() cli.Command {
-	var id influxid.ID
+	var id string
 	return cli.Command{
 		Name:  "delete",
 		Usage: "Delete user",
 		Flags: append(
 			commonFlags(),
-			&cli.GenericFlag{
-				Name:     "id, i",
-				Usage:    "The user ID",
-				Required: true,
-				Value:    &id,
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "The user ID",
+				Required:    true,
+				Destination: &id,
 			},
 		),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
@@ -97,10 +84,10 @@ func newUserListCmd() cli.Command {
 		Usage:   "List users",
 		Flags: append(
 			commonFlags(),
-			&cli.GenericFlag{
-				Name:  "id, i",
-				Usage: "The user ID",
-				Value: &params.Id,
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "The user ID",
+				Destination: &params.Id,
 			},
 			&cli.StringFlag{
 				Name:        "name, n",
@@ -117,16 +104,16 @@ func newUserListCmd() cli.Command {
 }
 
 func newUserUpdateCmd() cli.Command {
-	var params user.UpdateParmas
+	var params user.UpdateParams
 	return cli.Command{
 		Name: "update",
 		Flags: append(
 			commonFlags(),
-			&cli.GenericFlag{
-				Name:     "id, i",
-				Usage:    "The user ID",
-				Required: true,
-				Value:    &params.Id,
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "The user ID",
+				Required:    true,
+				Destination: &params.Id,
 			},
 			&cli.StringFlag{
 				Name:        "name, n",
@@ -148,10 +135,10 @@ func newUserSetPasswordCmd() cli.Command {
 		Name: "password",
 		Flags: append(
 			commonFlagsNoPrint(),
-			&cli.GenericFlag{
-				Name:  "id, i",
-				Usage: "The user ID",
-				Value: &params.Id,
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "The user ID",
+				Destination: &params.Id,
 			},
 			&cli.StringFlag{
 				Name:        "name, n",

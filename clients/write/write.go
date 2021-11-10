@@ -33,11 +33,8 @@ type Client struct {
 }
 
 type Params struct {
-	BucketID   string
-	BucketName string
-	OrgID      string
-	OrgName    string
-	Precision  api.WritePrecision
+	clients.OrgBucketParams
+	Precision api.WritePrecision
 }
 
 var ErrWriteCanceled = errors.New("write canceled")

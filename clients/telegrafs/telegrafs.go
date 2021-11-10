@@ -7,7 +7,6 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 )
 
 type Client struct {
@@ -27,7 +26,7 @@ type ListParams struct {
 }
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
-	if params.Id == "" && !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
+	if params.Id == "" && params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return errors.New("at least one of org, org-id, or id must be provided")
 	}
 
@@ -40,7 +39,7 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 		return c.printTelegrafs(telegrafPrintOpts{graf: &telegraf})
 	}
 
-	orgID, err := c.getOrgID(ctx, params.OrgID, params.OrgName)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -61,7 +60,7 @@ type CreateParams struct {
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
-	orgID, err := c.getOrgID(ctx, params.OrgID, params.OrgName)
+	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
 	}
@@ -153,8 +152,4 @@ func (c Client) printTelegrafs(opts telegrafPrintOpts) error {
 	}
 
 	return c.PrintTable(headers, rows...)
-}
-
-func (c Client) getOrgID(ctx context.Context, orgID influxid.ID, orgName string) (string, error) {
-	return c.GetOrgIdI(ctx, orgID, orgName, c.OrganizationsApi)
 }

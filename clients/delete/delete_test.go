@@ -11,7 +11,6 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients/delete"
 	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -20,8 +19,8 @@ import (
 func TestClient_Delete(t *testing.T) {
 	t.Parallel()
 
-	id1, _ := influxid.IDFromString("1111111111111111")
-	id2, _ := influxid.IDFromString("2222222222222222")
+	id1 := "1111111111111111"
+	id2 := "2222222222222222"
 
 	start, _ := time.Parse(time.RFC3339Nano, "2020-01-01T00:00:00Z")
 	stop, _ := time.Parse(time.RFC3339Nano, "2021-01-01T00:00:00Z")
@@ -53,9 +52,9 @@ func TestClient_Delete(t *testing.T) {
 				delApi.EXPECT().PostDeleteExecute(tmock.MatchedBy(func(in api.ApiPostDeleteRequest) bool {
 					body := in.GetDeletePredicateRequest()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id1.String(), *in.GetOrgID()) &&
+						assert.Equal(t, id1, *in.GetOrgID()) &&
 						assert.Nil(t, in.GetOrg()) &&
-						assert.Equal(t, id2.String(), *in.GetBucketID()) &&
+						assert.Equal(t, id2, *in.GetBucketID()) &&
 						assert.Nil(t, in.GetBucket()) &&
 						assert.Equal(t, start, body.GetStart()) &&
 						assert.Equal(t, stop, body.GetStop()) &&
@@ -83,7 +82,7 @@ func TestClient_Delete(t *testing.T) {
 				delApi.EXPECT().PostDeleteExecute(tmock.MatchedBy(func(in api.ApiPostDeleteRequest) bool {
 					body := in.GetDeletePredicateRequest()
 					return assert.NotNil(t, body) &&
-						assert.Equal(t, id1.String(), *in.GetOrgID()) &&
+						assert.Equal(t, id1, *in.GetOrgID()) &&
 						assert.Nil(t, in.GetOrg()) &&
 						assert.Equal(t, "my-bucket", *in.GetBucket()) &&
 						assert.Nil(t, in.GetBucketID()) &&
@@ -116,7 +115,7 @@ func TestClient_Delete(t *testing.T) {
 					return assert.NotNil(t, body) &&
 						assert.Equal(t, "my-org", *in.GetOrg()) &&
 						assert.Nil(t, in.GetOrgID()) &&
-						assert.Equal(t, id2.String(), *in.GetBucketID()) &&
+						assert.Equal(t, id2, *in.GetBucketID()) &&
 						assert.Nil(t, in.GetBucket()) &&
 						assert.Equal(t, start, body.GetStart()) &&
 						assert.Equal(t, stop, body.GetStop()) &&
@@ -160,7 +159,7 @@ func TestClient_Delete(t *testing.T) {
 		{
 			name:           "no bucket",
 			defaultOrgName: "my-default-org",
-			expectedErr:    delete.ErrMustSpecifyBucket.Error(),
+			expectedErr:    clients.ErrMustSpecifyBucket.Error(),
 		},
 		{
 			name: "bad start",

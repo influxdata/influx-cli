@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/influxdata/influx-cli/v2/clients/org"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/urfave/cli"
 )
 
@@ -54,18 +53,18 @@ func newOrgCreateCmd() cli.Command {
 }
 
 func newOrgDeleteCmd() cli.Command {
-	var id influxid.ID
+	var id string
 	return cli.Command{
 		Name:   "delete",
 		Usage:  "Delete organization",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlags(),
-			&cli.GenericFlag{
-				Name:   "id, i",
-				Usage:  "The organization ID",
-				EnvVar: "INFLUX_ORG_ID",
-				Value:  &id,
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "The organization ID",
+				EnvVar:      "INFLUX_ORG_ID",
+				Destination: &id,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
@@ -91,13 +90,13 @@ func newOrgListCmd() cli.Command {
 				Name:        "name, n",
 				Usage:       "The organization name",
 				EnvVar:      "INFLUX_ORG",
-				Destination: &params.Name,
+				Destination: &params.OrgName,
 			},
-			&cli.GenericFlag{
-				Name:   "id, i",
-				Usage:  "The organization ID",
-				EnvVar: "INFLUX_ORG_ID",
-				Value:  &params.ID,
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "The organization ID",
+				EnvVar:      "INFLUX_ORG_ID",
+				Destination: &params.OrgID,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
@@ -118,18 +117,18 @@ func newOrgUpdateCmd() cli.Command {
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlags(),
-			&cli.GenericFlag{
-				Name:     "id, i",
-				Usage:    "The organization ID",
-				EnvVar:   "INFLUX_ORG_ID",
-				Required: true,
-				Value:    &params.ID,
+			&cli.StringFlag{
+				Name:        "id, i",
+				Usage:       "The organization ID",
+				EnvVar:      "INFLUX_ORG_ID",
+				Required:    true,
+				Destination: &params.OrgID,
 			},
 			&cli.StringFlag{
 				Name:        "name, n",
 				Usage:       "New name to set on the organization",
 				EnvVar:      "INFLUX_ORG",
-				Destination: &params.Name,
+				Destination: &params.OrgName,
 			},
 			&cli.StringFlag{
 				Name:        "description, d",

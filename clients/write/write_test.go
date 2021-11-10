@@ -66,8 +66,10 @@ func TestWriteByIDs(t *testing.T) {
 	mockBatcher := lineBatcher{}
 
 	params := write.Params{
-		OrgID:     "12345",
-		BucketID:  "98765",
+		OrgBucketParams: clients.OrgBucketParams{
+			OrgParams:    clients.OrgParams{OrgID: "12345"},
+			BucketParams: clients.BucketParams{BucketID: "98765"},
+		},
 		Precision: api.WRITEPRECISION_S,
 	}
 
@@ -118,9 +120,11 @@ func TestWriteByNames(t *testing.T) {
 	mockBatcher := lineBatcher{}
 
 	params := write.Params{
-		OrgName:    "my-org",
-		BucketName: "my-bucket",
-		Precision:  api.WRITEPRECISION_US,
+		OrgBucketParams: clients.OrgBucketParams{
+			OrgParams:    clients.OrgParams{OrgName: "my-org"},
+			BucketParams: clients.BucketParams{BucketName: "my-bucket"},
+		},
+		Precision: api.WRITEPRECISION_US,
 	}
 
 	ctrl := gomock.NewController(t)
@@ -170,8 +174,10 @@ func TestWriteOrgFromConfig(t *testing.T) {
 	mockBatcher := lineBatcher{}
 
 	params := write.Params{
-		BucketName: "my-bucket",
-		Precision:  api.WRITEPRECISION_US,
+		OrgBucketParams: clients.OrgBucketParams{
+			BucketParams: clients.BucketParams{BucketName: "my-bucket"},
+		},
+		Precision: api.WRITEPRECISION_US,
 	}
 
 	defaultOrg := "my-default-org"

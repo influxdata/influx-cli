@@ -15,14 +15,13 @@ import (
 	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
-var id1, _ = influxid.IDFromString("1111111111111111")
-var id2, _ = influxid.IDFromString("2222222222222222")
+var id1 = "1111111111111111"
+var id2 = "2222222222222222"
 
 func TestClient_AddMember(t *testing.T) {
 	t.Parallel()
@@ -38,27 +37,27 @@ func TestClient_AddMember(t *testing.T) {
 		{
 			name: "org by ID",
 			params: org.AddMemberParams{
-				OrgID:    id1,
-				MemberId: id2,
+				OrgParams: clients.OrgParams{OrgID: id1},
+				MemberId:  id2,
 			},
 			defaultOrgName: "my-org",
 			registerExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).
-					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String()))
+				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).
+					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1))
 				orgApi.EXPECT().PostOrgsIDMembersExecute(tmock.MatchedBy(func(in api.ApiPostOrgsIDMembersRequest) bool {
 					body := in.GetAddResourceMemberRequestBody()
-					return assert.Equal(t, id1.String(), in.GetOrgID()) &&
+					return assert.Equal(t, id1, in.GetOrgID()) &&
 						assert.NotNil(t, body) &&
-						assert.Equal(t, id2.String(), body.GetId())
-				})).Return(api.ResourceMember{Id: api.PtrString(id2.String())}, nil)
+						assert.Equal(t, id2, body.GetId())
+				})).Return(api.ResourceMember{Id: api.PtrString(id2)}, nil)
 			},
 			expectedOut: "user \"2222222222222222\" has been added as a member of org \"1111111111111111\"",
 		},
 		{
 			name: "org by name",
 			params: org.AddMemberParams{
-				OrgName:  "org",
-				MemberId: id2,
+				OrgParams: clients.OrgParams{OrgName: "org"},
+				MemberId:  id2,
 			},
 			defaultOrgName: "my-org",
 			registerExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
@@ -66,17 +65,17 @@ func TestClient_AddMember(t *testing.T) {
 				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
 					return assert.Equal(t, "org", *in.GetOrg())
 				})).Return(api.Organizations{
-					Orgs: &[]api.Organization{{Id: api.PtrString(id1.String())}},
+					Orgs: &[]api.Organization{{Id: api.PtrString(id1)}},
 				}, nil)
 
-				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).
-					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String()))
+				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).
+					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1))
 				orgApi.EXPECT().PostOrgsIDMembersExecute(tmock.MatchedBy(func(in api.ApiPostOrgsIDMembersRequest) bool {
 					body := in.GetAddResourceMemberRequestBody()
-					return assert.Equal(t, id1.String(), in.GetOrgID()) &&
+					return assert.Equal(t, id1, in.GetOrgID()) &&
 						assert.NotNil(t, body) &&
-						assert.Equal(t, id2.String(), body.GetId())
-				})).Return(api.ResourceMember{Id: api.PtrString(id2.String())}, nil)
+						assert.Equal(t, id2, body.GetId())
+				})).Return(api.ResourceMember{Id: api.PtrString(id2)}, nil)
 			},
 			expectedOut: "user \"2222222222222222\" has been added as a member of org \"1111111111111111\"",
 		},
@@ -91,17 +90,17 @@ func TestClient_AddMember(t *testing.T) {
 				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
 					return assert.Equal(t, "my-org", *in.GetOrg())
 				})).Return(api.Organizations{
-					Orgs: &[]api.Organization{{Id: api.PtrString(id1.String())}},
+					Orgs: &[]api.Organization{{Id: api.PtrString(id1)}},
 				}, nil)
 
-				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).
-					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String()))
+				orgApi.EXPECT().PostOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).
+					Return(api.ApiPostOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1))
 				orgApi.EXPECT().PostOrgsIDMembersExecute(tmock.MatchedBy(func(in api.ApiPostOrgsIDMembersRequest) bool {
 					body := in.GetAddResourceMemberRequestBody()
-					return assert.Equal(t, id1.String(), in.GetOrgID()) &&
+					return assert.Equal(t, id1, in.GetOrgID()) &&
 						assert.NotNil(t, body) &&
-						assert.Equal(t, id2.String(), body.GetId())
-				})).Return(api.ResourceMember{Id: api.PtrString(id2.String())}, nil)
+						assert.Equal(t, id2, body.GetId())
+				})).Return(api.ResourceMember{Id: api.PtrString(id2)}, nil)
 			},
 			expectedOut: "user \"2222222222222222\" has been added as a member of org \"1111111111111111\"",
 		},
@@ -176,18 +175,18 @@ func TestClient_ListMembers(t *testing.T) {
 				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
 					return assert.Equal(t, "my-org", *in.GetOrg())
 				})).Return(api.Organizations{
-					Orgs: &[]api.Organization{{Id: api.PtrString(id1.String())}},
+					Orgs: &[]api.Organization{{Id: api.PtrString(id1)}},
 				}, nil)
 
-				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String())
-				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).Return(req)
+				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1)
+				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).Return(req)
 				orgApi.EXPECT().GetOrgsIDMembersExecute(gomock.Eq(req)).Return(api.ResourceMembers{}, nil)
 			},
 		},
 		{
 			name: "one member",
 			params: org.ListMemberParams{
-				OrgName: "org",
+				OrgParams: clients.OrgParams{OrgName: "org"},
 			},
 			defaultOrgName: "my-org",
 			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
@@ -195,19 +194,19 @@ func TestClient_ListMembers(t *testing.T) {
 				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
 					return assert.Equal(t, "org", *in.GetOrg())
 				})).Return(api.Organizations{
-					Orgs: &[]api.Organization{{Id: api.PtrString(id1.String())}},
+					Orgs: &[]api.Organization{{Id: api.PtrString(id1)}},
 				}, nil)
 
-				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String())
-				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).Return(req)
+				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1)
+				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).Return(req)
 				orgApi.EXPECT().GetOrgsIDMembersExecute(gomock.Eq(req)).
-					Return(api.ResourceMembers{Users: &[]api.ResourceMember{{Id: api.PtrString(id2.String())}}}, nil)
+					Return(api.ResourceMembers{Users: &[]api.ResourceMember{{Id: api.PtrString(id2)}}}, nil)
 			},
 			registerUserExpectations: func(t *testing.T, userApi *mock.MockUsersApi) {
-				req := api.ApiGetUsersIDRequest{ApiService: userApi}.UserID(id2.String())
-				userApi.EXPECT().GetUsersID(gomock.Any(), gomock.Eq(id2.String())).Return(req)
+				req := api.ApiGetUsersIDRequest{ApiService: userApi}.UserID(id2)
+				userApi.EXPECT().GetUsersID(gomock.Any(), gomock.Eq(id2)).Return(req)
 				userApi.EXPECT().GetUsersIDExecute(gomock.Eq(req)).Return(api.UserResponse{
-					Id:     api.PtrString(id2.String()),
+					Id:     api.PtrString(id2),
 					Name:   "user1",
 					Status: api.PtrString("active"),
 				}, nil)
@@ -217,12 +216,12 @@ func TestClient_ListMembers(t *testing.T) {
 		{
 			name: "many members",
 			params: org.ListMemberParams{
-				OrgID: id1,
+				OrgParams: clients.OrgParams{OrgID: id1},
 			},
 			// NOTE: We previously saw a deadlock when # members was > 10, so test that here.
 			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String())
-				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).Return(req)
+				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1)
+				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).Return(req)
 				members := make([]api.ResourceMember, 11)
 				for i := 0; i < 11; i++ {
 					members[i] = api.ResourceMember{Id: api.PtrString(fmt.Sprintf("%016d", i))}
@@ -273,17 +272,17 @@ func TestClient_ListMembers(t *testing.T) {
 		{
 			name: "no such user",
 			params: org.ListMemberParams{
-				OrgID: id1,
+				OrgParams: clients.OrgParams{OrgID: id1},
 			},
 			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1.String())
-				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1.String())).Return(req)
+				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1)
+				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).Return(req)
 				orgApi.EXPECT().GetOrgsIDMembersExecute(gomock.Eq(req)).
-					Return(api.ResourceMembers{Users: &[]api.ResourceMember{{Id: api.PtrString(id2.String())}}}, nil)
+					Return(api.ResourceMembers{Users: &[]api.ResourceMember{{Id: api.PtrString(id2)}}}, nil)
 			},
 			registerUserExpectations: func(t *testing.T, userApi *mock.MockUsersApi) {
-				req := api.ApiGetUsersIDRequest{ApiService: userApi}.UserID(id2.String())
-				userApi.EXPECT().GetUsersID(gomock.Any(), gomock.Eq(id2.String())).Return(req)
+				req := api.ApiGetUsersIDRequest{ApiService: userApi}.UserID(id2)
+				userApi.EXPECT().GetUsersID(gomock.Any(), gomock.Eq(id2)).Return(req)
 				userApi.EXPECT().GetUsersIDExecute(gomock.Eq(req)).Return(api.UserResponse{}, errors.New("not found"))
 			},
 			expectedErr: "user \"2222222222222222\": not found",
@@ -345,14 +344,14 @@ func TestClient_RemoveMembers(t *testing.T) {
 		{
 			name: "org by ID",
 			params: org.RemoveMemberParams{
-				OrgID:    id1,
-				MemberId: id2,
+				OrgParams: clients.OrgParams{OrgID: id1},
+				MemberId:  id2,
 			},
 			defaultOrgName: "my-org",
 			registerExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				req := api.ApiDeleteOrgsIDMembersIDRequest{ApiService: orgApi}.OrgID(id1.String()).UserID(id2.String())
+				req := api.ApiDeleteOrgsIDMembersIDRequest{ApiService: orgApi}.OrgID(id1).UserID(id2)
 				orgApi.EXPECT().
-					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id2.String()), gomock.Eq(id1.String())).Return(req)
+					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id2), gomock.Eq(id1)).Return(req)
 				orgApi.EXPECT().DeleteOrgsIDMembersIDExecute(gomock.Eq(req)).Return(nil)
 			},
 			expectedOut: "user \"2222222222222222\" has been removed from org \"1111111111111111\"",
@@ -360,8 +359,8 @@ func TestClient_RemoveMembers(t *testing.T) {
 		{
 			name: "org by name",
 			params: org.RemoveMemberParams{
-				OrgName:  "org",
-				MemberId: id2,
+				OrgParams: clients.OrgParams{OrgName: "org"},
+				MemberId:  id2,
 			},
 			defaultOrgName: "my-org",
 			registerExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
@@ -369,12 +368,12 @@ func TestClient_RemoveMembers(t *testing.T) {
 				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
 					return assert.Equal(t, "org", *in.GetOrg())
 				})).Return(api.Organizations{
-					Orgs: &[]api.Organization{{Id: api.PtrString(id1.String())}},
+					Orgs: &[]api.Organization{{Id: api.PtrString(id1)}},
 				}, nil)
 
-				req := api.ApiDeleteOrgsIDMembersIDRequest{ApiService: orgApi}.OrgID(id1.String()).UserID(id2.String())
+				req := api.ApiDeleteOrgsIDMembersIDRequest{ApiService: orgApi}.OrgID(id1).UserID(id2)
 				orgApi.EXPECT().
-					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id2.String()), gomock.Eq(id1.String())).Return(req)
+					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id2), gomock.Eq(id1)).Return(req)
 				orgApi.EXPECT().DeleteOrgsIDMembersIDExecute(gomock.Eq(req)).Return(nil)
 			},
 			expectedOut: "user \"2222222222222222\" has been removed from org \"1111111111111111\"",
@@ -390,12 +389,12 @@ func TestClient_RemoveMembers(t *testing.T) {
 				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
 					return assert.Equal(t, "my-org", *in.GetOrg())
 				})).Return(api.Organizations{
-					Orgs: &[]api.Organization{{Id: api.PtrString(id1.String())}},
+					Orgs: &[]api.Organization{{Id: api.PtrString(id1)}},
 				}, nil)
 
-				req := api.ApiDeleteOrgsIDMembersIDRequest{ApiService: orgApi}.OrgID(id1.String()).UserID(id2.String())
+				req := api.ApiDeleteOrgsIDMembersIDRequest{ApiService: orgApi}.OrgID(id1).UserID(id2)
 				orgApi.EXPECT().
-					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id2.String()), gomock.Eq(id1.String())).Return(req)
+					DeleteOrgsIDMembersID(gomock.Any(), gomock.Eq(id2), gomock.Eq(id1)).Return(req)
 				orgApi.EXPECT().DeleteOrgsIDMembersIDExecute(gomock.Eq(req)).Return(nil)
 			},
 			expectedOut: "user \"2222222222222222\" has been removed from org \"1111111111111111\"",

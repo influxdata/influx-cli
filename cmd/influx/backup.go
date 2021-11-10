@@ -26,19 +26,7 @@ Examples:
 		ArgsUsage: "path",
 		Before:    middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
-			commonFlagsNoPrint(),
-			&cli.StringFlag{
-				Name:        "org-id",
-				Usage:       "The ID of the organization",
-				EnvVar:      "INFLUX_ORG_ID",
-				Destination: &params.OrgID,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.Org,
-			},
+			append(commonFlagsNoPrint(), getOrgFlags(&params.OrgParams)...),
 			&cli.StringFlag{
 				Name:        "bucket-id",
 				Usage:       "The ID of the bucket to backup",
@@ -47,7 +35,7 @@ Examples:
 			&cli.StringFlag{
 				Name:        "bucket, b",
 				Usage:       "The name of the bucket to backup",
-				Destination: &params.Bucket,
+				Destination: &params.BucketName,
 			},
 			&cli.GenericFlag{
 				Name:  "compression",

@@ -39,7 +39,7 @@ Examples:
 				Name:        "org, o",
 				Usage:       "The original name of the organization to restore",
 				EnvVar:      "INFLUX_ORG",
-				Destination: &params.Org,
+				Destination: &params.OrgName,
 			},
 			&cli.StringFlag{
 				Name:        "bucket-id",
@@ -49,7 +49,7 @@ Examples:
 			&cli.StringFlag{
 				Name:        "bucket, b",
 				Usage:       "The original name of the bucket to restore",
-				Destination: &params.Bucket,
+				Destination: &params.BucketName,
 			},
 			&cli.StringFlag{
 				Name:        "new-bucket",
@@ -68,19 +68,19 @@ Examples:
 			}
 			params.Path = ctx.Args().Get(0)
 
-			if params.Full && (params.Org != "" ||
+			if params.Full && (params.OrgName != "" ||
 				params.OrgID != "" ||
-				params.Bucket != "" ||
+				params.BucketName != "" ||
 				params.BucketID != "" ||
 				params.NewOrgName != "" ||
 				params.NewBucketName != "") {
 				return errors.New("--full restore cannot be limited to a single org or bucket")
 			}
 
-			if params.NewOrgName != "" && params.OrgID == "" && params.Org == "" {
+			if params.NewOrgName != "" && params.OrgID == "" && params.OrgName == "" {
 				return errors.New("--org-id or --org must be set to use --new-org")
 			}
-			if params.NewBucketName != "" && params.BucketID == "" && params.Bucket == "" {
+			if params.NewBucketName != "" && params.BucketID == "" && params.BucketName == "" {
 				return errors.New("--bucket-id or --bucket must be set to use --new-bucket")
 			}
 

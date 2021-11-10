@@ -16,7 +16,6 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients/bucket_schema"
 	"github.com/influxdata/influx-cli/v2/internal/mock"
 	"github.com/influxdata/influx-cli/v2/internal/testutils"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -26,9 +25,9 @@ func TestClient_List(t *testing.T) {
 	t.Parallel()
 
 	var (
-		orgID         = influxid.MustIDFromString("deadf00dbaadf00d")
-		bucketID      = influxid.MustIDFromString("f00ddeadf00dbaad")
-		measurementID = influxid.MustIDFromString("1010f00ddeedfeed")
+		orgID         = "deadf00dbaadf00d"
+		bucketID      = "f00ddeadf00dbaad"
+		measurementID = "1010f00ddeedfeed"
 		createdAt     = time.Date(2004, 4, 9, 2, 15, 0, 0, time.UTC)
 		updatedAt     = time.Date(2009, 9, 1, 2, 15, 0, 0, time.UTC)
 	)
@@ -46,9 +45,9 @@ func TestClient_List(t *testing.T) {
 
 	type args struct {
 		OrgName        string
-		OrgID          influxid.ID
+		OrgID          string
 		BucketName     string
-		BucketID       influxid.ID
+		BucketID       string
 		Name           string
 		ExtendedOutput bool
 	}
@@ -74,8 +73,8 @@ func TestClient_List(t *testing.T) {
 			var buckets []api.Bucket
 			if len(n) == 1 {
 				bucket := api.NewBucket(n[0], nil)
-				bucket.SetOrgID(orgID.String())
-				bucket.SetId(bucketID.String())
+				bucket.SetOrgID(orgID)
+				bucket.SetId(bucketID)
 				bucket.SetName(n[0])
 				buckets = []api.Bucket{*bucket}
 			}
@@ -89,9 +88,9 @@ func TestClient_List(t *testing.T) {
 			a.buckets.EXPECT().
 				GetBucketsExecute(tmock.MatchedBy(func(in api.ApiGetBucketsRequest) bool {
 					matchOrg := (in.GetOrg() != nil && *in.GetOrg() == a.params.OrgName) ||
-						(in.GetOrgID() != nil && a.params.OrgID.Valid() && *in.GetOrgID() == a.params.OrgID.String())
+						(in.GetOrgID() != nil && *in.GetOrgID() == a.params.OrgID)
 					matchBucket := (in.GetName() != nil && *in.GetName() == a.params.BucketName) ||
-						(in.GetId() != nil && a.params.BucketID.Valid() && *in.GetId() == a.params.BucketID.String())
+						(in.GetId() != nil && *in.GetId() == a.params.BucketID)
 					return matchOrg && matchBucket
 				})).
 				Return(api.Buckets{Buckets: &buckets}, nil)
@@ -116,22 +115,22 @@ func TestClient_List(t *testing.T) {
 		return func(t *testing.T, a *setupArgs) {
 			t.Helper()
 
-			req := api.ApiGetMeasurementSchemasRequest{ApiService: a.schemas}.BucketID(bucketID.String())
+			req := api.ApiGetMeasurementSchemasRequest{ApiService: a.schemas}.BucketID(bucketID)
 
 			a.schemas.EXPECT().
-				GetMeasurementSchemas(gomock.Any(), bucketID.String()).
+				GetMeasurementSchemas(gomock.Any(), bucketID).
 				Return(req)
 
 			a.schemas.EXPECT().
 				GetMeasurementSchemasExecute(tmock.MatchedBy(func(in api.ApiGetMeasurementSchemasRequest) bool {
-					return (in.GetOrgID() != nil && *in.GetOrgID() == orgID.String()) &&
-						in.GetBucketID() == bucketID.String() &&
+					return (in.GetOrgID() != nil && *in.GetOrgID() == orgID) &&
+						in.GetBucketID() == bucketID &&
 						(in.GetName() != nil && *in.GetName() == a.params.Name)
 				})).
 				Return(api.MeasurementSchemaList{
 					MeasurementSchemas: []api.MeasurementSchema{
 						{
-							Id:        measurementID.String(),
+							Id:        measurementID,
 							Name:      a.params.Name,
 							Columns:   a.cols,
 							CreatedAt: createdAt,
@@ -177,7 +176,7 @@ func TestClient_List(t *testing.T) {
 		{
 			name: "bucket not found by id",
 			opts: opts(
-				withArgs(args{OrgName: "my-org", BucketID: influxid.MustIDFromString("baadf00d7777deed")}),
+				withArgs(args{OrgName: "my-org", BucketID: "baadf00d7777deed"}),
 				expGetBuckets(),
 			),
 			expErr: `bucket "baadf00d7777deed" not found`,

@@ -30,7 +30,7 @@ func newBucketCreateCmd() cli.Command {
 		Usage:  "Create bucket",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
-			commonFlags(),
+			append(commonFlags(), getOrgFlags(&params.OrgParams)...),
 			&cli.StringFlag{
 				Name:        "name, n",
 				Usage:       "New bucket name",
@@ -52,18 +52,6 @@ func newBucketCreateCmd() cli.Command {
 				Name:        "shard-group-duration",
 				Usage:       "Shard group duration used internally by the storage engine",
 				Destination: &params.ShardGroupDuration,
-			},
-			&cli.StringFlag{
-				Name:        "org-id",
-				Usage:       "The ID of the organization",
-				EnvVar:      "INFLUX_ORG_ID",
-				Destination: &params.OrgID,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.OrgName,
 			},
 			&cli.GenericFlag{
 				Name:  "schema-type",
@@ -90,28 +78,16 @@ func newBucketDeleteCmd() cli.Command {
 		Usage:  "Delete bucket",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
-			commonFlags(),
+			append(commonFlags(), getOrgFlags(&params.OrgParams)...),
 			&cli.StringFlag{
 				Name:        "id, i",
 				Usage:       "The bucket ID, required if name isn't provided",
-				Destination: &params.ID,
+				Destination: &params.BucketID,
 			},
 			&cli.StringFlag{
 				Name:        "name, n",
 				Usage:       "The bucket name, org or org-id will be required by choosing this",
-				Destination: &params.Name,
-			},
-			&cli.StringFlag{
-				Name:        "org-id",
-				Usage:       "The ID of the organization",
-				EnvVar:      "INFLUX_ORG_ID",
-				Destination: &params.OrgID,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.OrgName,
+				Destination: &params.BucketName,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
@@ -134,28 +110,16 @@ func newBucketListCmd() cli.Command {
 		Aliases: []string{"find", "ls"},
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
-			commonFlags(),
+			append(commonFlags(), getOrgFlags(&params.OrgParams)...),
 			&cli.StringFlag{
 				Name:        "id, i",
 				Usage:       "The bucket ID, required if name isn't provided",
-				Destination: &params.ID,
+				Destination: &params.BucketID,
 			},
 			&cli.StringFlag{
 				Name:        "name, n",
 				Usage:       "The bucket name, org or org-id will be required by choosing this",
-				Destination: &params.Name,
-			},
-			&cli.StringFlag{
-				Name:        "org-id",
-				Usage:       "The ID of the organization",
-				EnvVar:      "INFLUX_ORG_ID",
-				Destination: &params.OrgID,
-			},
-			&cli.StringFlag{
-				Name:        "org, o",
-				Usage:       "The name of the organization",
-				EnvVar:      "INFLUX_ORG",
-				Destination: &params.OrgName,
+				Destination: &params.BucketName,
 			},
 			&cli.IntFlag{
 				Name:        "limit",
@@ -199,13 +163,13 @@ func newBucketUpdateCmd() cli.Command {
 				Name:        "name, n",
 				Usage:       "New name to set on the bucket",
 				EnvVar:      "INFLUX_BUCKET_NAME",
-				Destination: &params.Name,
+				Destination: &params.BucketName,
 			},
 			&cli.StringFlag{
 				Name:        "id, i",
 				Usage:       "The bucket ID",
 				Required:    true,
-				Destination: &params.ID,
+				Destination: &params.BucketID,
 			},
 			&cli.StringFlag{
 				Name:        "description, d",

@@ -39,26 +39,27 @@ func (c Client) resolveMeasurement(ctx context.Context, ids orgBucketID, name st
 	return res.MeasurementSchemas[0].Id, nil
 }
 
+// todo move to params.go
 func (c Client) resolveOrgBucketIds(ctx context.Context, params clients.OrgBucketParams) (*orgBucketID, error) {
-	if params.BucketName == "" && !params.BucketID.Valid() {
+	if params.BucketName == "" && params.BucketID == "" {
 		return nil, errors.New("bucket missing: specify bucket ID or bucket name")
 	}
 
-	if !params.OrgID.Valid() && params.OrgName == "" && c.ActiveConfig.Org == "" {
+	if params.OrgID == "" && params.OrgName == "" && c.ActiveConfig.Org == "" {
 		return nil, errors.New("org missing: specify org ID or org name")
 	}
 
 	req := c.GetBuckets(ctx)
 	var nameID string
-	if params.BucketID.Valid() {
-		req = req.Id(params.BucketID.String())
-		nameID = params.BucketID.String()
+	if params.BucketID != "" {
+		req = req.Id(params.BucketID)
+		nameID = params.BucketID
 	} else {
 		req = req.Name(params.BucketName)
 		nameID = params.BucketName
 	}
-	if params.OrgID.Valid() {
-		req = req.OrgID(params.OrgID.String())
+	if params.OrgID != "" {
+		req = req.OrgID(params.OrgID)
 	} else if params.OrgName != "" {
 		req = req.Org(params.OrgName)
 	} else {

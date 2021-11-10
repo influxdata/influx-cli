@@ -6,7 +6,6 @@ import (
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/bucket_schema"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/influxdata/influx-cli/v2/pkg/influxid"
 	"github.com/urfave/cli"
 )
 
@@ -102,7 +101,7 @@ func newBucketSchemaCreateCmd() cli.Command {
 func newBucketSchemaUpdateCmd() cli.Command {
 	var params struct {
 		clients.OrgBucketParams
-		ID             influxid.ID
+		ID             string
 		Name           string
 		ColumnsFile    string
 		ColumnsFormat  bucket_schema.ColumnsFormat
@@ -116,10 +115,10 @@ func newBucketSchemaUpdateCmd() cli.Command {
 			commonFlags(),
 			append(
 				getOrgBucketFlags(&params.OrgBucketParams),
-				&cli.GenericFlag{
-					Name:  "id",
-					Usage: "ID of the measurement",
-					Value: &params.ID,
+				&cli.StringFlag{
+					Name:        "id",
+					Usage:       "ID of the measurement",
+					Destination: &params.ID,
 				},
 				&cli.StringFlag{
 					Name:        "name",
@@ -147,7 +146,7 @@ func newBucketSchemaUpdateCmd() cli.Command {
 			return getBucketSchemaClient(ctx).
 				Update(getContext(ctx), bucket_schema.UpdateParams{
 					OrgBucketParams: params.OrgBucketParams,
-					ID:              params.ID.String(),
+					ID:              params.ID,
 					Name:            params.Name,
 					Stdin:           os.Stdin,
 					ColumnsFile:     params.ColumnsFile,

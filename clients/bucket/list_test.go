@@ -32,7 +32,9 @@ func TestBucketsList(t *testing.T) {
 		{
 			name: "by ID",
 			params: bucket.BucketsListParams{
-				ID: "123",
+				OrgBucketParams: clients.OrgBucketParams{
+					BucketParams: clients.BucketParams{BucketID: "123"},
+				},
 			},
 			configOrgName: "my-default-org",
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
@@ -62,7 +64,9 @@ func TestBucketsList(t *testing.T) {
 		{
 			name: "by name",
 			params: bucket.BucketsListParams{
-				Name: "my-bucket",
+				OrgBucketParams: clients.OrgBucketParams{
+					BucketParams: clients.BucketParams{BucketName: "my-bucket"},
+				},
 			},
 			configOrgName: "my-default-org",
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
@@ -148,7 +152,9 @@ func TestBucketsList(t *testing.T) {
 		{
 			name: "override org by ID",
 			params: bucket.BucketsListParams{
-				OrgID: "456",
+				OrgBucketParams: clients.OrgBucketParams{
+					OrgParams: clients.OrgParams{OrgID: "456"},
+				},
 			},
 			configOrgName: "my-default-org",
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
@@ -164,8 +170,10 @@ func TestBucketsList(t *testing.T) {
 		{
 			name: "override org by name",
 			params: bucket.BucketsListParams{
-				OrgName: "my-org",
-				Limit:   2,
+				OrgBucketParams: clients.OrgBucketParams{
+					OrgParams: clients.OrgParams{OrgName: "my-org"},
+				},
+				Limit: 2,
 			},
 			configOrgName: "my-default-org",
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
@@ -204,8 +212,10 @@ func TestBucketsList(t *testing.T) {
 		{
 			name: "list multiple bucket schema types",
 			params: bucket.BucketsListParams{
-				OrgName: "my-org",
-				Limit:   3,
+				OrgBucketParams: clients.OrgBucketParams{
+					OrgParams: clients.OrgParams{OrgName: "my-org"},
+				},
+				Limit: 3,
 			},
 			configOrgName: "my-default-org",
 			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
