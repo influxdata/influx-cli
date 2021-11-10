@@ -507,6 +507,7 @@ type ApiGetTasksRequest struct {
 	orgID        *string
 	status       *string
 	limit        *int32
+	type_        *string
 }
 
 func (r ApiGetTasksRequest) ZapTraceSpan(zapTraceSpan string) ApiGetTasksRequest {
@@ -573,6 +574,14 @@ func (r ApiGetTasksRequest) GetLimit() *int32 {
 	return r.limit
 }
 
+func (r ApiGetTasksRequest) Type_(type_ string) ApiGetTasksRequest {
+	r.type_ = &type_
+	return r
+}
+func (r ApiGetTasksRequest) GetType_() *string {
+	return r.type_
+}
+
 func (r ApiGetTasksRequest) Execute() (Tasks, error) {
 	return r.ApiService.GetTasksExecute(r)
 }
@@ -634,6 +643,9 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 	}
 	if r.limit != nil {
 		localVarQueryParams.Add("limit", parameterToString(*r.limit, ""))
+	}
+	if r.type_ != nil {
+		localVarQueryParams.Add("type", parameterToString(*r.type_, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}

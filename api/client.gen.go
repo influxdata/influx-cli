@@ -72,7 +72,7 @@ type APIClient struct {
 
 	ReplicationsApi ReplicationsApi
 
-	ResourceListApi ResourceListApi
+	ResourcesApi ResourcesApi
 
 	RestoreApi RestoreApi
 
@@ -124,7 +124,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.QueryApi = (*QueryApiService)(&c.common)
 	c.RemoteConnectionsApi = (*RemoteConnectionsApiService)(&c.common)
 	c.ReplicationsApi = (*ReplicationsApiService)(&c.common)
-	c.ResourceListApi = (*ResourceListApiService)(&c.common)
+	c.ResourcesApi = (*ResourcesApiService)(&c.common)
 	c.RestoreApi = (*RestoreApiService)(&c.common)
 	c.SecretsApi = (*SecretsApiService)(&c.common)
 	c.SetupApi = (*SetupApiService)(&c.common)

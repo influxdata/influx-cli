@@ -23,7 +23,7 @@ var (
 	_ _context.Context
 )
 
-type ResourceListApi interface {
+type ResourcesApi interface {
 
 	/*
 	 * GetResources List all known resources
@@ -41,30 +41,30 @@ type ResourceListApi interface {
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
 	// servers.
-	OnlyOSS() ResourceListApi
+	OnlyOSS() ResourcesApi
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on cloud
 	// servers.
-	OnlyCloud() ResourceListApi
+	OnlyCloud() ResourcesApi
 }
 
-// ResourceListApiService ResourceListApi service
-type ResourceListApiService service
+// ResourcesApiService ResourcesApi service
+type ResourcesApiService service
 
-func (a *ResourceListApiService) OnlyOSS() ResourceListApi {
+func (a *ResourcesApiService) OnlyOSS() ResourcesApi {
 	a.isOnlyOSS = true
 	return a
 }
 
-func (a *ResourceListApiService) OnlyCloud() ResourceListApi {
+func (a *ResourcesApiService) OnlyCloud() ResourcesApi {
 	a.isOnlyCloud = true
 	return a
 }
 
 type ApiGetResourcesRequest struct {
 	ctx          _context.Context
-	ApiService   ResourceListApi
+	ApiService   ResourcesApi
 	zapTraceSpan *string
 }
 
@@ -85,7 +85,7 @@ func (r ApiGetResourcesRequest) Execute() ([]string, error) {
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetResourcesRequest
  */
-func (a *ResourceListApiService) GetResources(ctx _context.Context) ApiGetResourcesRequest {
+func (a *ResourcesApiService) GetResources(ctx _context.Context) ApiGetResourcesRequest {
 	return ApiGetResourcesRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -96,7 +96,7 @@ func (a *ResourceListApiService) GetResources(ctx _context.Context) ApiGetResour
  * Execute executes the request
  * @return []string
  */
-func (a *ResourceListApiService) GetResourcesExecute(r ApiGetResourcesRequest) ([]string, error) {
+func (a *ResourcesApiService) GetResourcesExecute(r ApiGetResourcesRequest) ([]string, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -106,7 +106,7 @@ func (a *ResourceListApiService) GetResourcesExecute(r ApiGetResourcesRequest) (
 		localVarReturnValue  []string
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ResourceListApiService.GetResources")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ResourcesApiService.GetResources")
 	if err != nil {
 		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
 	}

@@ -39,10 +39,13 @@ const (
 	RESOURCEENUMOSS_CHECKS                 ResourceEnumOSS = "checks"
 	RESOURCEENUMOSS_DBRP                   ResourceEnumOSS = "dbrp"
 	RESOURCEENUMOSS_NOTEBOOKS              ResourceEnumOSS = "notebooks"
+	RESOURCEENUMOSS_ANNOTATIONS            ResourceEnumOSS = "annotations"
+	RESOURCEENUMOSS_REMOTES                ResourceEnumOSS = "remotes"
+	RESOURCEENUMOSS_REPLICATIONS           ResourceEnumOSS = "replications"
 )
 
 func ResourceEnumOSSValues() []ResourceEnumOSS {
-	return []ResourceEnumOSS{"authorizations", "buckets", "dashboards", "orgs", "sources", "tasks", "telegrafs", "users", "variables", "scrapers", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "notebooks"}
+	return []ResourceEnumOSS{"authorizations", "buckets", "dashboards", "orgs", "sources", "tasks", "telegrafs", "users", "variables", "scrapers", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "notebooks", "annotations", "remotes", "replications"}
 }
 
 func (v *ResourceEnumOSS) UnmarshalJSON(src []byte) error {
@@ -52,7 +55,7 @@ func (v *ResourceEnumOSS) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := ResourceEnumOSS(value)
-	for _, existing := range []ResourceEnumOSS{"authorizations", "buckets", "dashboards", "orgs", "sources", "tasks", "telegrafs", "users", "variables", "scrapers", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "notebooks"} {
+	for _, existing := range []ResourceEnumOSS{"authorizations", "buckets", "dashboards", "orgs", "sources", "tasks", "telegrafs", "users", "variables", "scrapers", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "notebooks", "annotations", "remotes", "replications"} {
 		if existing == enumTypeValue {
 			*v = enumTypeValue
 			return nil
