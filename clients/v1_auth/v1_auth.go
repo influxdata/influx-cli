@@ -100,6 +100,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	var permissions []api.Permission
 	for _, bp := range bucketPerms {
 		for _, p := range bp.perms {
+			p := p
 			// verify the input ID
 			if err := influxid.Validate(p); err != nil {
 				return fmt.Errorf("invalid bucket ID '%s': %w (did you pass a bucket name instead of an ID?)", p, err)
