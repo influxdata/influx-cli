@@ -16,13 +16,14 @@ import (
 
 // ReplicationCreationRequest struct for ReplicationCreationRequest
 type ReplicationCreationRequest struct {
-	Name              string  `json:"name" yaml:"name"`
-	Description       *string `json:"description,omitempty" yaml:"description,omitempty"`
-	OrgID             string  `json:"orgID" yaml:"orgID"`
-	RemoteID          string  `json:"remoteID" yaml:"remoteID"`
-	LocalBucketID     string  `json:"localBucketID" yaml:"localBucketID"`
-	RemoteBucketID    string  `json:"remoteBucketID" yaml:"remoteBucketID"`
-	MaxQueueSizeBytes int64   `json:"maxQueueSizeBytes" yaml:"maxQueueSizeBytes"`
+	Name                 string  `json:"name" yaml:"name"`
+	Description          *string `json:"description,omitempty" yaml:"description,omitempty"`
+	OrgID                string  `json:"orgID" yaml:"orgID"`
+	RemoteID             string  `json:"remoteID" yaml:"remoteID"`
+	LocalBucketID        string  `json:"localBucketID" yaml:"localBucketID"`
+	RemoteBucketID       string  `json:"remoteBucketID" yaml:"remoteBucketID"`
+	MaxQueueSizeBytes    int64   `json:"maxQueueSizeBytes" yaml:"maxQueueSizeBytes"`
+	DropNonRetryableData *bool   `json:"dropNonRetryableData,omitempty" yaml:"dropNonRetryableData,omitempty"`
 }
 
 // NewReplicationCreationRequest instantiates a new ReplicationCreationRequest object
@@ -37,6 +38,8 @@ func NewReplicationCreationRequest(name string, orgID string, remoteID string, l
 	this.LocalBucketID = localBucketID
 	this.RemoteBucketID = remoteBucketID
 	this.MaxQueueSizeBytes = maxQueueSizeBytes
+	var dropNonRetryableData bool = false
+	this.DropNonRetryableData = &dropNonRetryableData
 	return &this
 }
 
@@ -47,6 +50,8 @@ func NewReplicationCreationRequestWithDefaults() *ReplicationCreationRequest {
 	this := ReplicationCreationRequest{}
 	var maxQueueSizeBytes int64 = 67108860
 	this.MaxQueueSizeBytes = maxQueueSizeBytes
+	var dropNonRetryableData bool = false
+	this.DropNonRetryableData = &dropNonRetryableData
 	return &this
 }
 
@@ -226,6 +231,38 @@ func (o *ReplicationCreationRequest) SetMaxQueueSizeBytes(v int64) {
 	o.MaxQueueSizeBytes = v
 }
 
+// GetDropNonRetryableData returns the DropNonRetryableData field value if set, zero value otherwise.
+func (o *ReplicationCreationRequest) GetDropNonRetryableData() bool {
+	if o == nil || o.DropNonRetryableData == nil {
+		var ret bool
+		return ret
+	}
+	return *o.DropNonRetryableData
+}
+
+// GetDropNonRetryableDataOk returns a tuple with the DropNonRetryableData field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ReplicationCreationRequest) GetDropNonRetryableDataOk() (*bool, bool) {
+	if o == nil || o.DropNonRetryableData == nil {
+		return nil, false
+	}
+	return o.DropNonRetryableData, true
+}
+
+// HasDropNonRetryableData returns a boolean if a field has been set.
+func (o *ReplicationCreationRequest) HasDropNonRetryableData() bool {
+	if o != nil && o.DropNonRetryableData != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetDropNonRetryableData gets a reference to the given bool and assigns it to the DropNonRetryableData field.
+func (o *ReplicationCreationRequest) SetDropNonRetryableData(v bool) {
+	o.DropNonRetryableData = &v
+}
+
 func (o ReplicationCreationRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
@@ -248,6 +285,9 @@ func (o ReplicationCreationRequest) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["maxQueueSizeBytes"] = o.MaxQueueSizeBytes
+	}
+	if o.DropNonRetryableData != nil {
+		toSerialize["dropNonRetryableData"] = o.DropNonRetryableData
 	}
 	return json.Marshal(toSerialize)
 }

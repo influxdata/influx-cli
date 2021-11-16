@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
@@ -17,12 +18,25 @@ type Client struct {
 
 type CreateParams struct {
 	clients.OrgParams
-	Name           string
-	Description    string
-	RemoteID       string
-	LocalBucketID  string
-	RemoteBucketID string
-	MaxQueueSize   int64
+	Name                 string
+	Description          string
+	RemoteID             string
+	LocalBucketID        string
+	RemoteBucketID       string
+	MaxQueueSize         int64
+	DropNonRetryableData string
+}
+
+func stringToBool(s string) (bool, error) {
+	if strings.ToLower(s) == "t" || strings.ToLower(s) == "true" {
+		return true, nil
+	}
+
+	if strings.ToLower(s) == "f" || strings.ToLower(s) == "false" {
+		return false, nil
+	}
+
+	return false, fmt.Errorf(`drop-non-retryable-data must be "true" ("t") or "false" ("f"), got %q`, s)
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
@@ -44,6 +58,15 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	// set optional params if specified
 	if params.Description != "" {
 		body.Description = &params.Description
+	}
+
+	if params.DropNonRetryableData != "" {
+		setB, err := stringToBool(params.DropNonRetryableData)
+		if err != nil {
+			return err
+		}
+
+		body.SetDropNonRetryableData(setB)
 	}
 
 	// send post request
@@ -102,12 +125,13 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 }
 
 type UpdateParams struct {
-	ReplicationID  string
-	Name           string
-	Description    string
-	RemoteID       string
-	RemoteBucketID string
-	MaxQueueSize   int64
+	ReplicationID        string
+	Name                 string
+	Description          string
+	RemoteID             string
+	RemoteBucketID       string
+	MaxQueueSize         int64
+	DropNonRetryableData string
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
@@ -132,6 +156,15 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 
 	if params.MaxQueueSize != 0 {
 		body.SetMaxQueueSizeBytes(params.MaxQueueSize)
+	}
+
+	if params.DropNonRetryableData != "" {
+		setB, err := stringToBool(params.DropNonRetryableData)
+		if err != nil {
+			return err
+		}
+
+		body.SetDropNonRetryableData(setB)
 	}
 
 	// send patch request
@@ -182,7 +215,7 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 	}
 
 	headers := []string{"ID", "Name", "Org ID", "Remote ID", "Local Bucket ID", "Remote Bucket ID",
-		"Current Queue Bytes", "Max Queue Bytes", "Latest Status Code"}
+		"Current Queue Bytes", "Max Queue Bytes", "Latest Status Code", "Drop Non-Retryable Data"}
 	if opts.deleted {
 		headers = append(headers, "Deleted")
 	}
@@ -194,15 +227,16 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 	var rows []map[string]interface{}
 	for _, r := range opts.replications {
 		row := map[string]interface{}{
-			"ID":                  r.GetId(),
-			"Name":                r.GetName(),
-			"Org ID":              r.GetOrgID(),
-			"Remote ID":           r.GetRemoteID(),
-			"Local Bucket ID":     r.GetLocalBucketID(),
-			"Remote Bucket ID":    r.GetRemoteBucketID(),
-			"Current Queue Bytes": r.GetCurrentQueueSizeBytes(),
-			"Max Queue Bytes":     r.GetMaxQueueSizeBytes(),
-			"Latest Status Code":  r.GetLatestResponseCode(),
+			"ID":                      r.GetId(),
+			"Name":                    r.GetName(),
+			"Org ID":                  r.GetOrgID(),
+			"Remote ID":               r.GetRemoteID(),
+			"Local Bucket ID":         r.GetLocalBucketID(),
+			"Remote Bucket ID":        r.GetRemoteBucketID(),
+			"Current Queue Bytes":     r.GetCurrentQueueSizeBytes(),
+			"Max Queue Bytes":         r.GetMaxQueueSizeBytes(),
+			"Latest Status Code":      r.GetLatestResponseCode(),
+			"Drop Non-Retryable Data": r.GetDropNonRetryableData(),
 		}
 		if opts.deleted {
 			row["Deleted"] = true

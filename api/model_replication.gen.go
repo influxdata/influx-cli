@@ -27,6 +27,7 @@ type Replication struct {
 	CurrentQueueSizeBytes int64   `json:"currentQueueSizeBytes" yaml:"currentQueueSizeBytes"`
 	LatestResponseCode    *int32  `json:"latestResponseCode,omitempty" yaml:"latestResponseCode,omitempty"`
 	LatestErrorMessage    *string `json:"latestErrorMessage,omitempty" yaml:"latestErrorMessage,omitempty"`
+	DropNonRetryableData  *bool   `json:"dropNonRetryableData,omitempty" yaml:"dropNonRetryableData,omitempty"`
 }
 
 // NewReplication instantiates a new Replication object
@@ -342,6 +343,38 @@ func (o *Replication) SetLatestErrorMessage(v string) {
 	o.LatestErrorMessage = &v
 }
 
+// GetDropNonRetryableData returns the DropNonRetryableData field value if set, zero value otherwise.
+func (o *Replication) GetDropNonRetryableData() bool {
+	if o == nil || o.DropNonRetryableData == nil {
+		var ret bool
+		return ret
+	}
+	return *o.DropNonRetryableData
+}
+
+// GetDropNonRetryableDataOk returns a tuple with the DropNonRetryableData field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Replication) GetDropNonRetryableDataOk() (*bool, bool) {
+	if o == nil || o.DropNonRetryableData == nil {
+		return nil, false
+	}
+	return o.DropNonRetryableData, true
+}
+
+// HasDropNonRetryableData returns a boolean if a field has been set.
+func (o *Replication) HasDropNonRetryableData() bool {
+	if o != nil && o.DropNonRetryableData != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetDropNonRetryableData gets a reference to the given bool and assigns it to the DropNonRetryableData field.
+func (o *Replication) SetDropNonRetryableData(v bool) {
+	o.DropNonRetryableData = &v
+}
+
 func (o Replication) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
@@ -376,6 +409,9 @@ func (o Replication) MarshalJSON() ([]byte, error) {
 	}
 	if o.LatestErrorMessage != nil {
 		toSerialize["latestErrorMessage"] = o.LatestErrorMessage
+	}
+	if o.DropNonRetryableData != nil {
+		toSerialize["dropNonRetryableData"] = o.DropNonRetryableData
 	}
 	return json.Marshal(toSerialize)
 }
