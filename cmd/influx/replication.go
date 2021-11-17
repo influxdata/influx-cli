@@ -76,6 +76,16 @@ func newReplicationCreateCmd() cli.Command {
 				Value:       67108860, // source: https://github.com/influxdata/openapi/blob/588064fe68e7dfeebd019695aa805832632cbfb6/src/oss/schemas/ReplicationCreationRequest.yml#L19
 				Destination: &params.MaxQueueSize,
 			},
+			&cli.BoolFlag{
+				Name:        "drop-non-retryable-data",
+				Usage:       "Drop data when a non-retryable error is encountered instead of retrying",
+				Destination: &params.DropNonRetryableData,
+			},
+			&cli.BoolFlag{
+				Name:        "no-drop-non-retryable-data",
+				Usage:       "Do not drop data when a non-retryable error is encountered",
+				Destination: &params.NoDropNonRetryableData,
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
@@ -208,6 +218,16 @@ func newReplicationUpdateCmd() cli.Command {
 				Name:        "max-queue-bytes",
 				Usage:       "New max queue size in bytes",
 				Destination: &params.MaxQueueSize,
+			},
+			&cli.BoolFlag{
+				Name:        "drop-non-retryable-data",
+				Usage:       "Drop data when a non-retryable error is encountered instead of retrying",
+				Destination: &params.DropNonRetryableData,
+			},
+			&cli.BoolFlag{
+				Name:        "no-drop-non-retryable-data",
+				Usage:       "Do not drop data when a non-retryable error is encountered",
+				Destination: &params.NoDropNonRetryableData,
 			},
 		),
 		Action: func(ctx *cli.Context) error {

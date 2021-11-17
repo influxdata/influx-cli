@@ -17,12 +17,14 @@ type Client struct {
 
 type CreateParams struct {
 	clients.OrgParams
-	Name           string
-	Description    string
-	RemoteID       string
-	LocalBucketID  string
-	RemoteBucketID string
-	MaxQueueSize   int64
+	Name                   string
+	Description            string
+	RemoteID               string
+	LocalBucketID          string
+	RemoteBucketID         string
+	MaxQueueSize           int64
+	DropNonRetryableData   bool
+	NoDropNonRetryableData bool
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
@@ -45,6 +47,12 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	if params.Description != "" {
 		body.Description = &params.Description
 	}
+
+	dropNonRetryableDataBoolPtr, err := dropNonRetryableDataBoolPtrFromFlags(params.DropNonRetryableData, params.NoDropNonRetryableData)
+	if err != nil {
+		return err
+	}
+	body.DropNonRetryableData = dropNonRetryableDataBoolPtr
 
 	// send post request
 	res, err := c.PostReplication(ctx).ReplicationCreationRequest(body).Execute()
@@ -102,12 +110,14 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 }
 
 type UpdateParams struct {
-	ReplicationID  string
-	Name           string
-	Description    string
-	RemoteID       string
-	RemoteBucketID string
-	MaxQueueSize   int64
+	ReplicationID          string
+	Name                   string
+	Description            string
+	RemoteID               string
+	RemoteBucketID         string
+	MaxQueueSize           int64
+	DropNonRetryableData   bool
+	NoDropNonRetryableData bool
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
@@ -132,6 +142,15 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 
 	if params.MaxQueueSize != 0 {
 		body.SetMaxQueueSizeBytes(params.MaxQueueSize)
+	}
+
+	dropNonRetryableDataBoolPtr, err := dropNonRetryableDataBoolPtrFromFlags(params.DropNonRetryableData, params.NoDropNonRetryableData)
+	if err != nil {
+		return err
+	}
+
+	if dropNonRetryableDataBoolPtr != nil {
+		body.SetDropNonRetryableData(*dropNonRetryableDataBoolPtr)
 	}
 
 	// send patch request
@@ -182,7 +201,7 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 	}
 
 	headers := []string{"ID", "Name", "Org ID", "Remote ID", "Local Bucket ID", "Remote Bucket ID",
-		"Current Queue Bytes", "Max Queue Bytes", "Latest Status Code"}
+		"Current Queue Bytes", "Max Queue Bytes", "Latest Status Code", "Drop Non-Retryable Data"}
 	if opts.deleted {
 		headers = append(headers, "Deleted")
 	}
@@ -194,15 +213,16 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 	var rows []map[string]interface{}
 	for _, r := range opts.replications {
 		row := map[string]interface{}{
-			"ID":                  r.GetId(),
-			"Name":                r.GetName(),
-			"Org ID":              r.GetOrgID(),
-			"Remote ID":           r.GetRemoteID(),
-			"Local Bucket ID":     r.GetLocalBucketID(),
-			"Remote Bucket ID":    r.GetRemoteBucketID(),
-			"Current Queue Bytes": r.GetCurrentQueueSizeBytes(),
-			"Max Queue Bytes":     r.GetMaxQueueSizeBytes(),
-			"Latest Status Code":  r.GetLatestResponseCode(),
+			"ID":                      r.GetId(),
+			"Name":                    r.GetName(),
+			"Org ID":                  r.GetOrgID(),
+			"Remote ID":               r.GetRemoteID(),
+			"Local Bucket ID":         r.GetLocalBucketID(),
+			"Remote Bucket ID":        r.GetRemoteBucketID(),
+			"Current Queue Bytes":     r.GetCurrentQueueSizeBytes(),
+			"Max Queue Bytes":         r.GetMaxQueueSizeBytes(),
+			"Latest Status Code":      r.GetLatestResponseCode(),
+			"Drop Non-Retryable Data": r.GetDropNonRetryableData(),
 		}
 		if opts.deleted {
 			row["Deleted"] = true
@@ -211,4 +231,20 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 	}
 
 	return c.PrintTable(headers, rows...)
+}
+
+func dropNonRetryableDataBoolPtrFromFlags(dropNonRetryableData, noDropNonRetryableData bool) (*bool, error) {
+	if dropNonRetryableData && noDropNonRetryableData {
+		return nil, errors.New("cannot specify both --drop-non-retryable-data and --no-drop-non-retryable-data at the same time")
+	}
+
+	if dropNonRetryableData {
+		return api.PtrBool(true), nil
+	}
+
+	if noDropNonRetryableData {
+		return api.PtrBool(false), nil
+	}
+
+	return nil, nil
 }

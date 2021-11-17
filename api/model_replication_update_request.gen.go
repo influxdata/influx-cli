@@ -16,11 +16,12 @@ import (
 
 // ReplicationUpdateRequest struct for ReplicationUpdateRequest
 type ReplicationUpdateRequest struct {
-	Name              *string `json:"name,omitempty" yaml:"name,omitempty"`
-	Description       *string `json:"description,omitempty" yaml:"description,omitempty"`
-	RemoteID          *string `json:"remoteID,omitempty" yaml:"remoteID,omitempty"`
-	RemoteBucketID    *string `json:"remoteBucketID,omitempty" yaml:"remoteBucketID,omitempty"`
-	MaxQueueSizeBytes *int64  `json:"maxQueueSizeBytes,omitempty" yaml:"maxQueueSizeBytes,omitempty"`
+	Name                 *string `json:"name,omitempty" yaml:"name,omitempty"`
+	Description          *string `json:"description,omitempty" yaml:"description,omitempty"`
+	RemoteID             *string `json:"remoteID,omitempty" yaml:"remoteID,omitempty"`
+	RemoteBucketID       *string `json:"remoteBucketID,omitempty" yaml:"remoteBucketID,omitempty"`
+	MaxQueueSizeBytes    *int64  `json:"maxQueueSizeBytes,omitempty" yaml:"maxQueueSizeBytes,omitempty"`
+	DropNonRetryableData *bool   `json:"dropNonRetryableData,omitempty" yaml:"dropNonRetryableData,omitempty"`
 }
 
 // NewReplicationUpdateRequest instantiates a new ReplicationUpdateRequest object
@@ -200,6 +201,38 @@ func (o *ReplicationUpdateRequest) SetMaxQueueSizeBytes(v int64) {
 	o.MaxQueueSizeBytes = &v
 }
 
+// GetDropNonRetryableData returns the DropNonRetryableData field value if set, zero value otherwise.
+func (o *ReplicationUpdateRequest) GetDropNonRetryableData() bool {
+	if o == nil || o.DropNonRetryableData == nil {
+		var ret bool
+		return ret
+	}
+	return *o.DropNonRetryableData
+}
+
+// GetDropNonRetryableDataOk returns a tuple with the DropNonRetryableData field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ReplicationUpdateRequest) GetDropNonRetryableDataOk() (*bool, bool) {
+	if o == nil || o.DropNonRetryableData == nil {
+		return nil, false
+	}
+	return o.DropNonRetryableData, true
+}
+
+// HasDropNonRetryableData returns a boolean if a field has been set.
+func (o *ReplicationUpdateRequest) HasDropNonRetryableData() bool {
+	if o != nil && o.DropNonRetryableData != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetDropNonRetryableData gets a reference to the given bool and assigns it to the DropNonRetryableData field.
+func (o *ReplicationUpdateRequest) SetDropNonRetryableData(v bool) {
+	o.DropNonRetryableData = &v
+}
+
 func (o ReplicationUpdateRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Name != nil {
@@ -216,6 +249,9 @@ func (o ReplicationUpdateRequest) MarshalJSON() ([]byte, error) {
 	}
 	if o.MaxQueueSizeBytes != nil {
 		toSerialize["maxQueueSizeBytes"] = o.MaxQueueSizeBytes
+	}
+	if o.DropNonRetryableData != nil {
+		toSerialize["dropNonRetryableData"] = o.DropNonRetryableData
 	}
 	return json.Marshal(toSerialize)
 }
