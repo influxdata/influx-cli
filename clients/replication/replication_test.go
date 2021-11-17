@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,12 +26,12 @@ func TestDropNonRetryableDataBoolPtrFromFlags(t *testing.T) {
 		{
 			name:                 "drop is true",
 			dropNonRetryableData: true,
-			want:                 boolPtr(true),
+			want:                 api.PtrBool(true),
 		},
 		{
 			name:                   "noDrop is true",
 			noDropNonRetryableData: true,
-			want:                   boolPtr(false),
+			want:                   api.PtrBool(false),
 		},
 		{
 			name: "both nil is nil",

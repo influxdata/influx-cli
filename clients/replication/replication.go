@@ -239,16 +239,12 @@ func dropNonRetryableDataBoolPtrFromFlags(dropNonRetryableData, noDropNonRetryab
 	}
 
 	if dropNonRetryableData {
-		return boolPtr(true), nil
+		return api.PtrBool(true), nil
 	}
 
 	if noDropNonRetryableData {
-		return boolPtr(false), nil
+		return api.PtrBool(false), nil
 	}
 
 	return nil, nil
-}
-
-func boolPtr(b bool) *bool {
-	return &b
 }
