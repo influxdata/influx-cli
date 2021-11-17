@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
@@ -18,25 +17,14 @@ type Client struct {
 
 type CreateParams struct {
 	clients.OrgParams
-	Name                 string
-	Description          string
-	RemoteID             string
-	LocalBucketID        string
-	RemoteBucketID       string
-	MaxQueueSize         int64
-	DropNonRetryableData string
-}
-
-func stringToBool(s string) (bool, error) {
-	if strings.ToLower(s) == "t" || strings.ToLower(s) == "true" {
-		return true, nil
-	}
-
-	if strings.ToLower(s) == "f" || strings.ToLower(s) == "false" {
-		return false, nil
-	}
-
-	return false, fmt.Errorf(`drop-non-retryable-data must be "true" ("t") or "false" ("f"), got %q`, s)
+	Name                   string
+	Description            string
+	RemoteID               string
+	LocalBucketID          string
+	RemoteBucketID         string
+	MaxQueueSize           int64
+	DropNonRetryableData   bool
+	NoDropNonRetryableData bool
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
@@ -60,14 +48,11 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		body.Description = &params.Description
 	}
 
-	if params.DropNonRetryableData != "" {
-		setB, err := stringToBool(params.DropNonRetryableData)
-		if err != nil {
-			return err
-		}
-
-		body.SetDropNonRetryableData(setB)
+	dropNonRetryableDataBoolPtr, err := dropNonRetryableDataBoolPtrFromFlags(params.DropNonRetryableData, params.NoDropNonRetryableData)
+	if err != nil {
+		return err
 	}
+	body.DropNonRetryableData = dropNonRetryableDataBoolPtr
 
 	// send post request
 	res, err := c.PostReplication(ctx).ReplicationCreationRequest(body).Execute()
@@ -125,13 +110,14 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 }
 
 type UpdateParams struct {
-	ReplicationID        string
-	Name                 string
-	Description          string
-	RemoteID             string
-	RemoteBucketID       string
-	MaxQueueSize         int64
-	DropNonRetryableData string
+	ReplicationID          string
+	Name                   string
+	Description            string
+	RemoteID               string
+	RemoteBucketID         string
+	MaxQueueSize           int64
+	DropNonRetryableData   bool
+	NoDropNonRetryableData bool
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
@@ -158,13 +144,13 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 		body.SetMaxQueueSizeBytes(params.MaxQueueSize)
 	}
 
-	if params.DropNonRetryableData != "" {
-		setB, err := stringToBool(params.DropNonRetryableData)
-		if err != nil {
-			return err
-		}
+	dropNonRetryableDataBoolPtr, err := dropNonRetryableDataBoolPtrFromFlags(params.DropNonRetryableData, params.NoDropNonRetryableData)
+	if err != nil {
+		return err
+	}
 
-		body.SetDropNonRetryableData(setB)
+	if dropNonRetryableDataBoolPtr != nil {
+		body.SetDropNonRetryableData(*dropNonRetryableDataBoolPtr)
 	}
 
 	// send patch request
@@ -245,4 +231,24 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 	}
 
 	return c.PrintTable(headers, rows...)
+}
+
+func dropNonRetryableDataBoolPtrFromFlags(dropNonRetryableData, noDropNonRetryableData bool) (*bool, error) {
+	if dropNonRetryableData && noDropNonRetryableData {
+		return nil, errors.New("cannot specify both --drop-non-retryable-data and --no-drop-non-retryable-data at the same time")
+	}
+
+	if dropNonRetryableData {
+		return boolPtr(true), nil
+	}
+
+	if noDropNonRetryableData {
+		return boolPtr(false), nil
+	}
+
+	return nil, nil
+}
+
+func boolPtr(b bool) *bool {
+	return &b
 }
