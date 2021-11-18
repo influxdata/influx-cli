@@ -93,19 +93,6 @@ type RemoteConnectionsApi interface {
 	 */
 	PostRemoteConnectionExecute(r ApiPostRemoteConnectionRequest) (RemoteConnection, error)
 
-	/*
-	 * PostValidateRemoteConnectionByID Validate a remote connection
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param remoteID
-	 * @return ApiPostValidateRemoteConnectionByIDRequest
-	 */
-	PostValidateRemoteConnectionByID(ctx _context.Context, remoteID string) ApiPostValidateRemoteConnectionByIDRequest
-
-	/*
-	 * PostValidateRemoteConnectionByIDExecute executes the request
-	 */
-	PostValidateRemoteConnectionByIDExecute(r ApiPostValidateRemoteConnectionByIDRequest) error
-
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
 	// servers.
@@ -629,7 +616,6 @@ type ApiPatchRemoteConnectionByIDRequest struct {
 	remoteID                       string
 	remoteConnenctionUpdateRequest *RemoteConnenctionUpdateRequest
 	zapTraceSpan                   *string
-	validate                       *bool
 }
 
 func (r ApiPatchRemoteConnectionByIDRequest) RemoteID(remoteID string) ApiPatchRemoteConnectionByIDRequest {
@@ -654,14 +640,6 @@ func (r ApiPatchRemoteConnectionByIDRequest) ZapTraceSpan(zapTraceSpan string) A
 }
 func (r ApiPatchRemoteConnectionByIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
-}
-
-func (r ApiPatchRemoteConnectionByIDRequest) Validate(validate bool) ApiPatchRemoteConnectionByIDRequest {
-	r.validate = &validate
-	return r
-}
-func (r ApiPatchRemoteConnectionByIDRequest) GetValidate() *bool {
-	return r.validate
 }
 
 func (r ApiPatchRemoteConnectionByIDRequest) Execute() (RemoteConnection, error) {
@@ -711,9 +689,6 @@ func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecute(r ApiPatc
 		return localVarReturnValue, reportError("remoteConnenctionUpdateRequest is required and must be specified")
 	}
 
-	if r.validate != nil {
-		localVarQueryParams.Add("validate", parameterToString(*r.validate, ""))
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
 
@@ -827,8 +802,6 @@ type ApiPostRemoteConnectionRequest struct {
 	ctx                             _context.Context
 	ApiService                      RemoteConnectionsApi
 	remoteConnectionCreationRequest *RemoteConnectionCreationRequest
-	zapTraceSpan                    *string
-	validate                        *bool
 }
 
 func (r ApiPostRemoteConnectionRequest) RemoteConnectionCreationRequest(remoteConnectionCreationRequest RemoteConnectionCreationRequest) ApiPostRemoteConnectionRequest {
@@ -837,22 +810,6 @@ func (r ApiPostRemoteConnectionRequest) RemoteConnectionCreationRequest(remoteCo
 }
 func (r ApiPostRemoteConnectionRequest) GetRemoteConnectionCreationRequest() *RemoteConnectionCreationRequest {
 	return r.remoteConnectionCreationRequest
-}
-
-func (r ApiPostRemoteConnectionRequest) ZapTraceSpan(zapTraceSpan string) ApiPostRemoteConnectionRequest {
-	r.zapTraceSpan = &zapTraceSpan
-	return r
-}
-func (r ApiPostRemoteConnectionRequest) GetZapTraceSpan() *string {
-	return r.zapTraceSpan
-}
-
-func (r ApiPostRemoteConnectionRequest) Validate(validate bool) ApiPostRemoteConnectionRequest {
-	r.validate = &validate
-	return r
-}
-func (r ApiPostRemoteConnectionRequest) GetValidate() *bool {
-	return r.validate
 }
 
 func (r ApiPostRemoteConnectionRequest) Execute() (RemoteConnection, error) {
@@ -899,9 +856,6 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemot
 		return localVarReturnValue, reportError("remoteConnectionCreationRequest is required and must be specified")
 	}
 
-	if r.validate != nil {
-		localVarQueryParams.Add("validate", parameterToString(*r.validate, ""))
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
 
@@ -918,9 +872,6 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemot
 	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.zapTraceSpan != nil {
-		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
 	// body params
 	localVarPostBody = r.remoteConnectionCreationRequest
@@ -998,146 +949,4 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemot
 	}
 
 	return localVarReturnValue, nil
-}
-
-type ApiPostValidateRemoteConnectionByIDRequest struct {
-	ctx          _context.Context
-	ApiService   RemoteConnectionsApi
-	remoteID     string
-	zapTraceSpan *string
-}
-
-func (r ApiPostValidateRemoteConnectionByIDRequest) RemoteID(remoteID string) ApiPostValidateRemoteConnectionByIDRequest {
-	r.remoteID = remoteID
-	return r
-}
-func (r ApiPostValidateRemoteConnectionByIDRequest) GetRemoteID() string {
-	return r.remoteID
-}
-
-func (r ApiPostValidateRemoteConnectionByIDRequest) ZapTraceSpan(zapTraceSpan string) ApiPostValidateRemoteConnectionByIDRequest {
-	r.zapTraceSpan = &zapTraceSpan
-	return r
-}
-func (r ApiPostValidateRemoteConnectionByIDRequest) GetZapTraceSpan() *string {
-	return r.zapTraceSpan
-}
-
-func (r ApiPostValidateRemoteConnectionByIDRequest) Execute() error {
-	return r.ApiService.PostValidateRemoteConnectionByIDExecute(r)
-}
-
-/*
- * PostValidateRemoteConnectionByID Validate a remote connection
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param remoteID
- * @return ApiPostValidateRemoteConnectionByIDRequest
- */
-func (a *RemoteConnectionsApiService) PostValidateRemoteConnectionByID(ctx _context.Context, remoteID string) ApiPostValidateRemoteConnectionByIDRequest {
-	return ApiPostValidateRemoteConnectionByIDRequest{
-		ApiService: a,
-		ctx:        ctx,
-		remoteID:   remoteID,
-	}
-}
-
-/*
- * Execute executes the request
- */
-func (a *RemoteConnectionsApiService) PostValidateRemoteConnectionByIDExecute(r ApiPostValidateRemoteConnectionByIDRequest) error {
-	var (
-		localVarHTTPMethod   = _nethttp.MethodPost
-		localVarPostBody     interface{}
-		localVarFormFileName string
-		localVarFileName     string
-		localVarFileBytes    []byte
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RemoteConnectionsApiService.PostValidateRemoteConnectionByID")
-	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/remotes/{remoteID}/validate"
-	localVarPath = strings.Replace(localVarPath, "{"+"remoteID"+"}", _neturl.PathEscape(parameterToString(r.remoteID, "")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := _neturl.Values{}
-	localVarFormParams := _neturl.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.zapTraceSpan != nil {
-		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return err
-	}
-
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		body, err := GunzipIfNeeded(localVarHTTPResponse)
-		if err != nil {
-			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
-		}
-		localVarBody, err := _io.ReadAll(body)
-		body.Close()
-		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
-		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v Error
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
-			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-			newErr.model = &v
-			return newErr
-		}
-		var v Error
-		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
-		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-		newErr.model = &v
-		return newErr
-	}
-
-	return nil
 }
