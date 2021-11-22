@@ -6,6 +6,7 @@ package mock
 
 import (
 	context "context"
+	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -63,6 +64,21 @@ func (mr *MockOrganizationsApiMockRecorder) DeleteOrgsIDExecute(arg0 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).DeleteOrgsIDExecute), arg0)
 }
 
+// DeleteOrgsIDExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) DeleteOrgsIDExecuteWithHttpInfo(arg0 api.ApiDeleteOrgsIDRequest) (*http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOrgsIDExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteOrgsIDExecuteWithHttpInfo indicates an expected call of DeleteOrgsIDExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) DeleteOrgsIDExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).DeleteOrgsIDExecuteWithHttpInfo), arg0)
+}
+
 // DeleteOrgsIDMembersID mocks base method.
 func (m *MockOrganizationsApi) DeleteOrgsIDMembersID(arg0 context.Context, arg1, arg2 string) api.ApiDeleteOrgsIDMembersIDRequest {
 	m.ctrl.T.Helper()
@@ -89,6 +105,21 @@ func (m *MockOrganizationsApi) DeleteOrgsIDMembersIDExecute(arg0 api.ApiDeleteOr
 func (mr *MockOrganizationsApiMockRecorder) DeleteOrgsIDMembersIDExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDMembersIDExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).DeleteOrgsIDMembersIDExecute), arg0)
+}
+
+// DeleteOrgsIDMembersIDExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) DeleteOrgsIDMembersIDExecuteWithHttpInfo(arg0 api.ApiDeleteOrgsIDMembersIDRequest) (*http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOrgsIDMembersIDExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteOrgsIDMembersIDExecuteWithHttpInfo indicates an expected call of DeleteOrgsIDMembersIDExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) DeleteOrgsIDMembersIDExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDMembersIDExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).DeleteOrgsIDMembersIDExecuteWithHttpInfo), arg0)
 }
 
 // GetOrgs mocks base method.
@@ -120,6 +151,22 @@ func (mr *MockOrganizationsApiMockRecorder) GetOrgsExecute(arg0 interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).GetOrgsExecute), arg0)
 }
 
+// GetOrgsExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) GetOrgsExecuteWithHttpInfo(arg0 api.ApiGetOrgsRequest) (api.Organizations, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrgsExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.Organizations)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetOrgsExecuteWithHttpInfo indicates an expected call of GetOrgsExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) GetOrgsExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).GetOrgsExecuteWithHttpInfo), arg0)
+}
+
 // GetOrgsID mocks base method.
 func (m *MockOrganizationsApi) GetOrgsID(arg0 context.Context, arg1 string) api.ApiGetOrgsIDRequest {
 	m.ctrl.T.Helper()
@@ -149,6 +196,22 @@ func (mr *MockOrganizationsApiMockRecorder) GetOrgsIDExecute(arg0 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).GetOrgsIDExecute), arg0)
 }
 
+// GetOrgsIDExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) GetOrgsIDExecuteWithHttpInfo(arg0 api.ApiGetOrgsIDRequest) (api.Organization, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrgsIDExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.Organization)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetOrgsIDExecuteWithHttpInfo indicates an expected call of GetOrgsIDExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) GetOrgsIDExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).GetOrgsIDExecuteWithHttpInfo), arg0)
+}
+
 // GetOrgsIDMembers mocks base method.
 func (m *MockOrganizationsApi) GetOrgsIDMembers(arg0 context.Context, arg1 string) api.ApiGetOrgsIDMembersRequest {
 	m.ctrl.T.Helper()
@@ -176,6 +239,22 @@ func (m *MockOrganizationsApi) GetOrgsIDMembersExecute(arg0 api.ApiGetOrgsIDMemb
 func (mr *MockOrganizationsApiMockRecorder) GetOrgsIDMembersExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDMembersExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).GetOrgsIDMembersExecute), arg0)
+}
+
+// GetOrgsIDMembersExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) GetOrgsIDMembersExecuteWithHttpInfo(arg0 api.ApiGetOrgsIDMembersRequest) (api.ResourceMembers, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrgsIDMembersExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.ResourceMembers)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetOrgsIDMembersExecuteWithHttpInfo indicates an expected call of GetOrgsIDMembersExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) GetOrgsIDMembersExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDMembersExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).GetOrgsIDMembersExecuteWithHttpInfo), arg0)
 }
 
 // OnlyCloud mocks base method.
@@ -235,6 +314,22 @@ func (mr *MockOrganizationsApiMockRecorder) PatchOrgsIDExecute(arg0 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchOrgsIDExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).PatchOrgsIDExecute), arg0)
 }
 
+// PatchOrgsIDExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) PatchOrgsIDExecuteWithHttpInfo(arg0 api.ApiPatchOrgsIDRequest) (api.Organization, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PatchOrgsIDExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.Organization)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// PatchOrgsIDExecuteWithHttpInfo indicates an expected call of PatchOrgsIDExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) PatchOrgsIDExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchOrgsIDExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).PatchOrgsIDExecuteWithHttpInfo), arg0)
+}
+
 // PostOrgs mocks base method.
 func (m *MockOrganizationsApi) PostOrgs(arg0 context.Context) api.ApiPostOrgsRequest {
 	m.ctrl.T.Helper()
@@ -264,6 +359,22 @@ func (mr *MockOrganizationsApiMockRecorder) PostOrgsExecute(arg0 interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostOrgsExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).PostOrgsExecute), arg0)
 }
 
+// PostOrgsExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) PostOrgsExecuteWithHttpInfo(arg0 api.ApiPostOrgsRequest) (api.Organization, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostOrgsExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.Organization)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// PostOrgsExecuteWithHttpInfo indicates an expected call of PostOrgsExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) PostOrgsExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostOrgsExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).PostOrgsExecuteWithHttpInfo), arg0)
+}
+
 // PostOrgsIDMembers mocks base method.
 func (m *MockOrganizationsApi) PostOrgsIDMembers(arg0 context.Context, arg1 string) api.ApiPostOrgsIDMembersRequest {
 	m.ctrl.T.Helper()
@@ -291,4 +402,20 @@ func (m *MockOrganizationsApi) PostOrgsIDMembersExecute(arg0 api.ApiPostOrgsIDMe
 func (mr *MockOrganizationsApiMockRecorder) PostOrgsIDMembersExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostOrgsIDMembersExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).PostOrgsIDMembersExecute), arg0)
+}
+
+// PostOrgsIDMembersExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) PostOrgsIDMembersExecuteWithHttpInfo(arg0 api.ApiPostOrgsIDMembersRequest) (api.ResourceMember, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostOrgsIDMembersExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.ResourceMember)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// PostOrgsIDMembersExecuteWithHttpInfo indicates an expected call of PostOrgsIDMembersExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) PostOrgsIDMembersExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostOrgsIDMembersExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).PostOrgsIDMembersExecuteWithHttpInfo), arg0)
 }

@@ -39,6 +39,12 @@ type DashboardsApi interface {
 	 */
 	GetDashboardsExecute(r ApiGetDashboardsRequest) (Dashboards, error)
 
+	/*
+	   * GetDashboardsExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Dashboards
+	*/
+	GetDashboardsExecuteWithHttpInfo(r ApiGetDashboardsRequest) (Dashboards, *_nethttp.Response, error)
+
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
 	// servers.
@@ -153,6 +159,10 @@ func (r ApiGetDashboardsRequest) Execute() (Dashboards, error) {
 	return r.ApiService.GetDashboardsExecute(r)
 }
 
+func (r ApiGetDashboardsRequest) ExecuteWithHttpInfo() (Dashboards, *_nethttp.Response, error) {
+	return r.ApiService.GetDashboardsExecuteWithHttpInfo(r)
+}
+
 /*
  * GetDashboards List all dashboards
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -170,6 +180,15 @@ func (a *DashboardsApiService) GetDashboards(ctx _context.Context) ApiGetDashboa
  * @return Dashboards
  */
 func (a *DashboardsApiService) GetDashboardsExecute(r ApiGetDashboardsRequest) (Dashboards, error) {
+	returnVal, _, err := a.GetDashboardsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Dashboards
+ */
+func (a *DashboardsApiService) GetDashboardsExecuteWithHttpInfo(r ApiGetDashboardsRequest) (Dashboards, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -181,7 +200,7 @@ func (a *DashboardsApiService) GetDashboardsExecute(r ApiGetDashboardsRequest) (
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DashboardsApiService.GetDashboards")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/dashboards"
@@ -244,12 +263,12 @@ func (a *DashboardsApiService) GetDashboardsExecute(r ApiGetDashboardsRequest) (
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -263,12 +282,12 @@ func (a *DashboardsApiService) GetDashboardsExecute(r ApiGetDashboardsRequest) (
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -278,22 +297,22 @@ func (a *DashboardsApiService) GetDashboardsExecute(r ApiGetDashboardsRequest) (
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -301,8 +320,8 @@ func (a *DashboardsApiService) GetDashboardsExecute(r ApiGetDashboardsRequest) (
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

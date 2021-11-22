@@ -6,6 +6,7 @@ package mock
 
 import (
 	context "context"
+	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -64,6 +65,22 @@ func (mr *MockSetupApiMockRecorder) GetSetupExecute(arg0 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSetupExecute", reflect.TypeOf((*MockSetupApi)(nil).GetSetupExecute), arg0)
 }
 
+// GetSetupExecuteWithHttpInfo mocks base method.
+func (m *MockSetupApi) GetSetupExecuteWithHttpInfo(arg0 api.ApiGetSetupRequest) (api.InlineResponse200, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSetupExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.InlineResponse200)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetSetupExecuteWithHttpInfo indicates an expected call of GetSetupExecuteWithHttpInfo.
+func (mr *MockSetupApiMockRecorder) GetSetupExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSetupExecuteWithHttpInfo", reflect.TypeOf((*MockSetupApi)(nil).GetSetupExecuteWithHttpInfo), arg0)
+}
+
 // OnlyCloud mocks base method.
 func (m *MockSetupApi) OnlyCloud() api.SetupApi {
 	m.ctrl.T.Helper()
@@ -119,4 +136,20 @@ func (m *MockSetupApi) PostSetupExecute(arg0 api.ApiPostSetupRequest) (api.Onboa
 func (mr *MockSetupApiMockRecorder) PostSetupExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostSetupExecute", reflect.TypeOf((*MockSetupApi)(nil).PostSetupExecute), arg0)
+}
+
+// PostSetupExecuteWithHttpInfo mocks base method.
+func (m *MockSetupApi) PostSetupExecuteWithHttpInfo(arg0 api.ApiPostSetupRequest) (api.OnboardingResponse, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostSetupExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.OnboardingResponse)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// PostSetupExecuteWithHttpInfo indicates an expected call of PostSetupExecuteWithHttpInfo.
+func (mr *MockSetupApiMockRecorder) PostSetupExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostSetupExecuteWithHttpInfo", reflect.TypeOf((*MockSetupApi)(nil).PostSetupExecuteWithHttpInfo), arg0)
 }

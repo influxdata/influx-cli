@@ -41,6 +41,12 @@ type BucketSchemasApi interface {
 	CreateMeasurementSchemaExecute(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, error)
 
 	/*
+	   * CreateMeasurementSchemaExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return MeasurementSchema
+	*/
+	CreateMeasurementSchemaExecuteWithHttpInfo(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
+
+	/*
 	 * GetMeasurementSchema Retrieve measurement schema information
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param bucketID The identifier of the bucket.
@@ -54,6 +60,12 @@ type BucketSchemasApi interface {
 	 * @return MeasurementSchema
 	 */
 	GetMeasurementSchemaExecute(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, error)
+
+	/*
+	   * GetMeasurementSchemaExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return MeasurementSchema
+	*/
+	GetMeasurementSchemaExecuteWithHttpInfo(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
 
 	/*
 	 * GetMeasurementSchemas List all measurement schemas of a bucket
@@ -70,6 +82,12 @@ type BucketSchemasApi interface {
 	GetMeasurementSchemasExecute(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, error)
 
 	/*
+	   * GetMeasurementSchemasExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return MeasurementSchemaList
+	*/
+	GetMeasurementSchemasExecuteWithHttpInfo(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, *_nethttp.Response, error)
+
+	/*
 	 * UpdateMeasurementSchema Update a measurement schema
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param bucketID The identifier of the bucket.
@@ -83,6 +101,12 @@ type BucketSchemasApi interface {
 	 * @return MeasurementSchema
 	 */
 	UpdateMeasurementSchemaExecute(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, error)
+
+	/*
+	   * UpdateMeasurementSchemaExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return MeasurementSchema
+	*/
+	UpdateMeasurementSchemaExecuteWithHttpInfo(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -153,6 +177,10 @@ func (r ApiCreateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) 
 	return r.ApiService.CreateMeasurementSchemaExecute(r)
 }
 
+func (r ApiCreateMeasurementSchemaRequest) ExecuteWithHttpInfo() (MeasurementSchema, *_nethttp.Response, error) {
+	return r.ApiService.CreateMeasurementSchemaExecuteWithHttpInfo(r)
+}
+
 /*
  * CreateMeasurementSchema Create a measurement schema for a bucket
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -172,6 +200,15 @@ func (a *BucketSchemasApiService) CreateMeasurementSchema(ctx _context.Context, 
  * @return MeasurementSchema
  */
 func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, error) {
+	returnVal, _, err := a.CreateMeasurementSchemaExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return MeasurementSchema
+ */
+func (a *BucketSchemasApiService) CreateMeasurementSchemaExecuteWithHttpInfo(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -183,7 +220,7 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketSchemasApiService.CreateMeasurementSchema")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements"
@@ -220,12 +257,12 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 	localVarPostBody = r.measurementSchemaCreateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -239,12 +276,12 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -255,23 +292,23 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -279,10 +316,10 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetMeasurementSchemaRequest struct {
@@ -330,6 +367,10 @@ func (r ApiGetMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
 	return r.ApiService.GetMeasurementSchemaExecute(r)
 }
 
+func (r ApiGetMeasurementSchemaRequest) ExecuteWithHttpInfo() (MeasurementSchema, *_nethttp.Response, error) {
+	return r.ApiService.GetMeasurementSchemaExecuteWithHttpInfo(r)
+}
+
 /*
  * GetMeasurementSchema Retrieve measurement schema information
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -351,6 +392,15 @@ func (a *BucketSchemasApiService) GetMeasurementSchema(ctx _context.Context, buc
  * @return MeasurementSchema
  */
 func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, error) {
+	returnVal, _, err := a.GetMeasurementSchemaExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return MeasurementSchema
+ */
+func (a *BucketSchemasApiService) GetMeasurementSchemaExecuteWithHttpInfo(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -362,7 +412,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketSchemasApiService.GetMeasurementSchema")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements/{measurementID}"
@@ -398,12 +448,12 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -417,29 +467,29 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -447,10 +497,10 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetMeasurementSchemasRequest struct {
@@ -498,6 +548,10 @@ func (r ApiGetMeasurementSchemasRequest) Execute() (MeasurementSchemaList, error
 	return r.ApiService.GetMeasurementSchemasExecute(r)
 }
 
+func (r ApiGetMeasurementSchemasRequest) ExecuteWithHttpInfo() (MeasurementSchemaList, *_nethttp.Response, error) {
+	return r.ApiService.GetMeasurementSchemasExecuteWithHttpInfo(r)
+}
+
 /*
  * GetMeasurementSchemas List all measurement schemas of a bucket
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -517,6 +571,15 @@ func (a *BucketSchemasApiService) GetMeasurementSchemas(ctx _context.Context, bu
  * @return MeasurementSchemaList
  */
 func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, error) {
+	returnVal, _, err := a.GetMeasurementSchemasExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return MeasurementSchemaList
+ */
+func (a *BucketSchemasApiService) GetMeasurementSchemasExecuteWithHttpInfo(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -528,7 +591,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketSchemasApiService.GetMeasurementSchemas")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements"
@@ -566,12 +629,12 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -585,12 +648,12 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -601,23 +664,23 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -625,10 +688,10 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiUpdateMeasurementSchemaRequest struct {
@@ -685,6 +748,10 @@ func (r ApiUpdateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) 
 	return r.ApiService.UpdateMeasurementSchemaExecute(r)
 }
 
+func (r ApiUpdateMeasurementSchemaRequest) ExecuteWithHttpInfo() (MeasurementSchema, *_nethttp.Response, error) {
+	return r.ApiService.UpdateMeasurementSchemaExecuteWithHttpInfo(r)
+}
+
 /*
  * UpdateMeasurementSchema Update a measurement schema
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -706,6 +773,15 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchema(ctx _context.Context, 
  * @return MeasurementSchema
  */
 func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, error) {
+	returnVal, _, err := a.UpdateMeasurementSchemaExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return MeasurementSchema
+ */
+func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecuteWithHttpInfo(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -717,7 +793,7 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BucketSchemasApiService.UpdateMeasurementSchema")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements/{measurementID}"
@@ -755,12 +831,12 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 	localVarPostBody = r.measurementSchemaUpdateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -774,12 +850,12 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -790,23 +866,23 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -814,8 +890,8 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

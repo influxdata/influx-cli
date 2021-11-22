@@ -40,6 +40,11 @@ type ReplicationsApi interface {
 	DeleteReplicationByIDExecute(r ApiDeleteReplicationByIDRequest) error
 
 	/*
+	 * DeleteReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 */
+	DeleteReplicationByIDExecuteWithHttpInfo(r ApiDeleteReplicationByIDRequest) (*_nethttp.Response, error)
+
+	/*
 	 * GetReplicationByID Retrieve a replication
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param replicationID
@@ -54,6 +59,12 @@ type ReplicationsApi interface {
 	GetReplicationByIDExecute(r ApiGetReplicationByIDRequest) (Replication, error)
 
 	/*
+	   * GetReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Replication
+	*/
+	GetReplicationByIDExecuteWithHttpInfo(r ApiGetReplicationByIDRequest) (Replication, *_nethttp.Response, error)
+
+	/*
 	 * GetReplications List all replications
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetReplicationsRequest
@@ -65,6 +76,12 @@ type ReplicationsApi interface {
 	 * @return Replications
 	 */
 	GetReplicationsExecute(r ApiGetReplicationsRequest) (Replications, error)
+
+	/*
+	   * GetReplicationsExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Replications
+	*/
+	GetReplicationsExecuteWithHttpInfo(r ApiGetReplicationsRequest) (Replications, *_nethttp.Response, error)
 
 	/*
 	 * PatchReplicationByID Update a replication
@@ -81,6 +98,12 @@ type ReplicationsApi interface {
 	PatchReplicationByIDExecute(r ApiPatchReplicationByIDRequest) (Replication, error)
 
 	/*
+	   * PatchReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Replication
+	*/
+	PatchReplicationByIDExecuteWithHttpInfo(r ApiPatchReplicationByIDRequest) (Replication, *_nethttp.Response, error)
+
+	/*
 	 * PostReplication Register a new replication
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiPostReplicationRequest
@@ -94,6 +117,12 @@ type ReplicationsApi interface {
 	PostReplicationExecute(r ApiPostReplicationRequest) (Replication, error)
 
 	/*
+	   * PostReplicationExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Replication
+	*/
+	PostReplicationExecuteWithHttpInfo(r ApiPostReplicationRequest) (Replication, *_nethttp.Response, error)
+
+	/*
 	 * PostValidateReplicationByID Validate a replication
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param replicationID
@@ -105,6 +134,11 @@ type ReplicationsApi interface {
 	 * PostValidateReplicationByIDExecute executes the request
 	 */
 	PostValidateReplicationByIDExecute(r ApiPostValidateReplicationByIDRequest) error
+
+	/*
+	 * PostValidateReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 */
+	PostValidateReplicationByIDExecuteWithHttpInfo(r ApiPostValidateReplicationByIDRequest) (*_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -157,6 +191,10 @@ func (r ApiDeleteReplicationByIDRequest) Execute() error {
 	return r.ApiService.DeleteReplicationByIDExecute(r)
 }
 
+func (r ApiDeleteReplicationByIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteReplicationByIDExecuteWithHttpInfo(r)
+}
+
 /*
  * DeleteReplicationByID Delete a replication
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -175,6 +213,14 @@ func (a *ReplicationsApiService) DeleteReplicationByID(ctx _context.Context, rep
  * Execute executes the request
  */
 func (a *ReplicationsApiService) DeleteReplicationByIDExecute(r ApiDeleteReplicationByIDRequest) error {
+	_, err := a.DeleteReplicationByIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ */
+func (a *ReplicationsApiService) DeleteReplicationByIDExecuteWithHttpInfo(r ApiDeleteReplicationByIDRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -185,7 +231,7 @@ func (a *ReplicationsApiService) DeleteReplicationByIDExecute(r ApiDeleteReplica
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.DeleteReplicationByID")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/replications/{replicationID}"
@@ -217,12 +263,12 @@ func (a *ReplicationsApiService) DeleteReplicationByIDExecute(r ApiDeleteReplica
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -236,12 +282,12 @@ func (a *ReplicationsApiService) DeleteReplicationByIDExecute(r ApiDeleteReplica
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -252,24 +298,24 @@ func (a *ReplicationsApiService) DeleteReplicationByIDExecute(r ApiDeleteReplica
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiGetReplicationByIDRequest struct {
@@ -299,6 +345,10 @@ func (r ApiGetReplicationByIDRequest) Execute() (Replication, error) {
 	return r.ApiService.GetReplicationByIDExecute(r)
 }
 
+func (r ApiGetReplicationByIDRequest) ExecuteWithHttpInfo() (Replication, *_nethttp.Response, error) {
+	return r.ApiService.GetReplicationByIDExecuteWithHttpInfo(r)
+}
+
 /*
  * GetReplicationByID Retrieve a replication
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -318,6 +368,15 @@ func (a *ReplicationsApiService) GetReplicationByID(ctx _context.Context, replic
  * @return Replication
  */
 func (a *ReplicationsApiService) GetReplicationByIDExecute(r ApiGetReplicationByIDRequest) (Replication, error) {
+	returnVal, _, err := a.GetReplicationByIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Replication
+ */
+func (a *ReplicationsApiService) GetReplicationByIDExecuteWithHttpInfo(r ApiGetReplicationByIDRequest) (Replication, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -329,7 +388,7 @@ func (a *ReplicationsApiService) GetReplicationByIDExecute(r ApiGetReplicationBy
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.GetReplicationByID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/replications/{replicationID}"
@@ -361,12 +420,12 @@ func (a *ReplicationsApiService) GetReplicationByIDExecute(r ApiGetReplicationBy
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -380,12 +439,12 @@ func (a *ReplicationsApiService) GetReplicationByIDExecute(r ApiGetReplicationBy
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -396,32 +455,32 @@ func (a *ReplicationsApiService) GetReplicationByIDExecute(r ApiGetReplicationBy
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -429,10 +488,10 @@ func (a *ReplicationsApiService) GetReplicationByIDExecute(r ApiGetReplicationBy
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetReplicationsRequest struct {
@@ -489,6 +548,10 @@ func (r ApiGetReplicationsRequest) Execute() (Replications, error) {
 	return r.ApiService.GetReplicationsExecute(r)
 }
 
+func (r ApiGetReplicationsRequest) ExecuteWithHttpInfo() (Replications, *_nethttp.Response, error) {
+	return r.ApiService.GetReplicationsExecuteWithHttpInfo(r)
+}
+
 /*
  * GetReplications List all replications
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -506,6 +569,15 @@ func (a *ReplicationsApiService) GetReplications(ctx _context.Context) ApiGetRep
  * @return Replications
  */
 func (a *ReplicationsApiService) GetReplicationsExecute(r ApiGetReplicationsRequest) (Replications, error) {
+	returnVal, _, err := a.GetReplicationsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Replications
+ */
+func (a *ReplicationsApiService) GetReplicationsExecuteWithHttpInfo(r ApiGetReplicationsRequest) (Replications, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -517,7 +589,7 @@ func (a *ReplicationsApiService) GetReplicationsExecute(r ApiGetReplicationsRequ
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.GetReplications")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/replications"
@@ -526,7 +598,7 @@ func (a *ReplicationsApiService) GetReplicationsExecute(r ApiGetReplicationsRequ
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.orgID == nil {
-		return localVarReturnValue, reportError("orgID is required and must be specified")
+		return localVarReturnValue, nil, reportError("orgID is required and must be specified")
 	}
 
 	localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
@@ -561,12 +633,12 @@ func (a *ReplicationsApiService) GetReplicationsExecute(r ApiGetReplicationsRequ
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -580,12 +652,12 @@ func (a *ReplicationsApiService) GetReplicationsExecute(r ApiGetReplicationsRequ
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -596,32 +668,32 @@ func (a *ReplicationsApiService) GetReplicationsExecute(r ApiGetReplicationsRequ
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -629,10 +701,10 @@ func (a *ReplicationsApiService) GetReplicationsExecute(r ApiGetReplicationsRequ
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPatchReplicationByIDRequest struct {
@@ -680,6 +752,10 @@ func (r ApiPatchReplicationByIDRequest) Execute() (Replication, error) {
 	return r.ApiService.PatchReplicationByIDExecute(r)
 }
 
+func (r ApiPatchReplicationByIDRequest) ExecuteWithHttpInfo() (Replication, *_nethttp.Response, error) {
+	return r.ApiService.PatchReplicationByIDExecuteWithHttpInfo(r)
+}
+
 /*
  * PatchReplicationByID Update a replication
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -699,6 +775,15 @@ func (a *ReplicationsApiService) PatchReplicationByID(ctx _context.Context, repl
  * @return Replication
  */
 func (a *ReplicationsApiService) PatchReplicationByIDExecute(r ApiPatchReplicationByIDRequest) (Replication, error) {
+	returnVal, _, err := a.PatchReplicationByIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Replication
+ */
+func (a *ReplicationsApiService) PatchReplicationByIDExecuteWithHttpInfo(r ApiPatchReplicationByIDRequest) (Replication, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -710,7 +795,7 @@ func (a *ReplicationsApiService) PatchReplicationByIDExecute(r ApiPatchReplicati
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.PatchReplicationByID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/replications/{replicationID}"
@@ -720,7 +805,7 @@ func (a *ReplicationsApiService) PatchReplicationByIDExecute(r ApiPatchReplicati
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.replicationUpdateRequest == nil {
-		return localVarReturnValue, reportError("replicationUpdateRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("replicationUpdateRequest is required and must be specified")
 	}
 
 	if r.validate != nil {
@@ -750,12 +835,12 @@ func (a *ReplicationsApiService) PatchReplicationByIDExecute(r ApiPatchReplicati
 	localVarPostBody = r.replicationUpdateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -769,12 +854,12 @@ func (a *ReplicationsApiService) PatchReplicationByIDExecute(r ApiPatchReplicati
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -785,43 +870,43 @@ func (a *ReplicationsApiService) PatchReplicationByIDExecute(r ApiPatchReplicati
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -829,10 +914,10 @@ func (a *ReplicationsApiService) PatchReplicationByIDExecute(r ApiPatchReplicati
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostReplicationRequest struct {
@@ -871,6 +956,10 @@ func (r ApiPostReplicationRequest) Execute() (Replication, error) {
 	return r.ApiService.PostReplicationExecute(r)
 }
 
+func (r ApiPostReplicationRequest) ExecuteWithHttpInfo() (Replication, *_nethttp.Response, error) {
+	return r.ApiService.PostReplicationExecuteWithHttpInfo(r)
+}
+
 /*
  * PostReplication Register a new replication
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -888,6 +977,15 @@ func (a *ReplicationsApiService) PostReplication(ctx _context.Context) ApiPostRe
  * @return Replication
  */
 func (a *ReplicationsApiService) PostReplicationExecute(r ApiPostReplicationRequest) (Replication, error) {
+	returnVal, _, err := a.PostReplicationExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Replication
+ */
+func (a *ReplicationsApiService) PostReplicationExecuteWithHttpInfo(r ApiPostReplicationRequest) (Replication, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -899,7 +997,7 @@ func (a *ReplicationsApiService) PostReplicationExecute(r ApiPostReplicationRequ
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.PostReplication")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/replications"
@@ -908,7 +1006,7 @@ func (a *ReplicationsApiService) PostReplicationExecute(r ApiPostReplicationRequ
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.replicationCreationRequest == nil {
-		return localVarReturnValue, reportError("replicationCreationRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("replicationCreationRequest is required and must be specified")
 	}
 
 	if r.validate != nil {
@@ -938,12 +1036,12 @@ func (a *ReplicationsApiService) PostReplicationExecute(r ApiPostReplicationRequ
 	localVarPostBody = r.replicationCreationRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -957,12 +1055,12 @@ func (a *ReplicationsApiService) PostReplicationExecute(r ApiPostReplicationRequ
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -973,32 +1071,32 @@ func (a *ReplicationsApiService) PostReplicationExecute(r ApiPostReplicationRequ
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1006,10 +1104,10 @@ func (a *ReplicationsApiService) PostReplicationExecute(r ApiPostReplicationRequ
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostValidateReplicationByIDRequest struct {
@@ -1039,6 +1137,10 @@ func (r ApiPostValidateReplicationByIDRequest) Execute() error {
 	return r.ApiService.PostValidateReplicationByIDExecute(r)
 }
 
+func (r ApiPostValidateReplicationByIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PostValidateReplicationByIDExecuteWithHttpInfo(r)
+}
+
 /*
  * PostValidateReplicationByID Validate a replication
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1057,6 +1159,14 @@ func (a *ReplicationsApiService) PostValidateReplicationByID(ctx _context.Contex
  * Execute executes the request
  */
 func (a *ReplicationsApiService) PostValidateReplicationByIDExecute(r ApiPostValidateReplicationByIDRequest) error {
+	_, err := a.PostValidateReplicationByIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ */
+func (a *ReplicationsApiService) PostValidateReplicationByIDExecuteWithHttpInfo(r ApiPostValidateReplicationByIDRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1067,7 +1177,7 @@ func (a *ReplicationsApiService) PostValidateReplicationByIDExecute(r ApiPostVal
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReplicationsApiService.PostValidateReplicationByID")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/replications/{replicationID}/validate"
@@ -1099,12 +1209,12 @@ func (a *ReplicationsApiService) PostValidateReplicationByIDExecute(r ApiPostVal
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -1118,12 +1228,12 @@ func (a *ReplicationsApiService) PostValidateReplicationByIDExecute(r ApiPostVal
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1134,22 +1244,22 @@ func (a *ReplicationsApiService) PostValidateReplicationByIDExecute(r ApiPostVal
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }

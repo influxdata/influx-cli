@@ -38,6 +38,12 @@ type QueryApi interface {
 	 */
 	PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Response, error)
 
+	/*
+	   * PostQueryExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return *os.File
+	*/
+	PostQueryExecuteWithHttpInfo(r ApiPostQueryRequest) (*_nethttp.Response, *_nethttp.Response, error)
+
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
 	// servers.
@@ -125,6 +131,10 @@ func (r ApiPostQueryRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.PostQueryExecute(r)
 }
 
+func (r ApiPostQueryRequest) ExecuteWithHttpInfo() (*_nethttp.Response, *_nethttp.Response, error) {
+	return r.ApiService.PostQueryExecuteWithHttpInfo(r)
+}
+
 /*
  * PostQuery Query InfluxDB
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -142,6 +152,15 @@ func (a *QueryApiService) PostQuery(ctx _context.Context) ApiPostQueryRequest {
  * @return *os.File
  */
 func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Response, error) {
+	returnVal, _, err := a.PostQueryExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return *os.File
+ */
+func (a *QueryApiService) PostQueryExecuteWithHttpInfo(r ApiPostQueryRequest) (*_nethttp.Response, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -153,7 +172,7 @@ func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Res
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "QueryApiService.PostQuery")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/query"
@@ -198,12 +217,12 @@ func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Res
 	localVarPostBody = r.query
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -217,12 +236,12 @@ func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Res
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -232,14 +251,14 @@ func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Res
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	localVarReturnValue = localVarHTTPResponse
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

@@ -6,6 +6,7 @@ package mock
 
 import (
 	context "context"
+	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -89,4 +90,19 @@ func (m *MockWriteApi) PostWriteExecute(arg0 api.ApiPostWriteRequest) error {
 func (mr *MockWriteApiMockRecorder) PostWriteExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostWriteExecute", reflect.TypeOf((*MockWriteApi)(nil).PostWriteExecute), arg0)
+}
+
+// PostWriteExecuteWithHttpInfo mocks base method.
+func (m *MockWriteApi) PostWriteExecuteWithHttpInfo(arg0 api.ApiPostWriteRequest) (*http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostWriteExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PostWriteExecuteWithHttpInfo indicates an expected call of PostWriteExecuteWithHttpInfo.
+func (mr *MockWriteApiMockRecorder) PostWriteExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostWriteExecuteWithHttpInfo", reflect.TypeOf((*MockWriteApi)(nil).PostWriteExecuteWithHttpInfo), arg0)
 }

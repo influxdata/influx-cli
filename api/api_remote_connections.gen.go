@@ -40,6 +40,11 @@ type RemoteConnectionsApi interface {
 	DeleteRemoteConnectionByIDExecute(r ApiDeleteRemoteConnectionByIDRequest) error
 
 	/*
+	 * DeleteRemoteConnectionByIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 */
+	DeleteRemoteConnectionByIDExecuteWithHttpInfo(r ApiDeleteRemoteConnectionByIDRequest) (*_nethttp.Response, error)
+
+	/*
 	 * GetRemoteConnectionByID Retrieve a remote connection
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param remoteID
@@ -54,6 +59,12 @@ type RemoteConnectionsApi interface {
 	GetRemoteConnectionByIDExecute(r ApiGetRemoteConnectionByIDRequest) (RemoteConnection, error)
 
 	/*
+	   * GetRemoteConnectionByIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return RemoteConnection
+	*/
+	GetRemoteConnectionByIDExecuteWithHttpInfo(r ApiGetRemoteConnectionByIDRequest) (RemoteConnection, *_nethttp.Response, error)
+
+	/*
 	 * GetRemoteConnections List all remote connections
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetRemoteConnectionsRequest
@@ -65,6 +76,12 @@ type RemoteConnectionsApi interface {
 	 * @return RemoteConnections
 	 */
 	GetRemoteConnectionsExecute(r ApiGetRemoteConnectionsRequest) (RemoteConnections, error)
+
+	/*
+	   * GetRemoteConnectionsExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return RemoteConnections
+	*/
+	GetRemoteConnectionsExecuteWithHttpInfo(r ApiGetRemoteConnectionsRequest) (RemoteConnections, *_nethttp.Response, error)
 
 	/*
 	 * PatchRemoteConnectionByID Update a remote connection
@@ -81,6 +98,12 @@ type RemoteConnectionsApi interface {
 	PatchRemoteConnectionByIDExecute(r ApiPatchRemoteConnectionByIDRequest) (RemoteConnection, error)
 
 	/*
+	   * PatchRemoteConnectionByIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return RemoteConnection
+	*/
+	PatchRemoteConnectionByIDExecuteWithHttpInfo(r ApiPatchRemoteConnectionByIDRequest) (RemoteConnection, *_nethttp.Response, error)
+
+	/*
 	 * PostRemoteConnection Register a new remote connection
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiPostRemoteConnectionRequest
@@ -92,6 +115,12 @@ type RemoteConnectionsApi interface {
 	 * @return RemoteConnection
 	 */
 	PostRemoteConnectionExecute(r ApiPostRemoteConnectionRequest) (RemoteConnection, error)
+
+	/*
+	   * PostRemoteConnectionExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return RemoteConnection
+	*/
+	PostRemoteConnectionExecuteWithHttpInfo(r ApiPostRemoteConnectionRequest) (RemoteConnection, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -144,6 +173,10 @@ func (r ApiDeleteRemoteConnectionByIDRequest) Execute() error {
 	return r.ApiService.DeleteRemoteConnectionByIDExecute(r)
 }
 
+func (r ApiDeleteRemoteConnectionByIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteRemoteConnectionByIDExecuteWithHttpInfo(r)
+}
+
 /*
  * DeleteRemoteConnectionByID Delete a remote connection
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -162,6 +195,14 @@ func (a *RemoteConnectionsApiService) DeleteRemoteConnectionByID(ctx _context.Co
  * Execute executes the request
  */
 func (a *RemoteConnectionsApiService) DeleteRemoteConnectionByIDExecute(r ApiDeleteRemoteConnectionByIDRequest) error {
+	_, err := a.DeleteRemoteConnectionByIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ */
+func (a *RemoteConnectionsApiService) DeleteRemoteConnectionByIDExecuteWithHttpInfo(r ApiDeleteRemoteConnectionByIDRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -172,7 +213,7 @@ func (a *RemoteConnectionsApiService) DeleteRemoteConnectionByIDExecute(r ApiDel
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RemoteConnectionsApiService.DeleteRemoteConnectionByID")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/remotes/{remoteID}"
@@ -204,12 +245,12 @@ func (a *RemoteConnectionsApiService) DeleteRemoteConnectionByIDExecute(r ApiDel
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -223,12 +264,12 @@ func (a *RemoteConnectionsApiService) DeleteRemoteConnectionByIDExecute(r ApiDel
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -239,24 +280,24 @@ func (a *RemoteConnectionsApiService) DeleteRemoteConnectionByIDExecute(r ApiDel
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiGetRemoteConnectionByIDRequest struct {
@@ -286,6 +327,10 @@ func (r ApiGetRemoteConnectionByIDRequest) Execute() (RemoteConnection, error) {
 	return r.ApiService.GetRemoteConnectionByIDExecute(r)
 }
 
+func (r ApiGetRemoteConnectionByIDRequest) ExecuteWithHttpInfo() (RemoteConnection, *_nethttp.Response, error) {
+	return r.ApiService.GetRemoteConnectionByIDExecuteWithHttpInfo(r)
+}
+
 /*
  * GetRemoteConnectionByID Retrieve a remote connection
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -305,6 +350,15 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionByID(ctx _context.Conte
  * @return RemoteConnection
  */
 func (a *RemoteConnectionsApiService) GetRemoteConnectionByIDExecute(r ApiGetRemoteConnectionByIDRequest) (RemoteConnection, error) {
+	returnVal, _, err := a.GetRemoteConnectionByIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return RemoteConnection
+ */
+func (a *RemoteConnectionsApiService) GetRemoteConnectionByIDExecuteWithHttpInfo(r ApiGetRemoteConnectionByIDRequest) (RemoteConnection, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -316,7 +370,7 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionByIDExecute(r ApiGetRem
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RemoteConnectionsApiService.GetRemoteConnectionByID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/remotes/{remoteID}"
@@ -348,12 +402,12 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionByIDExecute(r ApiGetRem
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -367,12 +421,12 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionByIDExecute(r ApiGetRem
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -383,32 +437,32 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionByIDExecute(r ApiGetRem
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -416,10 +470,10 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionByIDExecute(r ApiGetRem
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetRemoteConnectionsRequest struct {
@@ -467,6 +521,10 @@ func (r ApiGetRemoteConnectionsRequest) Execute() (RemoteConnections, error) {
 	return r.ApiService.GetRemoteConnectionsExecute(r)
 }
 
+func (r ApiGetRemoteConnectionsRequest) ExecuteWithHttpInfo() (RemoteConnections, *_nethttp.Response, error) {
+	return r.ApiService.GetRemoteConnectionsExecuteWithHttpInfo(r)
+}
+
 /*
  * GetRemoteConnections List all remote connections
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -484,6 +542,15 @@ func (a *RemoteConnectionsApiService) GetRemoteConnections(ctx _context.Context)
  * @return RemoteConnections
  */
 func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecute(r ApiGetRemoteConnectionsRequest) (RemoteConnections, error) {
+	returnVal, _, err := a.GetRemoteConnectionsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return RemoteConnections
+ */
+func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecuteWithHttpInfo(r ApiGetRemoteConnectionsRequest) (RemoteConnections, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -495,7 +562,7 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecute(r ApiGetRemote
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RemoteConnectionsApiService.GetRemoteConnections")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/remotes"
@@ -504,7 +571,7 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecute(r ApiGetRemote
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.orgID == nil {
-		return localVarReturnValue, reportError("orgID is required and must be specified")
+		return localVarReturnValue, nil, reportError("orgID is required and must be specified")
 	}
 
 	localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
@@ -536,12 +603,12 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecute(r ApiGetRemote
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -555,12 +622,12 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecute(r ApiGetRemote
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -571,32 +638,32 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecute(r ApiGetRemote
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -604,10 +671,10 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecute(r ApiGetRemote
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPatchRemoteConnectionByIDRequest struct {
@@ -646,6 +713,10 @@ func (r ApiPatchRemoteConnectionByIDRequest) Execute() (RemoteConnection, error)
 	return r.ApiService.PatchRemoteConnectionByIDExecute(r)
 }
 
+func (r ApiPatchRemoteConnectionByIDRequest) ExecuteWithHttpInfo() (RemoteConnection, *_nethttp.Response, error) {
+	return r.ApiService.PatchRemoteConnectionByIDExecuteWithHttpInfo(r)
+}
+
 /*
  * PatchRemoteConnectionByID Update a remote connection
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -665,6 +736,15 @@ func (a *RemoteConnectionsApiService) PatchRemoteConnectionByID(ctx _context.Con
  * @return RemoteConnection
  */
 func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecute(r ApiPatchRemoteConnectionByIDRequest) (RemoteConnection, error) {
+	returnVal, _, err := a.PatchRemoteConnectionByIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return RemoteConnection
+ */
+func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecuteWithHttpInfo(r ApiPatchRemoteConnectionByIDRequest) (RemoteConnection, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -676,7 +756,7 @@ func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecute(r ApiPatc
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RemoteConnectionsApiService.PatchRemoteConnectionByID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/remotes/{remoteID}"
@@ -686,7 +766,7 @@ func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecute(r ApiPatc
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.remoteConnenctionUpdateRequest == nil {
-		return localVarReturnValue, reportError("remoteConnenctionUpdateRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("remoteConnenctionUpdateRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -713,12 +793,12 @@ func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecute(r ApiPatc
 	localVarPostBody = r.remoteConnenctionUpdateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -732,12 +812,12 @@ func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecute(r ApiPatc
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -748,43 +828,43 @@ func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecute(r ApiPatc
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -792,10 +872,10 @@ func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecute(r ApiPatc
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostRemoteConnectionRequest struct {
@@ -816,6 +896,10 @@ func (r ApiPostRemoteConnectionRequest) Execute() (RemoteConnection, error) {
 	return r.ApiService.PostRemoteConnectionExecute(r)
 }
 
+func (r ApiPostRemoteConnectionRequest) ExecuteWithHttpInfo() (RemoteConnection, *_nethttp.Response, error) {
+	return r.ApiService.PostRemoteConnectionExecuteWithHttpInfo(r)
+}
+
 /*
  * PostRemoteConnection Register a new remote connection
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -833,6 +917,15 @@ func (a *RemoteConnectionsApiService) PostRemoteConnection(ctx _context.Context)
  * @return RemoteConnection
  */
 func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemoteConnectionRequest) (RemoteConnection, error) {
+	returnVal, _, err := a.PostRemoteConnectionExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return RemoteConnection
+ */
+func (a *RemoteConnectionsApiService) PostRemoteConnectionExecuteWithHttpInfo(r ApiPostRemoteConnectionRequest) (RemoteConnection, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -844,7 +937,7 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemot
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RemoteConnectionsApiService.PostRemoteConnection")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/remotes"
@@ -853,7 +946,7 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemot
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.remoteConnectionCreationRequest == nil {
-		return localVarReturnValue, reportError("remoteConnectionCreationRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("remoteConnectionCreationRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -877,12 +970,12 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemot
 	localVarPostBody = r.remoteConnectionCreationRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -896,12 +989,12 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemot
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -912,32 +1005,32 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemot
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -945,8 +1038,8 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemot
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

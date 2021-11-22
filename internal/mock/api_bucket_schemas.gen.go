@@ -6,6 +6,7 @@ package mock
 
 import (
 	context "context"
+	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -64,6 +65,22 @@ func (mr *MockBucketSchemasApiMockRecorder) CreateMeasurementSchemaExecute(arg0 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateMeasurementSchemaExecute", reflect.TypeOf((*MockBucketSchemasApi)(nil).CreateMeasurementSchemaExecute), arg0)
 }
 
+// CreateMeasurementSchemaExecuteWithHttpInfo mocks base method.
+func (m *MockBucketSchemasApi) CreateMeasurementSchemaExecuteWithHttpInfo(arg0 api.ApiCreateMeasurementSchemaRequest) (api.MeasurementSchema, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateMeasurementSchemaExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.MeasurementSchema)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// CreateMeasurementSchemaExecuteWithHttpInfo indicates an expected call of CreateMeasurementSchemaExecuteWithHttpInfo.
+func (mr *MockBucketSchemasApiMockRecorder) CreateMeasurementSchemaExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateMeasurementSchemaExecuteWithHttpInfo", reflect.TypeOf((*MockBucketSchemasApi)(nil).CreateMeasurementSchemaExecuteWithHttpInfo), arg0)
+}
+
 // GetMeasurementSchema mocks base method.
 func (m *MockBucketSchemasApi) GetMeasurementSchema(arg0 context.Context, arg1, arg2 string) api.ApiGetMeasurementSchemaRequest {
 	m.ctrl.T.Helper()
@@ -93,6 +110,22 @@ func (mr *MockBucketSchemasApiMockRecorder) GetMeasurementSchemaExecute(arg0 int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMeasurementSchemaExecute", reflect.TypeOf((*MockBucketSchemasApi)(nil).GetMeasurementSchemaExecute), arg0)
 }
 
+// GetMeasurementSchemaExecuteWithHttpInfo mocks base method.
+func (m *MockBucketSchemasApi) GetMeasurementSchemaExecuteWithHttpInfo(arg0 api.ApiGetMeasurementSchemaRequest) (api.MeasurementSchema, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMeasurementSchemaExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.MeasurementSchema)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetMeasurementSchemaExecuteWithHttpInfo indicates an expected call of GetMeasurementSchemaExecuteWithHttpInfo.
+func (mr *MockBucketSchemasApiMockRecorder) GetMeasurementSchemaExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMeasurementSchemaExecuteWithHttpInfo", reflect.TypeOf((*MockBucketSchemasApi)(nil).GetMeasurementSchemaExecuteWithHttpInfo), arg0)
+}
+
 // GetMeasurementSchemas mocks base method.
 func (m *MockBucketSchemasApi) GetMeasurementSchemas(arg0 context.Context, arg1 string) api.ApiGetMeasurementSchemasRequest {
 	m.ctrl.T.Helper()
@@ -120,6 +153,22 @@ func (m *MockBucketSchemasApi) GetMeasurementSchemasExecute(arg0 api.ApiGetMeasu
 func (mr *MockBucketSchemasApiMockRecorder) GetMeasurementSchemasExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMeasurementSchemasExecute", reflect.TypeOf((*MockBucketSchemasApi)(nil).GetMeasurementSchemasExecute), arg0)
+}
+
+// GetMeasurementSchemasExecuteWithHttpInfo mocks base method.
+func (m *MockBucketSchemasApi) GetMeasurementSchemasExecuteWithHttpInfo(arg0 api.ApiGetMeasurementSchemasRequest) (api.MeasurementSchemaList, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMeasurementSchemasExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.MeasurementSchemaList)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetMeasurementSchemasExecuteWithHttpInfo indicates an expected call of GetMeasurementSchemasExecuteWithHttpInfo.
+func (mr *MockBucketSchemasApiMockRecorder) GetMeasurementSchemasExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMeasurementSchemasExecuteWithHttpInfo", reflect.TypeOf((*MockBucketSchemasApi)(nil).GetMeasurementSchemasExecuteWithHttpInfo), arg0)
 }
 
 // OnlyCloud mocks base method.
@@ -177,4 +226,20 @@ func (m *MockBucketSchemasApi) UpdateMeasurementSchemaExecute(arg0 api.ApiUpdate
 func (mr *MockBucketSchemasApiMockRecorder) UpdateMeasurementSchemaExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateMeasurementSchemaExecute", reflect.TypeOf((*MockBucketSchemasApi)(nil).UpdateMeasurementSchemaExecute), arg0)
+}
+
+// UpdateMeasurementSchemaExecuteWithHttpInfo mocks base method.
+func (m *MockBucketSchemasApi) UpdateMeasurementSchemaExecuteWithHttpInfo(arg0 api.ApiUpdateMeasurementSchemaRequest) (api.MeasurementSchema, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateMeasurementSchemaExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.MeasurementSchema)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// UpdateMeasurementSchemaExecuteWithHttpInfo indicates an expected call of UpdateMeasurementSchemaExecuteWithHttpInfo.
+func (mr *MockBucketSchemasApiMockRecorder) UpdateMeasurementSchemaExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateMeasurementSchemaExecuteWithHttpInfo", reflect.TypeOf((*MockBucketSchemasApi)(nil).UpdateMeasurementSchemaExecuteWithHttpInfo), arg0)
 }

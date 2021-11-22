@@ -41,6 +41,12 @@ type StacksApi interface {
 	CreateStackExecute(r ApiCreateStackRequest) (Stack, error)
 
 	/*
+	   * CreateStackExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Stack
+	*/
+	CreateStackExecuteWithHttpInfo(r ApiCreateStackRequest) (Stack, *_nethttp.Response, error)
+
+	/*
 	 * DeleteStack Delete a stack and associated resources
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param stackId The identifier of the stack.
@@ -54,6 +60,11 @@ type StacksApi interface {
 	DeleteStackExecute(r ApiDeleteStackRequest) error
 
 	/*
+	 * DeleteStackExecuteWithHttpInfo executes the request with HTTP response info returned
+	 */
+	DeleteStackExecuteWithHttpInfo(r ApiDeleteStackRequest) (*_nethttp.Response, error)
+
+	/*
 	 * ListStacks List all installed InfluxDB templates
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiListStacksRequest
@@ -65,6 +76,12 @@ type StacksApi interface {
 	 * @return Stacks
 	 */
 	ListStacksExecute(r ApiListStacksRequest) (Stacks, error)
+
+	/*
+	   * ListStacksExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Stacks
+	*/
+	ListStacksExecuteWithHttpInfo(r ApiListStacksRequest) (Stacks, *_nethttp.Response, error)
 
 	/*
 	 * ReadStack Retrieve a stack
@@ -81,6 +98,12 @@ type StacksApi interface {
 	ReadStackExecute(r ApiReadStackRequest) (Stack, error)
 
 	/*
+	   * ReadStackExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Stack
+	*/
+	ReadStackExecuteWithHttpInfo(r ApiReadStackRequest) (Stack, *_nethttp.Response, error)
+
+	/*
 	 * UpdateStack Update an InfluxDB Stack
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param stackId The identifier of the stack.
@@ -93,6 +116,12 @@ type StacksApi interface {
 	 * @return Stack
 	 */
 	UpdateStackExecute(r ApiUpdateStackRequest) (Stack, error)
+
+	/*
+	   * UpdateStackExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Stack
+	*/
+	UpdateStackExecuteWithHttpInfo(r ApiUpdateStackRequest) (Stack, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -136,6 +165,10 @@ func (r ApiCreateStackRequest) Execute() (Stack, error) {
 	return r.ApiService.CreateStackExecute(r)
 }
 
+func (r ApiCreateStackRequest) ExecuteWithHttpInfo() (Stack, *_nethttp.Response, error) {
+	return r.ApiService.CreateStackExecuteWithHttpInfo(r)
+}
+
 /*
  * CreateStack Create a new stack
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -153,6 +186,15 @@ func (a *StacksApiService) CreateStack(ctx _context.Context) ApiCreateStackReque
  * @return Stack
  */
 func (a *StacksApiService) CreateStackExecute(r ApiCreateStackRequest) (Stack, error) {
+	returnVal, _, err := a.CreateStackExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Stack
+ */
+func (a *StacksApiService) CreateStackExecuteWithHttpInfo(r ApiCreateStackRequest) (Stack, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -164,7 +206,7 @@ func (a *StacksApiService) CreateStackExecute(r ApiCreateStackRequest) (Stack, e
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "StacksApiService.CreateStack")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/stacks"
@@ -173,7 +215,7 @@ func (a *StacksApiService) CreateStackExecute(r ApiCreateStackRequest) (Stack, e
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.stackPostRequest == nil {
-		return localVarReturnValue, reportError("stackPostRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("stackPostRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -197,12 +239,12 @@ func (a *StacksApiService) CreateStackExecute(r ApiCreateStackRequest) (Stack, e
 	localVarPostBody = r.stackPostRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -216,12 +258,12 @@ func (a *StacksApiService) CreateStackExecute(r ApiCreateStackRequest) (Stack, e
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -231,22 +273,22 @@ func (a *StacksApiService) CreateStackExecute(r ApiCreateStackRequest) (Stack, e
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -254,10 +296,10 @@ func (a *StacksApiService) CreateStackExecute(r ApiCreateStackRequest) (Stack, e
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiDeleteStackRequest struct {
@@ -287,6 +329,10 @@ func (r ApiDeleteStackRequest) Execute() error {
 	return r.ApiService.DeleteStackExecute(r)
 }
 
+func (r ApiDeleteStackRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteStackExecuteWithHttpInfo(r)
+}
+
 /*
  * DeleteStack Delete a stack and associated resources
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -305,6 +351,14 @@ func (a *StacksApiService) DeleteStack(ctx _context.Context, stackId string) Api
  * Execute executes the request
  */
 func (a *StacksApiService) DeleteStackExecute(r ApiDeleteStackRequest) error {
+	_, err := a.DeleteStackExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ */
+func (a *StacksApiService) DeleteStackExecuteWithHttpInfo(r ApiDeleteStackRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -315,7 +369,7 @@ func (a *StacksApiService) DeleteStackExecute(r ApiDeleteStackRequest) error {
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "StacksApiService.DeleteStack")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/stacks/{stack_id}"
@@ -325,7 +379,7 @@ func (a *StacksApiService) DeleteStackExecute(r ApiDeleteStackRequest) error {
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.orgID == nil {
-		return reportError("orgID is required and must be specified")
+		return nil, reportError("orgID is required and must be specified")
 	}
 
 	localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
@@ -348,12 +402,12 @@ func (a *StacksApiService) DeleteStackExecute(r ApiDeleteStackRequest) error {
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -367,12 +421,12 @@ func (a *StacksApiService) DeleteStackExecute(r ApiDeleteStackRequest) error {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -382,14 +436,14 @@ func (a *StacksApiService) DeleteStackExecute(r ApiDeleteStackRequest) error {
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiListStacksRequest struct {
@@ -428,6 +482,10 @@ func (r ApiListStacksRequest) Execute() (Stacks, error) {
 	return r.ApiService.ListStacksExecute(r)
 }
 
+func (r ApiListStacksRequest) ExecuteWithHttpInfo() (Stacks, *_nethttp.Response, error) {
+	return r.ApiService.ListStacksExecuteWithHttpInfo(r)
+}
+
 /*
  * ListStacks List all installed InfluxDB templates
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -445,6 +503,15 @@ func (a *StacksApiService) ListStacks(ctx _context.Context) ApiListStacksRequest
  * @return Stacks
  */
 func (a *StacksApiService) ListStacksExecute(r ApiListStacksRequest) (Stacks, error) {
+	returnVal, _, err := a.ListStacksExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Stacks
+ */
+func (a *StacksApiService) ListStacksExecuteWithHttpInfo(r ApiListStacksRequest) (Stacks, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -456,7 +523,7 @@ func (a *StacksApiService) ListStacksExecute(r ApiListStacksRequest) (Stacks, er
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "StacksApiService.ListStacks")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/stacks"
@@ -465,7 +532,7 @@ func (a *StacksApiService) ListStacksExecute(r ApiListStacksRequest) (Stacks, er
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.orgID == nil {
-		return localVarReturnValue, reportError("orgID is required and must be specified")
+		return localVarReturnValue, nil, reportError("orgID is required and must be specified")
 	}
 
 	localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
@@ -510,12 +577,12 @@ func (a *StacksApiService) ListStacksExecute(r ApiListStacksRequest) (Stacks, er
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -529,12 +596,12 @@ func (a *StacksApiService) ListStacksExecute(r ApiListStacksRequest) (Stacks, er
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -544,22 +611,22 @@ func (a *StacksApiService) ListStacksExecute(r ApiListStacksRequest) (Stacks, er
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -567,10 +634,10 @@ func (a *StacksApiService) ListStacksExecute(r ApiListStacksRequest) (Stacks, er
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiReadStackRequest struct {
@@ -589,6 +656,10 @@ func (r ApiReadStackRequest) GetStackId() string {
 
 func (r ApiReadStackRequest) Execute() (Stack, error) {
 	return r.ApiService.ReadStackExecute(r)
+}
+
+func (r ApiReadStackRequest) ExecuteWithHttpInfo() (Stack, *_nethttp.Response, error) {
+	return r.ApiService.ReadStackExecuteWithHttpInfo(r)
 }
 
 /*
@@ -610,6 +681,15 @@ func (a *StacksApiService) ReadStack(ctx _context.Context, stackId string) ApiRe
  * @return Stack
  */
 func (a *StacksApiService) ReadStackExecute(r ApiReadStackRequest) (Stack, error) {
+	returnVal, _, err := a.ReadStackExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Stack
+ */
+func (a *StacksApiService) ReadStackExecuteWithHttpInfo(r ApiReadStackRequest) (Stack, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -621,7 +701,7 @@ func (a *StacksApiService) ReadStackExecute(r ApiReadStackRequest) (Stack, error
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "StacksApiService.ReadStack")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/stacks/{stack_id}"
@@ -650,12 +730,12 @@ func (a *StacksApiService) ReadStackExecute(r ApiReadStackRequest) (Stack, error
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -669,12 +749,12 @@ func (a *StacksApiService) ReadStackExecute(r ApiReadStackRequest) (Stack, error
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -684,22 +764,22 @@ func (a *StacksApiService) ReadStackExecute(r ApiReadStackRequest) (Stack, error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -707,10 +787,10 @@ func (a *StacksApiService) ReadStackExecute(r ApiReadStackRequest) (Stack, error
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiUpdateStackRequest struct {
@@ -740,6 +820,10 @@ func (r ApiUpdateStackRequest) Execute() (Stack, error) {
 	return r.ApiService.UpdateStackExecute(r)
 }
 
+func (r ApiUpdateStackRequest) ExecuteWithHttpInfo() (Stack, *_nethttp.Response, error) {
+	return r.ApiService.UpdateStackExecuteWithHttpInfo(r)
+}
+
 /*
  * UpdateStack Update an InfluxDB Stack
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -759,6 +843,15 @@ func (a *StacksApiService) UpdateStack(ctx _context.Context, stackId string) Api
  * @return Stack
  */
 func (a *StacksApiService) UpdateStackExecute(r ApiUpdateStackRequest) (Stack, error) {
+	returnVal, _, err := a.UpdateStackExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Stack
+ */
+func (a *StacksApiService) UpdateStackExecuteWithHttpInfo(r ApiUpdateStackRequest) (Stack, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -770,7 +863,7 @@ func (a *StacksApiService) UpdateStackExecute(r ApiUpdateStackRequest) (Stack, e
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "StacksApiService.UpdateStack")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/stacks/{stack_id}"
@@ -780,7 +873,7 @@ func (a *StacksApiService) UpdateStackExecute(r ApiUpdateStackRequest) (Stack, e
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.stackPatchRequest == nil {
-		return localVarReturnValue, reportError("stackPatchRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("stackPatchRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -804,12 +897,12 @@ func (a *StacksApiService) UpdateStackExecute(r ApiUpdateStackRequest) (Stack, e
 	localVarPostBody = r.stackPatchRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -823,12 +916,12 @@ func (a *StacksApiService) UpdateStackExecute(r ApiUpdateStackRequest) (Stack, e
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -838,22 +931,22 @@ func (a *StacksApiService) UpdateStackExecute(r ApiUpdateStackRequest) (Stack, e
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -861,8 +954,8 @@ func (a *StacksApiService) UpdateStackExecute(r ApiUpdateStackRequest) (Stack, e
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

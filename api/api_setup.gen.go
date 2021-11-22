@@ -40,6 +40,12 @@ type SetupApi interface {
 	GetSetupExecute(r ApiGetSetupRequest) (InlineResponse200, error)
 
 	/*
+	   * GetSetupExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return InlineResponse200
+	*/
+	GetSetupExecuteWithHttpInfo(r ApiGetSetupRequest) (InlineResponse200, *_nethttp.Response, error)
+
+	/*
 	 * PostSetup Set up initial user, org and bucket
 	 * Post an onboarding request to set up initial user, org and bucket.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -52,6 +58,12 @@ type SetupApi interface {
 	 * @return OnboardingResponse
 	 */
 	PostSetupExecute(r ApiPostSetupRequest) (OnboardingResponse, error)
+
+	/*
+	   * PostSetupExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return OnboardingResponse
+	*/
+	PostSetupExecuteWithHttpInfo(r ApiPostSetupRequest) (OnboardingResponse, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -95,6 +107,10 @@ func (r ApiGetSetupRequest) Execute() (InlineResponse200, error) {
 	return r.ApiService.GetSetupExecute(r)
 }
 
+func (r ApiGetSetupRequest) ExecuteWithHttpInfo() (InlineResponse200, *_nethttp.Response, error) {
+	return r.ApiService.GetSetupExecuteWithHttpInfo(r)
+}
+
 /*
  * GetSetup Check if database has default user, org, bucket
  * Returns `true` if no default user, organization, or bucket has been created.
@@ -113,6 +129,15 @@ func (a *SetupApiService) GetSetup(ctx _context.Context) ApiGetSetupRequest {
  * @return InlineResponse200
  */
 func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse200, error) {
+	returnVal, _, err := a.GetSetupExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return InlineResponse200
+ */
+func (a *SetupApiService) GetSetupExecuteWithHttpInfo(r ApiGetSetupRequest) (InlineResponse200, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -124,7 +149,7 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SetupApiService.GetSetup")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/setup"
@@ -155,12 +180,12 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -174,29 +199,29 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -204,10 +229,10 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostSetupRequest struct {
@@ -237,6 +262,10 @@ func (r ApiPostSetupRequest) Execute() (OnboardingResponse, error) {
 	return r.ApiService.PostSetupExecute(r)
 }
 
+func (r ApiPostSetupRequest) ExecuteWithHttpInfo() (OnboardingResponse, *_nethttp.Response, error) {
+	return r.ApiService.PostSetupExecuteWithHttpInfo(r)
+}
+
 /*
  * PostSetup Set up initial user, org and bucket
  * Post an onboarding request to set up initial user, org and bucket.
@@ -255,6 +284,15 @@ func (a *SetupApiService) PostSetup(ctx _context.Context) ApiPostSetupRequest {
  * @return OnboardingResponse
  */
 func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingResponse, error) {
+	returnVal, _, err := a.PostSetupExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return OnboardingResponse
+ */
+func (a *SetupApiService) PostSetupExecuteWithHttpInfo(r ApiPostSetupRequest) (OnboardingResponse, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -266,7 +304,7 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SetupApiService.PostSetup")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/setup"
@@ -275,7 +313,7 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.onboardingRequest == nil {
-		return localVarReturnValue, reportError("onboardingRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("onboardingRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -302,12 +340,12 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 	localVarPostBody = r.onboardingRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -321,12 +359,12 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -336,22 +374,22 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -359,8 +397,8 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

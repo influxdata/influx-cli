@@ -41,6 +41,12 @@ type SecretsApi interface {
 	GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, error)
 
 	/*
+	   * GetOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return SecretKeysResponse
+	*/
+	GetOrgsIDSecretsExecuteWithHttpInfo(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, *_nethttp.Response, error)
+
+	/*
 	 * PatchOrgsIDSecrets Update secrets in an organization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param orgID The organization ID.
@@ -54,6 +60,11 @@ type SecretsApi interface {
 	PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsRequest) error
 
 	/*
+	 * PatchOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned
+	 */
+	PatchOrgsIDSecretsExecuteWithHttpInfo(r ApiPatchOrgsIDSecretsRequest) (*_nethttp.Response, error)
+
+	/*
 	 * PostOrgsIDSecrets Delete secrets from an organization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param orgID The organization ID.
@@ -65,6 +76,11 @@ type SecretsApi interface {
 	 * PostOrgsIDSecretsExecute executes the request
 	 */
 	PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsRequest) error
+
+	/*
+	 * PostOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned
+	 */
+	PostOrgsIDSecretsExecuteWithHttpInfo(r ApiPostOrgsIDSecretsRequest) (*_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -117,6 +133,10 @@ func (r ApiGetOrgsIDSecretsRequest) Execute() (SecretKeysResponse, error) {
 	return r.ApiService.GetOrgsIDSecretsExecute(r)
 }
 
+func (r ApiGetOrgsIDSecretsRequest) ExecuteWithHttpInfo() (SecretKeysResponse, *_nethttp.Response, error) {
+	return r.ApiService.GetOrgsIDSecretsExecuteWithHttpInfo(r)
+}
+
 /*
  * GetOrgsIDSecrets List all secret keys for an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -136,6 +156,15 @@ func (a *SecretsApiService) GetOrgsIDSecrets(ctx _context.Context, orgID string)
  * @return SecretKeysResponse
  */
 func (a *SecretsApiService) GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, error) {
+	returnVal, _, err := a.GetOrgsIDSecretsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return SecretKeysResponse
+ */
+func (a *SecretsApiService) GetOrgsIDSecretsExecuteWithHttpInfo(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -147,7 +176,7 @@ func (a *SecretsApiService) GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecretsApiService.GetOrgsIDSecrets")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs/{orgID}/secrets"
@@ -179,12 +208,12 @@ func (a *SecretsApiService) GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -198,12 +227,12 @@ func (a *SecretsApiService) GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -213,22 +242,22 @@ func (a *SecretsApiService) GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -236,10 +265,10 @@ func (a *SecretsApiService) GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPatchOrgsIDSecretsRequest struct {
@@ -278,6 +307,10 @@ func (r ApiPatchOrgsIDSecretsRequest) Execute() error {
 	return r.ApiService.PatchOrgsIDSecretsExecute(r)
 }
 
+func (r ApiPatchOrgsIDSecretsRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PatchOrgsIDSecretsExecuteWithHttpInfo(r)
+}
+
 /*
  * PatchOrgsIDSecrets Update secrets in an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -296,6 +329,14 @@ func (a *SecretsApiService) PatchOrgsIDSecrets(ctx _context.Context, orgID strin
  * Execute executes the request
  */
 func (a *SecretsApiService) PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsRequest) error {
+	_, err := a.PatchOrgsIDSecretsExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ */
+func (a *SecretsApiService) PatchOrgsIDSecretsExecuteWithHttpInfo(r ApiPatchOrgsIDSecretsRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -306,7 +347,7 @@ func (a *SecretsApiService) PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsReq
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecretsApiService.PatchOrgsIDSecrets")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs/{orgID}/secrets"
@@ -316,7 +357,7 @@ func (a *SecretsApiService) PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsReq
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.requestBody == nil {
-		return reportError("requestBody is required and must be specified")
+		return nil, reportError("requestBody is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -343,12 +384,12 @@ func (a *SecretsApiService) PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsReq
 	localVarPostBody = r.requestBody
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -362,12 +403,12 @@ func (a *SecretsApiService) PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsReq
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -377,14 +418,14 @@ func (a *SecretsApiService) PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsReq
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiPostOrgsIDSecretsRequest struct {
@@ -423,6 +464,10 @@ func (r ApiPostOrgsIDSecretsRequest) Execute() error {
 	return r.ApiService.PostOrgsIDSecretsExecute(r)
 }
 
+func (r ApiPostOrgsIDSecretsRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PostOrgsIDSecretsExecuteWithHttpInfo(r)
+}
+
 /*
  * PostOrgsIDSecrets Delete secrets from an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -441,6 +486,14 @@ func (a *SecretsApiService) PostOrgsIDSecrets(ctx _context.Context, orgID string
  * Execute executes the request
  */
 func (a *SecretsApiService) PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsRequest) error {
+	_, err := a.PostOrgsIDSecretsExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ */
+func (a *SecretsApiService) PostOrgsIDSecretsExecuteWithHttpInfo(r ApiPostOrgsIDSecretsRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -451,7 +504,7 @@ func (a *SecretsApiService) PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsReque
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecretsApiService.PostOrgsIDSecrets")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs/{orgID}/secrets/{delete}"
@@ -461,7 +514,7 @@ func (a *SecretsApiService) PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsReque
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.secretKeys == nil {
-		return reportError("secretKeys is required and must be specified")
+		return nil, reportError("secretKeys is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -488,12 +541,12 @@ func (a *SecretsApiService) PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsReque
 	localVarPostBody = r.secretKeys
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -507,12 +560,12 @@ func (a *SecretsApiService) PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsReque
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -522,12 +575,12 @@ func (a *SecretsApiService) PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsReque
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }

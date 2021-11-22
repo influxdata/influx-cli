@@ -6,6 +6,7 @@ package mock
 
 import (
 	context "context"
+	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -64,6 +65,22 @@ func (mr *MockSecretsApiMockRecorder) GetOrgsIDSecretsExecute(arg0 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDSecretsExecute", reflect.TypeOf((*MockSecretsApi)(nil).GetOrgsIDSecretsExecute), arg0)
 }
 
+// GetOrgsIDSecretsExecuteWithHttpInfo mocks base method.
+func (m *MockSecretsApi) GetOrgsIDSecretsExecuteWithHttpInfo(arg0 api.ApiGetOrgsIDSecretsRequest) (api.SecretKeysResponse, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrgsIDSecretsExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.SecretKeysResponse)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetOrgsIDSecretsExecuteWithHttpInfo indicates an expected call of GetOrgsIDSecretsExecuteWithHttpInfo.
+func (mr *MockSecretsApiMockRecorder) GetOrgsIDSecretsExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDSecretsExecuteWithHttpInfo", reflect.TypeOf((*MockSecretsApi)(nil).GetOrgsIDSecretsExecuteWithHttpInfo), arg0)
+}
+
 // OnlyCloud mocks base method.
 func (m *MockSecretsApi) OnlyCloud() api.SecretsApi {
 	m.ctrl.T.Helper()
@@ -120,6 +137,21 @@ func (mr *MockSecretsApiMockRecorder) PatchOrgsIDSecretsExecute(arg0 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchOrgsIDSecretsExecute", reflect.TypeOf((*MockSecretsApi)(nil).PatchOrgsIDSecretsExecute), arg0)
 }
 
+// PatchOrgsIDSecretsExecuteWithHttpInfo mocks base method.
+func (m *MockSecretsApi) PatchOrgsIDSecretsExecuteWithHttpInfo(arg0 api.ApiPatchOrgsIDSecretsRequest) (*http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PatchOrgsIDSecretsExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PatchOrgsIDSecretsExecuteWithHttpInfo indicates an expected call of PatchOrgsIDSecretsExecuteWithHttpInfo.
+func (mr *MockSecretsApiMockRecorder) PatchOrgsIDSecretsExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchOrgsIDSecretsExecuteWithHttpInfo", reflect.TypeOf((*MockSecretsApi)(nil).PatchOrgsIDSecretsExecuteWithHttpInfo), arg0)
+}
+
 // PostOrgsIDSecrets mocks base method.
 func (m *MockSecretsApi) PostOrgsIDSecrets(arg0 context.Context, arg1 string) api.ApiPostOrgsIDSecretsRequest {
 	m.ctrl.T.Helper()
@@ -146,4 +178,19 @@ func (m *MockSecretsApi) PostOrgsIDSecretsExecute(arg0 api.ApiPostOrgsIDSecretsR
 func (mr *MockSecretsApiMockRecorder) PostOrgsIDSecretsExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostOrgsIDSecretsExecute", reflect.TypeOf((*MockSecretsApi)(nil).PostOrgsIDSecretsExecute), arg0)
+}
+
+// PostOrgsIDSecretsExecuteWithHttpInfo mocks base method.
+func (m *MockSecretsApi) PostOrgsIDSecretsExecuteWithHttpInfo(arg0 api.ApiPostOrgsIDSecretsRequest) (*http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostOrgsIDSecretsExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PostOrgsIDSecretsExecuteWithHttpInfo indicates an expected call of PostOrgsIDSecretsExecuteWithHttpInfo.
+func (mr *MockSecretsApiMockRecorder) PostOrgsIDSecretsExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostOrgsIDSecretsExecuteWithHttpInfo", reflect.TypeOf((*MockSecretsApi)(nil).PostOrgsIDSecretsExecuteWithHttpInfo), arg0)
 }

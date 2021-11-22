@@ -6,6 +6,7 @@ package mock
 
 import (
 	context "context"
+	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -89,4 +90,19 @@ func (m *MockDeleteApi) PostDeleteExecute(arg0 api.ApiPostDeleteRequest) error {
 func (mr *MockDeleteApiMockRecorder) PostDeleteExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostDeleteExecute", reflect.TypeOf((*MockDeleteApi)(nil).PostDeleteExecute), arg0)
+}
+
+// PostDeleteExecuteWithHttpInfo mocks base method.
+func (m *MockDeleteApi) PostDeleteExecuteWithHttpInfo(arg0 api.ApiPostDeleteRequest) (*http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostDeleteExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PostDeleteExecuteWithHttpInfo indicates an expected call of PostDeleteExecuteWithHttpInfo.
+func (mr *MockDeleteApiMockRecorder) PostDeleteExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostDeleteExecuteWithHttpInfo", reflect.TypeOf((*MockDeleteApi)(nil).PostDeleteExecuteWithHttpInfo), arg0)
 }

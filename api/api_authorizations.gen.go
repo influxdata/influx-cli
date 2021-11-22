@@ -40,6 +40,11 @@ type AuthorizationsApi interface {
 	DeleteAuthorizationsIDExecute(r ApiDeleteAuthorizationsIDRequest) error
 
 	/*
+	 * DeleteAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 */
+	DeleteAuthorizationsIDExecuteWithHttpInfo(r ApiDeleteAuthorizationsIDRequest) (*_nethttp.Response, error)
+
+	/*
 	 * GetAuthorizations List all authorizations
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetAuthorizationsRequest
@@ -51,6 +56,12 @@ type AuthorizationsApi interface {
 	 * @return Authorizations
 	 */
 	GetAuthorizationsExecute(r ApiGetAuthorizationsRequest) (Authorizations, error)
+
+	/*
+	   * GetAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Authorizations
+	*/
+	GetAuthorizationsExecuteWithHttpInfo(r ApiGetAuthorizationsRequest) (Authorizations, *_nethttp.Response, error)
 
 	/*
 	 * GetAuthorizationsID Retrieve an authorization
@@ -67,6 +78,12 @@ type AuthorizationsApi interface {
 	GetAuthorizationsIDExecute(r ApiGetAuthorizationsIDRequest) (Authorization, error)
 
 	/*
+	   * GetAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Authorization
+	*/
+	GetAuthorizationsIDExecuteWithHttpInfo(r ApiGetAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
+
+	/*
 	 * PatchAuthorizationsID Update an authorization to be active or inactive
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param authID The ID of the authorization to update.
@@ -81,6 +98,12 @@ type AuthorizationsApi interface {
 	PatchAuthorizationsIDExecute(r ApiPatchAuthorizationsIDRequest) (Authorization, error)
 
 	/*
+	   * PatchAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Authorization
+	*/
+	PatchAuthorizationsIDExecuteWithHttpInfo(r ApiPatchAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
+
+	/*
 	 * PostAuthorizations Create an authorization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiPostAuthorizationsRequest
@@ -92,6 +115,12 @@ type AuthorizationsApi interface {
 	 * @return Authorization
 	 */
 	PostAuthorizationsExecute(r ApiPostAuthorizationsRequest) (Authorization, error)
+
+	/*
+	   * PostAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return Authorization
+	*/
+	PostAuthorizationsExecuteWithHttpInfo(r ApiPostAuthorizationsRequest) (Authorization, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -144,6 +173,10 @@ func (r ApiDeleteAuthorizationsIDRequest) Execute() error {
 	return r.ApiService.DeleteAuthorizationsIDExecute(r)
 }
 
+func (r ApiDeleteAuthorizationsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteAuthorizationsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * DeleteAuthorizationsID Delete an authorization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -162,6 +195,14 @@ func (a *AuthorizationsApiService) DeleteAuthorizationsID(ctx _context.Context, 
  * Execute executes the request
  */
 func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuthorizationsIDRequest) error {
+	_, err := a.DeleteAuthorizationsIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ */
+func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecuteWithHttpInfo(r ApiDeleteAuthorizationsIDRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -172,7 +213,7 @@ func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuth
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.DeleteAuthorizationsID")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/authorizations/{authID}"
@@ -204,12 +245,12 @@ func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuth
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -223,12 +264,12 @@ func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuth
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -238,14 +279,14 @@ func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuth
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiGetAuthorizationsRequest struct {
@@ -302,6 +343,10 @@ func (r ApiGetAuthorizationsRequest) Execute() (Authorizations, error) {
 	return r.ApiService.GetAuthorizationsExecute(r)
 }
 
+func (r ApiGetAuthorizationsRequest) ExecuteWithHttpInfo() (Authorizations, *_nethttp.Response, error) {
+	return r.ApiService.GetAuthorizationsExecuteWithHttpInfo(r)
+}
+
 /*
  * GetAuthorizations List all authorizations
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -319,6 +364,15 @@ func (a *AuthorizationsApiService) GetAuthorizations(ctx _context.Context) ApiGe
  * @return Authorizations
  */
 func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizationsRequest) (Authorizations, error) {
+	returnVal, _, err := a.GetAuthorizationsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Authorizations
+ */
+func (a *AuthorizationsApiService) GetAuthorizationsExecuteWithHttpInfo(r ApiGetAuthorizationsRequest) (Authorizations, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -330,7 +384,7 @@ func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizatio
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.GetAuthorizations")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/authorizations"
@@ -373,12 +427,12 @@ func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizatio
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -392,12 +446,12 @@ func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizatio
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -407,22 +461,22 @@ func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizatio
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -430,10 +484,10 @@ func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizatio
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetAuthorizationsIDRequest struct {
@@ -463,6 +517,10 @@ func (r ApiGetAuthorizationsIDRequest) Execute() (Authorization, error) {
 	return r.ApiService.GetAuthorizationsIDExecute(r)
 }
 
+func (r ApiGetAuthorizationsIDRequest) ExecuteWithHttpInfo() (Authorization, *_nethttp.Response, error) {
+	return r.ApiService.GetAuthorizationsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * GetAuthorizationsID Retrieve an authorization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -482,6 +540,15 @@ func (a *AuthorizationsApiService) GetAuthorizationsID(ctx _context.Context, aut
  * @return Authorization
  */
 func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizationsIDRequest) (Authorization, error) {
+	returnVal, _, err := a.GetAuthorizationsIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Authorization
+ */
+func (a *AuthorizationsApiService) GetAuthorizationsIDExecuteWithHttpInfo(r ApiGetAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -493,7 +560,7 @@ func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizat
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.GetAuthorizationsID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/authorizations/{authID}"
@@ -525,12 +592,12 @@ func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizat
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -544,12 +611,12 @@ func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizat
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -559,22 +626,22 @@ func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizat
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -582,10 +649,10 @@ func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizat
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPatchAuthorizationsIDRequest struct {
@@ -624,6 +691,10 @@ func (r ApiPatchAuthorizationsIDRequest) Execute() (Authorization, error) {
 	return r.ApiService.PatchAuthorizationsIDExecute(r)
 }
 
+func (r ApiPatchAuthorizationsIDRequest) ExecuteWithHttpInfo() (Authorization, *_nethttp.Response, error) {
+	return r.ApiService.PatchAuthorizationsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * PatchAuthorizationsID Update an authorization to be active or inactive
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -643,6 +714,15 @@ func (a *AuthorizationsApiService) PatchAuthorizationsID(ctx _context.Context, a
  * @return Authorization
  */
 func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthorizationsIDRequest) (Authorization, error) {
+	returnVal, _, err := a.PatchAuthorizationsIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Authorization
+ */
+func (a *AuthorizationsApiService) PatchAuthorizationsIDExecuteWithHttpInfo(r ApiPatchAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -654,7 +734,7 @@ func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthor
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.PatchAuthorizationsID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/authorizations/{authID}"
@@ -664,7 +744,7 @@ func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthor
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.authorizationUpdateRequest == nil {
-		return localVarReturnValue, reportError("authorizationUpdateRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("authorizationUpdateRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -691,12 +771,12 @@ func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthor
 	localVarPostBody = r.authorizationUpdateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -710,12 +790,12 @@ func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthor
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -725,22 +805,22 @@ func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthor
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -748,10 +828,10 @@ func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthor
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostAuthorizationsRequest struct {
@@ -781,6 +861,10 @@ func (r ApiPostAuthorizationsRequest) Execute() (Authorization, error) {
 	return r.ApiService.PostAuthorizationsExecute(r)
 }
 
+func (r ApiPostAuthorizationsRequest) ExecuteWithHttpInfo() (Authorization, *_nethttp.Response, error) {
+	return r.ApiService.PostAuthorizationsExecuteWithHttpInfo(r)
+}
+
 /*
  * PostAuthorizations Create an authorization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -798,6 +882,15 @@ func (a *AuthorizationsApiService) PostAuthorizations(ctx _context.Context) ApiP
  * @return Authorization
  */
 func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizationsRequest) (Authorization, error) {
+	returnVal, _, err := a.PostAuthorizationsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return Authorization
+ */
+func (a *AuthorizationsApiService) PostAuthorizationsExecuteWithHttpInfo(r ApiPostAuthorizationsRequest) (Authorization, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -809,7 +902,7 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizat
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AuthorizationsApiService.PostAuthorizations")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/authorizations"
@@ -818,7 +911,7 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizat
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.authorizationPostRequest == nil {
-		return localVarReturnValue, reportError("authorizationPostRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("authorizationPostRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -845,12 +938,12 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizat
 	localVarPostBody = r.authorizationPostRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -864,12 +957,12 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizat
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -880,32 +973,32 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizat
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -913,8 +1006,8 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizat
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

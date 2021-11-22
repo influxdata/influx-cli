@@ -37,6 +37,11 @@ type DeleteApi interface {
 	 */
 	PostDeleteExecute(r ApiPostDeleteRequest) error
 
+	/*
+	 * PostDeleteExecuteWithHttpInfo executes the request with HTTP response info returned
+	 */
+	PostDeleteExecuteWithHttpInfo(r ApiPostDeleteRequest) (*_nethttp.Response, error)
+
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
 	// servers.
@@ -124,6 +129,10 @@ func (r ApiPostDeleteRequest) Execute() error {
 	return r.ApiService.PostDeleteExecute(r)
 }
 
+func (r ApiPostDeleteRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PostDeleteExecuteWithHttpInfo(r)
+}
+
 /*
  * PostDelete Delete data
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -140,6 +149,14 @@ func (a *DeleteApiService) PostDelete(ctx _context.Context) ApiPostDeleteRequest
  * Execute executes the request
  */
 func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
+	_, err := a.PostDeleteExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ */
+func (a *DeleteApiService) PostDeleteExecuteWithHttpInfo(r ApiPostDeleteRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -150,7 +167,7 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DeleteApiService.PostDelete")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/delete"
@@ -159,7 +176,7 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.deletePredicateRequest == nil {
-		return reportError("deletePredicateRequest is required and must be specified")
+		return nil, reportError("deletePredicateRequest is required and must be specified")
 	}
 
 	if r.org != nil {
@@ -198,12 +215,12 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 	localVarPostBody = r.deletePredicateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -217,12 +234,12 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -233,44 +250,44 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }

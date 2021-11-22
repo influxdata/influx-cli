@@ -38,6 +38,12 @@ type ResourcesApi interface {
 	 */
 	GetResourcesExecute(r ApiGetResourcesRequest) ([]string, error)
 
+	/*
+	   * GetResourcesExecuteWithHttpInfo executes the request with HTTP response info returned
+	       * @return []string
+	*/
+	GetResourcesExecuteWithHttpInfo(r ApiGetResourcesRequest) ([]string, *_nethttp.Response, error)
+
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
 	// servers.
@@ -80,6 +86,10 @@ func (r ApiGetResourcesRequest) Execute() ([]string, error) {
 	return r.ApiService.GetResourcesExecute(r)
 }
 
+func (r ApiGetResourcesRequest) ExecuteWithHttpInfo() ([]string, *_nethttp.Response, error) {
+	return r.ApiService.GetResourcesExecuteWithHttpInfo(r)
+}
+
 /*
  * GetResources List all known resources
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -97,6 +107,15 @@ func (a *ResourcesApiService) GetResources(ctx _context.Context) ApiGetResources
  * @return []string
  */
 func (a *ResourcesApiService) GetResourcesExecute(r ApiGetResourcesRequest) ([]string, error) {
+	returnVal, _, err := a.GetResourcesExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * @return []string
+ */
+func (a *ResourcesApiService) GetResourcesExecuteWithHttpInfo(r ApiGetResourcesRequest) ([]string, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -108,7 +127,7 @@ func (a *ResourcesApiService) GetResourcesExecute(r ApiGetResourcesRequest) ([]s
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ResourcesApiService.GetResources")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/resources"
@@ -139,12 +158,12 @@ func (a *ResourcesApiService) GetResourcesExecute(r ApiGetResourcesRequest) ([]s
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -158,12 +177,12 @@ func (a *ResourcesApiService) GetResourcesExecute(r ApiGetResourcesRequest) ([]s
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -173,22 +192,22 @@ func (a *ResourcesApiService) GetResourcesExecute(r ApiGetResourcesRequest) ([]s
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -196,8 +215,8 @@ func (a *ResourcesApiService) GetResourcesExecute(r ApiGetResourcesRequest) ([]s
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
