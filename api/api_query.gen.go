@@ -39,9 +39,11 @@ type QueryApi interface {
 	PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Response, error)
 
 	/*
-	   * PostQueryExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return *os.File
-	*/
+	 * PostQueryExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return *os.File
+	 */
 	PostQueryExecuteWithHttpInfo(r ApiPostQueryRequest) (*_nethttp.Response, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -157,7 +159,9 @@ func (a *QueryApiService) PostQueryExecute(r ApiPostQueryRequest) (*_nethttp.Res
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return *os.File
  */
 func (a *QueryApiService) PostQueryExecuteWithHttpInfo(r ApiPostQueryRequest) (*_nethttp.Response, *_nethttp.Response, error) {

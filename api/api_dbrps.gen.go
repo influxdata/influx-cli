@@ -40,7 +40,9 @@ type DBRPsApi interface {
 	DeleteDBRPIDExecute(r ApiDeleteDBRPIDRequest) error
 
 	/*
-	 * DeleteDBRPIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteDBRPIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteDBRPIDExecuteWithHttpInfo(r ApiDeleteDBRPIDRequest) (*_nethttp.Response, error)
 
@@ -58,9 +60,11 @@ type DBRPsApi interface {
 	GetDBRPsExecute(r ApiGetDBRPsRequest) (DBRPs, error)
 
 	/*
-	   * GetDBRPsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return DBRPs
-	*/
+	 * GetDBRPsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return DBRPs
+	 */
 	GetDBRPsExecuteWithHttpInfo(r ApiGetDBRPsRequest) (DBRPs, *_nethttp.Response, error)
 
 	/*
@@ -78,9 +82,11 @@ type DBRPsApi interface {
 	GetDBRPsIDExecute(r ApiGetDBRPsIDRequest) (DBRPGet, error)
 
 	/*
-	   * GetDBRPsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return DBRPGet
-	*/
+	 * GetDBRPsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return DBRPGet
+	 */
 	GetDBRPsIDExecuteWithHttpInfo(r ApiGetDBRPsIDRequest) (DBRPGet, *_nethttp.Response, error)
 
 	/*
@@ -98,9 +104,11 @@ type DBRPsApi interface {
 	PatchDBRPIDExecute(r ApiPatchDBRPIDRequest) (DBRPGet, error)
 
 	/*
-	   * PatchDBRPIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return DBRPGet
-	*/
+	 * PatchDBRPIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return DBRPGet
+	 */
 	PatchDBRPIDExecuteWithHttpInfo(r ApiPatchDBRPIDRequest) (DBRPGet, *_nethttp.Response, error)
 
 	/*
@@ -117,9 +125,11 @@ type DBRPsApi interface {
 	PostDBRPExecute(r ApiPostDBRPRequest) (DBRP, error)
 
 	/*
-	   * PostDBRPExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return DBRP
-	*/
+	 * PostDBRPExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return DBRP
+	 */
 	PostDBRPExecuteWithHttpInfo(r ApiPostDBRPRequest) (DBRP, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -218,7 +228,9 @@ func (a *DBRPsApiService) DeleteDBRPIDExecute(r ApiDeleteDBRPIDRequest) error {
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *DBRPsApiService) DeleteDBRPIDExecuteWithHttpInfo(r ApiDeleteDBRPIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -431,7 +443,9 @@ func (a *DBRPsApiService) GetDBRPsExecute(r ApiGetDBRPsRequest) (DBRPs, error) {
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return DBRPs
  */
 func (a *DBRPsApiService) GetDBRPsExecuteWithHttpInfo(r ApiGetDBRPsRequest) (DBRPs, *_nethttp.Response, error) {
@@ -645,7 +659,9 @@ func (a *DBRPsApiService) GetDBRPsIDExecute(r ApiGetDBRPsIDRequest) (DBRPGet, er
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return DBRPGet
  */
 func (a *DBRPsApiService) GetDBRPsIDExecuteWithHttpInfo(r ApiGetDBRPsIDRequest) (DBRPGet, *_nethttp.Response, error) {
@@ -854,7 +870,9 @@ func (a *DBRPsApiService) PatchDBRPIDExecute(r ApiPatchDBRPIDRequest) (DBRPGet, 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return DBRPGet
  */
 func (a *DBRPsApiService) PatchDBRPIDExecuteWithHttpInfo(r ApiPatchDBRPIDRequest) (DBRPGet, *_nethttp.Response, error) {
@@ -1050,7 +1068,9 @@ func (a *DBRPsApiService) PostDBRPExecute(r ApiPostDBRPRequest) (DBRP, error) {
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return DBRP
  */
 func (a *DBRPsApiService) PostDBRPExecuteWithHttpInfo(r ApiPostDBRPRequest) (DBRP, *_nethttp.Response, error) {

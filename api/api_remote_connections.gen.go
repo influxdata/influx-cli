@@ -40,7 +40,9 @@ type RemoteConnectionsApi interface {
 	DeleteRemoteConnectionByIDExecute(r ApiDeleteRemoteConnectionByIDRequest) error
 
 	/*
-	 * DeleteRemoteConnectionByIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteRemoteConnectionByIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteRemoteConnectionByIDExecuteWithHttpInfo(r ApiDeleteRemoteConnectionByIDRequest) (*_nethttp.Response, error)
 
@@ -59,9 +61,11 @@ type RemoteConnectionsApi interface {
 	GetRemoteConnectionByIDExecute(r ApiGetRemoteConnectionByIDRequest) (RemoteConnection, error)
 
 	/*
-	   * GetRemoteConnectionByIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return RemoteConnection
-	*/
+	 * GetRemoteConnectionByIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return RemoteConnection
+	 */
 	GetRemoteConnectionByIDExecuteWithHttpInfo(r ApiGetRemoteConnectionByIDRequest) (RemoteConnection, *_nethttp.Response, error)
 
 	/*
@@ -78,9 +82,11 @@ type RemoteConnectionsApi interface {
 	GetRemoteConnectionsExecute(r ApiGetRemoteConnectionsRequest) (RemoteConnections, error)
 
 	/*
-	   * GetRemoteConnectionsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return RemoteConnections
-	*/
+	 * GetRemoteConnectionsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return RemoteConnections
+	 */
 	GetRemoteConnectionsExecuteWithHttpInfo(r ApiGetRemoteConnectionsRequest) (RemoteConnections, *_nethttp.Response, error)
 
 	/*
@@ -98,9 +104,11 @@ type RemoteConnectionsApi interface {
 	PatchRemoteConnectionByIDExecute(r ApiPatchRemoteConnectionByIDRequest) (RemoteConnection, error)
 
 	/*
-	   * PatchRemoteConnectionByIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return RemoteConnection
-	*/
+	 * PatchRemoteConnectionByIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return RemoteConnection
+	 */
 	PatchRemoteConnectionByIDExecuteWithHttpInfo(r ApiPatchRemoteConnectionByIDRequest) (RemoteConnection, *_nethttp.Response, error)
 
 	/*
@@ -117,9 +125,11 @@ type RemoteConnectionsApi interface {
 	PostRemoteConnectionExecute(r ApiPostRemoteConnectionRequest) (RemoteConnection, error)
 
 	/*
-	   * PostRemoteConnectionExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return RemoteConnection
-	*/
+	 * PostRemoteConnectionExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return RemoteConnection
+	 */
 	PostRemoteConnectionExecuteWithHttpInfo(r ApiPostRemoteConnectionRequest) (RemoteConnection, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -200,7 +210,9 @@ func (a *RemoteConnectionsApiService) DeleteRemoteConnectionByIDExecute(r ApiDel
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *RemoteConnectionsApiService) DeleteRemoteConnectionByIDExecuteWithHttpInfo(r ApiDeleteRemoteConnectionByIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -355,7 +367,9 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionByIDExecute(r ApiGetRem
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return RemoteConnection
  */
 func (a *RemoteConnectionsApiService) GetRemoteConnectionByIDExecuteWithHttpInfo(r ApiGetRemoteConnectionByIDRequest) (RemoteConnection, *_nethttp.Response, error) {
@@ -547,7 +561,9 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecute(r ApiGetRemote
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return RemoteConnections
  */
 func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecuteWithHttpInfo(r ApiGetRemoteConnectionsRequest) (RemoteConnections, *_nethttp.Response, error) {
@@ -741,7 +757,9 @@ func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecute(r ApiPatc
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return RemoteConnection
  */
 func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecuteWithHttpInfo(r ApiPatchRemoteConnectionByIDRequest) (RemoteConnection, *_nethttp.Response, error) {
@@ -922,7 +940,9 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecute(r ApiPostRemot
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return RemoteConnection
  */
 func (a *RemoteConnectionsApiService) PostRemoteConnectionExecuteWithHttpInfo(r ApiPostRemoteConnectionRequest) (RemoteConnection, *_nethttp.Response, error) {

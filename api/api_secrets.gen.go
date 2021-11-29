@@ -41,9 +41,11 @@ type SecretsApi interface {
 	GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, error)
 
 	/*
-	   * GetOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return SecretKeysResponse
-	*/
+	 * GetOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return SecretKeysResponse
+	 */
 	GetOrgsIDSecretsExecuteWithHttpInfo(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, *_nethttp.Response, error)
 
 	/*
@@ -60,7 +62,9 @@ type SecretsApi interface {
 	PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsRequest) error
 
 	/*
-	 * PatchOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * PatchOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	PatchOrgsIDSecretsExecuteWithHttpInfo(r ApiPatchOrgsIDSecretsRequest) (*_nethttp.Response, error)
 
@@ -78,7 +82,9 @@ type SecretsApi interface {
 	PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsRequest) error
 
 	/*
-	 * PostOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * PostOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	PostOrgsIDSecretsExecuteWithHttpInfo(r ApiPostOrgsIDSecretsRequest) (*_nethttp.Response, error)
 
@@ -161,7 +167,9 @@ func (a *SecretsApiService) GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return SecretKeysResponse
  */
 func (a *SecretsApiService) GetOrgsIDSecretsExecuteWithHttpInfo(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, *_nethttp.Response, error) {
@@ -334,7 +342,9 @@ func (a *SecretsApiService) PatchOrgsIDSecretsExecute(r ApiPatchOrgsIDSecretsReq
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *SecretsApiService) PatchOrgsIDSecretsExecuteWithHttpInfo(r ApiPatchOrgsIDSecretsRequest) (*_nethttp.Response, error) {
 	var (
@@ -491,7 +501,9 @@ func (a *SecretsApiService) PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsReque
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *SecretsApiService) PostOrgsIDSecretsExecuteWithHttpInfo(r ApiPostOrgsIDSecretsRequest) (*_nethttp.Response, error) {
 	var (

@@ -41,9 +41,11 @@ type BackupApi interface {
 	GetBackupKVExecute(r ApiGetBackupKVRequest) (*_nethttp.Response, error)
 
 	/*
-	   * GetBackupKVExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return *os.File
-	*/
+	 * GetBackupKVExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return *os.File
+	 */
 	GetBackupKVExecuteWithHttpInfo(r ApiGetBackupKVRequest) (*_nethttp.Response, *_nethttp.Response, error)
 
 	/*
@@ -60,9 +62,11 @@ type BackupApi interface {
 	GetBackupMetadataExecute(r ApiGetBackupMetadataRequest) (*_nethttp.Response, error)
 
 	/*
-	   * GetBackupMetadataExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return *os.File
-	*/
+	 * GetBackupMetadataExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return *os.File
+	 */
 	GetBackupMetadataExecuteWithHttpInfo(r ApiGetBackupMetadataRequest) (*_nethttp.Response, *_nethttp.Response, error)
 
 	/*
@@ -80,9 +84,11 @@ type BackupApi interface {
 	GetBackupShardIdExecute(r ApiGetBackupShardIdRequest) (*_nethttp.Response, error)
 
 	/*
-	   * GetBackupShardIdExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return *os.File
-	*/
+	 * GetBackupShardIdExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return *os.File
+	 */
 	GetBackupShardIdExecuteWithHttpInfo(r ApiGetBackupShardIdRequest) (*_nethttp.Response, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -153,7 +159,9 @@ func (a *BackupApiService) GetBackupKVExecute(r ApiGetBackupKVRequest) (*_nethtt
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return *os.File
  */
 func (a *BackupApiService) GetBackupKVExecuteWithHttpInfo(r ApiGetBackupKVRequest) (*_nethttp.Response, *_nethttp.Response, error) {
@@ -298,7 +306,9 @@ func (a *BackupApiService) GetBackupMetadataExecute(r ApiGetBackupMetadataReques
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return *os.File
  */
 func (a *BackupApiService) GetBackupMetadataExecuteWithHttpInfo(r ApiGetBackupMetadataRequest) (*_nethttp.Response, *_nethttp.Response, error) {
@@ -466,7 +476,9 @@ func (a *BackupApiService) GetBackupShardIdExecute(r ApiGetBackupShardIdRequest)
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return *os.File
  */
 func (a *BackupApiService) GetBackupShardIdExecuteWithHttpInfo(r ApiGetBackupShardIdRequest) (*_nethttp.Response, *_nethttp.Response, error) {

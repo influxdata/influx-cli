@@ -41,9 +41,11 @@ type BucketSchemasApi interface {
 	CreateMeasurementSchemaExecute(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, error)
 
 	/*
-	   * CreateMeasurementSchemaExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return MeasurementSchema
-	*/
+	 * CreateMeasurementSchemaExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return MeasurementSchema
+	 */
 	CreateMeasurementSchemaExecuteWithHttpInfo(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
 
 	/*
@@ -62,9 +64,11 @@ type BucketSchemasApi interface {
 	GetMeasurementSchemaExecute(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, error)
 
 	/*
-	   * GetMeasurementSchemaExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return MeasurementSchema
-	*/
+	 * GetMeasurementSchemaExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return MeasurementSchema
+	 */
 	GetMeasurementSchemaExecuteWithHttpInfo(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
 
 	/*
@@ -82,9 +86,11 @@ type BucketSchemasApi interface {
 	GetMeasurementSchemasExecute(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, error)
 
 	/*
-	   * GetMeasurementSchemasExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return MeasurementSchemaList
-	*/
+	 * GetMeasurementSchemasExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return MeasurementSchemaList
+	 */
 	GetMeasurementSchemasExecuteWithHttpInfo(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, *_nethttp.Response, error)
 
 	/*
@@ -103,9 +109,11 @@ type BucketSchemasApi interface {
 	UpdateMeasurementSchemaExecute(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, error)
 
 	/*
-	   * UpdateMeasurementSchemaExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return MeasurementSchema
-	*/
+	 * UpdateMeasurementSchemaExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return MeasurementSchema
+	 */
 	UpdateMeasurementSchemaExecuteWithHttpInfo(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -205,7 +213,9 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecute(r ApiCreateMeas
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return MeasurementSchema
  */
 func (a *BucketSchemasApiService) CreateMeasurementSchemaExecuteWithHttpInfo(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error) {
@@ -397,7 +407,9 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecute(r ApiGetMeasuremen
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return MeasurementSchema
  */
 func (a *BucketSchemasApiService) GetMeasurementSchemaExecuteWithHttpInfo(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error) {
@@ -576,7 +588,9 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecute(r ApiGetMeasureme
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return MeasurementSchemaList
  */
 func (a *BucketSchemasApiService) GetMeasurementSchemasExecuteWithHttpInfo(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, *_nethttp.Response, error) {
@@ -778,7 +792,9 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecute(r ApiUpdateMeas
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return MeasurementSchema
  */
 func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecuteWithHttpInfo(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error) {

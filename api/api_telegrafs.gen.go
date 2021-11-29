@@ -40,7 +40,9 @@ type TelegrafsApi interface {
 	DeleteTelegrafsIDExecute(r ApiDeleteTelegrafsIDRequest) error
 
 	/*
-	 * DeleteTelegrafsIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteTelegrafsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteTelegrafsIDExecuteWithHttpInfo(r ApiDeleteTelegrafsIDRequest) (*_nethttp.Response, error)
 
@@ -58,9 +60,11 @@ type TelegrafsApi interface {
 	GetTelegrafsExecute(r ApiGetTelegrafsRequest) (Telegrafs, error)
 
 	/*
-	   * GetTelegrafsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Telegrafs
-	*/
+	 * GetTelegrafsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Telegrafs
+	 */
 	GetTelegrafsExecuteWithHttpInfo(r ApiGetTelegrafsRequest) (Telegrafs, *_nethttp.Response, error)
 
 	/*
@@ -78,9 +82,11 @@ type TelegrafsApi interface {
 	GetTelegrafsIDExecute(r ApiGetTelegrafsIDRequest) (Telegraf, error)
 
 	/*
-	   * GetTelegrafsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Telegraf
-	*/
+	 * GetTelegrafsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Telegraf
+	 */
 	GetTelegrafsIDExecuteWithHttpInfo(r ApiGetTelegrafsIDRequest) (Telegraf, *_nethttp.Response, error)
 
 	/*
@@ -97,9 +103,11 @@ type TelegrafsApi interface {
 	PostTelegrafsExecute(r ApiPostTelegrafsRequest) (Telegraf, error)
 
 	/*
-	   * PostTelegrafsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Telegraf
-	*/
+	 * PostTelegrafsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Telegraf
+	 */
 	PostTelegrafsExecuteWithHttpInfo(r ApiPostTelegrafsRequest) (Telegraf, *_nethttp.Response, error)
 
 	/*
@@ -117,9 +125,11 @@ type TelegrafsApi interface {
 	PutTelegrafsIDExecute(r ApiPutTelegrafsIDRequest) (Telegraf, error)
 
 	/*
-	   * PutTelegrafsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Telegraf
-	*/
+	 * PutTelegrafsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Telegraf
+	 */
 	PutTelegrafsIDExecuteWithHttpInfo(r ApiPutTelegrafsIDRequest) (Telegraf, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -200,7 +210,9 @@ func (a *TelegrafsApiService) DeleteTelegrafsIDExecute(r ApiDeleteTelegrafsIDReq
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *TelegrafsApiService) DeleteTelegrafsIDExecuteWithHttpInfo(r ApiDeleteTelegrafsIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -342,7 +354,9 @@ func (a *TelegrafsApiService) GetTelegrafsExecute(r ApiGetTelegrafsRequest) (Tel
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Telegrafs
  */
 func (a *TelegrafsApiService) GetTelegrafsExecuteWithHttpInfo(r ApiGetTelegrafsRequest) (Telegrafs, *_nethttp.Response, error) {
@@ -518,7 +532,9 @@ func (a *TelegrafsApiService) GetTelegrafsIDExecute(r ApiGetTelegrafsIDRequest) 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Telegraf
  */
 func (a *TelegrafsApiService) GetTelegrafsIDExecuteWithHttpInfo(r ApiGetTelegrafsIDRequest) (Telegraf, *_nethttp.Response, error) {
@@ -684,7 +700,9 @@ func (a *TelegrafsApiService) PostTelegrafsExecute(r ApiPostTelegrafsRequest) (T
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Telegraf
  */
 func (a *TelegrafsApiService) PostTelegrafsExecuteWithHttpInfo(r ApiPostTelegrafsRequest) (Telegraf, *_nethttp.Response, error) {
@@ -862,7 +880,9 @@ func (a *TelegrafsApiService) PutTelegrafsIDExecute(r ApiPutTelegrafsIDRequest) 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Telegraf
  */
 func (a *TelegrafsApiService) PutTelegrafsIDExecuteWithHttpInfo(r ApiPutTelegrafsIDRequest) (Telegraf, *_nethttp.Response, error) {

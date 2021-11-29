@@ -40,9 +40,11 @@ type SetupApi interface {
 	GetSetupExecute(r ApiGetSetupRequest) (InlineResponse200, error)
 
 	/*
-	   * GetSetupExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return InlineResponse200
-	*/
+	 * GetSetupExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return InlineResponse200
+	 */
 	GetSetupExecuteWithHttpInfo(r ApiGetSetupRequest) (InlineResponse200, *_nethttp.Response, error)
 
 	/*
@@ -60,9 +62,11 @@ type SetupApi interface {
 	PostSetupExecute(r ApiPostSetupRequest) (OnboardingResponse, error)
 
 	/*
-	   * PostSetupExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return OnboardingResponse
-	*/
+	 * PostSetupExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return OnboardingResponse
+	 */
 	PostSetupExecuteWithHttpInfo(r ApiPostSetupRequest) (OnboardingResponse, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -134,7 +138,9 @@ func (a *SetupApiService) GetSetupExecute(r ApiGetSetupRequest) (InlineResponse2
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return InlineResponse200
  */
 func (a *SetupApiService) GetSetupExecuteWithHttpInfo(r ApiGetSetupRequest) (InlineResponse200, *_nethttp.Response, error) {
@@ -289,7 +295,9 @@ func (a *SetupApiService) PostSetupExecute(r ApiPostSetupRequest) (OnboardingRes
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return OnboardingResponse
  */
 func (a *SetupApiService) PostSetupExecuteWithHttpInfo(r ApiPostSetupRequest) (OnboardingResponse, *_nethttp.Response, error) {

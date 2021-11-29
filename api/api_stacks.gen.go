@@ -41,9 +41,11 @@ type StacksApi interface {
 	CreateStackExecute(r ApiCreateStackRequest) (Stack, error)
 
 	/*
-	   * CreateStackExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Stack
-	*/
+	 * CreateStackExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Stack
+	 */
 	CreateStackExecuteWithHttpInfo(r ApiCreateStackRequest) (Stack, *_nethttp.Response, error)
 
 	/*
@@ -60,7 +62,9 @@ type StacksApi interface {
 	DeleteStackExecute(r ApiDeleteStackRequest) error
 
 	/*
-	 * DeleteStackExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteStackExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteStackExecuteWithHttpInfo(r ApiDeleteStackRequest) (*_nethttp.Response, error)
 
@@ -78,9 +82,11 @@ type StacksApi interface {
 	ListStacksExecute(r ApiListStacksRequest) (Stacks, error)
 
 	/*
-	   * ListStacksExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Stacks
-	*/
+	 * ListStacksExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Stacks
+	 */
 	ListStacksExecuteWithHttpInfo(r ApiListStacksRequest) (Stacks, *_nethttp.Response, error)
 
 	/*
@@ -98,9 +104,11 @@ type StacksApi interface {
 	ReadStackExecute(r ApiReadStackRequest) (Stack, error)
 
 	/*
-	   * ReadStackExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Stack
-	*/
+	 * ReadStackExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Stack
+	 */
 	ReadStackExecuteWithHttpInfo(r ApiReadStackRequest) (Stack, *_nethttp.Response, error)
 
 	/*
@@ -118,9 +126,11 @@ type StacksApi interface {
 	UpdateStackExecute(r ApiUpdateStackRequest) (Stack, error)
 
 	/*
-	   * UpdateStackExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Stack
-	*/
+	 * UpdateStackExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Stack
+	 */
 	UpdateStackExecuteWithHttpInfo(r ApiUpdateStackRequest) (Stack, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -191,7 +201,9 @@ func (a *StacksApiService) CreateStackExecute(r ApiCreateStackRequest) (Stack, e
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Stack
  */
 func (a *StacksApiService) CreateStackExecuteWithHttpInfo(r ApiCreateStackRequest) (Stack, *_nethttp.Response, error) {
@@ -356,7 +368,9 @@ func (a *StacksApiService) DeleteStackExecute(r ApiDeleteStackRequest) error {
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *StacksApiService) DeleteStackExecuteWithHttpInfo(r ApiDeleteStackRequest) (*_nethttp.Response, error) {
 	var (
@@ -508,7 +522,9 @@ func (a *StacksApiService) ListStacksExecute(r ApiListStacksRequest) (Stacks, er
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Stacks
  */
 func (a *StacksApiService) ListStacksExecuteWithHttpInfo(r ApiListStacksRequest) (Stacks, *_nethttp.Response, error) {
@@ -686,7 +702,9 @@ func (a *StacksApiService) ReadStackExecute(r ApiReadStackRequest) (Stack, error
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Stack
  */
 func (a *StacksApiService) ReadStackExecuteWithHttpInfo(r ApiReadStackRequest) (Stack, *_nethttp.Response, error) {
@@ -848,7 +866,9 @@ func (a *StacksApiService) UpdateStackExecute(r ApiUpdateStackRequest) (Stack, e
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Stack
  */
 func (a *StacksApiService) UpdateStackExecuteWithHttpInfo(r ApiUpdateStackRequest) (Stack, *_nethttp.Response, error) {

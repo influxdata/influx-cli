@@ -40,7 +40,9 @@ type UsersApi interface {
 	DeleteUsersIDExecute(r ApiDeleteUsersIDRequest) error
 
 	/*
-	 * DeleteUsersIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteUsersIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteUsersIDExecuteWithHttpInfo(r ApiDeleteUsersIDRequest) (*_nethttp.Response, error)
 
@@ -58,9 +60,11 @@ type UsersApi interface {
 	GetUsersExecute(r ApiGetUsersRequest) (Users, error)
 
 	/*
-	   * GetUsersExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Users
-	*/
+	 * GetUsersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Users
+	 */
 	GetUsersExecuteWithHttpInfo(r ApiGetUsersRequest) (Users, *_nethttp.Response, error)
 
 	/*
@@ -78,9 +82,11 @@ type UsersApi interface {
 	GetUsersIDExecute(r ApiGetUsersIDRequest) (UserResponse, error)
 
 	/*
-	   * GetUsersIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return UserResponse
-	*/
+	 * GetUsersIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return UserResponse
+	 */
 	GetUsersIDExecuteWithHttpInfo(r ApiGetUsersIDRequest) (UserResponse, *_nethttp.Response, error)
 
 	/*
@@ -98,9 +104,11 @@ type UsersApi interface {
 	PatchUsersIDExecute(r ApiPatchUsersIDRequest) (UserResponse, error)
 
 	/*
-	   * PatchUsersIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return UserResponse
-	*/
+	 * PatchUsersIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return UserResponse
+	 */
 	PatchUsersIDExecuteWithHttpInfo(r ApiPatchUsersIDRequest) (UserResponse, *_nethttp.Response, error)
 
 	/*
@@ -117,9 +125,11 @@ type UsersApi interface {
 	PostUsersExecute(r ApiPostUsersRequest) (UserResponse, error)
 
 	/*
-	   * PostUsersExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return UserResponse
-	*/
+	 * PostUsersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return UserResponse
+	 */
 	PostUsersExecuteWithHttpInfo(r ApiPostUsersRequest) (UserResponse, *_nethttp.Response, error)
 
 	/*
@@ -136,7 +146,9 @@ type UsersApi interface {
 	PostUsersIDPasswordExecute(r ApiPostUsersIDPasswordRequest) error
 
 	/*
-	 * PostUsersIDPasswordExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * PostUsersIDPasswordExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	PostUsersIDPasswordExecuteWithHttpInfo(r ApiPostUsersIDPasswordRequest) (*_nethttp.Response, error)
 
@@ -218,7 +230,9 @@ func (a *UsersApiService) DeleteUsersIDExecute(r ApiDeleteUsersIDRequest) error 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *UsersApiService) DeleteUsersIDExecuteWithHttpInfo(r ApiDeleteUsersIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -396,7 +410,9 @@ func (a *UsersApiService) GetUsersExecute(r ApiGetUsersRequest) (Users, error) {
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Users
  */
 func (a *UsersApiService) GetUsersExecuteWithHttpInfo(r ApiGetUsersRequest) (Users, *_nethttp.Response, error) {
@@ -575,7 +591,9 @@ func (a *UsersApiService) GetUsersIDExecute(r ApiGetUsersIDRequest) (UserRespons
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return UserResponse
  */
 func (a *UsersApiService) GetUsersIDExecuteWithHttpInfo(r ApiGetUsersIDRequest) (UserResponse, *_nethttp.Response, error) {
@@ -749,7 +767,9 @@ func (a *UsersApiService) PatchUsersIDExecute(r ApiPatchUsersIDRequest) (UserRes
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return UserResponse
  */
 func (a *UsersApiService) PatchUsersIDExecuteWithHttpInfo(r ApiPatchUsersIDRequest) (UserResponse, *_nethttp.Response, error) {
@@ -917,7 +937,9 @@ func (a *UsersApiService) PostUsersExecute(r ApiPostUsersRequest) (UserResponse,
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return UserResponse
  */
 func (a *UsersApiService) PostUsersExecuteWithHttpInfo(r ApiPostUsersRequest) (UserResponse, *_nethttp.Response, error) {
@@ -1094,7 +1116,9 @@ func (a *UsersApiService) PostUsersIDPasswordExecute(r ApiPostUsersIDPasswordReq
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *UsersApiService) PostUsersIDPasswordExecuteWithHttpInfo(r ApiPostUsersIDPasswordRequest) (*_nethttp.Response, error) {
 	var (

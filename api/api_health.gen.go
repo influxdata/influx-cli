@@ -39,9 +39,11 @@ type HealthApi interface {
 	GetHealthExecute(r ApiGetHealthRequest) (HealthCheck, error)
 
 	/*
-	   * GetHealthExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return HealthCheck
-	*/
+	 * GetHealthExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return HealthCheck
+	 */
 	GetHealthExecuteWithHttpInfo(r ApiGetHealthRequest) (HealthCheck, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -112,7 +114,9 @@ func (a *HealthApiService) GetHealthExecute(r ApiGetHealthRequest) (HealthCheck,
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return HealthCheck
  */
 func (a *HealthApiService) GetHealthExecuteWithHttpInfo(r ApiGetHealthRequest) (HealthCheck, *_nethttp.Response, error) {

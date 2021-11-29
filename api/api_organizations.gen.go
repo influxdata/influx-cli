@@ -40,7 +40,9 @@ type OrganizationsApi interface {
 	DeleteOrgsIDExecute(r ApiDeleteOrgsIDRequest) error
 
 	/*
-	 * DeleteOrgsIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteOrgsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteOrgsIDExecuteWithHttpInfo(r ApiDeleteOrgsIDRequest) (*_nethttp.Response, error)
 
@@ -59,7 +61,9 @@ type OrganizationsApi interface {
 	DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsIDMembersIDRequest) error
 
 	/*
-	 * DeleteOrgsIDMembersIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteOrgsIDMembersIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteOrgsIDMembersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDMembersIDRequest) (*_nethttp.Response, error)
 
@@ -77,9 +81,11 @@ type OrganizationsApi interface {
 	GetOrgsExecute(r ApiGetOrgsRequest) (Organizations, error)
 
 	/*
-	   * GetOrgsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Organizations
-	*/
+	 * GetOrgsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Organizations
+	 */
 	GetOrgsExecuteWithHttpInfo(r ApiGetOrgsRequest) (Organizations, *_nethttp.Response, error)
 
 	/*
@@ -97,9 +103,11 @@ type OrganizationsApi interface {
 	GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organization, error)
 
 	/*
-	   * GetOrgsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Organization
-	*/
+	 * GetOrgsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Organization
+	 */
 	GetOrgsIDExecuteWithHttpInfo(r ApiGetOrgsIDRequest) (Organization, *_nethttp.Response, error)
 
 	/*
@@ -117,9 +125,11 @@ type OrganizationsApi interface {
 	GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersRequest) (ResourceMembers, error)
 
 	/*
-	   * GetOrgsIDMembersExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return ResourceMembers
-	*/
+	 * GetOrgsIDMembersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return ResourceMembers
+	 */
 	GetOrgsIDMembersExecuteWithHttpInfo(r ApiGetOrgsIDMembersRequest) (ResourceMembers, *_nethttp.Response, error)
 
 	/*
@@ -137,9 +147,11 @@ type OrganizationsApi interface {
 	PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (Organization, error)
 
 	/*
-	   * PatchOrgsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Organization
-	*/
+	 * PatchOrgsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Organization
+	 */
 	PatchOrgsIDExecuteWithHttpInfo(r ApiPatchOrgsIDRequest) (Organization, *_nethttp.Response, error)
 
 	/*
@@ -156,9 +168,11 @@ type OrganizationsApi interface {
 	PostOrgsExecute(r ApiPostOrgsRequest) (Organization, error)
 
 	/*
-	   * PostOrgsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Organization
-	*/
+	 * PostOrgsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Organization
+	 */
 	PostOrgsExecuteWithHttpInfo(r ApiPostOrgsRequest) (Organization, *_nethttp.Response, error)
 
 	/*
@@ -176,9 +190,11 @@ type OrganizationsApi interface {
 	PostOrgsIDMembersExecute(r ApiPostOrgsIDMembersRequest) (ResourceMember, error)
 
 	/*
-	   * PostOrgsIDMembersExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return ResourceMember
-	*/
+	 * PostOrgsIDMembersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return ResourceMember
+	 */
 	PostOrgsIDMembersExecuteWithHttpInfo(r ApiPostOrgsIDMembersRequest) (ResourceMember, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -259,7 +275,9 @@ func (a *OrganizationsApiService) DeleteOrgsIDExecute(r ApiDeleteOrgsIDRequest) 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *OrganizationsApiService) DeleteOrgsIDExecuteWithHttpInfo(r ApiDeleteOrgsIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -424,7 +442,9 @@ func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsID
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDMembersIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -612,7 +632,9 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Organizations
  */
 func (a *OrganizationsApiService) GetOrgsExecuteWithHttpInfo(r ApiGetOrgsRequest) (Organizations, *_nethttp.Response, error) {
@@ -794,7 +816,9 @@ func (a *OrganizationsApiService) GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organ
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Organization
  */
 func (a *OrganizationsApiService) GetOrgsIDExecuteWithHttpInfo(r ApiGetOrgsIDRequest) (Organization, *_nethttp.Response, error) {
@@ -959,7 +983,9 @@ func (a *OrganizationsApiService) GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersR
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return ResourceMembers
  */
 func (a *OrganizationsApiService) GetOrgsIDMembersExecuteWithHttpInfo(r ApiGetOrgsIDMembersRequest) (ResourceMembers, *_nethttp.Response, error) {
@@ -1144,7 +1170,9 @@ func (a *OrganizationsApiService) PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (O
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Organization
  */
 func (a *OrganizationsApiService) PatchOrgsIDExecuteWithHttpInfo(r ApiPatchOrgsIDRequest) (Organization, *_nethttp.Response, error) {
@@ -1312,7 +1340,9 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Organization
  */
 func (a *OrganizationsApiService) PostOrgsExecuteWithHttpInfo(r ApiPostOrgsRequest) (Organization, *_nethttp.Response, error) {
@@ -1490,7 +1520,9 @@ func (a *OrganizationsApiService) PostOrgsIDMembersExecute(r ApiPostOrgsIDMember
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return ResourceMember
  */
 func (a *OrganizationsApiService) PostOrgsIDMembersExecuteWithHttpInfo(r ApiPostOrgsIDMembersRequest) (ResourceMember, *_nethttp.Response, error) {

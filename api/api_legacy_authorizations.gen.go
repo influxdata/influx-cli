@@ -40,7 +40,9 @@ type LegacyAuthorizationsApi interface {
 	DeleteLegacyAuthorizationsIDExecute(r ApiDeleteLegacyAuthorizationsIDRequest) error
 
 	/*
-	 * DeleteLegacyAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteLegacyAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiDeleteLegacyAuthorizationsIDRequest) (*_nethttp.Response, error)
 
@@ -58,9 +60,11 @@ type LegacyAuthorizationsApi interface {
 	GetLegacyAuthorizationsExecute(r ApiGetLegacyAuthorizationsRequest) (Authorizations, error)
 
 	/*
-	   * GetLegacyAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Authorizations
-	*/
+	 * GetLegacyAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorizations
+	 */
 	GetLegacyAuthorizationsExecuteWithHttpInfo(r ApiGetLegacyAuthorizationsRequest) (Authorizations, *_nethttp.Response, error)
 
 	/*
@@ -78,9 +82,11 @@ type LegacyAuthorizationsApi interface {
 	GetLegacyAuthorizationsIDExecute(r ApiGetLegacyAuthorizationsIDRequest) (Authorization, error)
 
 	/*
-	   * GetLegacyAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Authorization
-	*/
+	 * GetLegacyAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorization
+	 */
 	GetLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiGetLegacyAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
 
 	/*
@@ -98,9 +104,11 @@ type LegacyAuthorizationsApi interface {
 	PatchLegacyAuthorizationsIDExecute(r ApiPatchLegacyAuthorizationsIDRequest) (Authorization, error)
 
 	/*
-	   * PatchLegacyAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Authorization
-	*/
+	 * PatchLegacyAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorization
+	 */
 	PatchLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiPatchLegacyAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
 
 	/*
@@ -117,9 +125,11 @@ type LegacyAuthorizationsApi interface {
 	PostLegacyAuthorizationsExecute(r ApiPostLegacyAuthorizationsRequest) (Authorization, error)
 
 	/*
-	   * PostLegacyAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Authorization
-	*/
+	 * PostLegacyAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorization
+	 */
 	PostLegacyAuthorizationsExecuteWithHttpInfo(r ApiPostLegacyAuthorizationsRequest) (Authorization, *_nethttp.Response, error)
 
 	/*
@@ -136,7 +146,9 @@ type LegacyAuthorizationsApi interface {
 	PostLegacyAuthorizationsIDPasswordExecute(r ApiPostLegacyAuthorizationsIDPasswordRequest) error
 
 	/*
-	 * PostLegacyAuthorizationsIDPasswordExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * PostLegacyAuthorizationsIDPasswordExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	PostLegacyAuthorizationsIDPasswordExecuteWithHttpInfo(r ApiPostLegacyAuthorizationsIDPasswordRequest) (*_nethttp.Response, error)
 
@@ -218,7 +230,9 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecute(r A
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiDeleteLegacyAuthorizationsIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -405,7 +419,9 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Authorizations
  */
 func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecuteWithHttpInfo(r ApiGetLegacyAuthorizationsRequest) (Authorizations, *_nethttp.Response, error) {
@@ -587,7 +603,9 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiG
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Authorization
  */
 func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiGetLegacyAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error) {
@@ -761,7 +779,9 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Authorization
  */
 func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiPatchLegacyAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error) {
@@ -929,7 +949,9 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Authorization
  */
 func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecuteWithHttpInfo(r ApiPostLegacyAuthorizationsRequest) (Authorization, *_nethttp.Response, error) {
@@ -1117,7 +1139,9 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecu
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecuteWithHttpInfo(r ApiPostLegacyAuthorizationsIDPasswordRequest) (*_nethttp.Response, error) {
 	var (

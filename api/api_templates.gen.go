@@ -39,9 +39,11 @@ type TemplatesApi interface {
 	ApplyTemplateExecute(r ApiApplyTemplateRequest) (TemplateSummary, error)
 
 	/*
-	   * ApplyTemplateExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return TemplateSummary
-	*/
+	 * ApplyTemplateExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return TemplateSummary
+	 */
 	ApplyTemplateExecuteWithHttpInfo(r ApiApplyTemplateRequest) (TemplateSummary, *_nethttp.Response, error)
 
 	/*
@@ -58,9 +60,11 @@ type TemplatesApi interface {
 	ExportTemplateExecute(r ApiExportTemplateRequest) ([]TemplateEntry, error)
 
 	/*
-	   * ExportTemplateExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return []TemplateEntry
-	*/
+	 * ExportTemplateExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return []TemplateEntry
+	 */
 	ExportTemplateExecuteWithHttpInfo(r ApiExportTemplateRequest) ([]TemplateEntry, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -131,7 +135,9 @@ func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (T
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return TemplateSummary
  */
 func (a *TemplatesApiService) ApplyTemplateExecuteWithHttpInfo(r ApiApplyTemplateRequest) (TemplateSummary, *_nethttp.Response, error) {
@@ -297,7 +303,9 @@ func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return []TemplateEntry
  */
 func (a *TemplatesApiService) ExportTemplateExecuteWithHttpInfo(r ApiExportTemplateRequest) ([]TemplateEntry, *_nethttp.Response, error) {

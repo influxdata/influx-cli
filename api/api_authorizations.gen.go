@@ -40,7 +40,9 @@ type AuthorizationsApi interface {
 	DeleteAuthorizationsIDExecute(r ApiDeleteAuthorizationsIDRequest) error
 
 	/*
-	 * DeleteAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteAuthorizationsIDExecuteWithHttpInfo(r ApiDeleteAuthorizationsIDRequest) (*_nethttp.Response, error)
 
@@ -58,9 +60,11 @@ type AuthorizationsApi interface {
 	GetAuthorizationsExecute(r ApiGetAuthorizationsRequest) (Authorizations, error)
 
 	/*
-	   * GetAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Authorizations
-	*/
+	 * GetAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorizations
+	 */
 	GetAuthorizationsExecuteWithHttpInfo(r ApiGetAuthorizationsRequest) (Authorizations, *_nethttp.Response, error)
 
 	/*
@@ -78,9 +82,11 @@ type AuthorizationsApi interface {
 	GetAuthorizationsIDExecute(r ApiGetAuthorizationsIDRequest) (Authorization, error)
 
 	/*
-	   * GetAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Authorization
-	*/
+	 * GetAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorization
+	 */
 	GetAuthorizationsIDExecuteWithHttpInfo(r ApiGetAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
 
 	/*
@@ -98,9 +104,11 @@ type AuthorizationsApi interface {
 	PatchAuthorizationsIDExecute(r ApiPatchAuthorizationsIDRequest) (Authorization, error)
 
 	/*
-	   * PatchAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Authorization
-	*/
+	 * PatchAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorization
+	 */
 	PatchAuthorizationsIDExecuteWithHttpInfo(r ApiPatchAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
 
 	/*
@@ -117,9 +125,11 @@ type AuthorizationsApi interface {
 	PostAuthorizationsExecute(r ApiPostAuthorizationsRequest) (Authorization, error)
 
 	/*
-	   * PostAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Authorization
-	*/
+	 * PostAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorization
+	 */
 	PostAuthorizationsExecuteWithHttpInfo(r ApiPostAuthorizationsRequest) (Authorization, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -200,7 +210,9 @@ func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecute(r ApiDeleteAuth
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecuteWithHttpInfo(r ApiDeleteAuthorizationsIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -369,7 +381,9 @@ func (a *AuthorizationsApiService) GetAuthorizationsExecute(r ApiGetAuthorizatio
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Authorizations
  */
 func (a *AuthorizationsApiService) GetAuthorizationsExecuteWithHttpInfo(r ApiGetAuthorizationsRequest) (Authorizations, *_nethttp.Response, error) {
@@ -545,7 +559,9 @@ func (a *AuthorizationsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizat
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Authorization
  */
 func (a *AuthorizationsApiService) GetAuthorizationsIDExecuteWithHttpInfo(r ApiGetAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error) {
@@ -719,7 +735,9 @@ func (a *AuthorizationsApiService) PatchAuthorizationsIDExecute(r ApiPatchAuthor
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Authorization
  */
 func (a *AuthorizationsApiService) PatchAuthorizationsIDExecuteWithHttpInfo(r ApiPatchAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error) {
@@ -887,7 +905,9 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecute(r ApiPostAuthorizat
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Authorization
  */
 func (a *AuthorizationsApiService) PostAuthorizationsExecuteWithHttpInfo(r ApiPostAuthorizationsRequest) (Authorization, *_nethttp.Response, error) {

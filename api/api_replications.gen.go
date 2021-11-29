@@ -40,7 +40,9 @@ type ReplicationsApi interface {
 	DeleteReplicationByIDExecute(r ApiDeleteReplicationByIDRequest) error
 
 	/*
-	 * DeleteReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteReplicationByIDExecuteWithHttpInfo(r ApiDeleteReplicationByIDRequest) (*_nethttp.Response, error)
 
@@ -59,9 +61,11 @@ type ReplicationsApi interface {
 	GetReplicationByIDExecute(r ApiGetReplicationByIDRequest) (Replication, error)
 
 	/*
-	   * GetReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Replication
-	*/
+	 * GetReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Replication
+	 */
 	GetReplicationByIDExecuteWithHttpInfo(r ApiGetReplicationByIDRequest) (Replication, *_nethttp.Response, error)
 
 	/*
@@ -78,9 +82,11 @@ type ReplicationsApi interface {
 	GetReplicationsExecute(r ApiGetReplicationsRequest) (Replications, error)
 
 	/*
-	   * GetReplicationsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Replications
-	*/
+	 * GetReplicationsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Replications
+	 */
 	GetReplicationsExecuteWithHttpInfo(r ApiGetReplicationsRequest) (Replications, *_nethttp.Response, error)
 
 	/*
@@ -98,9 +104,11 @@ type ReplicationsApi interface {
 	PatchReplicationByIDExecute(r ApiPatchReplicationByIDRequest) (Replication, error)
 
 	/*
-	   * PatchReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Replication
-	*/
+	 * PatchReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Replication
+	 */
 	PatchReplicationByIDExecuteWithHttpInfo(r ApiPatchReplicationByIDRequest) (Replication, *_nethttp.Response, error)
 
 	/*
@@ -117,9 +125,11 @@ type ReplicationsApi interface {
 	PostReplicationExecute(r ApiPostReplicationRequest) (Replication, error)
 
 	/*
-	   * PostReplicationExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Replication
-	*/
+	 * PostReplicationExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Replication
+	 */
 	PostReplicationExecuteWithHttpInfo(r ApiPostReplicationRequest) (Replication, *_nethttp.Response, error)
 
 	/*
@@ -136,7 +146,9 @@ type ReplicationsApi interface {
 	PostValidateReplicationByIDExecute(r ApiPostValidateReplicationByIDRequest) error
 
 	/*
-	 * PostValidateReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * PostValidateReplicationByIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	PostValidateReplicationByIDExecuteWithHttpInfo(r ApiPostValidateReplicationByIDRequest) (*_nethttp.Response, error)
 
@@ -218,7 +230,9 @@ func (a *ReplicationsApiService) DeleteReplicationByIDExecute(r ApiDeleteReplica
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *ReplicationsApiService) DeleteReplicationByIDExecuteWithHttpInfo(r ApiDeleteReplicationByIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -373,7 +387,9 @@ func (a *ReplicationsApiService) GetReplicationByIDExecute(r ApiGetReplicationBy
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Replication
  */
 func (a *ReplicationsApiService) GetReplicationByIDExecuteWithHttpInfo(r ApiGetReplicationByIDRequest) (Replication, *_nethttp.Response, error) {
@@ -574,7 +590,9 @@ func (a *ReplicationsApiService) GetReplicationsExecute(r ApiGetReplicationsRequ
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Replications
  */
 func (a *ReplicationsApiService) GetReplicationsExecuteWithHttpInfo(r ApiGetReplicationsRequest) (Replications, *_nethttp.Response, error) {
@@ -780,7 +798,9 @@ func (a *ReplicationsApiService) PatchReplicationByIDExecute(r ApiPatchReplicati
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Replication
  */
 func (a *ReplicationsApiService) PatchReplicationByIDExecuteWithHttpInfo(r ApiPatchReplicationByIDRequest) (Replication, *_nethttp.Response, error) {
@@ -982,7 +1002,9 @@ func (a *ReplicationsApiService) PostReplicationExecute(r ApiPostReplicationRequ
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Replication
  */
 func (a *ReplicationsApiService) PostReplicationExecuteWithHttpInfo(r ApiPostReplicationRequest) (Replication, *_nethttp.Response, error) {
@@ -1164,7 +1186,9 @@ func (a *ReplicationsApiService) PostValidateReplicationByIDExecute(r ApiPostVal
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *ReplicationsApiService) PostValidateReplicationByIDExecuteWithHttpInfo(r ApiPostValidateReplicationByIDRequest) (*_nethttp.Response, error) {
 	var (

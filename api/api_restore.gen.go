@@ -41,9 +41,11 @@ type RestoreApi interface {
 	PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDRequest) (string, error)
 
 	/*
-	   * PostRestoreBucketIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return string
-	*/
+	 * PostRestoreBucketIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return string
+	 */
 	PostRestoreBucketIDExecuteWithHttpInfo(r ApiPostRestoreBucketIDRequest) (string, *_nethttp.Response, error)
 
 	/*
@@ -60,9 +62,11 @@ type RestoreApi interface {
 	PostRestoreBucketMetadataExecute(r ApiPostRestoreBucketMetadataRequest) (RestoredBucketMappings, error)
 
 	/*
-	   * PostRestoreBucketMetadataExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return RestoredBucketMappings
-	*/
+	 * PostRestoreBucketMetadataExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return RestoredBucketMappings
+	 */
 	PostRestoreBucketMetadataExecuteWithHttpInfo(r ApiPostRestoreBucketMetadataRequest) (RestoredBucketMappings, *_nethttp.Response, error)
 
 	/*
@@ -79,9 +83,11 @@ type RestoreApi interface {
 	PostRestoreKVExecute(r ApiPostRestoreKVRequest) (PostRestoreKVResponse, error)
 
 	/*
-	   * PostRestoreKVExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return PostRestoreKVResponse
-	*/
+	 * PostRestoreKVExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return PostRestoreKVResponse
+	 */
 	PostRestoreKVExecuteWithHttpInfo(r ApiPostRestoreKVRequest) (PostRestoreKVResponse, *_nethttp.Response, error)
 
 	/*
@@ -97,7 +103,9 @@ type RestoreApi interface {
 	PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) error
 
 	/*
-	 * PostRestoreSQLExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * PostRestoreSQLExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	PostRestoreSQLExecuteWithHttpInfo(r ApiPostRestoreSQLRequest) (*_nethttp.Response, error)
 
@@ -115,7 +123,9 @@ type RestoreApi interface {
 	PostRestoreShardIdExecute(r ApiPostRestoreShardIdRequest) error
 
 	/*
-	 * PostRestoreShardIdExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * PostRestoreShardIdExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	PostRestoreShardIdExecuteWithHttpInfo(r ApiPostRestoreShardIdRequest) (*_nethttp.Response, error)
 
@@ -216,7 +226,9 @@ func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDR
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return string
  */
 func (a *RestoreApiService) PostRestoreBucketIDExecuteWithHttpInfo(r ApiPostRestoreBucketIDRequest) (string, *_nethttp.Response, error) {
@@ -387,7 +399,9 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return RestoredBucketMappings
  */
 func (a *RestoreApiService) PostRestoreBucketMetadataExecuteWithHttpInfo(r ApiPostRestoreBucketMetadataRequest) (RestoredBucketMappings, *_nethttp.Response, error) {
@@ -572,7 +586,9 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) (Pos
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return PostRestoreKVResponse
  */
 func (a *RestoreApiService) PostRestoreKVExecuteWithHttpInfo(r ApiPostRestoreKVRequest) (PostRestoreKVResponse, *_nethttp.Response, error) {
@@ -762,7 +778,9 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *RestoreApiService) PostRestoreSQLExecuteWithHttpInfo(r ApiPostRestoreSQLRequest) (*_nethttp.Response, error) {
 	var (
@@ -942,7 +960,9 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *RestoreApiService) PostRestoreShardIdExecuteWithHttpInfo(r ApiPostRestoreShardIdRequest) (*_nethttp.Response, error) {
 	var (

@@ -40,7 +40,9 @@ type BucketsApi interface {
 	DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) error
 
 	/*
-	 * DeleteBucketsIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteBucketsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteBucketsIDExecuteWithHttpInfo(r ApiDeleteBucketsIDRequest) (*_nethttp.Response, error)
 
@@ -58,9 +60,11 @@ type BucketsApi interface {
 	GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, error)
 
 	/*
-	   * GetBucketsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Buckets
-	*/
+	 * GetBucketsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Buckets
+	 */
 	GetBucketsExecuteWithHttpInfo(r ApiGetBucketsRequest) (Buckets, *_nethttp.Response, error)
 
 	/*
@@ -78,9 +82,11 @@ type BucketsApi interface {
 	GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucket, error)
 
 	/*
-	   * GetBucketsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Bucket
-	*/
+	 * GetBucketsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Bucket
+	 */
 	GetBucketsIDExecuteWithHttpInfo(r ApiGetBucketsIDRequest) (Bucket, *_nethttp.Response, error)
 
 	/*
@@ -98,9 +104,11 @@ type BucketsApi interface {
 	PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (Bucket, error)
 
 	/*
-	   * PatchBucketsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Bucket
-	*/
+	 * PatchBucketsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Bucket
+	 */
 	PatchBucketsIDExecuteWithHttpInfo(r ApiPatchBucketsIDRequest) (Bucket, *_nethttp.Response, error)
 
 	/*
@@ -117,9 +125,11 @@ type BucketsApi interface {
 	PostBucketsExecute(r ApiPostBucketsRequest) (Bucket, error)
 
 	/*
-	   * PostBucketsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Bucket
-	*/
+	 * PostBucketsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Bucket
+	 */
 	PostBucketsExecuteWithHttpInfo(r ApiPostBucketsRequest) (Bucket, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -200,7 +210,9 @@ func (a *BucketsApiService) DeleteBucketsIDExecute(r ApiDeleteBucketsIDRequest) 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *BucketsApiService) DeleteBucketsIDExecuteWithHttpInfo(r ApiDeleteBucketsIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -407,7 +419,9 @@ func (a *BucketsApiService) GetBucketsExecute(r ApiGetBucketsRequest) (Buckets, 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Buckets
  */
 func (a *BucketsApiService) GetBucketsExecuteWithHttpInfo(r ApiGetBucketsRequest) (Buckets, *_nethttp.Response, error) {
@@ -592,7 +606,9 @@ func (a *BucketsApiService) GetBucketsIDExecute(r ApiGetBucketsIDRequest) (Bucke
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Bucket
  */
 func (a *BucketsApiService) GetBucketsIDExecuteWithHttpInfo(r ApiGetBucketsIDRequest) (Bucket, *_nethttp.Response, error) {
@@ -766,7 +782,9 @@ func (a *BucketsApiService) PatchBucketsIDExecute(r ApiPatchBucketsIDRequest) (B
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Bucket
  */
 func (a *BucketsApiService) PatchBucketsIDExecuteWithHttpInfo(r ApiPatchBucketsIDRequest) (Bucket, *_nethttp.Response, error) {
@@ -934,7 +952,9 @@ func (a *BucketsApiService) PostBucketsExecute(r ApiPostBucketsRequest) (Bucket,
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Bucket
  */
 func (a *BucketsApiService) PostBucketsExecuteWithHttpInfo(r ApiPostBucketsRequest) (Bucket, *_nethttp.Response, error) {

@@ -38,7 +38,9 @@ type DeleteApi interface {
 	PostDeleteExecute(r ApiPostDeleteRequest) error
 
 	/*
-	 * PostDeleteExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * PostDeleteExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	PostDeleteExecuteWithHttpInfo(r ApiPostDeleteRequest) (*_nethttp.Response, error)
 
@@ -154,7 +156,9 @@ func (a *DeleteApiService) PostDeleteExecute(r ApiPostDeleteRequest) error {
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *DeleteApiService) PostDeleteExecuteWithHttpInfo(r ApiPostDeleteRequest) (*_nethttp.Response, error) {
 	var (

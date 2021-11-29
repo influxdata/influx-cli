@@ -39,9 +39,11 @@ type ResourcesApi interface {
 	GetResourcesExecute(r ApiGetResourcesRequest) ([]string, error)
 
 	/*
-	   * GetResourcesExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return []string
-	*/
+	 * GetResourcesExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return []string
+	 */
 	GetResourcesExecuteWithHttpInfo(r ApiGetResourcesRequest) ([]string, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -112,7 +114,9 @@ func (a *ResourcesApiService) GetResourcesExecute(r ApiGetResourcesRequest) ([]s
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return []string
  */
 func (a *ResourcesApiService) GetResourcesExecuteWithHttpInfo(r ApiGetResourcesRequest) ([]string, *_nethttp.Response, error) {

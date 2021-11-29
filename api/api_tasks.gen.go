@@ -42,7 +42,9 @@ type TasksApi interface {
 	DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error
 
 	/*
-	 * DeleteTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteTasksIDExecuteWithHttpInfo(r ApiDeleteTasksIDRequest) (*_nethttp.Response, error)
 
@@ -61,7 +63,9 @@ type TasksApi interface {
 	DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDRequest) error
 
 	/*
-	 * DeleteTasksIDRunsIDExecuteWithHttpInfo executes the request with HTTP response info returned
+	 * DeleteTasksIDRunsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
 	 */
 	DeleteTasksIDRunsIDExecuteWithHttpInfo(r ApiDeleteTasksIDRunsIDRequest) (*_nethttp.Response, error)
 
@@ -79,9 +83,11 @@ type TasksApi interface {
 	GetTasksExecute(r ApiGetTasksRequest) (Tasks, error)
 
 	/*
-	   * GetTasksExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Tasks
-	*/
+	 * GetTasksExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Tasks
+	 */
 	GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tasks, *_nethttp.Response, error)
 
 	/*
@@ -99,9 +105,11 @@ type TasksApi interface {
 	GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error)
 
 	/*
-	   * GetTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Task
-	*/
+	 * GetTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Task
+	 */
 	GetTasksIDExecuteWithHttpInfo(r ApiGetTasksIDRequest) (Task, *_nethttp.Response, error)
 
 	/*
@@ -119,9 +127,11 @@ type TasksApi interface {
 	GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Logs, error)
 
 	/*
-	   * GetTasksIDLogsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Logs
-	*/
+	 * GetTasksIDLogsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Logs
+	 */
 	GetTasksIDLogsExecuteWithHttpInfo(r ApiGetTasksIDLogsRequest) (Logs, *_nethttp.Response, error)
 
 	/*
@@ -139,9 +149,11 @@ type TasksApi interface {
 	GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Runs, error)
 
 	/*
-	   * GetTasksIDRunsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Runs
-	*/
+	 * GetTasksIDRunsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Runs
+	 */
 	GetTasksIDRunsExecuteWithHttpInfo(r ApiGetTasksIDRunsRequest) (Runs, *_nethttp.Response, error)
 
 	/*
@@ -160,9 +172,11 @@ type TasksApi interface {
 	GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) (Run, error)
 
 	/*
-	   * GetTasksIDRunsIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Run
-	*/
+	 * GetTasksIDRunsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Run
+	 */
 	GetTasksIDRunsIDExecuteWithHttpInfo(r ApiGetTasksIDRunsIDRequest) (Run, *_nethttp.Response, error)
 
 	/*
@@ -181,9 +195,11 @@ type TasksApi interface {
 	GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsRequest) (Logs, error)
 
 	/*
-	   * GetTasksIDRunsIDLogsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Logs
-	*/
+	 * GetTasksIDRunsIDLogsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Logs
+	 */
 	GetTasksIDRunsIDLogsExecuteWithHttpInfo(r ApiGetTasksIDRunsIDLogsRequest) (Logs, *_nethttp.Response, error)
 
 	/*
@@ -202,9 +218,11 @@ type TasksApi interface {
 	PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, error)
 
 	/*
-	   * PatchTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Task
-	*/
+	 * PatchTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Task
+	 */
 	PatchTasksIDExecuteWithHttpInfo(r ApiPatchTasksIDRequest) (Task, *_nethttp.Response, error)
 
 	/*
@@ -221,9 +239,11 @@ type TasksApi interface {
 	PostTasksExecute(r ApiPostTasksRequest) (Task, error)
 
 	/*
-	   * PostTasksExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Task
-	*/
+	 * PostTasksExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Task
+	 */
 	PostTasksExecuteWithHttpInfo(r ApiPostTasksRequest) (Task, *_nethttp.Response, error)
 
 	/*
@@ -241,9 +261,11 @@ type TasksApi interface {
 	PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (Run, error)
 
 	/*
-	   * PostTasksIDRunsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Run
-	*/
+	 * PostTasksIDRunsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Run
+	 */
 	PostTasksIDRunsExecuteWithHttpInfo(r ApiPostTasksIDRunsRequest) (Run, *_nethttp.Response, error)
 
 	/*
@@ -262,9 +284,11 @@ type TasksApi interface {
 	PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRetryRequest) (Run, error)
 
 	/*
-	   * PostTasksIDRunsIDRetryExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Run
-	*/
+	 * PostTasksIDRunsIDRetryExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Run
+	 */
 	PostTasksIDRunsIDRetryExecuteWithHttpInfo(r ApiPostTasksIDRunsIDRetryRequest) (Run, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -346,7 +370,9 @@ func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *TasksApiService) DeleteTasksIDExecuteWithHttpInfo(r ApiDeleteTasksIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -500,7 +526,9 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDReq
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  */
 func (a *TasksApiService) DeleteTasksIDRunsIDExecuteWithHttpInfo(r ApiDeleteTasksIDRunsIDRequest) (*_nethttp.Response, error) {
 	var (
@@ -706,7 +734,9 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Tasks
  */
 func (a *TasksApiService) GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tasks, *_nethttp.Response, error) {
@@ -894,7 +924,9 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Task
  */
 func (a *TasksApiService) GetTasksIDExecuteWithHttpInfo(r ApiGetTasksIDRequest) (Task, *_nethttp.Response, error) {
@@ -1059,7 +1091,9 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Logs
  */
 func (a *TasksApiService) GetTasksIDLogsExecuteWithHttpInfo(r ApiGetTasksIDLogsRequest) (Logs, *_nethttp.Response, error) {
@@ -1260,7 +1294,9 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Runs
  */
 func (a *TasksApiService) GetTasksIDRunsExecuteWithHttpInfo(r ApiGetTasksIDRunsRequest) (Runs, *_nethttp.Response, error) {
@@ -1448,7 +1484,9 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Run
  */
 func (a *TasksApiService) GetTasksIDRunsIDExecuteWithHttpInfo(r ApiGetTasksIDRunsIDRequest) (Run, *_nethttp.Response, error) {
@@ -1625,7 +1663,9 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Logs
  */
 func (a *TasksApiService) GetTasksIDRunsIDLogsExecuteWithHttpInfo(r ApiGetTasksIDRunsIDLogsRequest) (Logs, *_nethttp.Response, error) {
@@ -1801,7 +1841,9 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Task
  */
 func (a *TasksApiService) PatchTasksIDExecuteWithHttpInfo(r ApiPatchTasksIDRequest) (Task, *_nethttp.Response, error) {
@@ -1969,7 +2011,9 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Task
  */
 func (a *TasksApiService) PostTasksExecuteWithHttpInfo(r ApiPostTasksRequest) (Task, *_nethttp.Response, error) {
@@ -2147,7 +2191,9 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Run
  */
 func (a *TasksApiService) PostTasksIDRunsExecuteWithHttpInfo(r ApiPostTasksIDRunsRequest) (Run, *_nethttp.Response, error) {
@@ -2334,7 +2380,9 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Run
  */
 func (a *TasksApiService) PostTasksIDRunsIDRetryExecuteWithHttpInfo(r ApiPostTasksIDRunsIDRetryRequest) (Run, *_nethttp.Response, error) {

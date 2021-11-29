@@ -40,9 +40,11 @@ type DashboardsApi interface {
 	GetDashboardsExecute(r ApiGetDashboardsRequest) (Dashboards, error)
 
 	/*
-	   * GetDashboardsExecuteWithHttpInfo executes the request with HTTP response info returned
-	       * @return Dashboards
-	*/
+	 * GetDashboardsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Dashboards
+	 */
 	GetDashboardsExecuteWithHttpInfo(r ApiGetDashboardsRequest) (Dashboards, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
@@ -185,7 +187,9 @@ func (a *DashboardsApiService) GetDashboardsExecute(r ApiGetDashboardsRequest) (
 }
 
 /*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
  * @return Dashboards
  */
 func (a *DashboardsApiService) GetDashboardsExecuteWithHttpInfo(r ApiGetDashboardsRequest) (Dashboards, *_nethttp.Response, error) {
