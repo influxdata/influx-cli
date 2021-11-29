@@ -22,7 +22,7 @@ multiple locations.
 * Remove `*http.Response`s from the return values of generated `Execute` operations & provide a separate method
   `ExecuteWithHttpInfo` for returning the `*http.Response` if needed. The standard `Execute` operation should normally be
   used unless specific header values or response codes need to be examined with the `ExecuteWithHttpInfo`. The response
-  body cannot be read from the `*http.Reponse` returned from ExecuteWithHttpInfo` as it will have already have been read
+  body cannot be read from the `*http.Reponse` returned from `ExecuteWithHttpInfo` as it will have already have been read
   and closed; access to the response body content should be achieved through the returned response model if applicable
 
 `client.mustache`
