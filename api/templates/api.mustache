@@ -38,7 +38,15 @@ type {{classname}} interface {
 	 * @return {{{.}}}{{/returnType}}
 	 */
 	{{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}error)
-	{{/operation}}
+
+    /*
+    * {{nickname}}ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+    * available on the returned HTTP response as it will have already been read and closed; access to the response body
+    * content should be achieved through the returned response model if applicable.{{#returnType}}
+    * @return {{{.}}}{{/returnType}}
+    */
+    {{nickname}}ExecuteWithHttpInfo(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}*_nethttp.Response, error)
+    {{/operation}}
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -92,6 +100,10 @@ func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Reques
 	return r.ApiService.{{nickname}}Execute(r)
 }
 
+func (r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ExecuteWithHttpInfo() ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{returnType}}}{{/isResponseBinary}}, {{/returnType}}*_nethttp.Response, error) {
+    return r.ApiService.{{nickname}}ExecuteWithHttpInfo(r)
+}
+
 /*
  * {{operationId}}{{#summary}} {{{.}}}{{/summary}}{{^summary}} Method for {{operationId}}{{/summary}}
 {{#notes}}
@@ -116,7 +128,18 @@ func (a *{{{classname}}}Service) {{{nickname}}}(ctx _context.Context{{#pathParam
  * @return {{{.}}}{{/returnType}}
  */
 func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{.}}}{{/isResponseBinary}}, {{/returnType}}error) {
-	var (
+    {{#returnType}}returnVal, {{/returnType}}_, err := a.{{nickname}}ExecuteWithHttpInfo(r)
+    return {{#returnType}}returnVal, {{/returnType}}err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.{{#returnType}}
+ * @return {{{.}}}{{/returnType}}
+ */
+func (a *{{{classname}}}Service) {{nickname}}ExecuteWithHttpInfo(r {{#structPrefix}}{{&classname}}{{/structPrefix}}Api{{operationId}}Request) ({{#returnType}}{{#isResponseBinary}}*_nethttp.Response{{/isResponseBinary}}{{^isResponseBinary}}{{{.}}}{{/isResponseBinary}}, {{/returnType}}*_nethttp.Response, error) {
+    var (
 		localVarHTTPMethod   = _nethttp.Method{{httpMethod}}
 		localVarPostBody     interface{}
 		localVarFormFileName string
@@ -134,7 +157,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "{{{classname}}}Service.{{{nickname}}}")
 	if err != nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}GenericOpenAPIError{error: err.Error()}
+		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "{{{path}}}"{{#pathParams}}
@@ -147,27 +170,27 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	{{#required}}
 	{{^isPathParam}}
 	if r.{{paramName}} == nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} is required and must be specified")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} is required and must be specified")
 	}
 	{{/isPathParam}}
 	{{#minItems}}
 	if len({{^isPathParam}}*{{/isPathParam}}r.{{paramName}}) < {{minItems}} {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must have at least {{minItems}} elements")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must have at least {{minItems}} elements")
 	}
 	{{/minItems}}
 	{{#maxItems}}
 	if len({{^isPathParam}}*{{/isPathParam}}r.{{paramName}}) > {{maxItems}} {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must have less than {{maxItems}} elements")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must have less than {{maxItems}} elements")
 	}
 	{{/maxItems}}
 	{{#minLength}}
 	if strlen({{^isPathParam}}*{{/isPathParam}}r.{{paramName}}) < {{minLength}} {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must have at least {{minLength}} elements")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must have at least {{minLength}} elements")
 	}
 	{{/minLength}}
 	{{#maxLength}}
 	if strlen({{^isPathParam}}*{{/isPathParam}}r.{{paramName}}) > {{maxLength}} {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must have less than {{maxLength}} elements")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must have less than {{maxLength}} elements")
 	}
 	{{/maxLength}}
 	{{#minimum}}
@@ -178,7 +201,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	{{^isString}}
 	if {{^isPathParam}}*{{/isPathParam}}r.{{paramName}} < {{minimum}} {
 	{{/isString}}
-		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must be greater than {{minimum}}")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must be greater than {{minimum}}")
 	}
 	{{/minimum}}
 	{{#maximum}}
@@ -189,7 +212,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	{{^isString}}
 	if {{^isPathParam}}*{{/isPathParam}}r.{{paramName}} > {{maximum}} {
 	{{/isString}}
-		return {{#returnType}}localVarReturnValue, {{/returnType}}reportError("{{paramName}} must be less than {{maximum}}")
+		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, reportError("{{paramName}} must be less than {{maximum}}")
 	}
 	{{/maximum}}
 	{{/required}}
@@ -292,7 +315,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	if r.{{paramName}} != nil {
 		paramJson, err := parameterToJson(*r.{{paramName}})
 		if err != nil {
-			return {{#returnType}}localVarReturnValue, {{/returnType}}err
+			return {{#returnType}}localVarReturnValue, {{/returnType}}nil, err
 		}
 		localVarFormParams.Add("{{baseName}}", paramJson)
 	}
@@ -347,12 +370,12 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 {{/authMethods}}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}err
+		return {{#returnType}}localVarReturnValue, {{/returnType}}nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}err
+		return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -366,12 +389,12 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
+			return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
+			return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -388,12 +411,12 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
+				return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
 			{{^-last}}
-			return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
+			return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, newErr
 			{{/-last}}
 		{{^wildcard}}
 		}
@@ -402,7 +425,7 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 		{{/is1xx}}
 		{{/dataType}}
 		{{/responses}}
-		return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
+		return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, newErr
 	}
 
 	{{#returnType}}
@@ -413,12 +436,12 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
+		return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return {{#returnType}}localVarReturnValue, {{/returnType}}_fmt.Errorf("%s%w", errorPrefix, err)
+		return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -426,12 +449,12 @@ func (a *{{{classname}}}Service) {{nickname}}Execute(r {{#structPrefix}}{{&class
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return {{#returnType}}localVarReturnValue, {{/returnType}}newErr
+		return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, newErr
 	}
 	{{/isResponseBinary}}
 
 	{{/returnType}}
-	return {{#returnType}}localVarReturnValue, {{/returnType}}nil
+	return {{#returnType}}localVarReturnValue, {{/returnType}}localVarHTTPResponse, nil
 }
 {{/operation}}
 {{/operations}}

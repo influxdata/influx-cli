@@ -65,6 +65,22 @@ func (mr *MockBackupApiMockRecorder) GetBackupKVExecute(arg0 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBackupKVExecute", reflect.TypeOf((*MockBackupApi)(nil).GetBackupKVExecute), arg0)
 }
 
+// GetBackupKVExecuteWithHttpInfo mocks base method.
+func (m *MockBackupApi) GetBackupKVExecuteWithHttpInfo(arg0 api.ApiGetBackupKVRequest) (*http.Response, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBackupKVExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetBackupKVExecuteWithHttpInfo indicates an expected call of GetBackupKVExecuteWithHttpInfo.
+func (mr *MockBackupApiMockRecorder) GetBackupKVExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBackupKVExecuteWithHttpInfo", reflect.TypeOf((*MockBackupApi)(nil).GetBackupKVExecuteWithHttpInfo), arg0)
+}
+
 // GetBackupMetadata mocks base method.
 func (m *MockBackupApi) GetBackupMetadata(arg0 context.Context) api.ApiGetBackupMetadataRequest {
 	m.ctrl.T.Helper()
@@ -94,6 +110,22 @@ func (mr *MockBackupApiMockRecorder) GetBackupMetadataExecute(arg0 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBackupMetadataExecute", reflect.TypeOf((*MockBackupApi)(nil).GetBackupMetadataExecute), arg0)
 }
 
+// GetBackupMetadataExecuteWithHttpInfo mocks base method.
+func (m *MockBackupApi) GetBackupMetadataExecuteWithHttpInfo(arg0 api.ApiGetBackupMetadataRequest) (*http.Response, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBackupMetadataExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetBackupMetadataExecuteWithHttpInfo indicates an expected call of GetBackupMetadataExecuteWithHttpInfo.
+func (mr *MockBackupApiMockRecorder) GetBackupMetadataExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBackupMetadataExecuteWithHttpInfo", reflect.TypeOf((*MockBackupApi)(nil).GetBackupMetadataExecuteWithHttpInfo), arg0)
+}
+
 // GetBackupShardId mocks base method.
 func (m *MockBackupApi) GetBackupShardId(arg0 context.Context, arg1 int64) api.ApiGetBackupShardIdRequest {
 	m.ctrl.T.Helper()
@@ -121,6 +153,22 @@ func (m *MockBackupApi) GetBackupShardIdExecute(arg0 api.ApiGetBackupShardIdRequ
 func (mr *MockBackupApiMockRecorder) GetBackupShardIdExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBackupShardIdExecute", reflect.TypeOf((*MockBackupApi)(nil).GetBackupShardIdExecute), arg0)
+}
+
+// GetBackupShardIdExecuteWithHttpInfo mocks base method.
+func (m *MockBackupApi) GetBackupShardIdExecuteWithHttpInfo(arg0 api.ApiGetBackupShardIdRequest) (*http.Response, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBackupShardIdExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetBackupShardIdExecuteWithHttpInfo indicates an expected call of GetBackupShardIdExecuteWithHttpInfo.
+func (mr *MockBackupApiMockRecorder) GetBackupShardIdExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBackupShardIdExecuteWithHttpInfo", reflect.TypeOf((*MockBackupApi)(nil).GetBackupShardIdExecuteWithHttpInfo), arg0)
 }
 
 // OnlyCloud mocks base method.

@@ -40,6 +40,13 @@ type LegacyAuthorizationsApi interface {
 	DeleteLegacyAuthorizationsIDExecute(r ApiDeleteLegacyAuthorizationsIDRequest) error
 
 	/*
+	 * DeleteLegacyAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	DeleteLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiDeleteLegacyAuthorizationsIDRequest) (*_nethttp.Response, error)
+
+	/*
 	 * GetLegacyAuthorizations List all legacy authorizations
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetLegacyAuthorizationsRequest
@@ -51,6 +58,14 @@ type LegacyAuthorizationsApi interface {
 	 * @return Authorizations
 	 */
 	GetLegacyAuthorizationsExecute(r ApiGetLegacyAuthorizationsRequest) (Authorizations, error)
+
+	/*
+	 * GetLegacyAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorizations
+	 */
+	GetLegacyAuthorizationsExecuteWithHttpInfo(r ApiGetLegacyAuthorizationsRequest) (Authorizations, *_nethttp.Response, error)
 
 	/*
 	 * GetLegacyAuthorizationsID Retrieve a legacy authorization
@@ -67,6 +82,14 @@ type LegacyAuthorizationsApi interface {
 	GetLegacyAuthorizationsIDExecute(r ApiGetLegacyAuthorizationsIDRequest) (Authorization, error)
 
 	/*
+	 * GetLegacyAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorization
+	 */
+	GetLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiGetLegacyAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
+
+	/*
 	 * PatchLegacyAuthorizationsID Update a legacy authorization to be active or inactive
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param authID The ID of the legacy authorization to update.
@@ -79,6 +102,14 @@ type LegacyAuthorizationsApi interface {
 	 * @return Authorization
 	 */
 	PatchLegacyAuthorizationsIDExecute(r ApiPatchLegacyAuthorizationsIDRequest) (Authorization, error)
+
+	/*
+	 * PatchLegacyAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorization
+	 */
+	PatchLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiPatchLegacyAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
 
 	/*
 	 * PostLegacyAuthorizations Create a legacy authorization
@@ -94,6 +125,14 @@ type LegacyAuthorizationsApi interface {
 	PostLegacyAuthorizationsExecute(r ApiPostLegacyAuthorizationsRequest) (Authorization, error)
 
 	/*
+	 * PostLegacyAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorization
+	 */
+	PostLegacyAuthorizationsExecuteWithHttpInfo(r ApiPostLegacyAuthorizationsRequest) (Authorization, *_nethttp.Response, error)
+
+	/*
 	 * PostLegacyAuthorizationsIDPassword Set a legacy authorization password
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param authID The ID of the legacy authorization to update.
@@ -105,6 +144,13 @@ type LegacyAuthorizationsApi interface {
 	 * PostLegacyAuthorizationsIDPasswordExecute executes the request
 	 */
 	PostLegacyAuthorizationsIDPasswordExecute(r ApiPostLegacyAuthorizationsIDPasswordRequest) error
+
+	/*
+	 * PostLegacyAuthorizationsIDPasswordExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	PostLegacyAuthorizationsIDPasswordExecuteWithHttpInfo(r ApiPostLegacyAuthorizationsIDPasswordRequest) (*_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -157,6 +203,10 @@ func (r ApiDeleteLegacyAuthorizationsIDRequest) Execute() error {
 	return r.ApiService.DeleteLegacyAuthorizationsIDExecute(r)
 }
 
+func (r ApiDeleteLegacyAuthorizationsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteLegacyAuthorizationsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * DeleteLegacyAuthorizationsID Delete a legacy authorization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -175,6 +225,16 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsID(ctx _conte
  * Execute executes the request
  */
 func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecute(r ApiDeleteLegacyAuthorizationsIDRequest) error {
+	_, err := a.DeleteLegacyAuthorizationsIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiDeleteLegacyAuthorizationsIDRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -185,7 +245,7 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecute(r A
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.DeleteLegacyAuthorizationsID")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/legacy/authorizations/{authID}"
@@ -217,12 +277,12 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecute(r A
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -236,12 +296,12 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecute(r A
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -251,14 +311,14 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecute(r A
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiGetLegacyAuthorizationsRequest struct {
@@ -333,6 +393,10 @@ func (r ApiGetLegacyAuthorizationsRequest) Execute() (Authorizations, error) {
 	return r.ApiService.GetLegacyAuthorizationsExecute(r)
 }
 
+func (r ApiGetLegacyAuthorizationsRequest) ExecuteWithHttpInfo() (Authorizations, *_nethttp.Response, error) {
+	return r.ApiService.GetLegacyAuthorizationsExecuteWithHttpInfo(r)
+}
+
 /*
  * GetLegacyAuthorizations List all legacy authorizations
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -350,6 +414,17 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizations(ctx _context.Co
  * @return Authorizations
  */
 func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGetLegacyAuthorizationsRequest) (Authorizations, error) {
+	returnVal, _, err := a.GetLegacyAuthorizationsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Authorizations
+ */
+func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecuteWithHttpInfo(r ApiGetLegacyAuthorizationsRequest) (Authorizations, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -361,7 +436,7 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.GetLegacyAuthorizations")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/legacy/authorizations"
@@ -410,12 +485,12 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -429,12 +504,12 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -444,22 +519,22 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -467,10 +542,10 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecute(r ApiGet
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetLegacyAuthorizationsIDRequest struct {
@@ -500,6 +575,10 @@ func (r ApiGetLegacyAuthorizationsIDRequest) Execute() (Authorization, error) {
 	return r.ApiService.GetLegacyAuthorizationsIDExecute(r)
 }
 
+func (r ApiGetLegacyAuthorizationsIDRequest) ExecuteWithHttpInfo() (Authorization, *_nethttp.Response, error) {
+	return r.ApiService.GetLegacyAuthorizationsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * GetLegacyAuthorizationsID Retrieve a legacy authorization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -519,6 +598,17 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsID(ctx _context.
  * @return Authorization
  */
 func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiGetLegacyAuthorizationsIDRequest) (Authorization, error) {
+	returnVal, _, err := a.GetLegacyAuthorizationsIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Authorization
+ */
+func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiGetLegacyAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -530,7 +620,7 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiG
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.GetLegacyAuthorizationsID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/legacy/authorizations/{authID}"
@@ -562,12 +652,12 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiG
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -581,12 +671,12 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiG
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -596,22 +686,22 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiG
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -619,10 +709,10 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecute(r ApiG
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPatchLegacyAuthorizationsIDRequest struct {
@@ -661,6 +751,10 @@ func (r ApiPatchLegacyAuthorizationsIDRequest) Execute() (Authorization, error) 
 	return r.ApiService.PatchLegacyAuthorizationsIDExecute(r)
 }
 
+func (r ApiPatchLegacyAuthorizationsIDRequest) ExecuteWithHttpInfo() (Authorization, *_nethttp.Response, error) {
+	return r.ApiService.PatchLegacyAuthorizationsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * PatchLegacyAuthorizationsID Update a legacy authorization to be active or inactive
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -680,6 +774,17 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsID(ctx _contex
  * @return Authorization
  */
 func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r ApiPatchLegacyAuthorizationsIDRequest) (Authorization, error) {
+	returnVal, _, err := a.PatchLegacyAuthorizationsIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Authorization
+ */
+func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiPatchLegacyAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -691,7 +796,7 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.PatchLegacyAuthorizationsID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/legacy/authorizations/{authID}"
@@ -701,7 +806,7 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.authorizationUpdateRequest == nil {
-		return localVarReturnValue, reportError("authorizationUpdateRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("authorizationUpdateRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -728,12 +833,12 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 	localVarPostBody = r.authorizationUpdateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -747,12 +852,12 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -762,22 +867,22 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -785,10 +890,10 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecute(r Ap
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostLegacyAuthorizationsRequest struct {
@@ -818,6 +923,10 @@ func (r ApiPostLegacyAuthorizationsRequest) Execute() (Authorization, error) {
 	return r.ApiService.PostLegacyAuthorizationsExecute(r)
 }
 
+func (r ApiPostLegacyAuthorizationsRequest) ExecuteWithHttpInfo() (Authorization, *_nethttp.Response, error) {
+	return r.ApiService.PostLegacyAuthorizationsExecuteWithHttpInfo(r)
+}
+
 /*
  * PostLegacyAuthorizations Create a legacy authorization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -835,6 +944,17 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizations(ctx _context.C
  * @return Authorization
  */
 func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPostLegacyAuthorizationsRequest) (Authorization, error) {
+	returnVal, _, err := a.PostLegacyAuthorizationsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Authorization
+ */
+func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecuteWithHttpInfo(r ApiPostLegacyAuthorizationsRequest) (Authorization, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -846,7 +966,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.PostLegacyAuthorizations")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/legacy/authorizations"
@@ -855,7 +975,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.legacyAuthorizationPostRequest == nil {
-		return localVarReturnValue, reportError("legacyAuthorizationPostRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("legacyAuthorizationPostRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -882,12 +1002,12 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 	localVarPostBody = r.legacyAuthorizationPostRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -901,12 +1021,12 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -917,32 +1037,32 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -950,10 +1070,10 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecute(r ApiPo
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostLegacyAuthorizationsIDPasswordRequest struct {
@@ -992,6 +1112,10 @@ func (r ApiPostLegacyAuthorizationsIDPasswordRequest) Execute() error {
 	return r.ApiService.PostLegacyAuthorizationsIDPasswordExecute(r)
 }
 
+func (r ApiPostLegacyAuthorizationsIDPasswordRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PostLegacyAuthorizationsIDPasswordExecuteWithHttpInfo(r)
+}
+
 /*
  * PostLegacyAuthorizationsIDPassword Set a legacy authorization password
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1010,6 +1134,16 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPassword(ctx 
  * Execute executes the request
  */
 func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecute(r ApiPostLegacyAuthorizationsIDPasswordRequest) error {
+	_, err := a.PostLegacyAuthorizationsIDPasswordExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecuteWithHttpInfo(r ApiPostLegacyAuthorizationsIDPasswordRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1020,7 +1154,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecu
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "LegacyAuthorizationsApiService.PostLegacyAuthorizationsIDPassword")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/legacy/authorizations/{authID}/password"
@@ -1030,7 +1164,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecu
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.passwordResetBody == nil {
-		return reportError("passwordResetBody is required and must be specified")
+		return nil, reportError("passwordResetBody is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -1057,12 +1191,12 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecu
 	localVarPostBody = r.passwordResetBody
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -1076,12 +1210,12 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecu
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1091,12 +1225,12 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecu
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }

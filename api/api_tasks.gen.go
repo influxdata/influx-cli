@@ -42,6 +42,13 @@ type TasksApi interface {
 	DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error
 
 	/*
+	 * DeleteTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	DeleteTasksIDExecuteWithHttpInfo(r ApiDeleteTasksIDRequest) (*_nethttp.Response, error)
+
+	/*
 	 * DeleteTasksIDRunsID Cancel a running task
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param taskID The task ID.
@@ -56,6 +63,13 @@ type TasksApi interface {
 	DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDRequest) error
 
 	/*
+	 * DeleteTasksIDRunsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	DeleteTasksIDRunsIDExecuteWithHttpInfo(r ApiDeleteTasksIDRunsIDRequest) (*_nethttp.Response, error)
+
+	/*
 	 * GetTasks List all tasks
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetTasksRequest
@@ -67,6 +81,14 @@ type TasksApi interface {
 	 * @return Tasks
 	 */
 	GetTasksExecute(r ApiGetTasksRequest) (Tasks, error)
+
+	/*
+	 * GetTasksExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Tasks
+	 */
+	GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tasks, *_nethttp.Response, error)
 
 	/*
 	 * GetTasksID Retrieve a task
@@ -83,6 +105,14 @@ type TasksApi interface {
 	GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error)
 
 	/*
+	 * GetTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Task
+	 */
+	GetTasksIDExecuteWithHttpInfo(r ApiGetTasksIDRequest) (Task, *_nethttp.Response, error)
+
+	/*
 	 * GetTasksIDLogs Retrieve all logs for a task
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param taskID The task ID.
@@ -97,6 +127,14 @@ type TasksApi interface {
 	GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Logs, error)
 
 	/*
+	 * GetTasksIDLogsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Logs
+	 */
+	GetTasksIDLogsExecuteWithHttpInfo(r ApiGetTasksIDLogsRequest) (Logs, *_nethttp.Response, error)
+
+	/*
 	 * GetTasksIDRuns List runs for a task
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param taskID The ID of the task to get runs for.
@@ -109,6 +147,14 @@ type TasksApi interface {
 	 * @return Runs
 	 */
 	GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Runs, error)
+
+	/*
+	 * GetTasksIDRunsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Runs
+	 */
+	GetTasksIDRunsExecuteWithHttpInfo(r ApiGetTasksIDRunsRequest) (Runs, *_nethttp.Response, error)
 
 	/*
 	 * GetTasksIDRunsID Retrieve a single run for a task
@@ -126,6 +172,14 @@ type TasksApi interface {
 	GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) (Run, error)
 
 	/*
+	 * GetTasksIDRunsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Run
+	 */
+	GetTasksIDRunsIDExecuteWithHttpInfo(r ApiGetTasksIDRunsIDRequest) (Run, *_nethttp.Response, error)
+
+	/*
 	 * GetTasksIDRunsIDLogs Retrieve all logs for a run
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param taskID ID of task to get logs for.
@@ -139,6 +193,14 @@ type TasksApi interface {
 	 * @return Logs
 	 */
 	GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsRequest) (Logs, error)
+
+	/*
+	 * GetTasksIDRunsIDLogsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Logs
+	 */
+	GetTasksIDRunsIDLogsExecuteWithHttpInfo(r ApiGetTasksIDRunsIDLogsRequest) (Logs, *_nethttp.Response, error)
 
 	/*
 	 * PatchTasksID Update a task
@@ -156,6 +218,14 @@ type TasksApi interface {
 	PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, error)
 
 	/*
+	 * PatchTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Task
+	 */
+	PatchTasksIDExecuteWithHttpInfo(r ApiPatchTasksIDRequest) (Task, *_nethttp.Response, error)
+
+	/*
 	 * PostTasks Create a new task
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiPostTasksRequest
@@ -167,6 +237,14 @@ type TasksApi interface {
 	 * @return Task
 	 */
 	PostTasksExecute(r ApiPostTasksRequest) (Task, error)
+
+	/*
+	 * PostTasksExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Task
+	 */
+	PostTasksExecuteWithHttpInfo(r ApiPostTasksRequest) (Task, *_nethttp.Response, error)
 
 	/*
 	 * PostTasksIDRuns Manually start a task run, overriding the current schedule
@@ -183,6 +261,14 @@ type TasksApi interface {
 	PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (Run, error)
 
 	/*
+	 * PostTasksIDRunsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Run
+	 */
+	PostTasksIDRunsExecuteWithHttpInfo(r ApiPostTasksIDRunsRequest) (Run, *_nethttp.Response, error)
+
+	/*
 	 * PostTasksIDRunsIDRetry Retry a task run
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param taskID The task ID.
@@ -196,6 +282,14 @@ type TasksApi interface {
 	 * @return Run
 	 */
 	PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRetryRequest) (Run, error)
+
+	/*
+	 * PostTasksIDRunsIDRetryExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Run
+	 */
+	PostTasksIDRunsIDRetryExecuteWithHttpInfo(r ApiPostTasksIDRunsIDRetryRequest) (Run, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -248,6 +342,10 @@ func (r ApiDeleteTasksIDRequest) Execute() error {
 	return r.ApiService.DeleteTasksIDExecute(r)
 }
 
+func (r ApiDeleteTasksIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteTasksIDExecuteWithHttpInfo(r)
+}
+
 /*
  * DeleteTasksID Delete a task
  * Deletes a task and all associated records
@@ -267,6 +365,16 @@ func (a *TasksApiService) DeleteTasksID(ctx _context.Context, taskID string) Api
  * Execute executes the request
  */
 func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error {
+	_, err := a.DeleteTasksIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *TasksApiService) DeleteTasksIDExecuteWithHttpInfo(r ApiDeleteTasksIDRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -277,7 +385,7 @@ func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error 
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.DeleteTasksID")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks/{taskID}"
@@ -309,12 +417,12 @@ func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error 
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -328,12 +436,12 @@ func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error 
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -343,14 +451,14 @@ func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error 
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiDeleteTasksIDRunsIDRequest struct {
@@ -389,6 +497,10 @@ func (r ApiDeleteTasksIDRunsIDRequest) Execute() error {
 	return r.ApiService.DeleteTasksIDRunsIDExecute(r)
 }
 
+func (r ApiDeleteTasksIDRunsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteTasksIDRunsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * DeleteTasksIDRunsID Cancel a running task
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -409,6 +521,16 @@ func (a *TasksApiService) DeleteTasksIDRunsID(ctx _context.Context, taskID strin
  * Execute executes the request
  */
 func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDRequest) error {
+	_, err := a.DeleteTasksIDRunsIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *TasksApiService) DeleteTasksIDRunsIDExecuteWithHttpInfo(r ApiDeleteTasksIDRunsIDRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -419,7 +541,7 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDReq
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.DeleteTasksIDRunsID")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks/{taskID}/runs/{runID}"
@@ -452,12 +574,12 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDReq
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -471,12 +593,12 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDReq
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -486,14 +608,14 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDReq
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiGetTasksRequest struct {
@@ -586,6 +708,10 @@ func (r ApiGetTasksRequest) Execute() (Tasks, error) {
 	return r.ApiService.GetTasksExecute(r)
 }
 
+func (r ApiGetTasksRequest) ExecuteWithHttpInfo() (Tasks, *_nethttp.Response, error) {
+	return r.ApiService.GetTasksExecuteWithHttpInfo(r)
+}
+
 /*
  * GetTasks List all tasks
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -603,6 +729,17 @@ func (a *TasksApiService) GetTasks(ctx _context.Context) ApiGetTasksRequest {
  * @return Tasks
  */
 func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
+	returnVal, _, err := a.GetTasksExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Tasks
+ */
+func (a *TasksApiService) GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tasks, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -614,7 +751,7 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasks")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks"
@@ -669,12 +806,12 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -688,12 +825,12 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -703,22 +840,22 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -726,10 +863,10 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetTasksIDRequest struct {
@@ -759,6 +896,10 @@ func (r ApiGetTasksIDRequest) Execute() (Task, error) {
 	return r.ApiService.GetTasksIDExecute(r)
 }
 
+func (r ApiGetTasksIDRequest) ExecuteWithHttpInfo() (Task, *_nethttp.Response, error) {
+	return r.ApiService.GetTasksIDExecuteWithHttpInfo(r)
+}
+
 /*
  * GetTasksID Retrieve a task
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -778,6 +919,17 @@ func (a *TasksApiService) GetTasksID(ctx _context.Context, taskID string) ApiGet
  * @return Task
  */
 func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error) {
+	returnVal, _, err := a.GetTasksIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Task
+ */
+func (a *TasksApiService) GetTasksIDExecuteWithHttpInfo(r ApiGetTasksIDRequest) (Task, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -789,7 +941,7 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasksID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks/{taskID}"
@@ -821,12 +973,12 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -840,12 +992,12 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -855,22 +1007,22 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -878,10 +1030,10 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetTasksIDLogsRequest struct {
@@ -911,6 +1063,10 @@ func (r ApiGetTasksIDLogsRequest) Execute() (Logs, error) {
 	return r.ApiService.GetTasksIDLogsExecute(r)
 }
 
+func (r ApiGetTasksIDLogsRequest) ExecuteWithHttpInfo() (Logs, *_nethttp.Response, error) {
+	return r.ApiService.GetTasksIDLogsExecuteWithHttpInfo(r)
+}
+
 /*
  * GetTasksIDLogs Retrieve all logs for a task
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -930,6 +1086,17 @@ func (a *TasksApiService) GetTasksIDLogs(ctx _context.Context, taskID string) Ap
  * @return Logs
  */
 func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Logs, error) {
+	returnVal, _, err := a.GetTasksIDLogsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Logs
+ */
+func (a *TasksApiService) GetTasksIDLogsExecuteWithHttpInfo(r ApiGetTasksIDLogsRequest) (Logs, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -941,7 +1108,7 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasksIDLogs")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks/{taskID}/logs"
@@ -973,12 +1140,12 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -992,12 +1159,12 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1007,22 +1174,22 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1030,10 +1197,10 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetTasksIDRunsRequest struct {
@@ -1099,6 +1266,10 @@ func (r ApiGetTasksIDRunsRequest) Execute() (Runs, error) {
 	return r.ApiService.GetTasksIDRunsExecute(r)
 }
 
+func (r ApiGetTasksIDRunsRequest) ExecuteWithHttpInfo() (Runs, *_nethttp.Response, error) {
+	return r.ApiService.GetTasksIDRunsExecuteWithHttpInfo(r)
+}
+
 /*
  * GetTasksIDRuns List runs for a task
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1118,6 +1289,17 @@ func (a *TasksApiService) GetTasksIDRuns(ctx _context.Context, taskID string) Ap
  * @return Runs
  */
 func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Runs, error) {
+	returnVal, _, err := a.GetTasksIDRunsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Runs
+ */
+func (a *TasksApiService) GetTasksIDRunsExecuteWithHttpInfo(r ApiGetTasksIDRunsRequest) (Runs, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -1129,7 +1311,7 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasksIDRuns")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks/{taskID}/runs"
@@ -1173,12 +1355,12 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -1192,12 +1374,12 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1207,22 +1389,22 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1230,10 +1412,10 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetTasksIDRunsIDRequest struct {
@@ -1272,6 +1454,10 @@ func (r ApiGetTasksIDRunsIDRequest) Execute() (Run, error) {
 	return r.ApiService.GetTasksIDRunsIDExecute(r)
 }
 
+func (r ApiGetTasksIDRunsIDRequest) ExecuteWithHttpInfo() (Run, *_nethttp.Response, error) {
+	return r.ApiService.GetTasksIDRunsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * GetTasksIDRunsID Retrieve a single run for a task
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1293,6 +1479,17 @@ func (a *TasksApiService) GetTasksIDRunsID(ctx _context.Context, taskID string, 
  * @return Run
  */
 func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) (Run, error) {
+	returnVal, _, err := a.GetTasksIDRunsIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Run
+ */
+func (a *TasksApiService) GetTasksIDRunsIDExecuteWithHttpInfo(r ApiGetTasksIDRunsIDRequest) (Run, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -1304,7 +1501,7 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasksIDRunsID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks/{taskID}/runs/{runID}"
@@ -1337,12 +1534,12 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -1356,12 +1553,12 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1371,22 +1568,22 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1394,10 +1591,10 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetTasksIDRunsIDLogsRequest struct {
@@ -1436,6 +1633,10 @@ func (r ApiGetTasksIDRunsIDLogsRequest) Execute() (Logs, error) {
 	return r.ApiService.GetTasksIDRunsIDLogsExecute(r)
 }
 
+func (r ApiGetTasksIDRunsIDLogsRequest) ExecuteWithHttpInfo() (Logs, *_nethttp.Response, error) {
+	return r.ApiService.GetTasksIDRunsIDLogsExecuteWithHttpInfo(r)
+}
+
 /*
  * GetTasksIDRunsIDLogs Retrieve all logs for a run
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1457,6 +1658,17 @@ func (a *TasksApiService) GetTasksIDRunsIDLogs(ctx _context.Context, taskID stri
  * @return Logs
  */
 func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsRequest) (Logs, error) {
+	returnVal, _, err := a.GetTasksIDRunsIDLogsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Logs
+ */
+func (a *TasksApiService) GetTasksIDRunsIDLogsExecuteWithHttpInfo(r ApiGetTasksIDRunsIDLogsRequest) (Logs, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -1468,7 +1680,7 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasksIDRunsIDLogs")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks/{taskID}/runs/{runID}/logs"
@@ -1501,12 +1713,12 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -1520,12 +1732,12 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1535,22 +1747,22 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1558,10 +1770,10 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsR
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPatchTasksIDRequest struct {
@@ -1600,6 +1812,10 @@ func (r ApiPatchTasksIDRequest) Execute() (Task, error) {
 	return r.ApiService.PatchTasksIDExecute(r)
 }
 
+func (r ApiPatchTasksIDRequest) ExecuteWithHttpInfo() (Task, *_nethttp.Response, error) {
+	return r.ApiService.PatchTasksIDExecuteWithHttpInfo(r)
+}
+
 /*
  * PatchTasksID Update a task
  * Update a task. This will cancel all queued runs.
@@ -1620,6 +1836,17 @@ func (a *TasksApiService) PatchTasksID(ctx _context.Context, taskID string) ApiP
  * @return Task
  */
 func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, error) {
+	returnVal, _, err := a.PatchTasksIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Task
+ */
+func (a *TasksApiService) PatchTasksIDExecuteWithHttpInfo(r ApiPatchTasksIDRequest) (Task, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -1631,7 +1858,7 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.PatchTasksID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks/{taskID}"
@@ -1641,7 +1868,7 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.taskUpdateRequest == nil {
-		return localVarReturnValue, reportError("taskUpdateRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("taskUpdateRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -1668,12 +1895,12 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 	localVarPostBody = r.taskUpdateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -1687,12 +1914,12 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1702,22 +1929,22 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1725,10 +1952,10 @@ func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, e
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostTasksRequest struct {
@@ -1758,6 +1985,10 @@ func (r ApiPostTasksRequest) Execute() (Task, error) {
 	return r.ApiService.PostTasksExecute(r)
 }
 
+func (r ApiPostTasksRequest) ExecuteWithHttpInfo() (Task, *_nethttp.Response, error) {
+	return r.ApiService.PostTasksExecuteWithHttpInfo(r)
+}
+
 /*
  * PostTasks Create a new task
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1775,6 +2006,17 @@ func (a *TasksApiService) PostTasks(ctx _context.Context) ApiPostTasksRequest {
  * @return Task
  */
 func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) {
+	returnVal, _, err := a.PostTasksExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Task
+ */
+func (a *TasksApiService) PostTasksExecuteWithHttpInfo(r ApiPostTasksRequest) (Task, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1786,7 +2028,7 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.PostTasks")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks"
@@ -1795,7 +2037,7 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.taskCreateRequest == nil {
-		return localVarReturnValue, reportError("taskCreateRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("taskCreateRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -1822,12 +2064,12 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 	localVarPostBody = r.taskCreateRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -1841,12 +2083,12 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1856,22 +2098,22 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1879,10 +2121,10 @@ func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) 
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostTasksIDRunsRequest struct {
@@ -1921,6 +2163,10 @@ func (r ApiPostTasksIDRunsRequest) Execute() (Run, error) {
 	return r.ApiService.PostTasksIDRunsExecute(r)
 }
 
+func (r ApiPostTasksIDRunsRequest) ExecuteWithHttpInfo() (Run, *_nethttp.Response, error) {
+	return r.ApiService.PostTasksIDRunsExecuteWithHttpInfo(r)
+}
+
 /*
  * PostTasksIDRuns Manually start a task run, overriding the current schedule
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1940,6 +2186,17 @@ func (a *TasksApiService) PostTasksIDRuns(ctx _context.Context, taskID string) A
  * @return Run
  */
 func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (Run, error) {
+	returnVal, _, err := a.PostTasksIDRunsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Run
+ */
+func (a *TasksApiService) PostTasksIDRunsExecuteWithHttpInfo(r ApiPostTasksIDRunsRequest) (Run, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1951,7 +2208,7 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.PostTasksIDRuns")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks/{taskID}/runs"
@@ -1985,12 +2242,12 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 	localVarPostBody = r.runManually
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -2004,12 +2261,12 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -2019,22 +2276,22 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -2042,10 +2299,10 @@ func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (R
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostTasksIDRunsIDRetryRequest struct {
@@ -2093,6 +2350,10 @@ func (r ApiPostTasksIDRunsIDRetryRequest) Execute() (Run, error) {
 	return r.ApiService.PostTasksIDRunsIDRetryExecute(r)
 }
 
+func (r ApiPostTasksIDRunsIDRetryRequest) ExecuteWithHttpInfo() (Run, *_nethttp.Response, error) {
+	return r.ApiService.PostTasksIDRunsIDRetryExecuteWithHttpInfo(r)
+}
+
 /*
  * PostTasksIDRunsIDRetry Retry a task run
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -2114,6 +2375,17 @@ func (a *TasksApiService) PostTasksIDRunsIDRetry(ctx _context.Context, taskID st
  * @return Run
  */
 func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRetryRequest) (Run, error) {
+	returnVal, _, err := a.PostTasksIDRunsIDRetryExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Run
+ */
+func (a *TasksApiService) PostTasksIDRunsIDRetryExecuteWithHttpInfo(r ApiPostTasksIDRunsIDRetryRequest) (Run, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -2125,7 +2397,7 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.PostTasksIDRunsIDRetry")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/tasks/{taskID}/runs/{runID}/retry"
@@ -2160,12 +2432,12 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 	localVarPostBody = r.body
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -2179,12 +2451,12 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -2194,22 +2466,22 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -2217,8 +2489,8 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRe
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

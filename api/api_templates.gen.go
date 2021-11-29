@@ -39,6 +39,14 @@ type TemplatesApi interface {
 	ApplyTemplateExecute(r ApiApplyTemplateRequest) (TemplateSummary, error)
 
 	/*
+	 * ApplyTemplateExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return TemplateSummary
+	 */
+	ApplyTemplateExecuteWithHttpInfo(r ApiApplyTemplateRequest) (TemplateSummary, *_nethttp.Response, error)
+
+	/*
 	 * ExportTemplate Export a new Influx Template
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiExportTemplateRequest
@@ -50,6 +58,14 @@ type TemplatesApi interface {
 	 * @return []TemplateEntry
 	 */
 	ExportTemplateExecute(r ApiExportTemplateRequest) ([]TemplateEntry, error)
+
+	/*
+	 * ExportTemplateExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return []TemplateEntry
+	 */
+	ExportTemplateExecuteWithHttpInfo(r ApiExportTemplateRequest) ([]TemplateEntry, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -93,6 +109,10 @@ func (r ApiApplyTemplateRequest) Execute() (TemplateSummary, error) {
 	return r.ApiService.ApplyTemplateExecute(r)
 }
 
+func (r ApiApplyTemplateRequest) ExecuteWithHttpInfo() (TemplateSummary, *_nethttp.Response, error) {
+	return r.ApiService.ApplyTemplateExecuteWithHttpInfo(r)
+}
+
 /*
  * ApplyTemplate Apply or dry-run an InfluxDB Template
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -110,6 +130,17 @@ func (a *TemplatesApiService) ApplyTemplate(ctx _context.Context) ApiApplyTempla
  * @return TemplateSummary
  */
 func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (TemplateSummary, error) {
+	returnVal, _, err := a.ApplyTemplateExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return TemplateSummary
+ */
+func (a *TemplatesApiService) ApplyTemplateExecuteWithHttpInfo(r ApiApplyTemplateRequest) (TemplateSummary, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -121,7 +152,7 @@ func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (T
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TemplatesApiService.ApplyTemplate")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/templates/apply"
@@ -130,7 +161,7 @@ func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (T
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.templateApply == nil {
-		return localVarReturnValue, reportError("templateApply is required and must be specified")
+		return localVarReturnValue, nil, reportError("templateApply is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -154,12 +185,12 @@ func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (T
 	localVarPostBody = r.templateApply
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -173,12 +204,12 @@ func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (T
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -189,32 +220,32 @@ func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (T
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -222,10 +253,10 @@ func (a *TemplatesApiService) ApplyTemplateExecute(r ApiApplyTemplateRequest) (T
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiExportTemplateRequest struct {
@@ -246,6 +277,10 @@ func (r ApiExportTemplateRequest) Execute() ([]TemplateEntry, error) {
 	return r.ApiService.ExportTemplateExecute(r)
 }
 
+func (r ApiExportTemplateRequest) ExecuteWithHttpInfo() ([]TemplateEntry, *_nethttp.Response, error) {
+	return r.ApiService.ExportTemplateExecuteWithHttpInfo(r)
+}
+
 /*
  * ExportTemplate Export a new Influx Template
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -263,6 +298,17 @@ func (a *TemplatesApiService) ExportTemplate(ctx _context.Context) ApiExportTemp
  * @return []TemplateEntry
  */
 func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) ([]TemplateEntry, error) {
+	returnVal, _, err := a.ExportTemplateExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return []TemplateEntry
+ */
+func (a *TemplatesApiService) ExportTemplateExecuteWithHttpInfo(r ApiExportTemplateRequest) ([]TemplateEntry, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -274,7 +320,7 @@ func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) 
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TemplatesApiService.ExportTemplate")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/templates/export"
@@ -304,12 +350,12 @@ func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) 
 	localVarPostBody = r.templateExport
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -323,12 +369,12 @@ func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) 
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -338,22 +384,22 @@ func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) 
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -361,8 +407,8 @@ func (a *TemplatesApiService) ExportTemplateExecute(r ApiExportTemplateRequest) 
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

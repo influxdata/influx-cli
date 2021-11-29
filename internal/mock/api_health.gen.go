@@ -6,6 +6,7 @@ package mock
 
 import (
 	context "context"
+	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -62,6 +63,22 @@ func (m *MockHealthApi) GetHealthExecute(arg0 api.ApiGetHealthRequest) (api.Heal
 func (mr *MockHealthApiMockRecorder) GetHealthExecute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHealthExecute", reflect.TypeOf((*MockHealthApi)(nil).GetHealthExecute), arg0)
+}
+
+// GetHealthExecuteWithHttpInfo mocks base method.
+func (m *MockHealthApi) GetHealthExecuteWithHttpInfo(arg0 api.ApiGetHealthRequest) (api.HealthCheck, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetHealthExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.HealthCheck)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetHealthExecuteWithHttpInfo indicates an expected call of GetHealthExecuteWithHttpInfo.
+func (mr *MockHealthApiMockRecorder) GetHealthExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHealthExecuteWithHttpInfo", reflect.TypeOf((*MockHealthApi)(nil).GetHealthExecuteWithHttpInfo), arg0)
 }
 
 // OnlyCloud mocks base method.

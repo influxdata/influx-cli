@@ -41,6 +41,14 @@ type RestoreApi interface {
 	PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDRequest) (string, error)
 
 	/*
+	 * PostRestoreBucketIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return string
+	 */
+	PostRestoreBucketIDExecuteWithHttpInfo(r ApiPostRestoreBucketIDRequest) (string, *_nethttp.Response, error)
+
+	/*
 	 * PostRestoreBucketMetadata Create a new bucket pre-seeded with shard info from a backup.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiPostRestoreBucketMetadataRequest
@@ -52,6 +60,14 @@ type RestoreApi interface {
 	 * @return RestoredBucketMappings
 	 */
 	PostRestoreBucketMetadataExecute(r ApiPostRestoreBucketMetadataRequest) (RestoredBucketMappings, error)
+
+	/*
+	 * PostRestoreBucketMetadataExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return RestoredBucketMappings
+	 */
+	PostRestoreBucketMetadataExecuteWithHttpInfo(r ApiPostRestoreBucketMetadataRequest) (RestoredBucketMappings, *_nethttp.Response, error)
 
 	/*
 	 * PostRestoreKV Overwrite the embedded KV store on the server with a backed-up snapshot.
@@ -67,6 +83,14 @@ type RestoreApi interface {
 	PostRestoreKVExecute(r ApiPostRestoreKVRequest) (PostRestoreKVResponse, error)
 
 	/*
+	 * PostRestoreKVExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return PostRestoreKVResponse
+	 */
+	PostRestoreKVExecuteWithHttpInfo(r ApiPostRestoreKVRequest) (PostRestoreKVResponse, *_nethttp.Response, error)
+
+	/*
 	 * PostRestoreSQL Overwrite the embedded SQL store on the server with a backed-up snapshot.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiPostRestoreSQLRequest
@@ -77,6 +101,13 @@ type RestoreApi interface {
 	 * PostRestoreSQLExecute executes the request
 	 */
 	PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) error
+
+	/*
+	 * PostRestoreSQLExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	PostRestoreSQLExecuteWithHttpInfo(r ApiPostRestoreSQLRequest) (*_nethttp.Response, error)
 
 	/*
 	 * PostRestoreShardId Restore a TSM snapshot into a shard.
@@ -90,6 +121,13 @@ type RestoreApi interface {
 	 * PostRestoreShardIdExecute executes the request
 	 */
 	PostRestoreShardIdExecute(r ApiPostRestoreShardIdRequest) error
+
+	/*
+	 * PostRestoreShardIdExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	PostRestoreShardIdExecuteWithHttpInfo(r ApiPostRestoreShardIdRequest) (*_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -160,6 +198,10 @@ func (r ApiPostRestoreBucketIDRequest) Execute() (string, error) {
 	return r.ApiService.PostRestoreBucketIDExecute(r)
 }
 
+func (r ApiPostRestoreBucketIDRequest) ExecuteWithHttpInfo() (string, *_nethttp.Response, error) {
+	return r.ApiService.PostRestoreBucketIDExecuteWithHttpInfo(r)
+}
+
 /*
  * PostRestoreBucketID Overwrite storage metadata for a bucket with shard info from a backup.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -179,6 +221,17 @@ func (a *RestoreApiService) PostRestoreBucketID(ctx _context.Context, bucketID s
  * @return string
  */
 func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDRequest) (string, error) {
+	returnVal, _, err := a.PostRestoreBucketIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return string
+ */
+func (a *RestoreApiService) PostRestoreBucketIDExecuteWithHttpInfo(r ApiPostRestoreBucketIDRequest) (string, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -190,7 +243,7 @@ func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDR
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RestoreApiService.PostRestoreBucketID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/restore/buckets/{bucketID}"
@@ -200,7 +253,7 @@ func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDR
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.body == nil {
-		return localVarReturnValue, reportError("body is required and must be specified")
+		return localVarReturnValue, nil, reportError("body is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -230,12 +283,12 @@ func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDR
 	localVarPostBody = r.body
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -249,12 +302,12 @@ func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDR
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -264,22 +317,22 @@ func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDR
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -287,10 +340,10 @@ func (a *RestoreApiService) PostRestoreBucketIDExecute(r ApiPostRestoreBucketIDR
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostRestoreBucketMetadataRequest struct {
@@ -320,6 +373,10 @@ func (r ApiPostRestoreBucketMetadataRequest) Execute() (RestoredBucketMappings, 
 	return r.ApiService.PostRestoreBucketMetadataExecute(r)
 }
 
+func (r ApiPostRestoreBucketMetadataRequest) ExecuteWithHttpInfo() (RestoredBucketMappings, *_nethttp.Response, error) {
+	return r.ApiService.PostRestoreBucketMetadataExecuteWithHttpInfo(r)
+}
+
 /*
  * PostRestoreBucketMetadata Create a new bucket pre-seeded with shard info from a backup.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -337,6 +394,17 @@ func (a *RestoreApiService) PostRestoreBucketMetadata(ctx _context.Context) ApiP
  * @return RestoredBucketMappings
  */
 func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBucketMetadataRequest) (RestoredBucketMappings, error) {
+	returnVal, _, err := a.PostRestoreBucketMetadataExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return RestoredBucketMappings
+ */
+func (a *RestoreApiService) PostRestoreBucketMetadataExecuteWithHttpInfo(r ApiPostRestoreBucketMetadataRequest) (RestoredBucketMappings, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -348,7 +416,7 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RestoreApiService.PostRestoreBucketMetadata")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/restore/bucketMetadata"
@@ -357,7 +425,7 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.bucketMetadataManifest == nil {
-		return localVarReturnValue, reportError("bucketMetadataManifest is required and must be specified")
+		return localVarReturnValue, nil, reportError("bucketMetadataManifest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -384,12 +452,12 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 	localVarPostBody = r.bucketMetadataManifest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -403,12 +471,12 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -418,22 +486,22 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -441,10 +509,10 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecute(r ApiPostRestoreBuc
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostRestoreKVRequest struct {
@@ -492,6 +560,10 @@ func (r ApiPostRestoreKVRequest) Execute() (PostRestoreKVResponse, error) {
 	return r.ApiService.PostRestoreKVExecute(r)
 }
 
+func (r ApiPostRestoreKVRequest) ExecuteWithHttpInfo() (PostRestoreKVResponse, *_nethttp.Response, error) {
+	return r.ApiService.PostRestoreKVExecuteWithHttpInfo(r)
+}
+
 /*
  * PostRestoreKV Overwrite the embedded KV store on the server with a backed-up snapshot.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -509,6 +581,17 @@ func (a *RestoreApiService) PostRestoreKV(ctx _context.Context) ApiPostRestoreKV
  * @return PostRestoreKVResponse
  */
 func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) (PostRestoreKVResponse, error) {
+	returnVal, _, err := a.PostRestoreKVExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return PostRestoreKVResponse
+ */
+func (a *RestoreApiService) PostRestoreKVExecuteWithHttpInfo(r ApiPostRestoreKVRequest) (PostRestoreKVResponse, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -520,7 +603,7 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) (Pos
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RestoreApiService.PostRestoreKV")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/restore/kv"
@@ -529,7 +612,7 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) (Pos
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.body == nil {
-		return localVarReturnValue, reportError("body is required and must be specified")
+		return localVarReturnValue, nil, reportError("body is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -562,12 +645,12 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) (Pos
 	localVarPostBody = r.body
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -581,12 +664,12 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) (Pos
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -596,22 +679,22 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) (Pos
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -619,10 +702,10 @@ func (a *RestoreApiService) PostRestoreKVExecute(r ApiPostRestoreKVRequest) (Pos
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostRestoreSQLRequest struct {
@@ -670,6 +753,10 @@ func (r ApiPostRestoreSQLRequest) Execute() error {
 	return r.ApiService.PostRestoreSQLExecute(r)
 }
 
+func (r ApiPostRestoreSQLRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PostRestoreSQLExecuteWithHttpInfo(r)
+}
+
 /*
  * PostRestoreSQL Overwrite the embedded SQL store on the server with a backed-up snapshot.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -686,6 +773,16 @@ func (a *RestoreApiService) PostRestoreSQL(ctx _context.Context) ApiPostRestoreS
  * Execute executes the request
  */
 func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) error {
+	_, err := a.PostRestoreSQLExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *RestoreApiService) PostRestoreSQLExecuteWithHttpInfo(r ApiPostRestoreSQLRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -696,7 +793,7 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RestoreApiService.PostRestoreSQL")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/restore/sql"
@@ -705,7 +802,7 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.body == nil {
-		return reportError("body is required and must be specified")
+		return nil, reportError("body is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -738,12 +835,12 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 	localVarPostBody = r.body
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -757,12 +854,12 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -772,14 +869,14 @@ func (a *RestoreApiService) PostRestoreSQLExecute(r ApiPostRestoreSQLRequest) er
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiPostRestoreShardIdRequest struct {
@@ -836,6 +933,10 @@ func (r ApiPostRestoreShardIdRequest) Execute() error {
 	return r.ApiService.PostRestoreShardIdExecute(r)
 }
 
+func (r ApiPostRestoreShardIdRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PostRestoreShardIdExecuteWithHttpInfo(r)
+}
+
 /*
  * PostRestoreShardId Restore a TSM snapshot into a shard.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -854,6 +955,16 @@ func (a *RestoreApiService) PostRestoreShardId(ctx _context.Context, shardID str
  * Execute executes the request
  */
 func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdRequest) error {
+	_, err := a.PostRestoreShardIdExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *RestoreApiService) PostRestoreShardIdExecuteWithHttpInfo(r ApiPostRestoreShardIdRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -864,7 +975,7 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RestoreApiService.PostRestoreShardId")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/restore/shards/{shardID}"
@@ -874,7 +985,7 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.body == nil {
-		return reportError("body is required and must be specified")
+		return nil, reportError("body is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -907,12 +1018,12 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 	localVarPostBody = r.body
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -926,12 +1037,12 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -941,12 +1052,12 @@ func (a *RestoreApiService) PostRestoreShardIdExecute(r ApiPostRestoreShardIdReq
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }

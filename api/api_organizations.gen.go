@@ -40,6 +40,13 @@ type OrganizationsApi interface {
 	DeleteOrgsIDExecute(r ApiDeleteOrgsIDRequest) error
 
 	/*
+	 * DeleteOrgsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	DeleteOrgsIDExecuteWithHttpInfo(r ApiDeleteOrgsIDRequest) (*_nethttp.Response, error)
+
+	/*
 	 * DeleteOrgsIDMembersID Remove a member from an organization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param userID The ID of the member to remove.
@@ -54,6 +61,13 @@ type OrganizationsApi interface {
 	DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsIDMembersIDRequest) error
 
 	/*
+	 * DeleteOrgsIDMembersIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	DeleteOrgsIDMembersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDMembersIDRequest) (*_nethttp.Response, error)
+
+	/*
 	 * GetOrgs List all organizations
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetOrgsRequest
@@ -65,6 +79,14 @@ type OrganizationsApi interface {
 	 * @return Organizations
 	 */
 	GetOrgsExecute(r ApiGetOrgsRequest) (Organizations, error)
+
+	/*
+	 * GetOrgsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Organizations
+	 */
+	GetOrgsExecuteWithHttpInfo(r ApiGetOrgsRequest) (Organizations, *_nethttp.Response, error)
 
 	/*
 	 * GetOrgsID Retrieve an organization
@@ -81,6 +103,14 @@ type OrganizationsApi interface {
 	GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organization, error)
 
 	/*
+	 * GetOrgsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Organization
+	 */
+	GetOrgsIDExecuteWithHttpInfo(r ApiGetOrgsIDRequest) (Organization, *_nethttp.Response, error)
+
+	/*
 	 * GetOrgsIDMembers List all members of an organization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param orgID The organization ID.
@@ -93,6 +123,14 @@ type OrganizationsApi interface {
 	 * @return ResourceMembers
 	 */
 	GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersRequest) (ResourceMembers, error)
+
+	/*
+	 * GetOrgsIDMembersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return ResourceMembers
+	 */
+	GetOrgsIDMembersExecuteWithHttpInfo(r ApiGetOrgsIDMembersRequest) (ResourceMembers, *_nethttp.Response, error)
 
 	/*
 	 * PatchOrgsID Update an organization
@@ -109,6 +147,14 @@ type OrganizationsApi interface {
 	PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (Organization, error)
 
 	/*
+	 * PatchOrgsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Organization
+	 */
+	PatchOrgsIDExecuteWithHttpInfo(r ApiPatchOrgsIDRequest) (Organization, *_nethttp.Response, error)
+
+	/*
 	 * PostOrgs Create an organization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiPostOrgsRequest
@@ -120,6 +166,14 @@ type OrganizationsApi interface {
 	 * @return Organization
 	 */
 	PostOrgsExecute(r ApiPostOrgsRequest) (Organization, error)
+
+	/*
+	 * PostOrgsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Organization
+	 */
+	PostOrgsExecuteWithHttpInfo(r ApiPostOrgsRequest) (Organization, *_nethttp.Response, error)
 
 	/*
 	 * PostOrgsIDMembers Add a member to an organization
@@ -134,6 +188,14 @@ type OrganizationsApi interface {
 	 * @return ResourceMember
 	 */
 	PostOrgsIDMembersExecute(r ApiPostOrgsIDMembersRequest) (ResourceMember, error)
+
+	/*
+	 * PostOrgsIDMembersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return ResourceMember
+	 */
+	PostOrgsIDMembersExecuteWithHttpInfo(r ApiPostOrgsIDMembersRequest) (ResourceMember, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -186,6 +248,10 @@ func (r ApiDeleteOrgsIDRequest) Execute() error {
 	return r.ApiService.DeleteOrgsIDExecute(r)
 }
 
+func (r ApiDeleteOrgsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteOrgsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * DeleteOrgsID Delete an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -204,6 +270,16 @@ func (a *OrganizationsApiService) DeleteOrgsID(ctx _context.Context, orgID strin
  * Execute executes the request
  */
 func (a *OrganizationsApiService) DeleteOrgsIDExecute(r ApiDeleteOrgsIDRequest) error {
+	_, err := a.DeleteOrgsIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *OrganizationsApiService) DeleteOrgsIDExecuteWithHttpInfo(r ApiDeleteOrgsIDRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -214,7 +290,7 @@ func (a *OrganizationsApiService) DeleteOrgsIDExecute(r ApiDeleteOrgsIDRequest) 
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.DeleteOrgsID")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs/{orgID}"
@@ -246,12 +322,12 @@ func (a *OrganizationsApiService) DeleteOrgsIDExecute(r ApiDeleteOrgsIDRequest) 
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -265,12 +341,12 @@ func (a *OrganizationsApiService) DeleteOrgsIDExecute(r ApiDeleteOrgsIDRequest) 
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -281,24 +357,24 @@ func (a *OrganizationsApiService) DeleteOrgsIDExecute(r ApiDeleteOrgsIDRequest) 
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiDeleteOrgsIDMembersIDRequest struct {
@@ -337,6 +413,10 @@ func (r ApiDeleteOrgsIDMembersIDRequest) Execute() error {
 	return r.ApiService.DeleteOrgsIDMembersIDExecute(r)
 }
 
+func (r ApiDeleteOrgsIDMembersIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteOrgsIDMembersIDExecuteWithHttpInfo(r)
+}
+
 /*
  * DeleteOrgsIDMembersID Remove a member from an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -357,6 +437,16 @@ func (a *OrganizationsApiService) DeleteOrgsIDMembersID(ctx _context.Context, us
  * Execute executes the request
  */
 func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsIDMembersIDRequest) error {
+	_, err := a.DeleteOrgsIDMembersIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDMembersIDRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -367,7 +457,7 @@ func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsID
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.DeleteOrgsIDMembersID")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs/{orgID}/members/{userID}"
@@ -400,12 +490,12 @@ func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsID
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -419,12 +509,12 @@ func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsID
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -434,14 +524,14 @@ func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsID
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
 
 type ApiGetOrgsRequest struct {
@@ -516,6 +606,10 @@ func (r ApiGetOrgsRequest) Execute() (Organizations, error) {
 	return r.ApiService.GetOrgsExecute(r)
 }
 
+func (r ApiGetOrgsRequest) ExecuteWithHttpInfo() (Organizations, *_nethttp.Response, error) {
+	return r.ApiService.GetOrgsExecuteWithHttpInfo(r)
+}
+
 /*
  * GetOrgs List all organizations
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -533,6 +627,17 @@ func (a *OrganizationsApiService) GetOrgs(ctx _context.Context) ApiGetOrgsReques
  * @return Organizations
  */
 func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizations, error) {
+	returnVal, _, err := a.GetOrgsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Organizations
+ */
+func (a *OrganizationsApiService) GetOrgsExecuteWithHttpInfo(r ApiGetOrgsRequest) (Organizations, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -544,7 +649,7 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.GetOrgs")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs"
@@ -593,12 +698,12 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -612,12 +717,12 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -627,22 +732,22 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -650,10 +755,10 @@ func (a *OrganizationsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizat
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetOrgsIDRequest struct {
@@ -683,6 +788,10 @@ func (r ApiGetOrgsIDRequest) Execute() (Organization, error) {
 	return r.ApiService.GetOrgsIDExecute(r)
 }
 
+func (r ApiGetOrgsIDRequest) ExecuteWithHttpInfo() (Organization, *_nethttp.Response, error) {
+	return r.ApiService.GetOrgsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * GetOrgsID Retrieve an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -702,6 +811,17 @@ func (a *OrganizationsApiService) GetOrgsID(ctx _context.Context, orgID string) 
  * @return Organization
  */
 func (a *OrganizationsApiService) GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organization, error) {
+	returnVal, _, err := a.GetOrgsIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Organization
+ */
+func (a *OrganizationsApiService) GetOrgsIDExecuteWithHttpInfo(r ApiGetOrgsIDRequest) (Organization, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -713,7 +833,7 @@ func (a *OrganizationsApiService) GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organ
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.GetOrgsID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs/{orgID}"
@@ -745,12 +865,12 @@ func (a *OrganizationsApiService) GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organ
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -764,12 +884,12 @@ func (a *OrganizationsApiService) GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organ
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -779,22 +899,22 @@ func (a *OrganizationsApiService) GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organ
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -802,10 +922,10 @@ func (a *OrganizationsApiService) GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organ
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetOrgsIDMembersRequest struct {
@@ -835,6 +955,10 @@ func (r ApiGetOrgsIDMembersRequest) Execute() (ResourceMembers, error) {
 	return r.ApiService.GetOrgsIDMembersExecute(r)
 }
 
+func (r ApiGetOrgsIDMembersRequest) ExecuteWithHttpInfo() (ResourceMembers, *_nethttp.Response, error) {
+	return r.ApiService.GetOrgsIDMembersExecuteWithHttpInfo(r)
+}
+
 /*
  * GetOrgsIDMembers List all members of an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -854,6 +978,17 @@ func (a *OrganizationsApiService) GetOrgsIDMembers(ctx _context.Context, orgID s
  * @return ResourceMembers
  */
 func (a *OrganizationsApiService) GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersRequest) (ResourceMembers, error) {
+	returnVal, _, err := a.GetOrgsIDMembersExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return ResourceMembers
+ */
+func (a *OrganizationsApiService) GetOrgsIDMembersExecuteWithHttpInfo(r ApiGetOrgsIDMembersRequest) (ResourceMembers, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -865,7 +1000,7 @@ func (a *OrganizationsApiService) GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersR
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.GetOrgsIDMembers")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs/{orgID}/members"
@@ -897,12 +1032,12 @@ func (a *OrganizationsApiService) GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersR
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -916,12 +1051,12 @@ func (a *OrganizationsApiService) GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersR
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -932,32 +1067,32 @@ func (a *OrganizationsApiService) GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersR
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -965,10 +1100,10 @@ func (a *OrganizationsApiService) GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersR
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPatchOrgsIDRequest struct {
@@ -1007,6 +1142,10 @@ func (r ApiPatchOrgsIDRequest) Execute() (Organization, error) {
 	return r.ApiService.PatchOrgsIDExecute(r)
 }
 
+func (r ApiPatchOrgsIDRequest) ExecuteWithHttpInfo() (Organization, *_nethttp.Response, error) {
+	return r.ApiService.PatchOrgsIDExecuteWithHttpInfo(r)
+}
+
 /*
  * PatchOrgsID Update an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1026,6 +1165,17 @@ func (a *OrganizationsApiService) PatchOrgsID(ctx _context.Context, orgID string
  * @return Organization
  */
 func (a *OrganizationsApiService) PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (Organization, error) {
+	returnVal, _, err := a.PatchOrgsIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Organization
+ */
+func (a *OrganizationsApiService) PatchOrgsIDExecuteWithHttpInfo(r ApiPatchOrgsIDRequest) (Organization, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -1037,7 +1187,7 @@ func (a *OrganizationsApiService) PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (O
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.PatchOrgsID")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs/{orgID}"
@@ -1047,7 +1197,7 @@ func (a *OrganizationsApiService) PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (O
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.patchOrganizationRequest == nil {
-		return localVarReturnValue, reportError("patchOrganizationRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("patchOrganizationRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -1074,12 +1224,12 @@ func (a *OrganizationsApiService) PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (O
 	localVarPostBody = r.patchOrganizationRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -1093,12 +1243,12 @@ func (a *OrganizationsApiService) PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (O
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1108,22 +1258,22 @@ func (a *OrganizationsApiService) PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (O
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1131,10 +1281,10 @@ func (a *OrganizationsApiService) PatchOrgsIDExecute(r ApiPatchOrgsIDRequest) (O
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostOrgsRequest struct {
@@ -1164,6 +1314,10 @@ func (r ApiPostOrgsRequest) Execute() (Organization, error) {
 	return r.ApiService.PostOrgsExecute(r)
 }
 
+func (r ApiPostOrgsRequest) ExecuteWithHttpInfo() (Organization, *_nethttp.Response, error) {
+	return r.ApiService.PostOrgsExecuteWithHttpInfo(r)
+}
+
 /*
  * PostOrgs Create an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1181,6 +1335,17 @@ func (a *OrganizationsApiService) PostOrgs(ctx _context.Context) ApiPostOrgsRequ
  * @return Organization
  */
 func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organization, error) {
+	returnVal, _, err := a.PostOrgsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Organization
+ */
+func (a *OrganizationsApiService) PostOrgsExecuteWithHttpInfo(r ApiPostOrgsRequest) (Organization, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1192,7 +1357,7 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.PostOrgs")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs"
@@ -1201,7 +1366,7 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.postOrganizationRequest == nil {
-		return localVarReturnValue, reportError("postOrganizationRequest is required and must be specified")
+		return localVarReturnValue, nil, reportError("postOrganizationRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -1228,12 +1393,12 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 	localVarPostBody = r.postOrganizationRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -1247,12 +1412,12 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1262,22 +1427,22 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1285,10 +1450,10 @@ func (a *OrganizationsApiService) PostOrgsExecute(r ApiPostOrgsRequest) (Organiz
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostOrgsIDMembersRequest struct {
@@ -1327,6 +1492,10 @@ func (r ApiPostOrgsIDMembersRequest) Execute() (ResourceMember, error) {
 	return r.ApiService.PostOrgsIDMembersExecute(r)
 }
 
+func (r ApiPostOrgsIDMembersRequest) ExecuteWithHttpInfo() (ResourceMember, *_nethttp.Response, error) {
+	return r.ApiService.PostOrgsIDMembersExecuteWithHttpInfo(r)
+}
+
 /*
  * PostOrgsIDMembers Add a member to an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1346,6 +1515,17 @@ func (a *OrganizationsApiService) PostOrgsIDMembers(ctx _context.Context, orgID 
  * @return ResourceMember
  */
 func (a *OrganizationsApiService) PostOrgsIDMembersExecute(r ApiPostOrgsIDMembersRequest) (ResourceMember, error) {
+	returnVal, _, err := a.PostOrgsIDMembersExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return ResourceMember
+ */
+func (a *OrganizationsApiService) PostOrgsIDMembersExecuteWithHttpInfo(r ApiPostOrgsIDMembersRequest) (ResourceMember, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1357,7 +1537,7 @@ func (a *OrganizationsApiService) PostOrgsIDMembersExecute(r ApiPostOrgsIDMember
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.PostOrgsIDMembers")
 	if err != nil {
-		return localVarReturnValue, GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/orgs/{orgID}/members"
@@ -1367,7 +1547,7 @@ func (a *OrganizationsApiService) PostOrgsIDMembersExecute(r ApiPostOrgsIDMember
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.addResourceMemberRequestBody == nil {
-		return localVarReturnValue, reportError("addResourceMemberRequestBody is required and must be specified")
+		return localVarReturnValue, nil, reportError("addResourceMemberRequestBody is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -1394,12 +1574,12 @@ func (a *OrganizationsApiService) PostOrgsIDMembersExecute(r ApiPostOrgsIDMember
 	localVarPostBody = r.addResourceMemberRequestBody
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -1413,12 +1593,12 @@ func (a *OrganizationsApiService) PostOrgsIDMembersExecute(r ApiPostOrgsIDMember
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -1428,22 +1608,22 @@ func (a *OrganizationsApiService) PostOrgsIDMembersExecute(r ApiPostOrgsIDMember
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, newErr
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, _fmt.Errorf("%s%w", errorPrefix, err)
+		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 	}
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
@@ -1451,8 +1631,8 @@ func (a *OrganizationsApiService) PostOrgsIDMembersExecute(r ApiPostOrgsIDMember
 			body:  localVarBody,
 			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
 		}
-		return localVarReturnValue, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarReturnValue, nil
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

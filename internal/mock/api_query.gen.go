@@ -92,3 +92,19 @@ func (mr *MockQueryApiMockRecorder) PostQueryExecute(arg0 interface{}) *gomock.C
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostQueryExecute", reflect.TypeOf((*MockQueryApi)(nil).PostQueryExecute), arg0)
 }
+
+// PostQueryExecuteWithHttpInfo mocks base method.
+func (m *MockQueryApi) PostQueryExecuteWithHttpInfo(arg0 api.ApiPostQueryRequest) (*http.Response, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostQueryExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// PostQueryExecuteWithHttpInfo indicates an expected call of PostQueryExecuteWithHttpInfo.
+func (mr *MockQueryApiMockRecorder) PostQueryExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostQueryExecuteWithHttpInfo", reflect.TypeOf((*MockQueryApi)(nil).PostQueryExecuteWithHttpInfo), arg0)
+}

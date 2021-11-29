@@ -52,6 +52,13 @@ type WriteApi interface {
 	 */
 	PostWriteExecute(r ApiPostWriteRequest) error
 
+	/*
+	 * PostWriteExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	PostWriteExecuteWithHttpInfo(r ApiPostWriteRequest) (*_nethttp.Response, error)
+
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
 	// servers.
@@ -175,6 +182,10 @@ func (r ApiPostWriteRequest) Execute() error {
 	return r.ApiService.PostWriteExecute(r)
 }
 
+func (r ApiPostWriteRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PostWriteExecuteWithHttpInfo(r)
+}
+
 /*
  * PostWrite Write data
  * Writes data to a bucket.
@@ -206,6 +217,16 @@ func (a *WriteApiService) PostWrite(ctx _context.Context) ApiPostWriteRequest {
  * Execute executes the request
  */
 func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
+	_, err := a.PostWriteExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *WriteApiService) PostWriteExecuteWithHttpInfo(r ApiPostWriteRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -216,7 +237,7 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WriteApiService.PostWrite")
 	if err != nil {
-		return GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/write"
@@ -225,13 +246,13 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 	if r.org == nil {
-		return reportError("org is required and must be specified")
+		return nil, reportError("org is required and must be specified")
 	}
 	if r.bucket == nil {
-		return reportError("bucket is required and must be specified")
+		return nil, reportError("bucket is required and must be specified")
 	}
 	if r.body == nil {
-		return reportError("body is required and must be specified")
+		return nil, reportError("body is required and must be specified")
 	}
 
 	localVarQueryParams.Add("org", parameterToString(*r.org, ""))
@@ -278,12 +299,12 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 	localVarPostBody = r.body
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return err
+		return localVarHTTPResponse, err
 	}
 
 	var errorPrefix string
@@ -297,12 +318,12 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return _fmt.Errorf("%s%w", errorPrefix, err)
+			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
 		}
 		newErr := GenericOpenAPIError{
 			body:  localVarBody,
@@ -313,66 +334,66 @@ func (a *WriteApiService) PostWriteExecute(r ApiPostWriteRequest) error {
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 413 {
 			var v LineProtocolLengthError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 500 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return newErr
+				return localVarHTTPResponse, newErr
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	return nil
+	return localVarHTTPResponse, nil
 }
