@@ -245,6 +245,13 @@ func (c *APIClient) callAPI(request *http.Request) (*http.Response, error) {
 		}
 		log.Printf("\n%s\n", string(dump))
 	}
+	if resp.Header.Get("trace-sampled") == "true" {
+		tracePrefix := "trace-id: "
+		if prefix, found := os.LookupEnv("INFLUX_CLI_TRACE_PRINT_PREFIX"); found {
+			tracePrefix = prefix
+		}
+		fmt.Fprintf(os.Stderr, "%s%s\n", tracePrefix, resp.Header.Get("trace-id"))
+	}
 	return resp, err
 }
 

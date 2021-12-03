@@ -37,6 +37,7 @@ func NewAPIConfig(params ConfigParams) *Configuration {
 		// use codegen'd logic to set the header on every HTTP request. Early versions of the CLI
 		// used that technique, and we found it to be error-prone and easy to forget during testing.
 		apiConfig.DefaultHeader["Zap-Trace-Span"] = *params.TraceId
+		apiConfig.DefaultHeader["influx-debug-id"] = *params.TraceId
 	}
 	apiConfig.Debug = params.Debug
 
