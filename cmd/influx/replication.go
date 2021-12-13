@@ -10,7 +10,6 @@ func newReplicationCmd() cli.Command {
 	return cli.Command{
 		Name:   "replication",
 		Usage:  "Replication stream management commands",
-		Hidden: true, // Remove this line when all subcommands are completed
 		Before: middleware.NoArgs,
 		Subcommands: []cli.Command{
 			newReplicationCreateCmd(),
