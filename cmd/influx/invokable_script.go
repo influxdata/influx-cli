@@ -251,7 +251,7 @@ func newInvokableScriptInvokeCommand() cli.Command {
 
 	return cli.Command{
 		Name:   "invoke",
-		Usage:  "Invoke a script by ID, with parameters provided as JSON.",
+		Usage:  "Invoke a script by ID, with parameters provided as JSON",
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags: append(
 			commonFlags(),
