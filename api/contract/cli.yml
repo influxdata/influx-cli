@@ -124,7 +124,7 @@ paths:
   /scripts/{scriptID}:
     $ref: "./openapi/src/svc/invocable-scripts/paths/scripts_scriptID.yml"
   /scripts/{scriptID}/invoke:
-    $ref: "./openapi/src/svc/invocable-scripts/paths/scripts_scriptID_invoke.yml"
+    $ref: "./overrides/paths/scripts_scriptID_invoke.yml"
 components:
   parameters:
     TraceSpan:
@@ -464,6 +464,6 @@ components:
     ScriptInvocationParams:
       $ref: "./openapi/src/svc/invocable-scripts/schemas/ScriptInvocationParams.yml"
     ScriptHTTPResponseData:
-      $ref: "./openapi/src/svc/invocable-scripts/schemas/ScriptHTTPResponseData.yml"
+      $ref: "./overrides/schemas/ScriptHTTPResponseData.yml"
     ScriptLanguage:
       $ref: "./openapi/src/svc/invocable-scripts/schemas/ScriptLanguage.yml"

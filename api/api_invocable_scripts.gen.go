@@ -147,17 +147,17 @@ type InvocableScriptsApi interface {
 
 	/*
 	 * PostScriptsIDInvokeExecute executes the request
-	 * @return string
+	 * @return *os.File
 	 */
-	PostScriptsIDInvokeExecute(r ApiPostScriptsIDInvokeRequest) (string, error)
+	PostScriptsIDInvokeExecute(r ApiPostScriptsIDInvokeRequest) (*_nethttp.Response, error)
 
 	/*
 	 * PostScriptsIDInvokeExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
 	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
 	 * content should be achieved through the returned response model if applicable.
-	 * @return string
+	 * @return *os.File
 	 */
-	PostScriptsIDInvokeExecuteWithHttpInfo(r ApiPostScriptsIDInvokeRequest) (string, *_nethttp.Response, error)
+	PostScriptsIDInvokeExecuteWithHttpInfo(r ApiPostScriptsIDInvokeRequest) (*_nethttp.Response, *_nethttp.Response, error)
 
 	// Sets additional descriptive text in the error message if any request in
 	// this API fails, indicating that it is intended to be used only on OSS
@@ -991,11 +991,11 @@ func (r ApiPostScriptsIDInvokeRequest) GetScriptInvocationParams() *ScriptInvoca
 	return r.scriptInvocationParams
 }
 
-func (r ApiPostScriptsIDInvokeRequest) Execute() (string, error) {
+func (r ApiPostScriptsIDInvokeRequest) Execute() (*_nethttp.Response, error) {
 	return r.ApiService.PostScriptsIDInvokeExecute(r)
 }
 
-func (r ApiPostScriptsIDInvokeRequest) ExecuteWithHttpInfo() (string, *_nethttp.Response, error) {
+func (r ApiPostScriptsIDInvokeRequest) ExecuteWithHttpInfo() (*_nethttp.Response, *_nethttp.Response, error) {
 	return r.ApiService.PostScriptsIDInvokeExecuteWithHttpInfo(r)
 }
 
@@ -1016,9 +1016,9 @@ func (a *InvocableScriptsApiService) PostScriptsIDInvoke(ctx _context.Context, s
 
 /*
  * Execute executes the request
- * @return string
+ * @return *os.File
  */
-func (a *InvocableScriptsApiService) PostScriptsIDInvokeExecute(r ApiPostScriptsIDInvokeRequest) (string, error) {
+func (a *InvocableScriptsApiService) PostScriptsIDInvokeExecute(r ApiPostScriptsIDInvokeRequest) (*_nethttp.Response, error) {
 	returnVal, _, err := a.PostScriptsIDInvokeExecuteWithHttpInfo(r)
 	return returnVal, err
 }
@@ -1027,16 +1027,16 @@ func (a *InvocableScriptsApiService) PostScriptsIDInvokeExecute(r ApiPostScripts
  * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
  * returned HTTP response as it will have already been read and closed; access to the response body content should be
  * achieved through the returned response model if applicable.
- * @return string
+ * @return *os.File
  */
-func (a *InvocableScriptsApiService) PostScriptsIDInvokeExecuteWithHttpInfo(r ApiPostScriptsIDInvokeRequest) (string, *_nethttp.Response, error) {
+func (a *InvocableScriptsApiService) PostScriptsIDInvokeExecuteWithHttpInfo(r ApiPostScriptsIDInvokeRequest) (*_nethttp.Response, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  string
+		localVarReturnValue  *_nethttp.Response
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvocableScriptsApiService.PostScriptsIDInvoke")
@@ -1113,24 +1113,7 @@ func (a *InvocableScriptsApiService) PostScriptsIDInvokeExecuteWithHttpInfo(r Ap
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	body, err := GunzipIfNeeded(localVarHTTPResponse)
-	if err != nil {
-		body.Close()
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
-	}
-	localVarBody, err := _io.ReadAll(body)
-	body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
-	}
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
+	localVarReturnValue = localVarHTTPResponse
 
 	return localVarReturnValue, localVarHTTPResponse, nil
 }

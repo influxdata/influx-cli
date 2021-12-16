@@ -168,7 +168,8 @@ func (c Client) Invoke(ctx context.Context, params *InvokeParams) error {
 		}
 	}
 
-	// If the parameters JSON included the "params" key, drop it
+	// If the parameters JSON included the "params" key, use only the value of params since the "params" json key is set
+	// by the generated client.
 	if _, ok := sParams["params"]; ok {
 		v, ok := sParams["params"].(map[string]interface{})
 		if !ok {
@@ -183,8 +184,9 @@ func (c Client) Invoke(ctx context.Context, params *InvokeParams) error {
 	if err != nil {
 		return fmt.Errorf("failed to invoke script %q: %w", params.ID, err)
 	}
+	defer resp.Body.Close()
 
-	return c.PrintQueryResults(io.NopCloser(strings.NewReader(resp)), c.StdIO)
+	return c.PrintQueryResults(resp.Body, c.StdIO)
 }
 
 // printScriptOnly prints the script string directly
