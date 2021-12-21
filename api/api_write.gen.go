@@ -30,13 +30,16 @@ type WriteApi interface {
 			 * Writes data to a bucket.
 
 		To write data into InfluxDB, you need the following:
-		- **organization** – _See [View organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/view-orgs/#view-your-organization-id) for instructions on viewing your organization ID._
+
+		- **organization name or ID** – _See [View organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/view-orgs/#view-your-organization-id) for instructions on viewing your organization ID._
 		- **bucket** – _See [View buckets]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/view-buckets/) for
 		 instructions on viewing your bucket ID._
 		- **API token** – _See [View tokens]({{% INFLUXDB_DOCS_URL %}}/security/tokens/view-tokens/)
 		 for instructions on viewing your API token._
 		- **InfluxDB URL** – _See [InfluxDB URLs]({{% INFLUXDB_DOCS_URL %}}/reference/urls/)_.
 		- data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/line-protocol) format.
+
+		InfluxDB Cloud enforces rate and size limits different from InfluxDB OSS. For details, see Responses.
 
 		For more information and examples, see the following:
 		- [Write data with the InfluxDB API]({{% INFLUXDB_DOCS_URL %}}/write-data/developer-tools/api).
@@ -191,13 +194,16 @@ func (r ApiPostWriteRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
  * Writes data to a bucket.
 
 To write data into InfluxDB, you need the following:
-- **organization** – _See [View organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/view-orgs/#view-your-organization-id) for instructions on viewing your organization ID._
+
+- **organization name or ID** – _See [View organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/view-orgs/#view-your-organization-id) for instructions on viewing your organization ID._
 - **bucket** – _See [View buckets]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/view-buckets/) for
  instructions on viewing your bucket ID._
 - **API token** – _See [View tokens]({{% INFLUXDB_DOCS_URL %}}/security/tokens/view-tokens/)
  for instructions on viewing your API token._
 - **InfluxDB URL** – _See [InfluxDB URLs]({{% INFLUXDB_DOCS_URL %}}/reference/urls/)_.
 - data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/line-protocol) format.
+
+InfluxDB Cloud enforces rate and size limits different from InfluxDB OSS. For details, see Responses.
 
 For more information and examples, see the following:
 - [Write data with the InfluxDB API]({{% INFLUXDB_DOCS_URL %}}/write-data/developer-tools/api).
@@ -273,7 +279,7 @@ func (a *WriteApiService) PostWriteExecuteWithHttpInfo(r ApiPostWriteRequest) (*
 	}
 
 	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
+	localVarHTTPHeaderAccepts := []string{"application/json", "text/html"}
 
 	// set Accept header
 	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)

@@ -648,18 +648,18 @@ func (a *TelegrafsApiService) GetTelegrafsIDExecuteWithHttpInfo(r ApiGetTelegraf
 }
 
 type ApiPostTelegrafsRequest struct {
-	ctx             _context.Context
-	ApiService      TelegrafsApi
-	telegrafRequest *TelegrafRequest
-	zapTraceSpan    *string
+	ctx                   _context.Context
+	ApiService            TelegrafsApi
+	telegrafPluginRequest *TelegrafPluginRequest
+	zapTraceSpan          *string
 }
 
-func (r ApiPostTelegrafsRequest) TelegrafRequest(telegrafRequest TelegrafRequest) ApiPostTelegrafsRequest {
-	r.telegrafRequest = &telegrafRequest
+func (r ApiPostTelegrafsRequest) TelegrafPluginRequest(telegrafPluginRequest TelegrafPluginRequest) ApiPostTelegrafsRequest {
+	r.telegrafPluginRequest = &telegrafPluginRequest
 	return r
 }
-func (r ApiPostTelegrafsRequest) GetTelegrafRequest() *TelegrafRequest {
-	return r.telegrafRequest
+func (r ApiPostTelegrafsRequest) GetTelegrafPluginRequest() *TelegrafPluginRequest {
+	return r.telegrafPluginRequest
 }
 
 func (r ApiPostTelegrafsRequest) ZapTraceSpan(zapTraceSpan string) ApiPostTelegrafsRequest {
@@ -725,8 +725,8 @@ func (a *TelegrafsApiService) PostTelegrafsExecuteWithHttpInfo(r ApiPostTelegraf
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
-	if r.telegrafRequest == nil {
-		return localVarReturnValue, nil, reportError("telegrafRequest is required and must be specified")
+	if r.telegrafPluginRequest == nil {
+		return localVarReturnValue, nil, reportError("telegrafPluginRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -750,7 +750,7 @@ func (a *TelegrafsApiService) PostTelegrafsExecuteWithHttpInfo(r ApiPostTelegraf
 		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
 	// body params
-	localVarPostBody = r.telegrafRequest
+	localVarPostBody = r.telegrafPluginRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err

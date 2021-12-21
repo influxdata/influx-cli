@@ -19,19 +19,16 @@ type LineProtocolLengthError struct {
 	Code LineProtocolLengthErrorCode `json:"code" yaml:"code"`
 	// Message is a human-readable message.
 	Message string `json:"message" yaml:"message"`
-	// Max length in bytes for a body of line-protocol.
-	MaxLength int32 `json:"maxLength" yaml:"maxLength"`
 }
 
 // NewLineProtocolLengthError instantiates a new LineProtocolLengthError object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewLineProtocolLengthError(code LineProtocolLengthErrorCode, message string, maxLength int32) *LineProtocolLengthError {
+func NewLineProtocolLengthError(code LineProtocolLengthErrorCode, message string) *LineProtocolLengthError {
 	this := LineProtocolLengthError{}
 	this.Code = code
 	this.Message = message
-	this.MaxLength = maxLength
 	return &this
 }
 
@@ -91,30 +88,6 @@ func (o *LineProtocolLengthError) SetMessage(v string) {
 	o.Message = v
 }
 
-// GetMaxLength returns the MaxLength field value
-func (o *LineProtocolLengthError) GetMaxLength() int32 {
-	if o == nil {
-		var ret int32
-		return ret
-	}
-
-	return o.MaxLength
-}
-
-// GetMaxLengthOk returns a tuple with the MaxLength field value
-// and a boolean to check if the value has been set.
-func (o *LineProtocolLengthError) GetMaxLengthOk() (*int32, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.MaxLength, true
-}
-
-// SetMaxLength sets field value
-func (o *LineProtocolLengthError) SetMaxLength(v int32) {
-	o.MaxLength = v
-}
-
 func (o LineProtocolLengthError) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
@@ -122,9 +95,6 @@ func (o LineProtocolLengthError) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["message"] = o.Message
-	}
-	if true {
-		toSerialize["maxLength"] = o.MaxLength
 	}
 	return json.Marshal(toSerialize)
 }

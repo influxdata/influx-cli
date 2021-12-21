@@ -12,7 +12,7 @@ paths:
   /setup:
     $ref: "./openapi/src/common/paths/setup.yml"
   /write:
-    $ref: "./openapi/src/oss/paths/write.yml"
+    $ref: "./openapi/src/common/paths/write.yml"
   /buckets:
     $ref: "./openapi/src/common/paths/buckets.yml"
   /buckets/{bucketID}:
@@ -291,6 +291,8 @@ components:
       $ref: "./openapi/src/common/schemas/Telegrafs.yml"
     TelegrafRequest:
       $ref: "./openapi/src/common/schemas/TelegrafRequest.yml"
+    TelegrafPluginRequest:
+      $ref: "./openapi/src/common/schemas/TelegrafPluginRequest.yml"
     Telegraf:
       $ref: "./openapi/src/common/schemas/Telegraf.yml"
     Dashboards:

@@ -65,14 +65,14 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		return err
 	}
 
-	newTelegraf := api.TelegrafRequest{
+	newTelegraf := api.TelegrafPluginRequest{
 		Name:        &params.Name,
 		Description: &params.Desc,
 		Config:      &params.Config,
 		OrgID:       &orgID,
 	}
 
-	graf, err := c.PostTelegrafs(ctx).TelegrafRequest(newTelegraf).Execute()
+	graf, err := c.PostTelegrafs(ctx).TelegrafPluginRequest(newTelegraf).Execute()
 	if err != nil {
 		return fmt.Errorf("failed to create telegraf config %q: %w", params.Name, err)
 	}
