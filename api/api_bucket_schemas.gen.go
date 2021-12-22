@@ -115,30 +115,10 @@ type BucketSchemasApi interface {
 	 * @return MeasurementSchema
 	 */
 	UpdateMeasurementSchemaExecuteWithHttpInfo(r ApiUpdateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
-
-	// Sets additional descriptive text in the error message if any request in
-	// this API fails, indicating that it is intended to be used only on OSS
-	// servers.
-	OnlyOSS() BucketSchemasApi
-
-	// Sets additional descriptive text in the error message if any request in
-	// this API fails, indicating that it is intended to be used only on cloud
-	// servers.
-	OnlyCloud() BucketSchemasApi
 }
 
 // BucketSchemasApiService BucketSchemasApi service
 type BucketSchemasApiService service
-
-func (a *BucketSchemasApiService) OnlyOSS() BucketSchemasApi {
-	a.isOnlyOSS = true
-	return a
-}
-
-func (a *BucketSchemasApiService) OnlyCloud() BucketSchemasApi {
-	a.isOnlyCloud = true
-	return a
-}
 
 type ApiCreateMeasurementSchemaRequest struct {
 	ctx                            _context.Context
@@ -275,28 +255,25 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecuteWithHttpInfo(r A
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -313,19 +290,19 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecuteWithHttpInfo(r A
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
+	newErr.body = localVarBody
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
-		}
+		newErr.error = err.Error()
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
@@ -468,47 +445,44 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecuteWithHttpInfo(r ApiG
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
+	newErr.body = localVarBody
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
-		}
+		newErr.error = err.Error()
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
@@ -651,28 +625,25 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecuteWithHttpInfo(r Api
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -689,19 +660,19 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecuteWithHttpInfo(r Api
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
+	newErr.body = localVarBody
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
-		}
+		newErr.error = err.Error()
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
@@ -855,28 +826,25 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecuteWithHttpInfo(r A
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -893,19 +861,19 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecuteWithHttpInfo(r A
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
+	newErr.body = localVarBody
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
-		}
+		newErr.error = err.Error()
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 

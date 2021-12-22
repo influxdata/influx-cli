@@ -15,7 +15,7 @@ func newPingCmd() cli.Command {
 		Action: func(ctx *cli.Context) error {
 			client := ping.Client{
 				CLI:       getCLI(ctx),
-				HealthApi: getAPINoToken(ctx).HealthApi.OnlyOSS(),
+				HealthApi: getAPINoToken(ctx).HealthApi,
 			}
 			return client.Ping(getContext(ctx))
 		},

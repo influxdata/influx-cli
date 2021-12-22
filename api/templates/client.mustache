@@ -562,14 +562,20 @@ func strlen(s string) int {
 }
 
 // GenericOpenAPIError Provides access to the body, error and model on returned errors.
+// It also provides additional information about the HTTP response specific for the influx-cli.
 type GenericOpenAPIError struct {
 	body []byte
 	error string
 	model ApiError
+	buildHeader string
 }
 
 func (e GenericOpenAPIError) Body() []byte {
 	return e.body
+}
+
+func (e GenericOpenAPIError) BuildHeader() string {
+	return e.buildHeader
 }
 
 // Error returns non-empty string if there was an error.

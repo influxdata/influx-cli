@@ -61,30 +61,10 @@ type WriteApi interface {
 	 * content should be achieved through the returned response model if applicable.
 	 */
 	PostWriteExecuteWithHttpInfo(r ApiPostWriteRequest) (*_nethttp.Response, error)
-
-	// Sets additional descriptive text in the error message if any request in
-	// this API fails, indicating that it is intended to be used only on OSS
-	// servers.
-	OnlyOSS() WriteApi
-
-	// Sets additional descriptive text in the error message if any request in
-	// this API fails, indicating that it is intended to be used only on cloud
-	// servers.
-	OnlyCloud() WriteApi
 }
 
 // WriteApiService WriteApi service
 type WriteApiService service
-
-func (a *WriteApiService) OnlyOSS() WriteApi {
-	a.isOnlyOSS = true
-	return a
-}
-
-func (a *WriteApiService) OnlyCloud() WriteApi {
-	a.isOnlyCloud = true
-	return a
-}
 
 type ApiPostWriteRequest struct {
 	ctx             _context.Context
@@ -313,28 +293,25 @@ func (a *WriteApiService) PostWriteExecuteWithHttpInfo(r ApiPostWriteRequest) (*
 		return localVarHTTPResponse, err
 	}
 
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
 		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v LineProtocolError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
