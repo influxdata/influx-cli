@@ -93,7 +93,8 @@ func parseSignedDuration(text string) (durations, error) {
 }
 
 // parseDuration will convert a string into components of the duration.
-func parseDuration(lit string) (durations, error) {
+func parseDuration(input string) (durations, error) {
+	lit := input
 	var values durations
 	for len(lit) > 0 {
 		n := 0
@@ -133,7 +134,7 @@ func parseDuration(lit string) (durations, error) {
 		}
 
 		if n == 0 {
-			return nil, fmt.Errorf("duration is missing a unit: %s", lit)
+			return nil, fmt.Errorf("duration is missing a unit: %s", input)
 		}
 
 		unit := lit[:n]
