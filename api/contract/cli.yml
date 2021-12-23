@@ -119,6 +119,8 @@ paths:
     $ref: "./openapi/src/oss/paths/replications_replicationID.yml"
   /replications/{replicationID}/validate:
     $ref: "./openapi/src/oss/paths/replications_replicationID_validate.yml"
+  /config:
+    $ref: "./openapi/src/oss/paths/config.yml"
 components:
   parameters:
     TraceSpan:
@@ -449,3 +451,5 @@ components:
       $ref: "./openapi/src/oss/schemas/ReplicationUpdateRequest.yml"
     Replications:
       $ref: "./openapi/src/oss/schemas/Replications.yml"
+    Config:
+      $ref: "./openapi/src/oss/schemas/Config.yml"

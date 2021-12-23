@@ -57,6 +57,7 @@ var app = cli.App{
 		newTemplateCmd(),
 		newRemoteCmd(),
 		newReplicationCmd(),
+		newServerConfigCommand(),
 	},
 	Before: middleware.WithBeforeFns(withContext(), middleware.NoArgs),
 }
