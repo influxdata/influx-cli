@@ -9,25 +9,9 @@ This repository decouples the `influx` CLI from the OSS `influxdb` codebase. Our
 2. Enable faster turn-around on fixes/features that only affect the CLI
 3. Allow the CLI to be built & released for a wider range of platforms than the server can support
 
-## Updating dependencies
-
-We use [`OpenAPITools/openapi-generator`](https://github.com/OpenAPITools/openapi-generator) to generate
-the underlying HTTP client used by the CLI.
-`influx-cli/openapi` is a Git submodule. If you change or update your branch, you may need to update and regenerate _openapi_.
-You'll need Docker running locally for the generate script to work.
-
-To update, run the following commands in your `influx-cli` repo:
-
-1. Update the _openapi_ Git submodule.
-
-   `git pull --recurse-submodules`
-   
-2. With Docker running locally, regenerate _openapi_.
-
-   `make openapi`
-
 ## Building the CLI
 
+Follow these steps to build the CLI. If you're updating your CLI build, see *Updating openapi* below.
 1. Clone this repo (influx-cli) and change to your _influx-cli_ directory.
 
    ```
@@ -35,19 +19,33 @@ To update, run the following commands in your `influx-cli` repo:
    cd influx-cli
    ```
    
-2. If you're building a different version or commit, you may need to update and rebuild the _openapi_ git submodule.
-
+2. Build the CLI. The `make` and `make influx` commands write the new binary to `bin/$(GOOS)/influx`.
+   
    ```
-   git pull --recurse-submodules
-   make openapi
+   make
    ```
    
-3. Build the CLI.
+### Updating openapi
+
+If you change or update your branch, you may also need to update `influx-cli/openapi` and regenerate the client code.
+`influx-cli/openapi` is a Git submodule that contains the underlying API contracts and client used by the CLI.
+We use [`OpenAPITools/openapi-generator`](https://github.com/OpenAPITools/openapi-generator) to generate
+the HTTP client.
+
+To update, run the following commands in your `influx-cli` repo:
+
+1. Update the _openapi_ Git submodule. The following command pulls the latest commits for the branch and all submodules.
+
+   `git pull --recurse-submodules`
    
-   `make` or `make influx`
+2. With [Docker](https://docs.docker.com/get-docker/) running locally, regenerate _openapi_.
 
-The `make` command writes the binary to `bin/$(GOOS)/influx`.
+   `make openapi`
+   
+3. Rebuild the CLI
 
+   `make`
+ 
 ## Running the CLI
 
 After building, use `influx -h` to see the list of available commands.
