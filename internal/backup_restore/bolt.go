@@ -44,7 +44,7 @@ type influxdbOrganizationSchema struct {
 // ExtractBucketMetadata reads a boltdb backed up from InfluxDB 2.0.x, converting a subset of the
 // metadata it contains into a set of 2.1.x bucket manifests.
 func ExtractBucketMetadata(boltPath string) ([]api.BucketMetadataManifest, error) {
-	db, err := bbolt.Open(boltPath, 0666, &bbolt.Options{ReadOnly: true, Timeout: 1 * time.Second})
+	db, err := bbolt.Open(boltPath, 0666, &bbolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		// Hack to give a slightly nicer error message for a known failure mode when bolt calls
 		// mmap on a file system that doesn't support the MAP_SHARED option.
