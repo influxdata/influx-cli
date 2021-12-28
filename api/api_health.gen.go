@@ -45,30 +45,10 @@ type HealthApi interface {
 	 * @return HealthCheck
 	 */
 	GetHealthExecuteWithHttpInfo(r ApiGetHealthRequest) (HealthCheck, *_nethttp.Response, error)
-
-	// Sets additional descriptive text in the error message if any request in
-	// this API fails, indicating that it is intended to be used only on OSS
-	// servers.
-	OnlyOSS() HealthApi
-
-	// Sets additional descriptive text in the error message if any request in
-	// this API fails, indicating that it is intended to be used only on cloud
-	// servers.
-	OnlyCloud() HealthApi
 }
 
 // HealthApiService HealthApi service
 type HealthApiService service
-
-func (a *HealthApiService) OnlyOSS() HealthApi {
-	a.isOnlyOSS = true
-	return a
-}
-
-func (a *HealthApiService) OnlyCloud() HealthApi {
-	a.isOnlyCloud = true
-	return a
-}
 
 type ApiGetHealthRequest struct {
 	ctx          _context.Context
@@ -170,28 +150,25 @@ func (a *HealthApiService) GetHealthExecuteWithHttpInfo(r ApiGetHealthRequest) (
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 503 {
 			var v HealthCheck
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -217,19 +194,19 @@ func (a *HealthApiService) GetHealthExecuteWithHttpInfo(r ApiGetHealthRequest) (
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
+	newErr.body = localVarBody
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
-		}
+		newErr.error = err.Error()
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 

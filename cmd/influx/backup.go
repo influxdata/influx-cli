@@ -52,8 +52,8 @@ Examples:
 			api := getAPI(ctx)
 			client := backup.Client{
 				CLI:       getCLI(ctx),
-				BackupApi: api.BackupApi.OnlyOSS(),
-				HealthApi: api.HealthApi.OnlyOSS(),
+				BackupApi: api.BackupApi,
+				HealthApi: api.HealthApi,
 			}
 			return client.Backup(getContext(ctx), &params)
 		},

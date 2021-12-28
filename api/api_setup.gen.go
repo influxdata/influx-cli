@@ -68,30 +68,10 @@ type SetupApi interface {
 	 * @return OnboardingResponse
 	 */
 	PostSetupExecuteWithHttpInfo(r ApiPostSetupRequest) (OnboardingResponse, *_nethttp.Response, error)
-
-	// Sets additional descriptive text in the error message if any request in
-	// this API fails, indicating that it is intended to be used only on OSS
-	// servers.
-	OnlyOSS() SetupApi
-
-	// Sets additional descriptive text in the error message if any request in
-	// this API fails, indicating that it is intended to be used only on cloud
-	// servers.
-	OnlyCloud() SetupApi
 }
 
 // SetupApiService SetupApi service
 type SetupApiService service
-
-func (a *SetupApiService) OnlyOSS() SetupApi {
-	a.isOnlyOSS = true
-	return a
-}
-
-func (a *SetupApiService) OnlyCloud() SetupApi {
-	a.isOnlyCloud = true
-	return a
-}
 
 type ApiGetSetupRequest struct {
 	ctx          _context.Context
@@ -194,47 +174,44 @@ func (a *SetupApiService) GetSetupExecuteWithHttpInfo(r ApiGetSetupRequest) (Inl
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
+	newErr.body = localVarBody
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
-		}
+		newErr.error = err.Error()
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
@@ -356,28 +333,25 @@ func (a *SetupApiService) PostSetupExecuteWithHttpInfo(r ApiPostSetupRequest) (O
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	var errorPrefix string
-	if a.isOnlyOSS {
-		errorPrefix = "InfluxDB OSS-only command failed: "
-	} else if a.isOnlyCloud {
-		errorPrefix = "InfluxDB Cloud-only command failed: "
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
 		body, err := GunzipIfNeeded(localVarHTTPResponse)
 		if err != nil {
 			body.Close()
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
-			return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, localVarHTTPResponse.Status),
-		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -392,19 +366,19 @@ func (a *SetupApiService) PostSetupExecuteWithHttpInfo(r ApiPostSetupRequest) (O
 	body, err := GunzipIfNeeded(localVarHTTPResponse)
 	if err != nil {
 		body.Close()
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 	localVarBody, err := _io.ReadAll(body)
 	body.Close()
 	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, _fmt.Errorf("%s%w", errorPrefix, err)
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
+	newErr.body = localVarBody
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {
-		newErr := GenericOpenAPIError{
-			body:  localVarBody,
-			error: _fmt.Sprintf("%s%s", errorPrefix, err.Error()),
-		}
+		newErr.error = err.Error()
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
