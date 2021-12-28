@@ -12,7 +12,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func TestMain_HostSpecificErrors(t *testing.T) {
+func TestApp_HostSpecificErrors(t *testing.T) {
 	tests := []struct {
 		name          string
 		commandMw     cli.BeforeFunc
