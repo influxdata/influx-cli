@@ -1,8 +1,10 @@
 project_name: influx-cli
 
-# Do not make github release
+# Do not make github release or generate a changelog
 release:
   disable: true
+changelog:
+  skip: true
 
 builds:
   - id: influx
@@ -87,3 +89,5 @@ blobs:
     bucket: dl.influxdata.com
     region: us-east-1
     folder: '{{if index .Env "IS_NIGHTLY"}}platform/nightlies/{{else}}influxdb/releases/{{end}}'
+    extra_files:
+      - glob: ./changelog_artifacts/CHANGELOG*.md

@@ -52,16 +52,22 @@ workflows:
       - test-prebuilt:
           name: test-linux-arm64
           executor: linux-arm64
+          os: linux
+          arch: arm64
           requires:
             - test-build-arm64-linux
       - test-prebuilt:
           name: test-mac
           executor: mac
+          os: darwin
+          arch: amd64
           requires:
             - test-build-amd64-darwin
       - test-prebuilt:
           name: test-windows
           executor: windows
+          os: windows
+          arch: amd64
           requires:
             - test-build-amd64-windows
   release-nightly:
@@ -73,6 +79,7 @@ workflows:
               only:
                 - main
     jobs:
+      - changelog
       - lint
       - check-openapi
       - test-race:
@@ -94,21 +101,28 @@ workflows:
       - test-prebuilt:
           name: test-linux-arm64
           executor: linux-arm64
+          os: linux
+          arch: arm64
           requires:
             - test-build-arm64-linux
       - test-prebuilt:
           name: test-mac
           executor: mac
+          os: darwin
+          arch: amd64
           requires:
             - test-build-amd64-darwin
       - test-prebuilt:
           name: test-windows
           executor: windows
+          os: windows
+          arch: amd64
           requires:
             - test-build-amd64-windows
       - release:
           is-nightly: true
           requires:
+            - changelog
             - lint
             - check-openapi
             - test-linux-amd64
@@ -117,6 +131,12 @@ workflows:
             - test-windows
   release-tag:
     jobs:
+      - changelog:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
       - lint:
           filters:
             branches:
@@ -163,6 +183,8 @@ workflows:
             tags:
               only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
           executor: linux-arm64
+          os: linux
+          arch: arm64
           requires:
             - test-build-arm64-linux
       - test-prebuilt:
@@ -173,6 +195,8 @@ workflows:
             tags:
               only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
           executor: mac
+          os: darwin
+          arch: amd64
           requires:
             - test-build-amd64-darwin
       - test-prebuilt:
@@ -183,6 +207,8 @@ workflows:
             tags:
               only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
           executor: windows
+          os: windows
+          arch: amd64
           requires:
             - test-build-amd64-windows
       - release:
@@ -193,6 +219,7 @@ workflows:
               only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
           is-nightly: false
           requires:
+            - changelog
             - lint
             - check-openapi
             - test-linux-amd64
@@ -282,6 +309,8 @@ jobs:
     executor: linux-amd64
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - setup
       - run:
           name: Import GPG key
@@ -323,16 +352,20 @@ jobs:
           command: |
             export GOOS=<< parameters.os >>
             export GOARCH=<< parameters.arch >>
-            ./scripts/ci/build-tests.sh ./test-bin
+            ./scripts/ci/build-tests.sh ./test-bin-"$GOOS"-"$GOARCH"
       - persist_to_workspace:
           root: .
           paths:
-            - ./test-bin
+            - ./test-bin*
 
   test-prebuilt:
     parameters:
       executor:
         type: executor
+      os:
+        type: string
+      arch:
+        type: string
     executor: << parameters.executor >>
     steps:
       - checkout
@@ -340,7 +373,7 @@ jobs:
           at: .
       - run:
           name: Run tests
-          command: ./scripts/ci/run-prebuilt-tests.sh $(pwd)/test-bin $(pwd)/test-results
+          command: ./scripts/ci/run-prebuilt-tests.sh $(pwd)/test-bin-<< parameters.os >>-<< parameters.arch >> $(pwd)/test-results
       - store_artifacts:
           path: ./test-results
           destination: raw-test-output
@@ -359,3 +392,29 @@ jobs:
           destination: raw-test-output
       - store_test_results:
           path: ./test-results
+
+  changelog:
+    docker:
+      - image: quay.io/influxdb/changelogger:a20523cf8594eb93920e74d0189d6602a76a6146
+    steps:
+      - checkout
+      - run:
+          name: Generate changelog
+          command: |
+            CHANGELOG_FILE_NAME="CHANGELOG-CLI"
+            if [ -n "<< pipeline.git.tag >>" ]; then
+              CHANGELOG_FILE_NAME="CHANGELOG-CLI-<< pipeline.git.tag >>"
+            fi
+
+            mkdir changelog_artifacts
+
+            echo -e "CHANGELOG for influx-cli commit ${CIRCLE_SHA1}\n" > changelog_artifacts/"$CHANGELOG_FILE_NAME".md
+            echo "In addition to the list of changes below, please also see the [official release notes](https://docs.influxdata.com/influxdb/latest/reference/release-notes/influx-cli/) for other important information about this release." >> changelog_artifacts/"$CHANGELOG_FILE_NAME".md
+            build-changelog-by-tags.sh HEAD v2.2.1 main >> changelog_artifacts/"$CHANGELOG_FILE_NAME".md
+            cat ./scripts/ci/CHANGELOG_frozen.md >> changelog_artifacts/"$CHANGELOG_FILE_NAME".md
+      - store_artifacts:
+          path: changelog_artifacts/
+      - persist_to_workspace:
+          root: .
+          paths:
+            - changelog_artifacts

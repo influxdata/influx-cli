@@ -11,6 +11,10 @@ dist/
 # Test binary, built with `go test -c`
 *.test
 
+# Directories mounted during the release process in CI
+test-bin-*/
+changelog_artifacts/
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
