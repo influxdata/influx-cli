@@ -87,7 +87,7 @@ func SourcesFromPath(path string, recur bool, encoding Encoding) ([]Source, erro
 		}
 
 		sources[i] = Source{
-			Name:     path,
+			Name:     strings.TrimSuffix(path, filepath.Ext(path)),
 			Encoding: encoding,
 			Open: func(context.Context) (io.ReadCloser, error) {
 				return os.Open(path)
