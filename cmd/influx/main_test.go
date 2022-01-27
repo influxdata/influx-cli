@@ -39,14 +39,14 @@ func TestApp_HostSpecificErrors(t *testing.T) {
 			commandMw:     middleware.OSSOnly,
 			svrBuild:      middleware.OSSBuildHeader,
 			svrResCode:    http.StatusServiceUnavailable,
-			wantErrString: fmt.Sprintf("%s\n", "Error: health check failed: 503 Service Unavailable: unavailable"),
+			wantErrString: fmt.Sprintf("%s\n", "Error: 503 Service Unavailable"),
 		},
 		{
 			name:          "Cloud command on Cloud host - with error",
 			commandMw:     middleware.CloudOnly,
 			svrBuild:      middleware.CloudBuildHeader,
 			svrResCode:    http.StatusServiceUnavailable,
-			wantErrString: fmt.Sprintf("%s\n", "Error: health check failed: 503 Service Unavailable: unavailable"),
+			wantErrString: fmt.Sprintf("%s\n", "Error: 503 Service Unavailable"),
 		},
 		{
 			name:          "OSS command on Cloud host - no error",
@@ -81,14 +81,14 @@ func TestApp_HostSpecificErrors(t *testing.T) {
 			commandMw:     nil,
 			svrBuild:      middleware.OSSBuildHeader,
 			svrResCode:    http.StatusServiceUnavailable,
-			wantErrString: fmt.Sprintf("%s\n", "Error: health check failed: 503 Service Unavailable: unavailable"),
+			wantErrString: fmt.Sprintf("%s\n", "Error: 503 Service Unavailable"),
 		},
 		{
 			name:          "Non-specific command on Cloud host - with error",
 			commandMw:     nil,
 			svrBuild:      middleware.CloudBuildHeader,
 			svrResCode:    http.StatusServiceUnavailable,
-			wantErrString: fmt.Sprintf("%s\n", "Error: health check failed: 503 Service Unavailable: unavailable"),
+			wantErrString: fmt.Sprintf("%s\n", "Error: 503 Service Unavailable"),
 		},
 		{
 			name:          "Non-specific command on OSS host - no error",
