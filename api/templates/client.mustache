@@ -580,10 +580,13 @@ func (e GenericOpenAPIError) BuildHeader() string {
 
 // Error returns non-empty string if there was an error.
 func (e GenericOpenAPIError) Error() string {
+	if e.error != "" {
+		return e.error
+	}
 	if e.model != nil {
 		return e.model.Error()
 	}
-	return e.error
+	panic("errorless GenericOpenAPIError used as an error!")
 }
 
 // Model returns the unpacked model of the error
