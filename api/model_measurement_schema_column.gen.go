@@ -14,7 +14,7 @@ import (
 	"encoding/json"
 )
 
-// MeasurementSchemaColumn Definition of a measurement column
+// MeasurementSchemaColumn Definition of a measurement schema column.
 type MeasurementSchemaColumn struct {
 	Name     string             `json:"name" yaml:"name"`
 	Type     ColumnSemanticType `json:"type" yaml:"type"`

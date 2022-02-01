@@ -35,7 +35,7 @@ func (svc localConfigsSVC) CreateConfig(cfg Config) (Config, error) {
 	if cfg.Name == "" {
 		return Config{}, &api.Error{
 			Code:    api.ERRORCODE_INVALID,
-			Message: "config name is empty",
+			Message: api.PtrString("config name is empty"),
 		}
 	}
 	cfgs, err := svc.ListConfigs()
@@ -45,7 +45,7 @@ func (svc localConfigsSVC) CreateConfig(cfg Config) (Config, error) {
 	if _, ok := cfgs[cfg.Name]; ok {
 		return Config{}, &api.Error{
 			Code:    api.ERRORCODE_CONFLICT,
-			Message: fmt.Sprintf("config %q already exists", cfg.Name),
+			Message: api.PtrString(fmt.Sprintf("config %q already exists", cfg.Name)),
 		}
 	}
 	cfgs[cfg.Name] = cfg
@@ -69,7 +69,7 @@ func (svc localConfigsSVC) DeleteConfig(name string) (Config, error) {
 	if !ok {
 		return Config{}, &api.Error{
 			Code:    api.ERRORCODE_NOT_FOUND,
-			Message: fmt.Sprintf("config %q is not found", name),
+			Message: api.PtrString(fmt.Sprintf("config %q is not found", name)),
 		}
 	}
 	delete(cfgs, name)
@@ -119,7 +119,7 @@ func (svc localConfigsSVC) UpdateConfig(up Config) (Config, error) {
 	if !ok {
 		return Config{}, &api.Error{
 			Code:    api.ERRORCODE_NOT_FOUND,
-			Message: fmt.Sprintf("config %q is not found", up.Name),
+			Message: api.PtrString(fmt.Sprintf("config %q is not found", up.Name)),
 		}
 	}
 	if up.Token != "" {
@@ -209,7 +209,7 @@ func blockBadName(cfgs Configs) error {
 		if _, ok := badNames[n]; ok {
 			return &api.Error{
 				Code:    api.ERRORCODE_INVALID,
-				Message: fmt.Sprintf("%q is not a valid config name", n),
+				Message: api.PtrString(fmt.Sprintf("%q is not a valid config name", n)),
 			}
 		}
 	}
@@ -238,7 +238,7 @@ func (s baseRW) parseActiveConfig(currentOrPrevious bool) (Config, error) {
 		} else if check {
 			return DefaultConfig, &api.Error{
 				Code:    api.ERRORCODE_CONFLICT,
-				Message: fmt.Sprintf("more than one %s activated configs found", previousText),
+				Message: api.PtrString(fmt.Sprintf("more than one %s activated configs found", previousText)),
 			}
 		}
 	}
@@ -247,7 +247,7 @@ func (s baseRW) parseActiveConfig(currentOrPrevious bool) (Config, error) {
 	}
 	return DefaultConfig, &api.Error{
 		Code:    api.ERRORCODE_NOT_FOUND,
-		Message: fmt.Sprintf("%s activated config is not found", previousText),
+		Message: api.PtrString(fmt.Sprintf("%s activated config is not found", previousText)),
 	}
 }
 

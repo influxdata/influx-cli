@@ -17,13 +17,13 @@ import (
 // LineProtocolError struct for LineProtocolError
 type LineProtocolError struct {
 	Code LineProtocolErrorCode `json:"code" yaml:"code"`
-	// Message is a human-readable message.
-	Message string `json:"message" yaml:"message"`
-	// Op describes the logical code operation during error. Useful for debugging.
-	Op string `json:"op" yaml:"op"`
-	// Err is a stack of errors that occurred during processing of the request. Useful for debugging.
-	Err string `json:"err" yaml:"err"`
-	// First line within sent body containing malformed data
+	// Human-readable message.
+	Message *string `json:"message,omitempty" yaml:"message,omitempty"`
+	// Describes the logical code operation when the error occurred. Useful for debugging.
+	Op *string `json:"op,omitempty" yaml:"op,omitempty"`
+	// Stack of errors that occurred during processing of the request. Useful for debugging.
+	Err *string `json:"err,omitempty" yaml:"err,omitempty"`
+	// First line in the request body that contains malformed data.
 	Line *int32 `json:"line,omitempty" yaml:"line,omitempty"`
 }
 
@@ -31,12 +31,9 @@ type LineProtocolError struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewLineProtocolError(code LineProtocolErrorCode, message string, op string, err string) *LineProtocolError {
+func NewLineProtocolError(code LineProtocolErrorCode) *LineProtocolError {
 	this := LineProtocolError{}
 	this.Code = code
-	this.Message = message
-	this.Op = op
-	this.Err = err
 	return &this
 }
 
@@ -72,76 +69,100 @@ func (o *LineProtocolError) SetCode(v LineProtocolErrorCode) {
 	o.Code = v
 }
 
-// GetMessage returns the Message field value
+// GetMessage returns the Message field value if set, zero value otherwise.
 func (o *LineProtocolError) GetMessage() string {
-	if o == nil {
+	if o == nil || o.Message == nil {
 		var ret string
 		return ret
 	}
-
-	return o.Message
+	return *o.Message
 }
 
-// GetMessageOk returns a tuple with the Message field value
+// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *LineProtocolError) GetMessageOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Message == nil {
 		return nil, false
 	}
-	return &o.Message, true
+	return o.Message, true
 }
 
-// SetMessage sets field value
+// HasMessage returns a boolean if a field has been set.
+func (o *LineProtocolError) HasMessage() bool {
+	if o != nil && o.Message != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetMessage gets a reference to the given string and assigns it to the Message field.
 func (o *LineProtocolError) SetMessage(v string) {
-	o.Message = v
+	o.Message = &v
 }
 
-// GetOp returns the Op field value
+// GetOp returns the Op field value if set, zero value otherwise.
 func (o *LineProtocolError) GetOp() string {
-	if o == nil {
+	if o == nil || o.Op == nil {
 		var ret string
 		return ret
 	}
-
-	return o.Op
+	return *o.Op
 }
 
-// GetOpOk returns a tuple with the Op field value
+// GetOpOk returns a tuple with the Op field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *LineProtocolError) GetOpOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Op == nil {
 		return nil, false
 	}
-	return &o.Op, true
+	return o.Op, true
 }
 
-// SetOp sets field value
+// HasOp returns a boolean if a field has been set.
+func (o *LineProtocolError) HasOp() bool {
+	if o != nil && o.Op != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetOp gets a reference to the given string and assigns it to the Op field.
 func (o *LineProtocolError) SetOp(v string) {
-	o.Op = v
+	o.Op = &v
 }
 
-// GetErr returns the Err field value
+// GetErr returns the Err field value if set, zero value otherwise.
 func (o *LineProtocolError) GetErr() string {
-	if o == nil {
+	if o == nil || o.Err == nil {
 		var ret string
 		return ret
 	}
-
-	return o.Err
+	return *o.Err
 }
 
-// GetErrOk returns a tuple with the Err field value
+// GetErrOk returns a tuple with the Err field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *LineProtocolError) GetErrOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Err == nil {
 		return nil, false
 	}
-	return &o.Err, true
+	return o.Err, true
 }
 
-// SetErr sets field value
+// HasErr returns a boolean if a field has been set.
+func (o *LineProtocolError) HasErr() bool {
+	if o != nil && o.Err != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetErr gets a reference to the given string and assigns it to the Err field.
 func (o *LineProtocolError) SetErr(v string) {
-	o.Err = v
+	o.Err = &v
 }
 
 // GetLine returns the Line field value if set, zero value otherwise.
@@ -181,13 +202,13 @@ func (o LineProtocolError) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["code"] = o.Code
 	}
-	if true {
+	if o.Message != nil {
 		toSerialize["message"] = o.Message
 	}
-	if true {
+	if o.Op != nil {
 		toSerialize["op"] = o.Op
 	}
-	if true {
+	if o.Err != nil {
 		toSerialize["err"] = o.Err
 	}
 	if o.Line != nil {

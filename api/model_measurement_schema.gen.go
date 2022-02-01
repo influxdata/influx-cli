@@ -15,15 +15,15 @@ import (
 	"time"
 )
 
-// MeasurementSchema The schema definition for a single measurement
+// MeasurementSchema Definition of a measurement schema.
 type MeasurementSchema struct {
 	Id string `json:"id" yaml:"id"`
-	// ID of organization that the measurement schema is associated with.
+	// ID of the organization that the measurement schema is associated with.
 	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
 	// ID of the bucket that the measurement schema is associated with.
 	BucketID *string `json:"bucketID,omitempty" yaml:"bucketID,omitempty"`
 	Name     string  `json:"name" yaml:"name"`
-	// An ordered collection of column definitions
+	// Ordered collection of column definitions.
 	Columns   []MeasurementSchemaColumn `json:"columns" yaml:"columns"`
 	CreatedAt time.Time                 `json:"createdAt" yaml:"createdAt"`
 	UpdatedAt time.Time                 `json:"updatedAt" yaml:"updatedAt"`
