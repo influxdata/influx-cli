@@ -17,7 +17,7 @@ import (
 // LineProtocolLengthError struct for LineProtocolLengthError
 type LineProtocolLengthError struct {
 	Code LineProtocolLengthErrorCode `json:"code" yaml:"code"`
-	// Message is a human-readable message.
+	// Human-readable message.
 	Message string `json:"message" yaml:"message"`
 }
 

@@ -16,17 +16,17 @@ import (
 
 // DBRPCreate struct for DBRPCreate
 type DBRPCreate struct {
-	// the organization ID that owns this mapping.
+	// ID of the organization that owns this mapping.
 	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
-	// the organization that owns this mapping.
+	// Name of the organization that owns this mapping.
 	Org *string `json:"org,omitempty" yaml:"org,omitempty"`
-	// the bucket ID used as target for the translation.
+	// ID of the bucket used as the target for the translation.
 	BucketID string `json:"bucketID" yaml:"bucketID"`
 	// InfluxDB v1 database
 	Database string `json:"database" yaml:"database"`
 	// InfluxDB v1 retention policy
 	RetentionPolicy string `json:"retention_policy" yaml:"retention_policy"`
-	// Specify if this mapping represents the default retention policy for the database specificed.
+	// Mapping represents the default retention policy for the database specified.
 	Default *bool `json:"default,omitempty" yaml:"default,omitempty"`
 }
 

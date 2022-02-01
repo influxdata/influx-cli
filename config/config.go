@@ -66,7 +66,7 @@ func (cfgs Configs) switchActive(name string) error {
 	if _, ok := cfgs[name]; !ok {
 		return &api.Error{
 			Code:    api.ERRORCODE_NOT_FOUND,
-			Message: fmt.Sprintf("config %q is not found", name),
+			Message: api.PtrString(fmt.Sprintf("config %q is not found", name)),
 		}
 	}
 	for k, v := range cfgs {

@@ -14,10 +14,10 @@ import (
 	"encoding/json"
 )
 
-// MeasurementSchemaCreateRequest Create a new measurement schema
+// MeasurementSchemaCreateRequest Create a new measurement schema.
 type MeasurementSchemaCreateRequest struct {
 	Name string `json:"name" yaml:"name"`
-	// An ordered collection of column definitions
+	// Ordered collection of column definitions.
 	Columns []MeasurementSchemaColumn `json:"columns" yaml:"columns"`
 }
 

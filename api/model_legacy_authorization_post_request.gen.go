@@ -16,7 +16,7 @@ import (
 
 // LegacyAuthorizationPostRequest struct for LegacyAuthorizationPostRequest
 type LegacyAuthorizationPostRequest struct {
-	// If inactive the token is inactive and requests using the token will be rejected.
+	// Status of the token. If `inactive`, requests using the token will be rejected.
 	Status *string `json:"status,omitempty" yaml:"status,omitempty"`
 	// A description of the token.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`

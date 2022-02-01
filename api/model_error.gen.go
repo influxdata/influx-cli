@@ -17,11 +17,11 @@ import (
 // Error struct for Error
 type Error struct {
 	Code ErrorCode `json:"code" yaml:"code"`
-	// message is a human-readable message.
-	Message string `json:"message" yaml:"message"`
-	// op describes the logical code operation during error. Useful for debugging.
+	// Human-readable message.
+	Message *string `json:"message,omitempty" yaml:"message,omitempty"`
+	// Describes the logical code operation when the error occurred. Useful for debugging.
 	Op *string `json:"op,omitempty" yaml:"op,omitempty"`
-	// err is a stack of errors that occurred during processing of the request. Useful for debugging.
+	// Stack of errors that occurred during processing of the request. Useful for debugging.
 	Err *string `json:"err,omitempty" yaml:"err,omitempty"`
 }
 
@@ -29,10 +29,9 @@ type Error struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewError(code ErrorCode, message string) *Error {
+func NewError(code ErrorCode) *Error {
 	this := Error{}
 	this.Code = code
-	this.Message = message
 	return &this
 }
 
@@ -68,28 +67,36 @@ func (o *Error) SetCode(v ErrorCode) {
 	o.Code = v
 }
 
-// GetMessage returns the Message field value
+// GetMessage returns the Message field value if set, zero value otherwise.
 func (o *Error) GetMessage() string {
-	if o == nil {
+	if o == nil || o.Message == nil {
 		var ret string
 		return ret
 	}
-
-	return o.Message
+	return *o.Message
 }
 
-// GetMessageOk returns a tuple with the Message field value
+// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *Error) GetMessageOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Message == nil {
 		return nil, false
 	}
-	return &o.Message, true
+	return o.Message, true
 }
 
-// SetMessage sets field value
+// HasMessage returns a boolean if a field has been set.
+func (o *Error) HasMessage() bool {
+	if o != nil && o.Message != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetMessage gets a reference to the given string and assigns it to the Message field.
 func (o *Error) SetMessage(v string) {
-	o.Message = v
+	o.Message = &v
 }
 
 // GetOp returns the Op field value if set, zero value otherwise.
@@ -161,7 +168,7 @@ func (o Error) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["code"] = o.Code
 	}
-	if true {
+	if o.Message != nil {
 		toSerialize["message"] = o.Message
 	}
 	if o.Op != nil {
