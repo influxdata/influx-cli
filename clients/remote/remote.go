@@ -55,7 +55,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	// send post request
 	res, err := c.PostRemoteConnection(ctx).RemoteConnectionCreationRequest(body).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to create remote connection %q: %w", params.Name, err)
+		return fmt.Errorf("failed to create remote connection %q in local InfluxDB: %w", params.Name, err)
 	}
 
 	// print confirmation of new connection
