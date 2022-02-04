@@ -29,7 +29,13 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to find local org id: %w", err)
+	}
+
+	// Test that the local org can be properly found for better error displaying
+	_, err = c.OrganizationsApi.GetOrgs(ctx).OrgID(orgID).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to lookup local org: %w", err)
 	}
 
 	// set up a struct with required params
