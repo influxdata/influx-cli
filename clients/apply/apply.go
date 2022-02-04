@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"reflect"
 	"strconv"
 	"time"
 
@@ -33,7 +32,6 @@ type Params struct {
 	Filters []ResourceFilter
 
 	Force              bool
-	OverwriteConflicts bool
 	Quiet              bool
 	RenderTableColors  bool
 	RenderTableBorders bool
@@ -114,14 +112,10 @@ func (c Client) Apply(ctx context.Context, params *Params) error {
 		}
 	}
 
-	if c.StdIO.IsInteractive() && !params.Force {
+	if !params.Force {
 		if confirmed := c.StdIO.GetConfirm("Confirm application of the above resources"); !confirmed {
 			return errors.New("aborted application of template")
 		}
-	}
-
-	if !params.OverwriteConflicts && hasConflicts(res.Diff) {
-		return errors.New("template has conflicts with existing resources and cannot safely apply")
 	}
 
 	// Flip the dry-run flag and apply the template.
@@ -167,10 +161,10 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if l.Old != nil {
 				oldRow = buildRow(l.TemplateMetaName, hexId, *l.Old)
 			}
-			if l.New != nil {
+			if l.New != nil && l.StateStatus != "remove" {
 				newRow = buildRow(l.TemplateMetaName, hexId, *l.New)
 			}
-			printer.AppendDiff(oldRow, newRow)
+			printer.AppendDiff(oldRow, newRow, false)
 		}
 		printer.Render()
 		_, _ = c.StdIO.Write([]byte("\n"))
@@ -199,10 +193,10 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if b.Old != nil {
 				oldRow = buildRow(b.TemplateMetaName, hexId, *b.Old)
 			}
-			if b.New != nil {
+			if b.New != nil && b.StateStatus != "remove" {
 				newRow = buildRow(b.TemplateMetaName, hexId, *b.New)
 			}
-			printer.AppendDiff(oldRow, newRow)
+			printer.AppendDiff(oldRow, newRow, false)
 		}
 		printer.Render()
 		_, _ = c.StdIO.Write([]byte("\n"))
@@ -223,10 +217,10 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if c.Old != nil {
 				oldRow = buildRow(c.TemplateMetaName, hexId, *c.Old)
 			}
-			if c.New != nil {
+			if c.New != nil && c.StateStatus != "remove" {
 				newRow = buildRow(c.TemplateMetaName, hexId, *c.New)
 			}
-			printer.AppendDiff(oldRow, newRow)
+			printer.AppendDiff(oldRow, newRow, true)
 		}
 		printer.Render()
 		_, _ = c.StdIO.Write([]byte("\n"))
@@ -247,10 +241,10 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if d.Old != nil {
 				oldRow = buildRow(d.TemplateMetaName, hexId, *d.Old)
 			}
-			if d.New != nil {
+			if d.New != nil && d.StateStatus != "remove" {
 				newRow = buildRow(d.TemplateMetaName, hexId, *d.New)
 			}
-			printer.AppendDiff(oldRow, newRow)
+			printer.AppendDiff(oldRow, newRow, true)
 		}
 		printer.Render()
 		_, _ = c.StdIO.Write([]byte("\n"))
@@ -267,10 +261,10 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if e.Old != nil {
 				oldRow = buildRow(e.TemplateMetaName, hexId, *e.Old)
 			}
-			if e.New != nil {
+			if e.New != nil && e.StateStatus != "remove" {
 				newRow = buildRow(e.TemplateMetaName, hexId, *e.New)
 			}
-			printer.AppendDiff(oldRow, newRow)
+			printer.AppendDiff(oldRow, newRow, true)
 		}
 		printer.Render()
 		_, _ = c.StdIO.Write([]byte("\n"))
@@ -292,10 +286,10 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if r.Old != nil {
 				oldRow = buildRow(r.TemplateMetaName, hexId, *r.Old)
 			}
-			if r.New != nil {
+			if r.New != nil && r.StateStatus != "remove" {
 				newRow = buildRow(r.TemplateMetaName, hexId, *r.New)
 			}
-			printer.AppendDiff(oldRow, newRow)
+			printer.AppendDiff(oldRow, newRow, true)
 		}
 		printer.Render()
 		_, _ = c.StdIO.Write([]byte("\n"))
@@ -316,10 +310,10 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if t.Old != nil {
 				oldRow = buildRow(t.TemplateMetaName, hexId, *t.Old)
 			}
-			if t.New != nil {
+			if t.New != nil && t.StateStatus != "remove" {
 				newRow = buildRow(t.TemplateMetaName, hexId, *t.New)
 			}
-			printer.AppendDiff(oldRow, newRow)
+			printer.AppendDiff(oldRow, newRow, true)
 		}
 		printer.Render()
 		_, _ = c.StdIO.Write([]byte("\n"))
@@ -351,10 +345,10 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if t.Old != nil {
 				oldRow = buildRow(t.TemplateMetaName, hexId, *t.Old)
 			}
-			if t.New != nil {
+			if t.New != nil && t.StateStatus != "remove" {
 				newRow = buildRow(t.TemplateMetaName, hexId, *t.New)
 			}
-			printer.AppendDiff(oldRow, newRow)
+			printer.AppendDiff(oldRow, newRow, true)
 		}
 		printer.Render()
 		_, _ = c.StdIO.Write([]byte("\n"))
@@ -378,10 +372,10 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if v.Old != nil {
 				oldRow = buildRow(v.TemplateMetaName, hexId, *v.Old)
 			}
-			if v.New != nil {
+			if v.New != nil && v.StateStatus != "remove" {
 				newRow = buildRow(v.TemplateMetaName, hexId, *v.New)
 			}
-			printer.AppendDiff(oldRow, newRow)
+			printer.AppendDiff(oldRow, newRow, false)
 		}
 		printer.Render()
 		_, _ = c.StdIO.Write([]byte("\n"))
@@ -398,66 +392,17 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			row := []string{m.ResourceType, m.ResourceName, resId, m.LabelTemplateMetaName, m.LabelName, labelId}
 			switch m.StateStatus {
 			case "new":
-				printer.AppendDiff(nil, row)
+				printer.AppendDiff(nil, row, false)
 			case "remove":
-				printer.AppendDiff(row, nil)
+				printer.AppendDiff(row, nil, false)
 			default:
-				printer.AppendDiff(row, row)
+				printer.AppendDiff(row, row, false)
 			}
 		}
 		printer.Render()
 	}
 
 	return nil
-}
-
-func hasConflicts(diff api.TemplateSummaryDiff) bool {
-	for _, l := range diff.Labels {
-		if l.StateStatus != "new" && l.Old != nil && l.New != nil && !reflect.DeepEqual(l.Old, l.New) {
-			return true
-		}
-	}
-	for _, b := range diff.Buckets {
-		if b.StateStatus != "new" && b.Old != nil && b.New != nil && !reflect.DeepEqual(b.Old, b.New) {
-			return true
-		}
-	}
-	for _, c := range diff.Checks {
-		if c.StateStatus != "new" && c.Old != nil && c.New != nil && !reflect.DeepEqual(c.Old, c.New) {
-			return true
-		}
-	}
-	for _, d := range diff.Dashboards {
-		if d.StateStatus != "new" && d.Old != nil && d.New != nil && !reflect.DeepEqual(d.Old, d.New) {
-			return true
-		}
-	}
-	for _, e := range diff.NotificationEndpoints {
-		if e.StateStatus != "new" && e.Old != nil && e.New != nil && !reflect.DeepEqual(e.Old, e.New) {
-			return true
-		}
-	}
-	for _, r := range diff.NotificationRules {
-		if r.StateStatus != "new" && r.Old != nil && r.New != nil && !reflect.DeepEqual(r.Old, r.New) {
-			return true
-		}
-	}
-	for _, t := range diff.TelegrafConfigs {
-		if t.StateStatus != "new" && t.Old != nil && t.New != nil && !reflect.DeepEqual(t.Old, t.New) {
-			return true
-		}
-	}
-	for _, t := range diff.Tasks {
-		if t.StateStatus != "new" && t.Old != nil && t.New != nil && !reflect.DeepEqual(t.Old, t.New) {
-			return true
-		}
-	}
-	for _, v := range diff.Variables {
-		if v.StateStatus != "new" && v.Old != nil && v.New != nil && !reflect.DeepEqual(v.Old, v.New) {
-			return true
-		}
-	}
-	return false
 }
 
 func (c Client) printSummary(summary api.TemplateSummaryResources, params *Params) error {

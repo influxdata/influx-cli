@@ -106,7 +106,11 @@ func (d *DiffPrinter) Append(slc []string) {
 	d.writer.Append(d.prepend(slc, ""))
 }
 
-func (d *DiffPrinter) AppendDiff(remove, add []string) {
+// AppendDiff appends a diff to the diff printer
+//
+// assumeDiff says to mark remove/add as a diff (with two lines), even if they are the same.
+// this is used for types that the CLI does not know how to fully compare.
+func (d *DiffPrinter) AppendDiff(remove, add []string, assumeDiff bool) {
 	defer func() { d.appendCalls++ }()
 
 	if d.appendCalls > 0 {
@@ -127,7 +131,7 @@ func (d *DiffPrinter) AppendDiff(remove, add []string) {
 	var (
 		addColors    = make([]tablewriter.Colors, len(preppedAdd))
 		removeColors = make([]tablewriter.Colors, len(preppedRemove))
-		hasDiff      bool
+		hasDiff      = assumeDiff
 	)
 	addColor, removeColor := noColor, noColor
 	if d.useColor {
