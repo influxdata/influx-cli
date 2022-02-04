@@ -161,7 +161,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if l.Old != nil {
 				oldRow = buildRow(l.TemplateMetaName, hexId, *l.Old)
 			}
-			if l.New != nil {
+			if l.New != nil && l.StateStatus != "remove" {
 				newRow = buildRow(l.TemplateMetaName, hexId, *l.New)
 			}
 			printer.AppendDiff(oldRow, newRow, false)
@@ -193,7 +193,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if b.Old != nil {
 				oldRow = buildRow(b.TemplateMetaName, hexId, *b.Old)
 			}
-			if b.New != nil {
+			if b.New != nil && b.StateStatus != "remove" {
 				newRow = buildRow(b.TemplateMetaName, hexId, *b.New)
 			}
 			printer.AppendDiff(oldRow, newRow, false)
@@ -217,7 +217,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if c.Old != nil {
 				oldRow = buildRow(c.TemplateMetaName, hexId, *c.Old)
 			}
-			if c.New != nil {
+			if c.New != nil && c.StateStatus != "remove" {
 				newRow = buildRow(c.TemplateMetaName, hexId, *c.New)
 			}
 			printer.AppendDiff(oldRow, newRow, true)
@@ -241,7 +241,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if d.Old != nil {
 				oldRow = buildRow(d.TemplateMetaName, hexId, *d.Old)
 			}
-			if d.New != nil {
+			if d.New != nil && d.StateStatus != "remove" {
 				newRow = buildRow(d.TemplateMetaName, hexId, *d.New)
 			}
 			printer.AppendDiff(oldRow, newRow, true)
@@ -261,7 +261,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if e.Old != nil {
 				oldRow = buildRow(e.TemplateMetaName, hexId, *e.Old)
 			}
-			if e.New != nil {
+			if e.New != nil && e.StateStatus != "remove" {
 				newRow = buildRow(e.TemplateMetaName, hexId, *e.New)
 			}
 			printer.AppendDiff(oldRow, newRow, true)
@@ -286,7 +286,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if r.Old != nil {
 				oldRow = buildRow(r.TemplateMetaName, hexId, *r.Old)
 			}
-			if r.New != nil {
+			if r.New != nil && r.StateStatus != "remove" {
 				newRow = buildRow(r.TemplateMetaName, hexId, *r.New)
 			}
 			printer.AppendDiff(oldRow, newRow, true)
@@ -310,7 +310,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if t.Old != nil {
 				oldRow = buildRow(t.TemplateMetaName, hexId, *t.Old)
 			}
-			if t.New != nil {
+			if t.New != nil && t.StateStatus != "remove" {
 				newRow = buildRow(t.TemplateMetaName, hexId, *t.New)
 			}
 			printer.AppendDiff(oldRow, newRow, true)
@@ -345,7 +345,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if t.Old != nil {
 				oldRow = buildRow(t.TemplateMetaName, hexId, *t.Old)
 			}
-			if t.New != nil {
+			if t.New != nil && t.StateStatus != "remove" {
 				newRow = buildRow(t.TemplateMetaName, hexId, *t.New)
 			}
 			printer.AppendDiff(oldRow, newRow, true)
@@ -372,7 +372,7 @@ func (c Client) printDiff(diff api.TemplateSummaryDiff, params *Params) error {
 			if v.Old != nil {
 				oldRow = buildRow(v.TemplateMetaName, hexId, *v.Old)
 			}
-			if v.New != nil {
+			if v.New != nil && v.StateStatus != "remove" {
 				newRow = buildRow(v.TemplateMetaName, hexId, *v.New)
 			}
 			printer.AppendDiff(oldRow, newRow, false)

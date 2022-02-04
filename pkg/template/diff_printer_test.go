@@ -29,19 +29,27 @@ func TestDiffPrinter(t *testing.T) {
 		SetHeaders("Wow", "Such", "A", "Fancy", "Printer")
 
 	// Add
-	printer.AppendDiff(nil, []string{"A", "B", "C", "D", "E"})
+	printer.AppendDiff(nil, []string{"A", "B", "C", "D", "E"}, false)
 
 	// No change
-	printer.Append([]string{"foo", "bar", "baz", "qux", "wat"})
+	simple := []string{"foo", "bar", "baz", "qux", "wat"}
+	printer.Append(simple)
+
+	// No change with two arguments
+	printer.AppendDiff(simple, simple, false)
+
+	// No change but force a diff
+	printer.AppendDiff(simple, simple, true)
 
 	// Replace
 	printer.AppendDiff(
 		[]string{"1", "200000000000000", "3", "4", "5"},
 		[]string{"9", "8", "7", "6", "5"},
+		false,
 	)
 
 	// Remove
-	printer.AppendDiff([]string{"x y", "z x", "x y z", "", "y z"}, nil)
+	printer.AppendDiff([]string{"x y", "z x", "x y z", "", "y z"}, nil, false)
 
 	printer.Render()
 	expected := `EXAMPLE    +add | -remove | unchanged
@@ -53,6 +61,14 @@ func TestDiffPrinter(t *testing.T) {
 |     | foo | bar             | baz   | qux   | wat     |
 +-----+-----+-----------------+-------+-------+---------+
 +-----+-----+-----------------+-------+-------+---------+
+|     | foo | bar             | baz   | qux   | wat     |
++-----+-----+-----------------+-------+-------+---------+
++-----+-----+-----------------+-------+-------+---------+
+| -   | foo | bar             | baz   | qux   | wat     |
++-----+-----+-----------------+-------+-------+---------+
+| +   | foo | bar             | baz   | qux   | wat     |
++-----+-----+-----------------+-------+-------+---------+
++-----+-----+-----------------+-------+-------+---------+
 | -   |   1 | 200000000000000 |     3 |     4 |       5 |
 +-----+-----+-----------------+-------+-------+---------+
 | +   |   9 |               8 |     7 |     6 |       5 |
@@ -60,7 +76,7 @@ func TestDiffPrinter(t *testing.T) {
 +-----+-----+-----------------+-------+-------+---------+
 | -   | x y | z x             | x y z |       | y z     |
 +-----+-----+-----------------+-------+-------+---------+
-|                                       TOTAL |    3    |
+|                                       TOTAL |    5    |
 +-----+-----+-----------------+-------+-------+---------+
 `
 	require.Equal(t, expected, out.String())
