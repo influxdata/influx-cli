@@ -133,7 +133,7 @@ https://github.com/influxdata/community-templates.
 			},
 			&cli.StringFlag{
 				Name:        "force",
-				Usage:       "Set to 'true' to skip confirmation before applying changes. Set to 'conflict' to skip confirmation and overwrite existing resources",
+				Usage:       "Set to 'yes' to skip confirmation before applying changes (recommended for non-interactive scripts).",
 				Destination: &params.force,
 			},
 			&cli.StringSliceFlag{
@@ -240,12 +240,18 @@ https://github.com/influxdata/community-templates.
 
 			// Parse our strange way of passing 'force'
 			switch params.force {
+			case "":
+				// no force
 			case "conflict":
+				log.Println("WARN: Passing '--force conflict' is deprecated, assuming '--force yes'")
 				parsedParams.Force = true
-				parsedParams.OverwriteConflicts = true
 			case "true":
+				log.Println("WARN: Passing '--force true' is deprecated, assuming '--force yes'")
+				parsedParams.Force = true
+			case "yes":
 				parsedParams.Force = true
 			default:
+				return fmt.Errorf("invalid argument '--force %s', should use '--force yes'", params.force)
 			}
 
 			api := getAPI(ctx)
