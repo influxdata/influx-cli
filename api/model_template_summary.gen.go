@@ -20,14 +20,14 @@ type TemplateSummary struct {
 	StackID string                   `json:"stackID" yaml:"stackID"`
 	Summary TemplateSummaryResources `json:"summary" yaml:"summary"`
 	Diff    TemplateSummaryDiff      `json:"diff" yaml:"diff"`
-	Errors  []TemplateSummaryError   `json:"errors" yaml:"errors"`
+	Errors  []TemplateSummaryErrors  `json:"errors" yaml:"errors"`
 }
 
 // NewTemplateSummary instantiates a new TemplateSummary object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTemplateSummary(sources []string, stackID string, summary TemplateSummaryResources, diff TemplateSummaryDiff, errors []TemplateSummaryError) *TemplateSummary {
+func NewTemplateSummary(sources []string, stackID string, summary TemplateSummaryResources, diff TemplateSummaryDiff, errors []TemplateSummaryErrors) *TemplateSummary {
 	this := TemplateSummary{}
 	this.Sources = sources
 	this.StackID = stackID
@@ -142,9 +142,9 @@ func (o *TemplateSummary) SetDiff(v TemplateSummaryDiff) {
 }
 
 // GetErrors returns the Errors field value
-func (o *TemplateSummary) GetErrors() []TemplateSummaryError {
+func (o *TemplateSummary) GetErrors() []TemplateSummaryErrors {
 	if o == nil {
-		var ret []TemplateSummaryError
+		var ret []TemplateSummaryErrors
 		return ret
 	}
 
@@ -153,7 +153,7 @@ func (o *TemplateSummary) GetErrors() []TemplateSummaryError {
 
 // GetErrorsOk returns a tuple with the Errors field value
 // and a boolean to check if the value has been set.
-func (o *TemplateSummary) GetErrorsOk() (*[]TemplateSummaryError, bool) {
+func (o *TemplateSummary) GetErrorsOk() (*[]TemplateSummaryErrors, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -161,7 +161,7 @@ func (o *TemplateSummary) GetErrorsOk() (*[]TemplateSummaryError, bool) {
 }
 
 // SetErrors sets field value
-func (o *TemplateSummary) SetErrors(v []TemplateSummaryError) {
+func (o *TemplateSummary) SetErrors(v []TemplateSummaryErrors) {
 	o.Errors = v
 }
 

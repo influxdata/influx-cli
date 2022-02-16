@@ -13,5 +13,5 @@ properties:
   errors:
     type: array
     items:
-      $ref: "./TemplateSummaryError.yml"
+      $ref: "./TemplateSummaryErrors.yml"
 required: [sources, stackID, summary, diff, errors]

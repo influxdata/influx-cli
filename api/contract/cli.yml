@@ -329,6 +329,8 @@ components:
       $ref: "./overrides/schemas/TemplateSummaryResources.yml"
     TemplateSummaryError:
       $ref: "./overrides/schemas/TemplateSummaryError.yml"
+    TemplateSummaryErrors:
+      $ref: "./overrides/schemas/TemplateSummaryErrors.yml"
     TemplateSummaryBucket:
       $ref: "./overrides/schemas/TemplateSummaryBucket.yml"
     TemplateSummaryCheck:

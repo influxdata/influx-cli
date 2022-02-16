@@ -1,16 +1,21 @@
 type: object
 properties:
-  kind:
+  message:
     type: string
-  reason:
+  code:
     type: string
-  fields:
+  sources:
     type: array
     items:
       type: string
-  indexes:
+  stackID:
+    type: string
+  summary:
+    $ref: "./TemplateSummaryResources.yml"
+  diff:
+    $ref: "./TemplateSummaryDiff.yml"
+  errors:
     type: array
     items:
-      type: integer
-    x-go-field-type: '[]*int'
-required: [kind, reason, fields, indexes]
+      $ref: "./TemplateSummaryErrors.yml"
+required: [message, code]
