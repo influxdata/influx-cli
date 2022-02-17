@@ -81,9 +81,7 @@ func (c Client) Validate(ctx context.Context, params *ValidateParams) error {
 	}
 
 	if apiErr, ok := err.(api.GenericOpenAPIError); ok {
-		if summary, ok := apiErr.Model().(*api.TemplateSummaryError); ok {
-			return fmt.Errorf("template failed validation:\n\t%s", summary)
-		}
+		return fmt.Errorf("template failed validation:\n\t%s", apiErr)
 	}
 	return fmt.Errorf("failed to validate template: %w", err)
 }
