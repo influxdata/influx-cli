@@ -1,0 +1,16 @@
+type: object
+properties:
+  kind:
+    type: string
+  reason:
+    type: string
+  fields:
+    type: array
+    items:
+      type: string
+  indexes:
+    type: array
+    items:
+      type: integer
+    x-go-field-type: '[]*int'
+required: [kind, reason, fields, indexes]

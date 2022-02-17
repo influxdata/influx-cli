@@ -93,14 +93,16 @@ func (o *LineProtocolLengthError) ErrorCode() ErrorCode {
 	}
 }
 
-func (o *TemplateSummary) Error() string {
-	if len(o.Errors) == 0 {
-		panic("error-less template summary used as an error!")
+func (o *TemplateSummaryError) Error() string {
+	// If there are no extended errors, simply give the normal error
+	if o.Errors == nil || len(*o.Errors) == 0 {
+		return o.Message
 	}
 
+	// otherwise try to collect the extended error info
 	var errMsg []string
 	seenErrs := map[string]struct{}{}
-	for _, e := range o.Errors {
+	for _, e := range *o.Errors {
 		fieldPairs := make([]string, 0, len(e.Fields))
 		for i, idx := range e.Indexes {
 			field := e.Fields[i]
@@ -121,18 +123,6 @@ func (o *TemplateSummary) Error() string {
 	return strings.Join(errMsg, "\n\t")
 }
 
-func (o *TemplateSummary) ErrorCode() ErrorCode {
-	if len(o.Errors) == 0 {
-		panic("error-less template summary used as an error!")
-	}
-
-	return ERRORCODE_UNPROCESSABLE_ENTITY
-}
-
-func (o *TemplateSummary) SetMessage(string) {
-	// Placeholder to satisfy interface
-}
-
-func (o TemplateSummary) GetMessage() string {
-	return o.Error()
+func (o *TemplateSummaryError) ErrorCode() ErrorCode {
+	return ErrorCode(o.Code)
 }

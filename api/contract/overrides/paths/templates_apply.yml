@@ -34,7 +34,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: "../schemas/TemplateSummary.yml"
+            $ref: "../schemas/TemplateSummaryError.yml"
     default:
       description: Unexpected error
       content:

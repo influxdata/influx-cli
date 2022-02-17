@@ -193,7 +193,7 @@ func (a *TemplatesApiService) ApplyTemplateExecuteWithHttpInfo(r ApiApplyTemplat
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 422 {
-			var v TemplateSummary
+			var v TemplateSummaryError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
