@@ -42,6 +42,11 @@ Examples:
 				Usage: "Compression to use for local backup files, either 'none' or 'gzip'",
 				Value: &params.Compression,
 			},
+			&cli.IntFlag{
+				Name:        "workers",
+				Usage:       "Amount of Workers to create to copy bucket data in parallel",
+				Destination: &params.Workers,
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			if ctx.NArg() != 1 {

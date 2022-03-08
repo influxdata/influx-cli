@@ -76,7 +76,7 @@ func convertManifest(path string, lm legacyManifest) (br.Manifest, error) {
 		Buckets: make([]br.ManifestBucketEntry, len(metadata)),
 	}
 	for i, bkt := range metadata {
-		m.Buckets[i], err = br.ConvertBucketManifest(bkt, func(shardId int64) (*br.ManifestFileEntry, error) {
+		m.Buckets[i], err = br.ConvertBucketManifest(bkt, 1, func(shardId int64) (*br.ManifestFileEntry, error) {
 			shardManifest, ok := shardManifestsById[shardId]
 			if !ok {
 				return nil, nil

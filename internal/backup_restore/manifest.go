@@ -2,6 +2,7 @@ package backup_restore
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/influxdata/influx-cli/v2/api"
@@ -99,7 +100,7 @@ type ManifestSubscription struct {
 	Destinations []string `json:"destinations"`
 }
 
-func ConvertBucketManifest(manifest api.BucketMetadataManifest, getShard func(shardId int64) (*ManifestFileEntry, error)) (ManifestBucketEntry, error) {
+func ConvertBucketManifest(manifest api.BucketMetadataManifest, shardGroupWorkers int, getShard func(shardId int64) (*ManifestFileEntry, error)) (ManifestBucketEntry, error) {
 	m := ManifestBucketEntry{
 		OrganizationID:         manifest.OrganizationID,
 		OrganizationName:       manifest.OrganizationName,
@@ -112,7 +113,7 @@ func ConvertBucketManifest(manifest api.BucketMetadataManifest, getShard func(sh
 
 	for i, rp := range manifest.RetentionPolicies {
 		var err error
-		m.RetentionPolicies[i], err = ConvertRetentionPolicy(rp, getShard)
+		m.RetentionPolicies[i], err = ConvertRetentionPolicy(rp, shardGroupWorkers, getShard)
 		if err != nil {
 			return ManifestBucketEntry{}, err
 		}
@@ -121,7 +122,7 @@ func ConvertBucketManifest(manifest api.BucketMetadataManifest, getShard func(sh
 	return m, nil
 }
 
-func ConvertRetentionPolicy(manifest api.RetentionPolicyManifest, getShard func(shardId int64) (*ManifestFileEntry, error)) (ManifestRetentionPolicy, error) {
+func ConvertRetentionPolicy(manifest api.RetentionPolicyManifest, shardGroupWorkers int, getShard func(shardId int64) (*ManifestFileEntry, error)) (ManifestRetentionPolicy, error) {
 	m := ManifestRetentionPolicy{
 		Name:               manifest.Name,
 		ReplicaN:           manifest.ReplicaN,
@@ -131,12 +132,46 @@ func ConvertRetentionPolicy(manifest api.RetentionPolicyManifest, getShard func(
 		Subscriptions:      make([]ManifestSubscription, len(manifest.Subscriptions)),
 	}
 
+	type ShardGroupInfo struct {
+		index      int
+		shardGroup api.ShardGroupManifest
+	}
+
+	if shardGroupWorkers < 1 {
+		shardGroupWorkers = 1
+	}
+
+	shardGroupsToProcess := make(chan ShardGroupInfo, shardGroupWorkers)
+
+	var workers sync.WaitGroup
+	var err error
+
+	for worker := 0; worker < shardGroupWorkers; worker++ {
+		workers.Add(1)
+
+		go func() {
+			for s := range shardGroupsToProcess {
+				var e error
+				m.ShardGroups[s.index], e = ConvertShardGroup(s.shardGroup, getShard)
+
+				if e != nil && err == nil {
+					err = e
+				}
+			}
+
+			workers.Done()
+		}()
+	}
+
 	for i, sg := range manifest.ShardGroups {
-		var err error
-		m.ShardGroups[i], err = ConvertShardGroup(sg, getShard)
-		if err != nil {
-			return ManifestRetentionPolicy{}, err
-		}
+		shardGroupsToProcess <- ShardGroupInfo{i, sg}
+	}
+	close(shardGroupsToProcess)
+
+	workers.Wait()
+
+	if err != nil {
+		return ManifestRetentionPolicy{}, err
 	}
 
 	for i, s := range manifest.Subscriptions {
