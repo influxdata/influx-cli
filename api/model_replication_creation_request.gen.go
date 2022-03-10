@@ -24,13 +24,14 @@ type ReplicationCreationRequest struct {
 	RemoteBucketID       string  `json:"remoteBucketID" yaml:"remoteBucketID"`
 	MaxQueueSizeBytes    int64   `json:"maxQueueSizeBytes" yaml:"maxQueueSizeBytes"`
 	DropNonRetryableData *bool   `json:"dropNonRetryableData,omitempty" yaml:"dropNonRetryableData,omitempty"`
+	MaxAgeSeconds        int64   `json:"maxAgeSeconds" yaml:"maxAgeSeconds"`
 }
 
 // NewReplicationCreationRequest instantiates a new ReplicationCreationRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewReplicationCreationRequest(name string, orgID string, remoteID string, localBucketID string, remoteBucketID string, maxQueueSizeBytes int64) *ReplicationCreationRequest {
+func NewReplicationCreationRequest(name string, orgID string, remoteID string, localBucketID string, remoteBucketID string, maxQueueSizeBytes int64, maxAgeSeconds int64) *ReplicationCreationRequest {
 	this := ReplicationCreationRequest{}
 	this.Name = name
 	this.OrgID = orgID
@@ -40,6 +41,7 @@ func NewReplicationCreationRequest(name string, orgID string, remoteID string, l
 	this.MaxQueueSizeBytes = maxQueueSizeBytes
 	var dropNonRetryableData bool = false
 	this.DropNonRetryableData = &dropNonRetryableData
+	this.MaxAgeSeconds = maxAgeSeconds
 	return &this
 }
 
@@ -52,6 +54,8 @@ func NewReplicationCreationRequestWithDefaults() *ReplicationCreationRequest {
 	this.MaxQueueSizeBytes = maxQueueSizeBytes
 	var dropNonRetryableData bool = false
 	this.DropNonRetryableData = &dropNonRetryableData
+	var maxAgeSeconds int64 = 604800
+	this.MaxAgeSeconds = maxAgeSeconds
 	return &this
 }
 
@@ -263,6 +267,30 @@ func (o *ReplicationCreationRequest) SetDropNonRetryableData(v bool) {
 	o.DropNonRetryableData = &v
 }
 
+// GetMaxAgeSeconds returns the MaxAgeSeconds field value
+func (o *ReplicationCreationRequest) GetMaxAgeSeconds() int64 {
+	if o == nil {
+		var ret int64
+		return ret
+	}
+
+	return o.MaxAgeSeconds
+}
+
+// GetMaxAgeSecondsOk returns a tuple with the MaxAgeSeconds field value
+// and a boolean to check if the value has been set.
+func (o *ReplicationCreationRequest) GetMaxAgeSecondsOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.MaxAgeSeconds, true
+}
+
+// SetMaxAgeSeconds sets field value
+func (o *ReplicationCreationRequest) SetMaxAgeSeconds(v int64) {
+	o.MaxAgeSeconds = v
+}
+
 func (o ReplicationCreationRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
@@ -288,6 +316,9 @@ func (o ReplicationCreationRequest) MarshalJSON() ([]byte, error) {
 	}
 	if o.DropNonRetryableData != nil {
 		toSerialize["dropNonRetryableData"] = o.DropNonRetryableData
+	}
+	if true {
+		toSerialize["maxAgeSeconds"] = o.MaxAgeSeconds
 	}
 	return json.Marshal(toSerialize)
 }

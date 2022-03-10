@@ -85,6 +85,12 @@ func newReplicationCreateCmd() cli.Command {
 				Usage:       "Do not drop data when a non-retryable error is encountered",
 				Destination: &params.NoDropNonRetryableData,
 			},
+			&cli.Int64Flag{
+				Name:        "max-age",
+				Usage:       "Specify a maximum age (in seconds) for replications data before it is dropped, or 0 for infinite",
+				Value:       604800, // 1 week in seconds TODO Link to OpenAPI default like above
+				Destination: &params.MaxAge,
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
@@ -227,6 +233,11 @@ func newReplicationUpdateCmd() cli.Command {
 				Name:        "no-drop-non-retryable-data",
 				Usage:       "Do not drop data when a non-retryable error is encountered",
 				Destination: &params.NoDropNonRetryableData,
+			},
+			&cli.Int64Flag{
+				Name:        "max-age",
+				Usage:       "Specify a maximum age (in seconds) for replications data before it is dropped, or 0 for infinite",
+				Destination: &params.MaxAge,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
