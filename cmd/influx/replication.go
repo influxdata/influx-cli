@@ -58,13 +58,13 @@ func newReplicationCreateCmd() cli.Command {
 				Destination: &params.RemoteID,
 			},
 			&cli.StringFlag{
-				Name:        "local-bucket",
+				Name:        "local-bucket-id",
 				Usage:       "ID of local bucket data should be replicated from",
 				Required:    true,
 				Destination: &params.LocalBucketID,
 			},
 			&cli.StringFlag{
-				Name:        "remote-bucket",
+				Name:        "remote-bucket-id",
 				Usage:       "ID of remote bucket data should be replicated to",
 				Required:    true,
 				Destination: &params.RemoteBucketID,
@@ -160,7 +160,7 @@ func newReplicationListCmd() cli.Command {
 				Destination: &params.RemoteID,
 			},
 			&cli.StringFlag{
-				Name:        "local-bucket",
+				Name:        "local-bucket-id",
 				Usage:       "Filter results to only replication streams for a specific local bucket",
 				Destination: &params.LocalBucketID,
 			},
@@ -209,7 +209,7 @@ func newReplicationUpdateCmd() cli.Command {
 				Destination: &params.RemoteID,
 			},
 			&cli.StringFlag{
-				Name:        "remote-bucket",
+				Name:        "remote-bucket-id",
 				Usage:       "New ID of remote bucket that data should be replicated to",
 				Destination: &params.RemoteBucketID,
 			},
