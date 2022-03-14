@@ -228,7 +228,7 @@ func (s Source) Read(ctx context.Context) (api.TemplateApplyTemplate, error) {
 	}
 
 	return api.TemplateApplyTemplate{
-		Sources:  []string{s.Name},
+		Sources:  []string{s.Name + ".generated.json"},
 		Contents: entries,
 	}, nil
 }
