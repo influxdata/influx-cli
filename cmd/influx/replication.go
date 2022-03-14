@@ -88,7 +88,7 @@ func newReplicationCreateCmd() cli.Command {
 			&cli.Int64Flag{
 				Name:        "max-age",
 				Usage:       "Specify a maximum age (in seconds) for replications data before it is dropped, or 0 for infinite",
-				Value:       604800, // 1 week in seconds TODO Link to OpenAPI default like above
+				Value:       604800, // source: https://github.com/influxdata/openapi/blob/6ea7df4daa5735a063be3db60d0165b34b26c096/src/oss/schemas/ReplicationCreationRequest.yml#L27
 				Destination: &params.MaxAge,
 			},
 		),
