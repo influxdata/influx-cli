@@ -25,6 +25,7 @@ type CreateParams struct {
 	MaxQueueSize           int64
 	DropNonRetryableData   bool
 	NoDropNonRetryableData bool
+	MaxAge                 int64
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
@@ -41,6 +42,7 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		LocalBucketID:     params.LocalBucketID,
 		RemoteBucketID:    params.RemoteBucketID,
 		MaxQueueSizeBytes: params.MaxQueueSize,
+		MaxAgeSeconds:     params.MaxAge,
 	}
 
 	// set optional params if specified
@@ -118,6 +120,7 @@ type UpdateParams struct {
 	MaxQueueSize           int64
 	DropNonRetryableData   bool
 	NoDropNonRetryableData bool
+	MaxAge                 int64
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
@@ -151,6 +154,10 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 
 	if dropNonRetryableDataBoolPtr != nil {
 		body.SetDropNonRetryableData(*dropNonRetryableDataBoolPtr)
+	}
+
+	if params.MaxAge != 0 {
+		body.SetMaxAgeSeconds(params.MaxAge)
 	}
 
 	// send patch request

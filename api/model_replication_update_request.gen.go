@@ -22,6 +22,7 @@ type ReplicationUpdateRequest struct {
 	RemoteBucketID       *string `json:"remoteBucketID,omitempty" yaml:"remoteBucketID,omitempty"`
 	MaxQueueSizeBytes    *int64  `json:"maxQueueSizeBytes,omitempty" yaml:"maxQueueSizeBytes,omitempty"`
 	DropNonRetryableData *bool   `json:"dropNonRetryableData,omitempty" yaml:"dropNonRetryableData,omitempty"`
+	MaxAgeSeconds        *int64  `json:"maxAgeSeconds,omitempty" yaml:"maxAgeSeconds,omitempty"`
 }
 
 // NewReplicationUpdateRequest instantiates a new ReplicationUpdateRequest object
@@ -233,6 +234,38 @@ func (o *ReplicationUpdateRequest) SetDropNonRetryableData(v bool) {
 	o.DropNonRetryableData = &v
 }
 
+// GetMaxAgeSeconds returns the MaxAgeSeconds field value if set, zero value otherwise.
+func (o *ReplicationUpdateRequest) GetMaxAgeSeconds() int64 {
+	if o == nil || o.MaxAgeSeconds == nil {
+		var ret int64
+		return ret
+	}
+	return *o.MaxAgeSeconds
+}
+
+// GetMaxAgeSecondsOk returns a tuple with the MaxAgeSeconds field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ReplicationUpdateRequest) GetMaxAgeSecondsOk() (*int64, bool) {
+	if o == nil || o.MaxAgeSeconds == nil {
+		return nil, false
+	}
+	return o.MaxAgeSeconds, true
+}
+
+// HasMaxAgeSeconds returns a boolean if a field has been set.
+func (o *ReplicationUpdateRequest) HasMaxAgeSeconds() bool {
+	if o != nil && o.MaxAgeSeconds != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetMaxAgeSeconds gets a reference to the given int64 and assigns it to the MaxAgeSeconds field.
+func (o *ReplicationUpdateRequest) SetMaxAgeSeconds(v int64) {
+	o.MaxAgeSeconds = &v
+}
+
 func (o ReplicationUpdateRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Name != nil {
@@ -252,6 +285,9 @@ func (o ReplicationUpdateRequest) MarshalJSON() ([]byte, error) {
 	}
 	if o.DropNonRetryableData != nil {
 		toSerialize["dropNonRetryableData"] = o.DropNonRetryableData
+	}
+	if o.MaxAgeSeconds != nil {
+		toSerialize["maxAgeSeconds"] = o.MaxAgeSeconds
 	}
 	return json.Marshal(toSerialize)
 }

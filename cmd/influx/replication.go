@@ -72,7 +72,7 @@ func newReplicationCreateCmd() cli.Command {
 			&cli.Int64Flag{
 				Name:        "max-queue-bytes",
 				Usage:       "Max queue size in bytes",
-				Value:       67108860, // source: https://github.com/influxdata/openapi/blob/588064fe68e7dfeebd019695aa805832632cbfb6/src/oss/schemas/ReplicationCreationRequest.yml#L19
+				Value:       67108860, // source: https://github.com/influxdata/openapi/blob/master/src/oss/schemas/ReplicationCreationRequest.yml
 				Destination: &params.MaxQueueSize,
 			},
 			&cli.BoolFlag{
@@ -84,6 +84,12 @@ func newReplicationCreateCmd() cli.Command {
 				Name:        "no-drop-non-retryable-data",
 				Usage:       "Do not drop data when a non-retryable error is encountered",
 				Destination: &params.NoDropNonRetryableData,
+			},
+			&cli.Int64Flag{
+				Name:        "max-age",
+				Usage:       "Specify a maximum age (in seconds) for replications data before it is dropped, or 0 for infinite",
+				Value:       604800, // source: https://github.com/influxdata/openapi/blob/master/src/oss/schemas/ReplicationCreationRequest.yml
+				Destination: &params.MaxAge,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
@@ -227,6 +233,11 @@ func newReplicationUpdateCmd() cli.Command {
 				Name:        "no-drop-non-retryable-data",
 				Usage:       "Do not drop data when a non-retryable error is encountered",
 				Destination: &params.NoDropNonRetryableData,
+			},
+			&cli.Int64Flag{
+				Name:        "max-age",
+				Usage:       "Specify a maximum age (in seconds) for replications data before it is dropped, or 0 for infinite",
+				Destination: &params.MaxAge,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
