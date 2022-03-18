@@ -72,7 +72,7 @@ func newReplicationCreateCmd() cli.Command {
 			&cli.Int64Flag{
 				Name:        "max-queue-bytes",
 				Usage:       "Max queue size in bytes",
-				Value:       67108860, // source: https://github.com/influxdata/openapi/blob/588064fe68e7dfeebd019695aa805832632cbfb6/src/oss/schemas/ReplicationCreationRequest.yml#L19
+				Value:       67108860, // source: https://github.com/influxdata/openapi/blob/master/src/oss/schemas/ReplicationCreationRequest.yml
 				Destination: &params.MaxQueueSize,
 			},
 			&cli.BoolFlag{
@@ -88,7 +88,7 @@ func newReplicationCreateCmd() cli.Command {
 			&cli.Int64Flag{
 				Name:        "max-age",
 				Usage:       "Specify a maximum age (in seconds) for replications data before it is dropped, or 0 for infinite",
-				Value:       604800, // source: https://github.com/influxdata/openapi/blob/6ea7df4daa5735a063be3db60d0165b34b26c096/src/oss/schemas/ReplicationCreationRequest.yml#L27
+				Value:       604800, // source: https://github.com/influxdata/openapi/blob/master/src/oss/schemas/ReplicationCreationRequest.yml
 				Destination: &params.MaxAge,
 			},
 		),
