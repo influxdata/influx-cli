@@ -17,15 +17,16 @@ import (
 )
 
 const (
-	tokenFlagName       = "token"
-	hostFlagName        = "host"
-	skipVerifyFlagName  = "skip-verify"
-	traceIdFlagName     = "trace-debug-id"
-	configPathFlagName  = "configs-path"
-	configNameFlagName  = "active-config"
-	httpDebugFlagName   = "http-debug"
-	printJsonFlagName   = "json"
-	hideHeadersFlagName = "hide-headers"
+	tokenFlagName           = "token"
+	hostFlagName            = "host"
+	skipVerifyFlagName      = "skip-verify"
+	traceIdFlagName         = "trace-debug-id"
+	extraHttpHeaderFlagName = "extra-http-header"
+	configPathFlagName      = "configs-path"
+	configNameFlagName      = "active-config"
+	httpDebugFlagName       = "http-debug"
+	printJsonFlagName       = "json"
+	hideHeadersFlagName     = "hide-headers"
 )
 
 // newCli builds a CLI core that reads from stdin, writes to stdout/stderr, manages a local config store,
@@ -91,7 +92,19 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 		configParams.TraceId = api.PtrString(ctx.String(traceIdFlagName))
 	}
 
-	return api.NewAPIClient(api.NewAPIConfig(configParams)), nil
+	apiConfig := api.NewAPIConfig(configParams)
+
+	if ctx.IsSet(extraHttpHeaderFlagName) {
+		for _, h := range ctx.StringSlice(extraHttpHeaderFlagName) {
+			k, v, ok := stringsCut(h, ":")
+			if !ok {
+				return nil, fmt.Errorf(`header flag syntax "key:value", missing value in %q`, h)
+			}
+			apiConfig.AddDefaultHeader(k, v)
+		}
+	}
+
+	return api.NewAPIClient(apiConfig), nil
 }
 
 func withContext() cli.BeforeFunc {
@@ -170,6 +183,10 @@ type CommonStringFlag struct {
 	cli.StringFlag
 }
 
+type CommonStringSliceFlag struct {
+	cli.StringSliceFlag
+}
+
 // NOTE: urfave/cli has dedicated support for global flags, but it only parses those flags
 // if they're specified before any command names. This is incompatible with the old influx
 // CLI, which repeatedly registered common flags on every "leaf" command, forcing the flags
@@ -211,6 +228,11 @@ func coreFlags() []cli.Flag {
 			Name:   traceIdFlagName,
 			Hidden: true,
 			EnvVar: "INFLUX_TRACE_DEBUG_ID",
+		}},
+		&CommonStringSliceFlag{cli.StringSliceFlag{
+			Name:   extraHttpHeaderFlagName,
+			Hidden: true,
+			EnvVar: "INFLUX_EXTRA_HTTP_HEADER",
 		}},
 		&CommonBoolFlag{cli.BoolFlag{
 			Name: httpDebugFlagName,
