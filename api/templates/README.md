@@ -31,6 +31,7 @@ multiple locations.
 * Use `strings.EqualFold` instead of comparing two `strings.ToLower` calls
 * Update the `GenericOpenAPIError` type to enforce that error response models implement the `error` interface
 * Update `setBody` to avoid buffering data in memory when the request body is already an `io.ReadCloser`
+* Update reference from `reflect.Ptr` to `reflect.Pointer` as per the Go 1.18 spec
 
 `configuration.mustache`
 * Deleted `ContextOAuth2` key to match modification in client
@@ -45,3 +46,4 @@ multiple locations.
 `model_simple.mustache`
 * Added `yaml:` tags to all model fields to support unmarshalling camelCase
 * Added support for `x-go-field-type` vendor extension, to explicitly override the type generated for model fields
+* Use `strings.Cut` when applicable over `strings.IndexByte` and slicing

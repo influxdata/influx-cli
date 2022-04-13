@@ -283,9 +283,7 @@ func createBoolParseFn(format string) func(string) (interface{}, error) {
 	if !strings.Contains(format, ":") {
 		err = fmt.Errorf("unsupported boolean format: %s should be in 'true,yes,1:false,no,0' format, but no ':' is present", format)
 	} else {
-		colon := strings.Index(format, ":")
-		t := format[:colon]
-		f := format[colon+1:]
+		t, f, _ := strings.Cut(format, ":")
 		if t != "" {
 			truthy = strings.Split(t, ",")
 		}

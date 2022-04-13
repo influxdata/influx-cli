@@ -325,12 +325,7 @@ return json.Marshal(toSerialize)
             t := reflect{{{parent}}}.Type().Field(i)
 
             if jsonTag := t.Tag.Get("json"); jsonTag != "" {
-            fieldName := ""
-            if commaIdx := strings.Index(jsonTag, ","); commaIdx > 0 {
-            fieldName = jsonTag[:commaIdx]
-            } else {
-            fieldName = jsonTag
-            }
+            fieldName, _, _ := strings.Cut(jsonTag, ",")
             if fieldName != "AdditionalProperties" {
             delete(additionalProperties, fieldName)
             }
