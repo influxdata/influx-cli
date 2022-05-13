@@ -339,6 +339,15 @@ func getOrgFlags(params *clients.OrgParams) []cli.Flag {
 	}
 }
 
+// checkOrgFlags returns an error if OrgId and OrgName are both set.
+func checkOrgFlags(params *clients.OrgParams) error {
+	if params.OrgID != "" && params.OrgName != "" {
+		return fmt.Errorf("ambiguous org: use OrgId or OrgName, but not both. OrgID: %s, OrgName: %s",
+			params.OrgID, params.OrgName)
+	}
+	return nil
+}
+
 // getBucketFlags returns flags used by commands that are scoped to a single bucket, binding
 // the flags to the given params container.
 func getBucketFlags(params *clients.BucketParams) []cli.Flag {

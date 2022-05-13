@@ -41,6 +41,9 @@ Examples:
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := telegrafs.Client{
 				CLI:              getCLI(ctx),
@@ -89,6 +92,9 @@ Examples:
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			conf, err := readConfig(ctx.String("file"))
 			if err != nil {
 				return err

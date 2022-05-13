@@ -108,6 +108,9 @@ func newTemplateCmd() cli.Command {
 		),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.orgParams); err != nil {
+				return err
+			}
 			parsedParams := template.SummarizeParams{
 				OrgParams:          params.orgParams,
 				RenderTableColors:  !params.noColor,
@@ -138,6 +141,9 @@ func newTemplateValidateCmd() cli.Command {
 		Flags:  append(commonFlagsNoPrint(), templateFlags(&params)...),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.orgParams); err != nil {
+				return err
+			}
 			parsedParams := template.ValidateParams{
 				OrgParams: params.orgParams,
 			}

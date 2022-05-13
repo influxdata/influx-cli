@@ -41,6 +41,9 @@ func newTaskCreateCmd() cli.Command {
 		Flags:     flags,
 		Before:    middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := task.Client{
 				CLI:      getCLI(ctx),
@@ -84,6 +87,9 @@ func newTaskFindCmd() cli.Command {
 		Flags:   flags,
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := task.Client{
 				CLI:      getCLI(ctx),
@@ -138,6 +144,9 @@ func newTaskRetryFailedCmd() cli.Command {
 		Flags:   flags,
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := task.Client{
 				CLI:      getCLI(ctx),

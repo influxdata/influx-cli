@@ -43,6 +43,9 @@ func newUserCreateCmd() cli.Command {
 		),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := user.Client{
 				CLI:              getCLI(ctx),

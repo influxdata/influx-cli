@@ -35,6 +35,9 @@ func newQueryCmd() cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&orgParams); err != nil {
+				return err
+			}
 			queryString, err := clients.ReadQuery(ctx.String("file"), ctx.Args())
 			if err != nil {
 				return err

@@ -122,6 +122,9 @@ func newCreateCommand() cli.Command {
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			params.WriteBucketIds = ctx.StringSlice("write-bucket")
 			params.ReadBucketIds = ctx.StringSlice("read-bucket")
 
@@ -191,6 +194,9 @@ func newListCommand() cli.Command {
 		Flags:   flags,
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := auth.Client{
 				CLI:               getCLI(ctx),

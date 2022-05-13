@@ -80,6 +80,9 @@ func newCreateV1AuthCmd() cli.Command {
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			params.ReadBucket = ctx.StringSlice("read-bucket")
 			params.WriteBucket = ctx.StringSlice("write-bucket")
 			api := getAPI(ctx)
@@ -142,6 +145,9 @@ func newListV1AuthCmd() cli.Command {
 		Flags:   flags,
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := v1_auth.Client{
 				CLI:                     getCLI(ctx),

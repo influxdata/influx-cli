@@ -60,6 +60,9 @@ func newBucketCreateCmd() cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := bucket.Client{
 				CLI:              getCLI(ctx),
@@ -91,6 +94,9 @@ func newBucketDeleteCmd() cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := bucket.Client{
 				CLI:              getCLI(ctx),
@@ -139,6 +145,9 @@ func newBucketListCmd() cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := bucket.Client{
 				CLI:              getCLI(ctx),

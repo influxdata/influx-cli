@@ -64,6 +64,9 @@ func newRemoteCreateCmd() cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 
 			client := remote.Client{

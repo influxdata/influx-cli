@@ -165,6 +165,10 @@ https://github.com/influxdata/community-templates.
 				EnvVars:            make(map[string]string, len(params.envVars.Value())),
 				Filters:            make([]apply.ResourceFilter, len(params.filters.Value())),
 			}
+			// check that orgName and orgFlags aren't both set
+			if err := checkOrgFlags(&params.orgParams); err != nil {
+				return err
+			}
 
 			// Collect all the sources the CLI needs to read templates from.
 			var deprecationShown bool
