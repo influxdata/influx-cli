@@ -34,6 +34,9 @@ func newDeleteSecretCmd() cli.Command {
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := secret.Client{
 				CLI:              getCLI(ctx),
@@ -55,6 +58,9 @@ func newListSecretCmd() cli.Command {
 		Flags:   flags,
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := secret.Client{
 				CLI:              getCLI(ctx),
@@ -88,6 +94,9 @@ func newUpdateSecretCmd() cli.Command {
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := secret.Client{
 				CLI:              getCLI(ctx),

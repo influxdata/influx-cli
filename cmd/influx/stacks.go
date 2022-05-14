@@ -54,6 +54,9 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/stacks/`,
 			newStacksUpdateCmd(),
 		},
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			params.StackIds = ctx.StringSlice("stack-id")
 			params.StackNames = ctx.StringSlice("stack-name")
 			api := getAPI(ctx)
@@ -108,6 +111,9 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/stacks/init/`,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			params.URLs = ctx.StringSlice("template-url")
 			api := getAPI(ctx)
 			client := stacks.Client{
@@ -141,6 +147,9 @@ func newStacksRemoveCmd() cli.Command {
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			params.Ids = ctx.StringSlice("stack-id")
 			api := getAPI(ctx)
 			client := stacks.Client{

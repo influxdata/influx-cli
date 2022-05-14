@@ -310,6 +310,9 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/export/all/
 			parsedParams := export.AllParams{
 				OrgParams: params.orgParams,
 			}
+			if err := checkOrgFlags(&params.orgParams); err != nil {
+				return err
+			}
 
 			for _, filter := range params.filters.Value() {
 				components := strings.Split(filter, "=")

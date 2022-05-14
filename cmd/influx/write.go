@@ -171,6 +171,9 @@ func newWriteCmd() cli.Command {
 		Before:      middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags:       append(commonFlagsNoPrint(), params.Flags()...),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			errorFile, err := params.makeErrorFile()
 			if err != nil {
 				return err
@@ -211,7 +214,11 @@ func newWriteDryRun() cli.Command {
 		Before:      middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags:       append(commonFlagsNoPrint(), params.Flags()...),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			errorFile, err := params.makeErrorFile()
+			fmt.Println(params.OrgBucketParams.OrgName)
 			if err != nil {
 				return err
 			}

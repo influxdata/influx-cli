@@ -58,6 +58,9 @@ func newV1DBRPListCmd() cli.Command {
 		),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := v1dbrps.Client{
 				CLI:      getCLI(ctx),
@@ -103,6 +106,9 @@ func newV1DBRPCreateCmd() cli.Command {
 		),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := v1dbrps.Client{
 				CLI:              getCLI(ctx),
@@ -132,6 +138,9 @@ func newV1DBRPDeleteCmd() cli.Command {
 		),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := v1dbrps.Client{
 				CLI:      getCLI(ctx),
@@ -170,6 +179,9 @@ func newV1DBRPUpdateCmd() cli.Command {
 		),
 		Before: middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			api := getAPI(ctx)
 			client := v1dbrps.Client{
 				CLI:      getCLI(ctx),

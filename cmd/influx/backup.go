@@ -44,6 +44,9 @@ Examples:
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if err := checkOrgFlags(&params.OrgParams); err != nil {
+				return err
+			}
 			if ctx.NArg() != 1 {
 				return errors.New("backup path must be specified as a single positional argument")
 			}
