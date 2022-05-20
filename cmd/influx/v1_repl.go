@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/fatih/color"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 	repl "github.com/influxdata/influx-cli/v2/clients/v1_repl"
@@ -46,9 +47,11 @@ func newReplCmd() cli.Command {
 			c := repl.Client{
 				CLI:                   getCLI(ctx),
 				PersistentQueryParams: persistentQueryParams,
+				PingApi:               api.PingApi,
 				LegacyQueryApi:        api.LegacyQueryApi,
 				OrganizationsApi:      api.OrganizationsApi,
 			}
+			color.Cyan("InfluxQL Shell %s", version)
 			return c.Create(getContext(ctx))
 		},
 	}
