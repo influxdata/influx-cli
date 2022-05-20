@@ -70,6 +70,8 @@ type APIClient struct {
 
 	OrganizationsApi OrganizationsApi
 
+	PingApi PingApi
+
 	QueryApi QueryApi
 
 	RemoteConnectionsApi RemoteConnectionsApi
@@ -127,6 +129,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.LegacyAuthorizationsApi = (*LegacyAuthorizationsApiService)(&c.common)
 	c.LegacyQueryApi = (*LegacyQueryApiService)(&c.common)
 	c.OrganizationsApi = (*OrganizationsApiService)(&c.common)
+	c.PingApi = (*PingApiService)(&c.common)
 	c.QueryApi = (*QueryApiService)(&c.common)
 	c.RemoteConnectionsApi = (*RemoteConnectionsApiService)(&c.common)
 	c.ReplicationsApi = (*ReplicationsApiService)(&c.common)

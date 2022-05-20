@@ -1,0 +1,19 @@
+get:
+  operationId: GetPing
+  summary: Checks the status of InfluxDB instance and version of InfluxDB.
+  servers:
+    - url: ''
+  tags:
+    - Ping
+  responses:
+    '204':
+      description: OK
+      headers:
+        X-Influxdb-Build:
+          schema:
+            type: string
+          description: The type of InfluxDB build.
+        X-Influxdb-Version:
+          schema:
+            type: integer
+          description: The version of InfluxDB.

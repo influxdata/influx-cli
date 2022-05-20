@@ -9,6 +9,8 @@ paths:
     $ref: "./overrides/paths/legacy_query.yml"
   /health:
     $ref: "./openapi/src/oss/paths/health.yml"
+  /ping:
+    $ref: "./overrides/paths/ping.yml"
   /private/legacy/authorizations:
     $ref: "./openapi/src/oss/paths/legacy_authorizations.yml"
   /private/legacy/authorizations/{authID}:
