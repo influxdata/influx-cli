@@ -114,7 +114,7 @@ func (a *ConfigApiService) GetConfigExecuteWithHttpInfo(r ApiGetConfigRequest) (
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/config"
+	localVarPath := localBasePath + "/api/v2/config"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

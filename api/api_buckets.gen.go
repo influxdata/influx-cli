@@ -208,7 +208,7 @@ func (a *BucketsApiService) DeleteBucketsIDExecuteWithHttpInfo(r ApiDeleteBucket
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/buckets/{bucketID}"
+	localVarPath := localBasePath + "/api/v2/buckets/{bucketID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -416,7 +416,7 @@ func (a *BucketsApiService) GetBucketsExecuteWithHttpInfo(r ApiGetBucketsRequest
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/buckets"
+	localVarPath := localBasePath + "/api/v2/buckets"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -600,7 +600,7 @@ func (a *BucketsApiService) GetBucketsIDExecuteWithHttpInfo(r ApiGetBucketsIDReq
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/buckets/{bucketID}"
+	localVarPath := localBasePath + "/api/v2/buckets/{bucketID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -773,7 +773,7 @@ func (a *BucketsApiService) PatchBucketsIDExecuteWithHttpInfo(r ApiPatchBucketsI
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/buckets/{bucketID}"
+	localVarPath := localBasePath + "/api/v2/buckets/{bucketID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -940,7 +940,7 @@ func (a *BucketsApiService) PostBucketsExecuteWithHttpInfo(r ApiPostBucketsReque
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/buckets"
+	localVarPath := localBasePath + "/api/v2/buckets"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

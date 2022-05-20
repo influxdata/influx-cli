@@ -228,7 +228,7 @@ func (a *WriteApiService) PostWriteExecuteWithHttpInfo(r ApiPostWriteRequest) (*
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/write"
+	localVarPath := localBasePath + "/api/v2/write"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

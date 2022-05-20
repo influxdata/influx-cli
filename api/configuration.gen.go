@@ -102,7 +102,7 @@ func NewConfiguration() *Configuration {
 		Debug:         false,
 		Servers: ServerConfigurations{
 			{
-				URL:         "/api/v2",
+				URL:         "",
 				Description: "No description provided",
 			},
 		},
@@ -110,42 +110,6 @@ func NewConfiguration() *Configuration {
 			"HealthApiService.GetHealth": {
 				{
 					URL:         "",
-					Description: "No description provided",
-				},
-			},
-			"LegacyAuthorizationsApiService.DeleteLegacyAuthorizationsID": {
-				{
-					URL:         "/private",
-					Description: "No description provided",
-				},
-			},
-			"LegacyAuthorizationsApiService.GetLegacyAuthorizations": {
-				{
-					URL:         "/private",
-					Description: "No description provided",
-				},
-			},
-			"LegacyAuthorizationsApiService.GetLegacyAuthorizationsID": {
-				{
-					URL:         "/private",
-					Description: "No description provided",
-				},
-			},
-			"LegacyAuthorizationsApiService.PatchLegacyAuthorizationsID": {
-				{
-					URL:         "/private",
-					Description: "No description provided",
-				},
-			},
-			"LegacyAuthorizationsApiService.PostLegacyAuthorizations": {
-				{
-					URL:         "/private",
-					Description: "No description provided",
-				},
-			},
-			"LegacyAuthorizationsApiService.PostLegacyAuthorizationsIDPassword": {
-				{
-					URL:         "/private",
 					Description: "No description provided",
 				},
 			},
