@@ -17,7 +17,7 @@ import (
 // InfluxqlJsonResponseSeries struct for InfluxqlJsonResponseSeries
 type InfluxqlJsonResponseSeries struct {
 	Name    *string          `json:"name,omitempty" yaml:"name,omitempty"`
-	Columns *[]int32         `json:"columns,omitempty" yaml:"columns,omitempty"`
+	Columns *[]string        `json:"columns,omitempty" yaml:"columns,omitempty"`
 	Values  *[][]interface{} `json:"values,omitempty" yaml:"values,omitempty"`
 }
 
@@ -71,9 +71,9 @@ func (o *InfluxqlJsonResponseSeries) SetName(v string) {
 }
 
 // GetColumns returns the Columns field value if set, zero value otherwise.
-func (o *InfluxqlJsonResponseSeries) GetColumns() []int32 {
+func (o *InfluxqlJsonResponseSeries) GetColumns() []string {
 	if o == nil || o.Columns == nil {
-		var ret []int32
+		var ret []string
 		return ret
 	}
 	return *o.Columns
@@ -81,7 +81,7 @@ func (o *InfluxqlJsonResponseSeries) GetColumns() []int32 {
 
 // GetColumnsOk returns a tuple with the Columns field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *InfluxqlJsonResponseSeries) GetColumnsOk() (*[]int32, bool) {
+func (o *InfluxqlJsonResponseSeries) GetColumnsOk() (*[]string, bool) {
 	if o == nil || o.Columns == nil {
 		return nil, false
 	}
@@ -97,8 +97,8 @@ func (o *InfluxqlJsonResponseSeries) HasColumns() bool {
 	return false
 }
 
-// SetColumns gets a reference to the given []int32 and assigns it to the Columns field.
-func (o *InfluxqlJsonResponseSeries) SetColumns(v []int32) {
+// SetColumns gets a reference to the given []string and assigns it to the Columns field.
+func (o *InfluxqlJsonResponseSeries) SetColumns(v []string) {
 	o.Columns = &v
 }
 

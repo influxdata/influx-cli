@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/c-bata/go-prompt"
@@ -31,6 +32,9 @@ type PersistentQueryParams struct {
 	Epoch  string
 	Format FormatType
 	Pretty bool
+	// Storage
+	Databases         []string
+	RetentionPolicies []string
 }
 
 func DefaultPersistentQueryParams() PersistentQueryParams {
@@ -57,11 +61,12 @@ func (c *Client) Create(ctx context.Context) error {
 	version := res.Header.Get("X-Influxdb-Version")
 	color.Cyan("Connected to InfluxDB %s %s", build, version)
 	p := prompt.New(c.executor,
-		completer,
+		c.completer,
 		prompt.OptionTitle("InfluxQL Shell"),
 		prompt.OptionDescriptionTextColor(prompt.Cyan),
 		prompt.OptionPrefixTextColor(prompt.Green),
 	)
+	c.Databases, _ = c.GetDatabases(ctx)
 	p.Run()
 	return nil
 }
@@ -147,7 +152,7 @@ var ReplKeywords []prompt.Suggest = []prompt.Suggest{
 	// {Text: "auth", Description: "Prompt for username and password"},
 	{Text: "pretty", Description: "Toggle pretty print for the json format"},
 	{Text: "use", Description: "Set current database"},
-	{Text: "precision", Description: "Specify the format of the timestamp"},
+	// {Text: "precision", Description: "Specify the format of the timestamp"},
 	// {Text: "history", Description: "Display shell history"},
 	// {Text: "settings", Description: "Output the current shell settings"},
 	// {Text: "clear", Description: "Clears settings such as database"},
@@ -187,8 +192,8 @@ func (c *Client) executor(cmd string) {
 	// 	c.Settings()
 	case "pretty":
 		c.TogglePretty()
-	// case "use":
-	// 	c.use(cmd)
+	case "use":
+		c.use(cmdArgs)
 	// case "node":
 	// 	c.node(cmd)
 	// case "insert":
@@ -215,7 +220,31 @@ func (c *Client) RunAndShowQuery(query string) {
 	displayFunc(response)
 }
 
-func completer(d prompt.Document) []prompt.Suggest {
+func (c *Client) completer(d prompt.Document) []prompt.Suggest {
+	var s []prompt.Suggest
+	if strings.HasPrefix(d.CurrentLine(), "use ") || strings.HasPrefix(d.CurrentLine(), "use \"") {
+		for _, db := range c.Databases {
+			s = append(s, prompt.Suggest{Text: db, Description: "Table Name"})
+		}
+		return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
+	} else if strings.HasPrefix(d.CurrentLine(), "SELECT ") {
+		if d.GetWordBeforeCursorWithSpace() == "FROM " {
+			for _, db := range c.Databases {
+				s = append(s, prompt.Suggest{Text: db, Description: "Table Name"})
+			}
+			if c.Db != "" {
+				for _, rp := range c.RetentionPolicies {
+					s = append(s, prompt.Suggest{Text: rp, Description: "Retention Policy"})
+				}
+			}
+			return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
+		} else if isMatch, _ := regexp.Match(`FROM [a-zA-Z0-9]+. $`, []byte(d.CurrentLine())); isMatch {
+			for _, rp := range c.RetentionPolicies {
+				s = append(s, prompt.Suggest{Text: rp, Description: "Retention Policy"})
+			}
+			return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
+		}
+	}
 	return append(
 		prompt.FilterHasPrefix(ReplKeywords, d.CurrentLine(), false),
 		prompt.FilterHasPrefix(AllInfluxQLKeywords, d.GetWordBeforeCursor(), true)...,
@@ -284,4 +313,197 @@ func (c *Client) SetFormat(args []string) {
 
 func (c *Client) TogglePretty() {
 	c.Pretty = !c.Pretty
+}
+
+func (c *Client) use(args []string) {
+	if len(args) != 2 {
+		color.Red("wrong number of args for \"use [DATABASE_NAME]\"")
+		return
+	}
+	parsedDb, parsedRp, err := parseDatabaseAndRetentionPolicy([]byte(args[1]))
+	if err != nil {
+		color.Red("Unable to parse: %v", err)
+		return
+	}
+	dbs, err := c.GetDatabases(context.Background())
+	if err != nil {
+		color.Red("Unable to check databases: %v", err)
+		return
+	}
+	for _, db := range dbs {
+		if parsedDb == db {
+			exists := false
+			prevDb := c.Db
+			c.Db = parsedDb
+			rps, _ := c.GetRetentionPolicies(context.Background())
+			for _, rp := range rps {
+				if parsedRp == rp || parsedRp == "" {
+					c.Rp = parsedRp
+					c.RetentionPolicies = rps
+					exists = true
+					break
+				}
+			}
+			if !exists {
+				color.Red("No such retention policy %q exists on %q", parsedRp, c.Db)
+				color.HiBlack("Available retention policies on %q:", parsedDb)
+				for _, rp := range rps {
+					color.HiBlack("- %q", rp)
+				}
+				c.Db = prevDb
+				return
+			}
+			c.Db = parsedDb
+			c.Databases = dbs
+
+			return
+		}
+	}
+	color.Red("No such database %q exists", parsedDb)
+	color.HiBlack("Available databases:")
+	for _, db := range dbs {
+		color.HiBlack("- %q", db)
+	}
+
+}
+
+func (c *Client) GetRetentionPolicies(ctx context.Context) ([]string, error) {
+	singleSeries, err := c.getDataSingleSeries(ctx,
+		fmt.Sprintf("SHOW RETENTION POLICIES ON %q", c.Db))
+	if err != nil {
+		return []string{}, err
+	}
+	nameIndex := -1
+	for i, colName := range singleSeries.GetColumns() {
+		if colName == "name" {
+			nameIndex = i
+		}
+	}
+	if nameIndex == -1 {
+		return []string{}, fmt.Errorf("expected a \"name\" column for retention policies")
+	}
+	var retentionPolicies []string
+	for _, value := range singleSeries.GetValues() {
+		if name, ok := value[nameIndex].(string); ok {
+			retentionPolicies = append(retentionPolicies, name)
+		} else {
+			return []string{}, fmt.Errorf("expected \"name\" column to contain string value")
+		}
+	}
+	return retentionPolicies, nil
+}
+
+func (c *Client) GetDefaultRetentionPolicy(ctx context.Context) (string, error) {
+	singleSeries, err := c.getDataSingleSeries(ctx,
+		fmt.Sprintf("SHOW RETENTION POLICIES ON %q", c.Db))
+	if err != nil {
+		return "", err
+	}
+	nameIndex := -1
+	defaultIndex := -1
+	for i, colName := range singleSeries.GetColumns() {
+		if colName == "default" {
+			defaultIndex = i
+		} else if colName == "name" {
+			nameIndex = i
+		}
+	}
+	if nameIndex == -1 {
+		return "", fmt.Errorf("expected a \"name\" column for retention policies")
+	}
+	if defaultIndex == -1 {
+		return "", fmt.Errorf("expected a \"default\" column for retention policies")
+	}
+	for _, value := range singleSeries.GetValues() {
+		isDefault := value[defaultIndex]
+		if isDefault, ok := isDefault.(bool); ok {
+			if isDefault {
+				if name, ok := value[nameIndex].(string); ok {
+					return name, nil
+				} else {
+					return "", fmt.Errorf("expected \"name\" column to contain string value")
+				}
+			}
+		} else {
+			return "", fmt.Errorf("expected \"default\" column to contain boolean value")
+		}
+	}
+	return "", fmt.Errorf("no default retention policy")
+}
+
+func (c *Client) GetDatabases(ctx context.Context) ([]string, error) {
+	singleSeries, err := c.getDataSingleSeries(ctx, "SHOW DATABASES")
+	if err != nil {
+		return []string{}, err
+	}
+	values := singleSeries.GetValues()
+	if len(values) != 1 {
+		return []string{}, fmt.Errorf("expected a single array in values array")
+	}
+	var databases []string
+	for _, db := range values[0] {
+		if db, ok := db.(string); ok {
+			databases = append(databases, db)
+		} else {
+			return []string{}, fmt.Errorf("expected database names to be strings")
+		}
+	}
+	return databases, nil
+}
+
+func (c *Client) getDataSingleSeries(ctx context.Context, query string) (*api.InfluxqlJsonResponseSeries, error) {
+	resBody, err := c.GetLegacyQuery(ctx).
+		U(c.U).
+		P(c.P).
+		Db(c.Db).
+		Q(query).
+		Rp(c.Rp).
+		Epoch(c.Epoch).
+		Accept("application/json").
+		Execute()
+	if err != nil {
+		return nil, err
+	}
+	var responses api.InfluxqlJsonResponse
+	if err := json.Unmarshal([]byte(resBody), &responses); err != nil {
+		return nil, err
+	}
+	results := responses.GetResults()
+	if len(results) != 1 {
+		return nil, fmt.Errorf("expected a single result from single query")
+	}
+	result := results[0]
+	series := result.GetSeries()
+	if len(series) != 1 {
+		return nil, fmt.Errorf("expected a single series from single result")
+	}
+	return &series[0], nil
+}
+
+func parseDatabaseAndRetentionPolicy(stmt []byte) (string, string, error) {
+	var db, rp []byte
+	var quoted bool
+	var seperatorCount int
+
+	stmt = bytes.TrimSpace(stmt)
+
+	for _, b := range stmt {
+		if b == '"' {
+			quoted = !quoted
+			continue
+		}
+		if b == '.' && !quoted {
+			seperatorCount++
+			if seperatorCount > 1 {
+				return "", "", fmt.Errorf("unable to parse database and retention policy from %s", string(stmt))
+			}
+			continue
+		}
+		if seperatorCount == 1 {
+			rp = append(rp, b)
+			continue
+		}
+		db = append(db, b)
+	}
+	return string(db), string(rp), nil
 }
