@@ -9,8 +9,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/c-bata/go-prompt"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fatih/color"
+	"github.com/influxdata/go-prompt"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 )
@@ -35,6 +36,7 @@ type PersistentQueryParams struct {
 	// Storage
 	Databases         []string
 	RetentionPolicies []string
+	Measurements      []string
 }
 
 func DefaultPersistentQueryParams() PersistentQueryParams {
@@ -43,13 +45,6 @@ func DefaultPersistentQueryParams() PersistentQueryParams {
 		Epoch:  "n",
 	}
 }
-
-type FormatType string
-
-var (
-	CsvFormat  FormatType = "csv"
-	JsonFormat FormatType = "json"
-)
 
 func (c *Client) Create(ctx context.Context) error {
 	res, err := c.GetPing(ctx).ExecuteWithHttpInfo()
@@ -65,6 +60,7 @@ func (c *Client) Create(ctx context.Context) error {
 		prompt.OptionTitle("InfluxQL Shell"),
 		prompt.OptionDescriptionTextColor(prompt.Cyan),
 		prompt.OptionPrefixTextColor(prompt.Green),
+		prompt.OptionCompletionWordSeparator(" ", "."),
 	)
 	c.Databases, _ = c.GetDatabases(ctx)
 	p.Run()
@@ -159,7 +155,7 @@ var ReplKeywords []prompt.Suggest = []prompt.Suggest{
 	{Text: "exit", Description: "Exit the InfluxQL shell"},
 	{Text: "quit", Description: "Exit the InfluxQL shell"},
 	// {Text: "gopher", Description: "Display the Go Gopher"},
-	{Text: "help", Description: "Display help options"},
+	// {Text: "help", Description: "Display help options"},
 	{Text: "format", Description: "Specify the data display format"},
 }
 
@@ -205,6 +201,14 @@ func (c *Client) executor(cmd string) {
 	}
 }
 
+type FormatType string
+
+var (
+	CsvFormat   FormatType = "csv"
+	JsonFormat  FormatType = "json"
+	TableFormat FormatType = "table"
+)
+
 func (c *Client) RunAndShowQuery(query string) {
 	response, err := c.Query(context.Background(), query)
 	if err != nil {
@@ -213,36 +217,45 @@ func (c *Client) RunAndShowQuery(query string) {
 		return
 	}
 	displayMap := map[FormatType]func(string){
-		CsvFormat:  c.OutputCsv,
-		JsonFormat: c.OutputJson,
+		CsvFormat:   c.OutputCsv,
+		JsonFormat:  c.OutputJson,
+		TableFormat: c.OutputTable,
 	}
 	displayFunc := displayMap[c.Format]
 	displayFunc(response)
 }
 
+var IdentifierRegex = `([0-9A-Za-z\"\-\_]+)`
+
 func (c *Client) completer(d prompt.Document) []prompt.Suggest {
+	currentLineUpper := strings.ToUpper(d.CurrentLine())
 	var s []prompt.Suggest
-	if strings.HasPrefix(d.CurrentLine(), "use ") || strings.HasPrefix(d.CurrentLine(), "use \"") {
+	if strings.HasPrefix(d.CurrentLine(), "format ") {
+		s = append(s, prompt.Suggest{Text: "table", Description: "Format Type"})
+		s = append(s, prompt.Suggest{Text: "json", Description: "Format Type"})
+		s = append(s, prompt.Suggest{Text: "csv", Description: "Format Type"})
+		return prompt.FilterFuzzy(s, d.GetWordBeforeCursor(), true)
+	} else if strings.HasPrefix(d.CurrentLine(), "use ") || strings.HasPrefix(d.CurrentLine(), "use \"") {
 		for _, db := range c.Databases {
-			s = append(s, prompt.Suggest{Text: db, Description: "Table Name"})
+			s = append(s, prompt.Suggest{Text: "\"" + db + "\"", Description: "Table Name"})
 		}
-		return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
-	} else if strings.HasPrefix(d.CurrentLine(), "SELECT ") {
-		if d.GetWordBeforeCursorWithSpace() == "FROM " {
-			for _, db := range c.Databases {
-				s = append(s, prompt.Suggest{Text: db, Description: "Table Name"})
+		return prompt.FilterFuzzy(s, d.GetWordBeforeCursor(), true)
+	} else if strings.HasPrefix(currentLineUpper, "SELECT ") {
+		if isMatch, _ := regexp.Match(`FROM `+IdentifierRegex+`?$`, []byte(currentLineUpper)); isMatch {
+			if c.Db != "" && c.Rp != "" {
+				for _, m := range c.Measurements {
+					s = append(s, prompt.Suggest{Text: "\"" + m + "\"", Description: fmt.Sprintf("Measurement on \"%s\".\"%s\"", c.Db, c.Rp)})
+				}
 			}
 			if c.Db != "" {
 				for _, rp := range c.RetentionPolicies {
-					s = append(s, prompt.Suggest{Text: rp, Description: "Retention Policy"})
+					s = append(s, prompt.Suggest{Text: "\"" + rp + "\"", Description: "Retention Policy on " + c.Db})
 				}
 			}
-			return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
-		} else if isMatch, _ := regexp.Match(`FROM [a-zA-Z0-9]+. $`, []byte(d.CurrentLine())); isMatch {
-			for _, rp := range c.RetentionPolicies {
-				s = append(s, prompt.Suggest{Text: rp, Description: "Retention Policy"})
+			for _, db := range c.Databases {
+				s = append(s, prompt.Suggest{Text: "\"" + db + "\"", Description: "Table Name"})
 			}
-			return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
+			return prompt.FilterFuzzy(s, d.GetWordBeforeCursorUntilAnySeparator(" ", "."), true)
 		}
 	}
 	return append(
@@ -256,7 +269,7 @@ func (c *Client) Query(ctx context.Context, query string) (string, error) {
 	switch c.Format {
 	case CsvFormat:
 		resContentType = "application/csv"
-	case JsonFormat:
+	case JsonFormat, TableFormat:
 		resContentType = "application/json"
 	default:
 		return "", fmt.Errorf("unexpected format: %s", c.Format)
@@ -274,6 +287,21 @@ func (c *Client) Query(ctx context.Context, query string) (string, error) {
 		return "", err
 	}
 	return resBody, nil
+}
+
+func (c *Client) SetFormat(args []string) {
+	// args[0] is "format"
+	if len(args) != 2 {
+		color.Red("Expected a format, like csv or json")
+		return
+	}
+	newFormat := FormatType(args[1])
+	switch newFormat {
+	case CsvFormat, JsonFormat, TableFormat:
+		c.Format = newFormat
+	default:
+		color.HiRed("Unimplemented format %q, keeping %s format.", newFormat, c.Format)
+	}
 }
 
 func (c *Client) OutputCsv(csvBody string) {
@@ -294,20 +322,19 @@ func (c *Client) OutputJson(jsonBody string) {
 	}
 }
 
-// -- Command Helper Functions --
-
-func (c *Client) SetFormat(args []string) {
-	// args[0] is "format"
-	if len(args) != 2 {
-		color.Red("Expected a format, like csv or json")
-		return
+func (c *Client) OutputTable(jsonBody string) {
+	var responses api.InfluxqlJsonResponse
+	if err := json.Unmarshal([]byte(jsonBody), &responses); err != nil {
+		color.Red("Failed to parse JSON response")
 	}
-	newFormat := FormatType(args[1])
-	switch newFormat {
-	case CsvFormat, JsonFormat:
-		c.Format = newFormat
-	default:
-		color.HiRed("Unimplemented format %q, keeping %s format.", newFormat, c.Format)
+	for _, res := range responses.GetResults() {
+		for _, series := range res.GetSeries() {
+			p := tea.NewProgram(NewModel(series))
+			if err := p.Start(); err != nil {
+				color.Red("Failed to display table")
+			}
+			fmt.Printf("\n")
+		}
 	}
 }
 
@@ -338,9 +365,14 @@ func (c *Client) use(args []string) {
 			rps, _ := c.GetRetentionPolicies(context.Background())
 			for _, rp := range rps {
 				if parsedRp == rp || parsedRp == "" {
-					c.Rp = parsedRp
+					if parsedRp == "" {
+						c.Rp, _ = c.GetDefaultRetentionPolicy(context.Background())
+					} else {
+						c.Rp = parsedRp
+					}
 					c.RetentionPolicies = rps
 					exists = true
+					c.Measurements, _ = c.GetMeasurements(context.Background())
 					break
 				}
 			}
@@ -449,6 +481,25 @@ func (c *Client) GetDatabases(ctx context.Context) ([]string, error) {
 		}
 	}
 	return databases, nil
+}
+
+func (c *Client) GetMeasurements(ctx context.Context) ([]string, error) {
+	singleSeries, err := c.getDataSingleSeries(ctx, "SHOW MEASUREMENTS")
+	if err != nil {
+		return []string{}, err
+	}
+	var measures []string
+	for _, measureArr := range singleSeries.GetValues() {
+		if len(measureArr) != 1 {
+			return []string{}, fmt.Errorf("expected a single measurement name in each array in values array")
+		}
+		if measure, ok := measureArr[0].(string); ok {
+			measures = append(measures, measure)
+		} else {
+			return []string{}, fmt.Errorf("expected measurement name to be a string")
+		}
+	}
+	return measures, nil
 }
 
 func (c *Client) getDataSingleSeries(ctx context.Context, query string) (*api.InfluxqlJsonResponseSeries, error) {
