@@ -33,26 +33,40 @@ func newQueryCmd() cli.Command {
 				Name:  "profilers, p",
 				Usage: "Names of Flux profilers to enable",
 			},
+			&cli.BoolFlag{
+				Name:  "version",
+				Usage: "Runs a query to display the server flux version",
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			if err := checkOrgFlags(&orgParams); err != nil {
 				return err
 			}
-			queryString, err := clients.ReadQuery(ctx.String("file"), ctx.Args())
-			if err != nil {
-				return err
-			}
-			queryString = strings.TrimSpace(queryString)
-			if queryString == "" {
-				return errors.New("no query provided")
+
+			queryVersion := ctx.Bool("version")
+			var queryString string
+			if queryVersion {
+				queryString = clients.VersionQuery
+			} else {
+				var err error
+				queryString, err = clients.ReadQuery(ctx.String("file"), ctx.Args())
+				if err != nil {
+					return err
+				}
+				queryString = strings.TrimSpace(queryString)
+				if queryString == "" {
+					return errors.New("no query provided")
+				}
 			}
 
 			// The old CLI allowed specifying this either via repeated flags or
 			// via a single flag w/ a comma-separated value.
-			rawProfilers := ctx.StringSlice("profilers")
 			var profilers []string
-			for _, p := range rawProfilers {
-				profilers = append(profilers, strings.Split(p, ",")...)
+			if !queryVersion {
+				rawProfilers := ctx.StringSlice("profilers")
+				for _, p := range rawProfilers {
+					profilers = append(profilers, strings.Split(p, ",")...)
+				}
 			}
 
 			params := query.Params{
@@ -64,6 +78,8 @@ func newQueryCmd() cli.Command {
 			var printer query.ResultPrinter
 			if ctx.Bool("raw") {
 				printer = query.RawResultPrinter
+			} else if queryVersion {
+				printer = query.VersionPrinter
 			} else {
 				printer = query.NewFormattingPrinter()
 			}

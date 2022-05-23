@@ -51,3 +51,8 @@ func ReadQuery(filepath string, args []string) (string, error) {
 		return arg, nil
 	}
 }
+
+const VersionQuery = `import "array"
+import "runtime"
+array.from(rows: [{version: runtime.version()}])
+`
