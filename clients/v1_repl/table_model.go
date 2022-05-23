@@ -2,6 +2,7 @@ package v1repl
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -16,17 +17,24 @@ const (
 )
 
 type Model struct {
+	rows        []table.Row
+	cols        []table.Column
+	colNames    []string
 	simpleTable table.Model
 	totalMargin int
 	totalWidth  int
+	rowsPerPage int
+	currentPage int
+	numPages    int
 }
 
 func NewModel(res api.InfluxqlJsonResponseSeries) Model {
-	cols := make([]table.Column, len(*res.Columns))
+	cols := make([]table.Column, len(*res.Columns)+1)
 	rows := make([]table.Row, len(*res.Values))
 	colNames := *res.Columns
 	for rowI, row := range *res.Values {
 		rd := table.RowData{}
+		rd["index"] = fmt.Sprintf("%d", rowI)
 		for i, rowVal := range row {
 			if rowValStr, ok := rowVal.(string); ok {
 				rd[colNames[i]] = fmt.Sprintf("%q", rowValStr)
@@ -37,22 +45,37 @@ func NewModel(res api.InfluxqlJsonResponseSeries) Model {
 		rows[rowI] = table.NewRow(rd).
 			WithStyle(lipgloss.NewStyle().Align(lipgloss.Center))
 	}
+	cols[0] = table.NewColumn("index", "index", 10).WithStyle(lipgloss.NewStyle().
+		Faint(true).
+		Align(lipgloss.Center))
 	for colI, colTitle := range colNames {
-		titleWidth := len(colTitle) + 2
-		colWidth := 10
-		if len(rows) > 0 {
-			colWidth = len(fmt.Sprintf("%q", rows[0].Data[colTitle])) + 2
-		}
-		if colWidth < titleWidth {
-			colWidth = titleWidth
-		}
-		cols[colI] = table.NewFlexColumn(colTitle, color.HiCyanString(colTitle), colWidth).
+		cols[colI+1] = table.NewFlexColumn(colTitle, color.HiCyanString(colTitle), 1).
 			WithStyle(lipgloss.NewStyle().Align(lipgloss.Center))
 	}
-
-	return Model{
-		simpleTable: table.New(cols).WithRows(rows).WithStaticFooter(fmt.Sprintf("%d Columns, %d Rows", len(cols), len(rows))),
+	colNames = append([]string{"index"}, colNames...)
+	m := Model{
+		rows:        rows,
+		cols:        cols,
+		colNames:    colNames,
+		rowsPerPage: 15,
+		numPages:    int(math.Ceil(float64(len(rows)) / float64(15))),
+		currentPage: 0,
 	}
+	m.regeneratePage()
+	m.recalculateTable()
+	return m
+}
+
+func (m *Model) regeneratePage() {
+	pageEnd := (m.currentPage + 1) * m.rowsPerPage
+	if len(m.rows) < pageEnd {
+		pageEnd = len(m.rows)
+	}
+	m.simpleTable = table.New(m.cols).
+		WithRows(m.rows[m.currentPage*m.rowsPerPage : pageEnd]).
+		WithStaticFooter(
+			fmt.Sprintf("%d Columns, %d Rows, Page %d/%d",
+				len(m.cols), len(m.rows), m.currentPage+1, m.numPages))
 }
 
 func (m Model) Init() tea.Cmd {
@@ -72,6 +95,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "ctrl+d", "esc", "q":
+			fmt.Printf("\n")
 			cmds = append(cmds, tea.Quit)
 
 		case "left":
@@ -85,12 +109,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.totalMargin--
 				m.recalculateTable()
 			}
+		case "down":
+			if m.currentPage < m.numPages-1 {
+				m.currentPage++
+				m.regeneratePage()
+				m.recalculateTable()
+			}
+		case "up":
+			if m.currentPage > 0 {
+				m.currentPage--
+				m.regeneratePage()
+				m.recalculateTable()
+			}
 		}
 	case tea.WindowSizeMsg:
 		m.totalWidth = msg.Width
+		m.rowsPerPage = msg.Height - 7
+		m.numPages = int(math.Ceil(float64(len(m.rows)) / float64(m.rowsPerPage)))
+		m.regeneratePage()
 		m.recalculateTable()
 	}
-
 	return m, tea.Batch(cmds...)
 }
 
@@ -101,9 +139,7 @@ func (m *Model) recalculateTable() {
 func (m Model) View() string {
 	body := strings.Builder{}
 
-	body.WriteString("Query Response: (non-interactive)\nPress q or ctrl+c to quit\n\n")
-
 	body.WriteString(m.simpleTable.View())
 
-	return body.String() + "\n"
+	return body.String()
 }

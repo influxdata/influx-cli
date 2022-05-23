@@ -329,6 +329,7 @@ func (c *Client) OutputTable(jsonBody string) {
 	}
 	for _, res := range responses.GetResults() {
 		for _, series := range res.GetSeries() {
+			color.Magenta("Table View (press q to exit interactive mode):")
 			p := tea.NewProgram(NewModel(series))
 			if err := p.Start(); err != nil {
 				color.Red("Failed to display table")
