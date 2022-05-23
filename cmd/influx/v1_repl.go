@@ -50,6 +50,8 @@ func newReplCmd() cli.Command {
 				PingApi:               api.PingApi,
 				LegacyQueryApi:        api.LegacyQueryApi,
 				OrganizationsApi:      api.OrganizationsApi,
+				WriteApi:              api.WriteApi,
+				DBRPsApi:              api.DBRPsApi,
 			}
 			color.Cyan("InfluxQL Shell %s", version)
 			return c.Create(getContext(ctx))

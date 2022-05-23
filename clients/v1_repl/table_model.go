@@ -34,7 +34,7 @@ func NewModel(res api.InfluxqlJsonResponseSeries) Model {
 	colNames := *res.Columns
 	for rowI, row := range *res.Values {
 		rd := table.RowData{}
-		rd["index"] = fmt.Sprintf("%d", rowI)
+		rd["index"] = fmt.Sprintf("%d", rowI+1)
 		for i, rowVal := range row {
 			if rowValStr, ok := rowVal.(string); ok {
 				rd[colNames[i]] = fmt.Sprintf("%q", rowValStr)
@@ -90,6 +90,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	m.simpleTable, cmd = m.simpleTable.Update(msg)
 	cmds = append(cmds, cmd)
+
+	if m.numPages == 1 {
+		fmt.Printf("\n")
+		cmds = append(cmds, tea.Quit)
+	}
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:

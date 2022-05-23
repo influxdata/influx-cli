@@ -1,13 +1,18 @@
 package v1repl
 
 import (
+	"bufio"
 	"bytes"
+	"compress/gzip"
 	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
+	"text/tabwriter"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fatih/color"
@@ -22,27 +27,109 @@ type Client struct {
 	api.LegacyQueryApi
 	api.PingApi
 	api.OrganizationsApi
+	api.WriteApi
+	api.DBRPsApi
 }
 
 type PersistentQueryParams struct {
 	clients.OrgParams
-	Db     string // bucketID
-	P      string // password OR token
-	U      string
-	Rp     string
-	Epoch  string
-	Format FormatType
-	Pretty bool
+	Database        string // bucketID
+	Password        string // password OR token
+	Username        string
+	RetentionPolicy string
+	Precision       string
+	Format          FormatType
+	Pretty          bool
+	historyFilePath string
 	// Storage
 	Databases         []string
 	RetentionPolicies []string
 	Measurements      []string
 }
 
+func (c *Client) clear(cmd string) {
+	args := strings.Split(strings.TrimSuffix(strings.TrimSpace(cmd), ";"), " ")
+	v := strings.ToLower(strings.Join(args[1:], " "))
+	switch v {
+	case "database", "db":
+		c.Database = ""
+		c.RetentionPolicies = []string{}
+		fmt.Println("database context cleared")
+		return
+	case "retention policy", "rp":
+		c.RetentionPolicy = ""
+		fmt.Println("retention policy context cleared")
+		return
+	default:
+		if len(args) > 1 {
+			fmt.Printf("invalid command %q.\n", v)
+		}
+		fmt.Println(`Possible commands for 'clear' are:
+    # Clear the database context
+    clear database
+    clear db
+
+    # Clear the retention policy context
+    clear retention policy
+    clear rp
+		`)
+	}
+}
+
 func DefaultPersistentQueryParams() PersistentQueryParams {
 	return PersistentQueryParams{
-		Format: CsvFormat,
-		Epoch:  "n",
+		Format:    CsvFormat,
+		Precision: "ns",
+	}
+}
+
+func (c *Client) ReadHistory() []string {
+	// Only load/write history if HOME environment variable is set.
+	var historyDir string
+	if runtime.GOOS == "windows" {
+		if userDir := os.Getenv("USERPROFILE"); userDir != "" {
+			historyDir = userDir
+		}
+	}
+
+	if homeDir := os.Getenv("HOME"); homeDir != "" {
+		historyDir = homeDir
+	}
+	// Attempt to load the history file.
+	if historyDir != "" {
+		c.historyFilePath = filepath.Join(historyDir, ".influx_history")
+		if historyFile, err := os.Open(c.historyFilePath); err == nil {
+			var history []string
+			scanner := bufio.NewScanner(historyFile)
+			for scanner.Scan() {
+				history = append(history, scanner.Text())
+			}
+			historyFile.Close()
+			return history
+		}
+	}
+	return []string{}
+}
+
+func (c *Client) WriteCommandToHistory(cmd string) {
+	// Only load/write history if HOME environment variable is set.
+	var historyDir string
+	if runtime.GOOS == "windows" {
+		if userDir := os.Getenv("USERPROFILE"); userDir != "" {
+			historyDir = userDir
+		}
+	}
+
+	if homeDir := os.Getenv("HOME"); homeDir != "" {
+		historyDir = homeDir
+	}
+	// Attempt to load the history file.
+	if historyDir != "" {
+		c.historyFilePath = filepath.Join(historyDir, ".influx_history")
+		if historyFile, err := os.OpenFile(c.historyFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
+			historyFile.WriteString(cmd + "\n")
+			historyFile.Close()
+		}
 	}
 }
 
@@ -55,9 +142,11 @@ func (c *Client) Create(ctx context.Context) error {
 	build := res.Header.Get("X-Influxdb-Build")
 	version := res.Header.Get("X-Influxdb-Version")
 	color.Cyan("Connected to InfluxDB %s %s", build, version)
+
 	p := prompt.New(c.executor,
 		c.completer,
 		prompt.OptionTitle("InfluxQL Shell"),
+		prompt.OptionHistory(c.ReadHistory()),
 		prompt.OptionDescriptionTextColor(prompt.Cyan),
 		prompt.OptionPrefixTextColor(prompt.Green),
 		prompt.OptionCompletionWordSeparator(" ", "."),
@@ -69,13 +158,13 @@ func (c *Client) Create(ctx context.Context) error {
 
 var AllInfluxQLKeywords []prompt.Suggest = []prompt.Suggest{
 	{Text: "ALL"},
-	{Text: "ALTER"},
+	// {Text: "ALTER"},
 	{Text: "ANY"},
 	{Text: "AS"},
 	{Text: "ASC"},
 	{Text: "BEGIN"},
 	{Text: "BY"},
-	{Text: "CREATE"},
+	// {Text: "CREATE"},
 	{Text: "CONTINUOUS"},
 	{Text: "DATABASE"},
 	{Text: "DATABASES"},
@@ -93,17 +182,17 @@ var AllInfluxQLKeywords []prompt.Suggest = []prompt.Suggest{
 	{Text: "FIELD"},
 	{Text: "FOR"},
 	{Text: "FROM"},
-	{Text: "GRANT"},
+	// {Text: "GRANT"},
 	{Text: "GRANTS"},
 	{Text: "GROUP"},
 	{Text: "GROUPS"},
 	{Text: "IN"},
 	{Text: "INF"},
-	{Text: "INSERT"},
-	{Text: "INTO"},
+	// {Text: "INSERT"},
+	// {Text: "INTO"},
 	{Text: "KEY"},
 	{Text: "KEYS"},
-	{Text: "KILL"},
+	// {Text: "KILL"},
 	{Text: "LIMIT"},
 	{Text: "SHOW"},
 	{Text: "MEASUREMENT"},
@@ -122,7 +211,7 @@ var AllInfluxQLKeywords []prompt.Suggest = []prompt.Suggest{
 	{Text: "REPLICATION"},
 	{Text: "RESAMPLE"},
 	{Text: "RETENTION"},
-	{Text: "REVOKE"},
+	// {Text: "REVOKE"},
 	{Text: "SELECT"},
 	{Text: "SERIES"},
 	{Text: "SET"},
@@ -148,57 +237,185 @@ var ReplKeywords []prompt.Suggest = []prompt.Suggest{
 	// {Text: "auth", Description: "Prompt for username and password"},
 	{Text: "pretty", Description: "Toggle pretty print for the json format"},
 	{Text: "use", Description: "Set current database"},
-	// {Text: "precision", Description: "Specify the format of the timestamp"},
-	// {Text: "history", Description: "Display shell history"},
-	// {Text: "settings", Description: "Output the current shell settings"},
-	// {Text: "clear", Description: "Clears settings such as database"},
+	{Text: "precision", Description: "Specify the format of the timestamp"},
+	{Text: "history", Description: "Display shell history"},
+	{Text: "settings", Description: "Output the current shell settings"},
+	{Text: "clear", Description: "Clears settings such as database"},
 	{Text: "exit", Description: "Exit the InfluxQL shell"},
 	{Text: "quit", Description: "Exit the InfluxQL shell"},
-	// {Text: "gopher", Description: "Display the Go Gopher"},
-	// {Text: "help", Description: "Display help options"},
+	{Text: "gopher", Description: "Display the Go Gopher"},
+	{Text: "help", Description: "Display help options"},
+	{Text: "insert", Description: "Insert line protocol data"},
 	{Text: "format", Description: "Specify the data display format"},
+}
+
+func (c *Client) gopher() {
+	color.Cyan(`
+                                          .-::-::://:-::-    .:/++/'
+                                     '://:-''/oo+//++o+/.://o-    ./+:
+                                  .:-.    '++-         .o/ '+yydhy'  o-
+                               .:/.      .h:         :osoys  .smMN-  :/
+                            -/:.'        s-         /MMMymh.   '/y/  s'
+                         -+s:''''        d          -mMMms//     '-/o:
+                       -/++/++/////:.    o:          '... s-        :s.
+                     :+-+s-'       ':/'  's-             /+          'o:
+                   '+-'o:        /ydhsh.  '//.        '-o-             o-
+                  .y. o:        .MMMdm+y    ':+++:::/+:.'               s:
+                .-h/  y-        'sdmds'h -+ydds:::-.'                   'h.
+             .//-.d'  o:          '.' 'dsNMMMNh:.:++'                    :y
+            +y.  'd   's.            .s:mddds:     ++                     o/
+           'N-  odd    'o/.       './o-s-'   .---+++'                      o-
+           'N'  yNd      .://:/:::::. -s   -+/s/./s'                       'o/'
+            so'  .h         ''''       ////s: '+. .s                         +y'
+             os/-.y'                       's' 'y::+                          +d'
+               '.:o/                        -+:-:.'                            so.---.'
+                   o'                                                          'd-.''/s'
+                   .s'                                                          :y.''.y
+                    -s                                                           mo:::'
+                     ::                                                          yh
+                      //                                      ''''               /M'
+                       o+                                    .s///:/.            'N:
+                        :+                                   /:    -s'            ho
+                         's-                               -/s/:+/.+h'            +h
+                           ys'                            ':'    '-.              -d
+                            oh                                                    .h
+                             /o                                                   .s
+                              s.                                                  .h
+                              -y                                                  .d
+                               m/                                                 -h
+                               +d                                                 /o
+                               'N-                                                y:
+                                h:                                                m.
+                                s-                                               -d
+                                o-                                               s+
+                                +-                                              'm'
+                                s/                                              oo--.
+                                y-                                             /s  ':+'
+                                s'                                           'od--' .d:
+                                -+                                         ':o: ':+-/+
+                                 y-                                      .:+-      '
+                                //o-                                 '.:+/.
+                                .-:+/'                           ''-/+/.
+                                    ./:'                    ''.:o+/-'
+                                      .+o:/:/+-'      ''.-+ooo/-'
+                                         o:   -h///++////-.
+                                        /:   .o/
+                                       //+  'y
+                                       ./sooy.`)
 }
 
 func (c *Client) executor(cmd string) {
 	if cmd == "" {
 		return
 	}
+	defer c.WriteCommandToHistory(cmd)
 	cmdArgs := strings.Split(cmd, " ")
-	switch cmdArgs[0] {
+	switch strings.ToLower(cmdArgs[0]) {
 	case "quit", "exit":
 		color.HiBlack("Goodbye!")
 		os.Exit(0)
-	// case "gopher":
-	// 	c.gopher()
+	case "gopher":
+		c.gopher()
 	// case "connect":
 	// 	return c.Connect(cmd)
 	// case "auth":
 	// 	c.SetAuth(cmd)
-	// case "help":
-	// 	c.help()
-	// case "history":
-	//  c.History()
+	case "help":
+		c.help()
+	case "history":
+		color.HiBlack(strings.Join(c.ReadHistory(), "\n"))
 	case "format":
 		c.SetFormat(cmdArgs)
-	// case "precision":
-	// 	c.SetPrecision(cmd)
-	// case "consistency":
-	// 	c.SetWriteConsistency(cmd)
-	// case "settings":
-	// 	c.Settings()
+	case "precision":
+		c.SetPrecision(cmdArgs)
+	case "settings":
+		c.Settings()
 	case "pretty":
 		c.TogglePretty()
 	case "use":
 		c.use(cmdArgs)
 	// case "node":
 	// 	c.node(cmd)
-	// case "insert":
-	// 	return c.Insert(cmd)
-	// case "clear":
-	// 	c.clear(cmd)
+	case "insert":
+		c.Insert(cmdArgs)
+	case "clear":
+		c.clear(cmd)
 	default:
 		c.RunAndShowQuery(cmd)
 	}
+}
+
+func (c Client) Insert(args []string) {
+	if len(args) > 1 && args[1] == "INTO" {
+		// TODO: Implement INSERT INTO
+		color.Red("INSERT INTO not yet implemented for the 2.x REPL.")
+		color.Red(`Instead, set a database with the command "use <database>"`)
+		color.Red(`Then run "INSERT <point>"`)
+		return
+	}
+	buf := bytes.Buffer{}
+	gzw := gzip.NewWriter(&buf)
+	_, err := gzw.Write([]byte(strings.Join(args[1:], " ")))
+	gzw.Close()
+	if err != nil {
+		color.Red("Failed to gzip points")
+		return
+	}
+	bucketID, err := c.getBucketIdForDBRP()
+	if err != nil {
+		color.Red("Unable to match DBRP to BucketID: %v", err)
+		return
+	}
+	writeReq := c.PostWrite(context.Background()).
+		Bucket(bucketID).
+		Precision(api.WritePrecision(c.Precision)). // TODO: specific write precision
+		ContentEncoding("gzip").
+		Body(buf.Bytes())
+	if c.OrgID != "" {
+		writeReq = writeReq.Org(c.OrgID)
+	} else if c.OrgName != "" {
+		writeReq = writeReq.Org(c.OrgName)
+	} else {
+		writeReq = writeReq.Org(c.ActiveConfig.Org)
+	}
+	if err := writeReq.Execute(); err != nil {
+		color.Red("ERR: %v", err)
+		if c.Database == "" {
+			fmt.Println("Note: error may be due to not setting a database or retention policy.")
+			fmt.Println(`Please set a database with the command "use <database>"`)
+			return
+			// TODO: implement INSERT INTO
+			//fmt.Println("INSERT INTO <database>.<retention-policy> <point>")
+		}
+	}
+}
+
+func (c Client) getBucketIdForDBRP() (string, error) {
+	dbrpsReq := c.GetDBRPs(context.Background())
+	if c.OrgID != "" {
+		dbrpsReq = dbrpsReq.OrgID(c.OrgID)
+	}
+	if c.OrgName != "" {
+		dbrpsReq = dbrpsReq.Org(c.OrgName)
+	}
+	if c.OrgID == "" && c.OrgName == "" {
+		dbrpsReq = dbrpsReq.Org(c.ActiveConfig.Org)
+	}
+	dbrps, err := dbrpsReq.Execute()
+	if err != nil {
+		return "", err
+	}
+	bucketID := ""
+	for _, dbrp := range *dbrps.Content {
+		if dbrp.Database == c.Database && dbrp.RetentionPolicy == c.RetentionPolicy {
+			bucketID = dbrp.BucketID
+			break
+		}
+	}
+	if bucketID == "" {
+		return "", fmt.Errorf("unable to find bucket ID for %q.%q", c.Database, c.RetentionPolicy)
+	}
+	return bucketID, nil
 }
 
 type FormatType string
@@ -230,26 +447,26 @@ var IdentifierRegex = `([0-9A-Za-z\"\-\_]+)`
 func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 	currentLineUpper := strings.ToUpper(d.CurrentLine())
 	var s []prompt.Suggest
-	if strings.HasPrefix(d.CurrentLine(), "format ") {
+	if strings.HasPrefix(currentLineUpper, "FORMAT ") {
 		s = append(s, prompt.Suggest{Text: "table", Description: "Format Type"})
 		s = append(s, prompt.Suggest{Text: "json", Description: "Format Type"})
 		s = append(s, prompt.Suggest{Text: "csv", Description: "Format Type"})
 		return prompt.FilterFuzzy(s, d.GetWordBeforeCursor(), true)
-	} else if strings.HasPrefix(d.CurrentLine(), "use ") || strings.HasPrefix(d.CurrentLine(), "use \"") {
+	} else if strings.HasPrefix(currentLineUpper, "USE ") {
 		for _, db := range c.Databases {
 			s = append(s, prompt.Suggest{Text: "\"" + db + "\"", Description: "Table Name"})
 		}
 		return prompt.FilterFuzzy(s, d.GetWordBeforeCursor(), true)
 	} else if strings.HasPrefix(currentLineUpper, "SELECT ") {
 		if isMatch, _ := regexp.Match(`FROM `+IdentifierRegex+`?$`, []byte(currentLineUpper)); isMatch {
-			if c.Db != "" && c.Rp != "" {
+			if c.Database != "" && c.RetentionPolicy != "" {
 				for _, m := range c.Measurements {
-					s = append(s, prompt.Suggest{Text: "\"" + m + "\"", Description: fmt.Sprintf("Measurement on \"%s\".\"%s\"", c.Db, c.Rp)})
+					s = append(s, prompt.Suggest{Text: "\"" + m + "\"", Description: fmt.Sprintf("Measurement on \"%s\".\"%s\"", c.Database, c.RetentionPolicy)})
 				}
 			}
-			if c.Db != "" {
+			if c.Database != "" {
 				for _, rp := range c.RetentionPolicies {
-					s = append(s, prompt.Suggest{Text: "\"" + rp + "\"", Description: "Retention Policy on " + c.Db})
+					s = append(s, prompt.Suggest{Text: "\"" + rp + "\"", Description: "Retention Policy on " + c.Database})
 				}
 			}
 			for _, db := range c.Databases {
@@ -259,9 +476,53 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 		}
 	}
 	return append(
-		prompt.FilterHasPrefix(ReplKeywords, d.CurrentLine(), false),
-		prompt.FilterHasPrefix(AllInfluxQLKeywords, d.GetWordBeforeCursor(), true)...,
+		prompt.FilterHasPrefix(ReplKeywords, strings.ToLower(d.CurrentLine()), false),
+		prompt.FilterHasPrefix(AllInfluxQLKeywords, strings.ToUpper(d.GetWordBeforeCursor()), true)...,
 	)
+}
+
+func (c *Client) help() {
+	fmt.Println(`Usage:
+        connect <host:port>   connects to another node specified by host:port
+        auth                  prompts for username and password
+        pretty                toggles pretty print for the json format
+        use <db_name>         sets current database
+        format <format>       specifies the format of the server responses: json, csv, or column
+        precision <format>    specifies the format of the timestamp: h, m, s, ms, u or ns
+        history               displays command history
+        settings              outputs the current settings for the shell
+        clear                 clears settings such as database or retention policy.  run 'clear' for help
+        exit/quit/ctrl+d      quits the influx shell
+
+        show databases        show database names
+        show series           show series information
+        show measurements     show measurement information
+        show tag keys         show tag key information
+        show field keys       show field key information
+
+        A full list of influxql commands can be found at:
+        https://docs.influxdata.com/influxdb/latest/query_language/spec/`)
+}
+
+// Settings prints current settings.
+func (c *Client) Settings() {
+	w := new(tabwriter.Writer)
+	w.Init(os.Stdout, 0, 1, 1, ' ', 0)
+	fmt.Fprintln(w, "Setting\tValue")
+	fmt.Fprintln(w, "--------\t--------")
+	// if c.Port > 0 {
+	// 	fmt.Fprintf(w, "Host\t%s:%d\n", c.Host, c.Port)
+	// } else {
+	// 	fmt.Fprintf(w, "Host\t%s\n", c.Host)
+	// }
+	// fmt.Fprintf(w, "Username\t%s\n", c.ClientConfig.Username)
+	fmt.Fprintf(w, "Database\t%s\n", c.Database)
+	fmt.Fprintf(w, "RetentionPolicy\t%s\n", c.RetentionPolicy)
+	fmt.Fprintf(w, "Pretty\t%v\n", c.Pretty)
+	fmt.Fprintf(w, "Format\t%s\n", c.Format)
+	fmt.Fprintf(w, "Precision\t%s\n", c.Precision)
+	fmt.Fprintln(w)
+	w.Flush()
 }
 
 func (c *Client) Query(ctx context.Context, query string) (string, error) {
@@ -275,12 +536,11 @@ func (c *Client) Query(ctx context.Context, query string) (string, error) {
 		return "", fmt.Errorf("unexpected format: %s", c.Format)
 	}
 	resBody, err := c.GetLegacyQuery(ctx).
-		U(c.U).
-		P(c.P).
-		Db(c.Db).
+		U(c.Username).
+		P(c.Password).
+		Db(c.Database).
 		Q(query).
-		Rp(c.Rp).
-		Epoch(c.Epoch).
+		Rp(c.RetentionPolicy).
 		Accept(resContentType).
 		Execute()
 	if err != nil {
@@ -292,7 +552,7 @@ func (c *Client) Query(ctx context.Context, query string) (string, error) {
 func (c *Client) SetFormat(args []string) {
 	// args[0] is "format"
 	if len(args) != 2 {
-		color.Red("Expected a format, like csv or json")
+		color.Red("Expected a format [csv, json, table]")
 		return
 	}
 	newFormat := FormatType(args[1])
@@ -301,6 +561,23 @@ func (c *Client) SetFormat(args []string) {
 		c.Format = newFormat
 	default:
 		color.HiRed("Unimplemented format %q, keeping %s format.", newFormat, c.Format)
+		color.HiBlack("Choose a format from [csv, json, table]")
+	}
+}
+
+func (c *Client) SetPrecision(args []string) {
+	// args[0] is "precision"
+	if len(args) != 2 {
+		color.Red("Expected a precision [ns, u, ms, s, m, or h]")
+		return
+	}
+	precision := args[1]
+	switch precision {
+	case "ns", "u", "µ", "ms", "s", "m", "h":
+		c.Precision = precision
+	default:
+		color.HiRed("Unimplemented precision %q, keeping %s precision.", precision, c.Precision)
+		color.HiBlack("Choose a precision from [ns, u, ms, s, m, or h]")
 	}
 }
 
@@ -341,11 +618,12 @@ func (c *Client) OutputTable(jsonBody string) {
 
 func (c *Client) TogglePretty() {
 	c.Pretty = !c.Pretty
+	color.HiBlack("Pretty: %v", c.Pretty)
 }
 
 func (c *Client) use(args []string) {
 	if len(args) != 2 {
-		color.Red("wrong number of args for \"use [DATABASE_NAME]\"")
+		color.Red("wrong number of args for \"use <database>\"")
 		return
 	}
 	parsedDb, parsedRp, err := parseDatabaseAndRetentionPolicy([]byte(args[1]))
@@ -361,15 +639,15 @@ func (c *Client) use(args []string) {
 	for _, db := range dbs {
 		if parsedDb == db {
 			exists := false
-			prevDb := c.Db
-			c.Db = parsedDb
+			prevDb := c.Database
+			c.Database = parsedDb
 			rps, _ := c.GetRetentionPolicies(context.Background())
 			for _, rp := range rps {
 				if parsedRp == rp || parsedRp == "" {
 					if parsedRp == "" {
-						c.Rp, _ = c.GetDefaultRetentionPolicy(context.Background())
+						c.RetentionPolicy, _ = c.GetDefaultRetentionPolicy(context.Background())
 					} else {
-						c.Rp = parsedRp
+						c.RetentionPolicy = parsedRp
 					}
 					c.RetentionPolicies = rps
 					exists = true
@@ -378,15 +656,15 @@ func (c *Client) use(args []string) {
 				}
 			}
 			if !exists {
-				color.Red("No such retention policy %q exists on %q", parsedRp, c.Db)
+				color.Red("No such retention policy %q exists on %q", parsedRp, c.Database)
 				color.HiBlack("Available retention policies on %q:", parsedDb)
 				for _, rp := range rps {
 					color.HiBlack("- %q", rp)
 				}
-				c.Db = prevDb
+				c.Database = prevDb
 				return
 			}
-			c.Db = parsedDb
+			c.Database = parsedDb
 			c.Databases = dbs
 
 			return
@@ -402,7 +680,7 @@ func (c *Client) use(args []string) {
 
 func (c *Client) GetRetentionPolicies(ctx context.Context) ([]string, error) {
 	singleSeries, err := c.getDataSingleSeries(ctx,
-		fmt.Sprintf("SHOW RETENTION POLICIES ON %q", c.Db))
+		fmt.Sprintf("SHOW RETENTION POLICIES ON %q", c.Database))
 	if err != nil {
 		return []string{}, err
 	}
@@ -428,7 +706,7 @@ func (c *Client) GetRetentionPolicies(ctx context.Context) ([]string, error) {
 
 func (c *Client) GetDefaultRetentionPolicy(ctx context.Context) (string, error) {
 	singleSeries, err := c.getDataSingleSeries(ctx,
-		fmt.Sprintf("SHOW RETENTION POLICIES ON %q", c.Db))
+		fmt.Sprintf("SHOW RETENTION POLICIES ON %q", c.Database))
 	if err != nil {
 		return "", err
 	}
@@ -505,12 +783,11 @@ func (c *Client) GetMeasurements(ctx context.Context) ([]string, error) {
 
 func (c *Client) getDataSingleSeries(ctx context.Context, query string) (*api.InfluxqlJsonResponseSeries, error) {
 	resBody, err := c.GetLegacyQuery(ctx).
-		U(c.U).
-		P(c.P).
-		Db(c.Db).
+		U(c.Username).
+		P(c.Password).
+		Db(c.Database).
 		Q(query).
-		Rp(c.Rp).
-		Epoch(c.Epoch).
+		Rp(c.RetentionPolicy).
 		Accept("application/json").
 		Execute()
 	if err != nil {
