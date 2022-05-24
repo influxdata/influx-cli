@@ -59,7 +59,6 @@ func allCommands() []cli.Command {
 		newCompletionCmd(),
 		newQueryCmd(),
 		newConfigCmd(),
-		newReplCmd(),
 		newOrgCmd(),
 		newDeleteCmd(),
 		newUserCmd(),

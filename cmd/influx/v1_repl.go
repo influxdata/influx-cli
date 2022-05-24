@@ -14,7 +14,7 @@ type Client struct {
 	api.LegacyQueryApi
 }
 
-func newReplCmd() cli.Command {
+func newV1ReplCmd() cli.Command {
 	var orgParams clients.OrgParams
 	persistentQueryParams := repl.DefaultPersistentQueryParams()
 	return cli.Command{
