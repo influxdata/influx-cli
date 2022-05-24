@@ -337,7 +337,7 @@ func (c *Client) executor(cmd string) {
 	// case "node":
 	// 	c.node(cmd)
 	case "insert":
-		c.Insert(cmdArgs)
+		c.Insert(cmd)
 	case "clear":
 		c.clear(cmd)
 	default:
@@ -345,23 +345,78 @@ func (c *Client) executor(cmd string) {
 	}
 }
 
-func (c Client) Insert(args []string) {
-	if len(args) > 1 && args[1] == "INTO" {
-		// TODO: Implement INSERT INTO
-		color.Red("INSERT INTO not yet implemented for the 2.x REPL.")
-		color.Red(`Instead, set a database with the command "use <database>"`)
-		color.Red(`Then run "INSERT <point>"`)
+func identRegex(name string) string {
+	return `((?P<` + name + `>\w+)|(\"(?P<` + name + `_quote>.+)\"))`
+}
+func getIdentFromMatches(matches *map[string]string, name string) string {
+	if val, ok := (*matches)[name]; ok && val != "" {
+		return val
+	} else if val, ok := (*matches)[name+"_quote"]; ok && val != "" {
+		return val
+	}
+	return ""
+}
+
+func reSubMatchMap(r *regexp.Regexp, str string) *map[string]string {
+	match := r.FindStringSubmatch(str)
+	if match == nil {
+		return nil
+	}
+	subMatchMap := make(map[string]string)
+	for i, name := range r.SubexpNames() {
+		if i != 0 {
+			subMatchMap[name] = match[i]
+		}
+	}
+	return &subMatchMap
+}
+
+var InsertIntoRegex string = `^(?i)INSERT INTO ` + identRegex("db") + `(\.` + identRegex("rp") + `)? (?P<point>.+)$`
+var InsertRegex string = `^(?i)INSERT (?P<point>.+)$`
+
+func (c Client) Insert(cmd string) {
+	var db string
+	var rp string
+	var point string
+	insertRgx := regexp.MustCompile(InsertRegex)
+	insertIntoRgx := regexp.MustCompile(InsertIntoRegex)
+	insertMatches := reSubMatchMap(insertRgx, cmd)
+	insertIntoMatches := reSubMatchMap(insertIntoRgx, cmd)
+	if insertIntoMatches != nil {
+		db = getIdentFromMatches(insertIntoMatches, "db")
+		rp = getIdentFromMatches(insertIntoMatches, "rp")
+		point = getIdentFromMatches(insertIntoMatches, "point")
+		if db != "" && rp == "" {
+			defaultRp, err := c.GetDefaultRetentionPolicy(context.Background(), db)
+			if err != nil {
+				color.Red("Unable to get default retention policy for %q", db)
+				return
+			}
+			rp = defaultRp
+		}
+	} else if !strings.HasPrefix(strings.ToUpper(cmd), "INSERT INTO") && insertMatches != nil {
+		db = c.Database
+		rp = c.RetentionPolicy
+		point = getIdentFromMatches(insertMatches, "point")
+		if db == "" {
+			color.Red("Please run \"use <database>\" to run \"INSERT <point\"")
+			return
+		}
+	} else {
+		color.Red("Expected \"INSERT INTO <database>.<retention_policy> <point>\" OR \"INSERT <point>\".")
 		return
 	}
+
 	buf := bytes.Buffer{}
 	gzw := gzip.NewWriter(&buf)
-	_, err := gzw.Write([]byte(strings.Join(args[1:], " ")))
+
+	_, err := gzw.Write([]byte(point))
 	gzw.Close()
 	if err != nil {
 		color.Red("Failed to gzip points")
 		return
 	}
-	bucketID, err := c.getBucketIdForDBRP()
+	bucketID, err := c.getBucketIdForDBRP(db, rp)
 	if err != nil {
 		color.Red("Unable to match DBRP to BucketID: %v", err)
 		return
@@ -384,13 +439,11 @@ func (c Client) Insert(args []string) {
 			fmt.Println("Note: error may be due to not setting a database or retention policy.")
 			fmt.Println(`Please set a database with the command "use <database>"`)
 			return
-			// TODO: implement INSERT INTO
-			//fmt.Println("INSERT INTO <database>.<retention-policy> <point>")
 		}
 	}
 }
 
-func (c Client) getBucketIdForDBRP() (string, error) {
+func (c Client) getBucketIdForDBRP(db string, rp string) (string, error) {
 	dbrpsReq := c.GetDBRPs(context.Background())
 	if c.OrgID != "" {
 		dbrpsReq = dbrpsReq.OrgID(c.OrgID)
@@ -407,13 +460,13 @@ func (c Client) getBucketIdForDBRP() (string, error) {
 	}
 	bucketID := ""
 	for _, dbrp := range *dbrps.Content {
-		if dbrp.Database == c.Database && dbrp.RetentionPolicy == c.RetentionPolicy {
+		if dbrp.Database == db && dbrp.RetentionPolicy == rp {
 			bucketID = dbrp.BucketID
 			break
 		}
 	}
 	if bucketID == "" {
-		return "", fmt.Errorf("unable to find bucket ID for %q.%q", c.Database, c.RetentionPolicy)
+		return "", fmt.Errorf("unable to find bucket ID for %q.%q", db, rp)
 	}
 	return bucketID, nil
 }
@@ -442,8 +495,6 @@ func (c *Client) RunAndShowQuery(query string) {
 	displayFunc(response)
 }
 
-var IdentifierRegex = `([0-9A-Za-z\"\-\_]+)`
-
 func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 	currentLineUpper := strings.ToUpper(d.CurrentLine())
 	var s []prompt.Suggest
@@ -458,7 +509,7 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 		}
 		return prompt.FilterFuzzy(s, d.GetWordBeforeCursor(), true)
 	} else if strings.HasPrefix(currentLineUpper, "SELECT ") {
-		if isMatch, _ := regexp.Match(`FROM `+IdentifierRegex+`?$`, []byte(currentLineUpper)); isMatch {
+		if isMatch, _ := regexp.Match(`FROM `+identRegex("from_clause")+`?$`, []byte(currentLineUpper)); isMatch {
 			if c.Database != "" && c.RetentionPolicy != "" {
 				for _, m := range c.Measurements {
 					s = append(s, prompt.Suggest{Text: "\"" + m + "\"", Description: fmt.Sprintf("Measurement on \"%s\".\"%s\"", c.Database, c.RetentionPolicy)})
@@ -645,7 +696,7 @@ func (c *Client) use(args []string) {
 			for _, rp := range rps {
 				if parsedRp == rp || parsedRp == "" {
 					if parsedRp == "" {
-						c.RetentionPolicy, _ = c.GetDefaultRetentionPolicy(context.Background())
+						c.RetentionPolicy, _ = c.GetDefaultRetentionPolicy(context.Background(), c.Database)
 					} else {
 						c.RetentionPolicy = parsedRp
 					}
@@ -704,9 +755,9 @@ func (c *Client) GetRetentionPolicies(ctx context.Context) ([]string, error) {
 	return retentionPolicies, nil
 }
 
-func (c *Client) GetDefaultRetentionPolicy(ctx context.Context) (string, error) {
+func (c *Client) GetDefaultRetentionPolicy(ctx context.Context, db string) (string, error) {
 	singleSeries, err := c.getDataSingleSeries(ctx,
-		fmt.Sprintf("SHOW RETENTION POLICIES ON %q", c.Database))
+		fmt.Sprintf("SHOW RETENTION POLICIES ON %q", db))
 	if err != nil {
 		return "", err
 	}
