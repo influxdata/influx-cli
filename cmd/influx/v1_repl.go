@@ -21,24 +21,8 @@ func newV1ReplCmd() cli.Command {
 		Name:        "repl",
 		Usage:       "Start an InfluxQL REPL",
 		Description: "Start an InfluxQL REPL",
-		// ArgsUsage:   "[query literal or '-' for stdin]",
-		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
-		Flags: append(
-			append(commonFlagsNoPrint(), getOrgFlags(&orgParams)...),
-			// &cli.StringFlag{
-			// 	Name:      "file, f",
-			// 	Usage:     "Path to Flux query file",
-			// 	TakesFile: true,
-			// },
-			// &cli.BoolFlag{
-			// 	Name:  "raw, r",
-			// 	Usage: "Display raw query results",
-			// },
-			// &cli.StringSliceFlag{
-			// 	Name:  "profilers, p",
-			// 	Usage: "Names of Flux profilers to enable",
-			// },
-		),
+		Before:      middleware.WithBeforeFns(withCli(), withApi(true)),
+		Flags:       append(commonFlagsNoPrint(), getOrgFlags(&orgParams)...),
 		Action: func(ctx *cli.Context) error {
 			if err := checkOrgFlags(&orgParams); err != nil {
 				return err
