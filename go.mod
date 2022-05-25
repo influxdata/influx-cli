@@ -6,6 +6,8 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.4
 	github.com/BurntSushi/toml v0.4.1
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
+	github.com/charmbracelet/bubbletea v0.19.3
+	github.com/charmbracelet/lipgloss v0.4.0
 	github.com/daixiang0/gci v0.2.8
 	github.com/evertras/bubble-table v0.12.0
 	github.com/fatih/color v1.9.0
@@ -29,8 +31,6 @@ require (
 require (
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/charmbracelet/bubbles v0.10.3 // indirect
-	github.com/charmbracelet/bubbletea v0.19.3 // indirect
-	github.com/charmbracelet/lipgloss v0.4.0 // indirect
 	github.com/containerd/console v1.0.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect

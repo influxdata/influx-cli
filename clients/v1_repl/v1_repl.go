@@ -33,15 +33,15 @@ type Client struct {
 
 type PersistentQueryParams struct {
 	clients.OrgParams
-	Database        string // bucketID
-	Password        string // password OR token
+	Database        string
+	Password        string
 	Username        string
 	RetentionPolicy string
 	Precision       string
 	Format          FormatType
 	Pretty          bool
 	historyFilePath string
-	// Storage
+	// Autocompletion Storage
 	Databases         []string
 	RetentionPolicies []string
 	Measurements      []string
@@ -83,7 +83,7 @@ func DefaultPersistentQueryParams() PersistentQueryParams {
 	}
 }
 
-func (c *Client) ReadHistory() []string {
+func (c *Client) readHistory() []string {
 	// Only load/write history if HOME environment variable is set.
 	var historyDir string
 	if runtime.GOOS == "windows" {
@@ -105,13 +105,18 @@ func (c *Client) ReadHistory() []string {
 				history = append(history, scanner.Text())
 			}
 			historyFile.Close()
+			// Limit to last 100 elements
+			historyElems := 100
+			if len(history) > historyElems {
+				history = history[len(history)-historyElems:]
+			}
 			return history
 		}
 	}
 	return []string{}
 }
 
-func (c *Client) WriteCommandToHistory(cmd string) {
+func (c *Client) writeCommandToHistory(cmd string) {
 	// Only load/write history if HOME environment variable is set.
 	var historyDir string
 	if runtime.GOOS == "windows" {
@@ -123,7 +128,7 @@ func (c *Client) WriteCommandToHistory(cmd string) {
 	if homeDir := os.Getenv("HOME"); homeDir != "" {
 		historyDir = homeDir
 	}
-	// Attempt to load the history file.
+	// Attempt to append to the history file.
 	if historyDir != "" {
 		c.historyFilePath = filepath.Join(historyDir, ".influx_history")
 		if historyFile, err := os.OpenFile(c.historyFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
@@ -146,7 +151,7 @@ func (c *Client) Create(ctx context.Context) error {
 	p := prompt.New(c.executor,
 		c.completer,
 		prompt.OptionTitle("InfluxQL Shell"),
-		prompt.OptionHistory(c.ReadHistory()),
+		prompt.OptionHistory(c.readHistory()),
 		prompt.OptionDescriptionTextColor(prompt.Cyan),
 		prompt.OptionPrefixTextColor(prompt.Green),
 		prompt.OptionCompletionWordSeparator(" ", "."),
@@ -156,7 +161,8 @@ func (c *Client) Create(ctx context.Context) error {
 	return nil
 }
 
-var AllInfluxQLKeywords []prompt.Suggest = []prompt.Suggest{
+var allInfluxQLKeywords []prompt.Suggest = []prompt.Suggest{
+	// * Commented out are unsupported keywords in 2.x
 	{Text: "ALL"},
 	// {Text: "ALTER"},
 	{Text: "ANY"},
@@ -188,8 +194,8 @@ var AllInfluxQLKeywords []prompt.Suggest = []prompt.Suggest{
 	{Text: "GROUPS"},
 	{Text: "IN"},
 	{Text: "INF"},
-	// {Text: "INSERT"},
-	// {Text: "INTO"},
+	{Text: "INSERT", Description: "Insert line protocol data"},
+	{Text: "INTO"},
 	{Text: "KEY"},
 	{Text: "KEYS"},
 	// {Text: "KILL"},
@@ -232,7 +238,8 @@ var AllInfluxQLKeywords []prompt.Suggest = []prompt.Suggest{
 	{Text: "WRITE"},
 }
 
-var ReplKeywords []prompt.Suggest = []prompt.Suggest{
+var replKeywords []prompt.Suggest = []prompt.Suggest{
+	// TODO: provide a way to connect to a new endpoint during the same REPL session
 	// {Text: "connect", Description: "Connect to another node"},
 	// {Text: "auth", Description: "Prompt for username and password"},
 	{Text: "pretty", Description: "Toggle pretty print for the json format"},
@@ -245,7 +252,6 @@ var ReplKeywords []prompt.Suggest = []prompt.Suggest{
 	{Text: "quit", Description: "Exit the InfluxQL shell"},
 	{Text: "gopher", Description: "Display the Go Gopher"},
 	{Text: "help", Description: "Display help options"},
-	{Text: "insert", Description: "Insert line protocol data"},
 	{Text: "format", Description: "Specify the data display format"},
 }
 
@@ -304,11 +310,12 @@ func (c *Client) gopher() {
                                        ./sooy.`)
 }
 
+// The logic for the main prompt that is run in the REPL loop
 func (c *Client) executor(cmd string) {
 	if cmd == "" {
 		return
 	}
-	defer c.WriteCommandToHistory(cmd)
+	defer c.writeCommandToHistory(cmd)
 	cmdArgs := strings.Split(cmd, " ")
 	switch strings.ToLower(cmdArgs[0]) {
 	case "quit", "exit":
@@ -316,38 +323,47 @@ func (c *Client) executor(cmd string) {
 		os.Exit(0)
 	case "gopher":
 		c.gopher()
+
+	// TODO: Allow user to change API in REPL session
 	// case "connect":
 	// 	return c.Connect(cmd)
 	// case "auth":
 	// 	c.SetAuth(cmd)
+
+	// ? Should this command be supported in 2.x
+	// case "node":
+	// 	c.node(cmd)
+
 	case "help":
 		c.help()
 	case "history":
-		color.HiBlack(strings.Join(c.ReadHistory(), "\n"))
+		color.HiBlack(strings.Join(c.readHistory(), "\n"))
 	case "format":
-		c.SetFormat(cmdArgs)
+		c.setFormat(cmdArgs)
 	case "precision":
-		c.SetPrecision(cmdArgs)
+		c.setPrecision(cmdArgs)
 	case "settings":
-		c.Settings()
+		c.settings()
 	case "pretty":
-		c.TogglePretty()
+		c.togglePretty()
 	case "use":
 		c.use(cmdArgs)
-	// case "node":
-	// 	c.node(cmd)
 	case "insert":
-		c.Insert(cmd)
+		c.insert(cmd)
 	case "clear":
 		c.clear(cmd)
 	default:
-		c.RunAndShowQuery(cmd)
+		c.runAndShowQuery(cmd)
 	}
 }
 
+// Create a regex string for a named InfluxQL identifier, quoted or unquoted
 func identRegex(name string) string {
 	return `((?P<` + name + `>\w+)|(\"(?P<` + name + `_quote>.+)\"))`
 }
+
+// Get the value of a named InfluxQL identifier from a regex match map.
+// Returns empty string if no match
 func getIdentFromMatches(matches *map[string]string, name string) string {
 	if val, ok := (*matches)[name]; ok && val != "" {
 		return val
@@ -357,6 +373,8 @@ func getIdentFromMatches(matches *map[string]string, name string) string {
 	return ""
 }
 
+// Create a regex match map from a regexp with named groups.
+// Returns nil if no match.
 func reSubMatchMap(r *regexp.Regexp, str string) *map[string]string {
 	match := r.FindStringSubmatch(str)
 	if match == nil {
@@ -371,15 +389,15 @@ func reSubMatchMap(r *regexp.Regexp, str string) *map[string]string {
 	return &subMatchMap
 }
 
-var InsertIntoRegex string = `^(?i)INSERT INTO ` + identRegex("db") + `(\.` + identRegex("rp") + `)? (?P<point>.+)$`
-var InsertRegex string = `^(?i)INSERT (?P<point>.+)$`
+var insertIntoRegex string = `^(?i)INSERT INTO ` + identRegex("db") + `(\.` + identRegex("rp") + `)? (?P<point>.+)$`
+var insertRegex string = `^(?i)INSERT (?P<point>.+)$`
 
-func (c Client) Insert(cmd string) {
+func (c Client) insert(cmd string) {
 	var db string
 	var rp string
 	var point string
-	insertRgx := regexp.MustCompile(InsertRegex)
-	insertIntoRgx := regexp.MustCompile(InsertIntoRegex)
+	insertRgx := regexp.MustCompile(insertRegex)
+	insertIntoRgx := regexp.MustCompile(insertIntoRegex)
 	insertMatches := reSubMatchMap(insertRgx, cmd)
 	insertIntoMatches := reSubMatchMap(insertIntoRgx, cmd)
 	if insertIntoMatches != nil {
@@ -387,7 +405,7 @@ func (c Client) Insert(cmd string) {
 		rp = getIdentFromMatches(insertIntoMatches, "rp")
 		point = getIdentFromMatches(insertIntoMatches, "point")
 		if db != "" && rp == "" {
-			defaultRp, err := c.GetDefaultRetentionPolicy(context.Background(), db)
+			defaultRp, err := c.getDefaultRetentionPolicy(context.Background(), db)
 			if err != nil {
 				color.Red("Unable to get default retention policy for %q", db)
 				return
@@ -423,7 +441,7 @@ func (c Client) Insert(cmd string) {
 	}
 	writeReq := c.PostWrite(context.Background()).
 		Bucket(bucketID).
-		Precision(api.WritePrecision(c.Precision)). // TODO: specific write precision
+		Precision(api.WritePrecision(c.Precision)).
 		ContentEncoding("gzip").
 		Body(buf.Bytes())
 	if c.OrgID != "" {
@@ -443,6 +461,7 @@ func (c Client) Insert(cmd string) {
 	}
 }
 
+// Reverse search for a bucket from db & rp
 func (c Client) getBucketIdForDBRP(db string, rp string) (string, error) {
 	dbrpsReq := c.GetDBRPs(context.Background())
 	if c.OrgID != "" {
@@ -479,22 +498,24 @@ var (
 	TableFormat FormatType = "table"
 )
 
-func (c *Client) RunAndShowQuery(query string) {
-	response, err := c.Query(context.Background(), query)
+func (c *Client) runAndShowQuery(query string) {
+	// ? Should this function have support to guide users trying to use deprecated InfluxQL queries
+	response, err := c.query(context.Background(), query)
 	if err != nil {
 		color.HiRed("Query failed.")
 		color.Red("%v", err)
 		return
 	}
 	displayMap := map[FormatType]func(string){
-		CsvFormat:   c.OutputCsv,
-		JsonFormat:  c.OutputJson,
-		TableFormat: c.OutputTable,
+		CsvFormat:   c.outputCsv,
+		JsonFormat:  c.outputJson,
+		TableFormat: c.outputTable,
 	}
 	displayFunc := displayMap[c.Format]
 	displayFunc(response)
 }
 
+// This function generates the prompt autocompletions
 func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 	currentLineUpper := strings.ToUpper(d.CurrentLine())
 	var s []prompt.Suggest
@@ -527,16 +548,17 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 		}
 	}
 	return append(
-		prompt.FilterHasPrefix(ReplKeywords, strings.ToLower(d.CurrentLine()), false),
-		prompt.FilterHasPrefix(AllInfluxQLKeywords, strings.ToUpper(d.GetWordBeforeCursor()), true)...,
+		prompt.FilterHasPrefix(replKeywords, strings.ToLower(d.CurrentLine()), false),
+		prompt.FilterHasPrefix(allInfluxQLKeywords, strings.ToUpper(d.GetWordBeforeCursor()), true)...,
 	)
 }
 
 func (c *Client) help() {
 	fmt.Println(`Usage:
-        connect <host:port>   connects to another node specified by host:port
-        auth                  prompts for username and password
-        pretty                toggles pretty print for the json format
+        ` +
+		// ! UNSUPPORTED connect <host:port>   connects to another node specified by host:port
+		// ! UNSUPPORTED auth                  prompts for username and password
+		`pretty                toggles pretty print for the json format
         use <db_name>         sets current database
         format <format>       specifies the format of the server responses: json, csv, or column
         precision <format>    specifies the format of the timestamp: h, m, s, ms, u or ns
@@ -553,20 +575,21 @@ func (c *Client) help() {
 
         A full list of influxql commands can be found at:
         https://docs.influxdata.com/influxdb/latest/query_language/spec/`)
+	// ? Maybe add keybindings information like <CTRL+L> clearing the screen, <CTRL+D> exitting, etc
 }
 
-// Settings prints current settings.
-func (c *Client) Settings() {
+func (c *Client) settings() {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 1, 1, ' ', 0)
 	fmt.Fprintln(w, "Setting\tValue")
 	fmt.Fprintln(w, "--------\t--------")
+	// TODO: No supported way to access or change host & port in a REPL session
 	// if c.Port > 0 {
 	// 	fmt.Fprintf(w, "Host\t%s:%d\n", c.Host, c.Port)
 	// } else {
 	// 	fmt.Fprintf(w, "Host\t%s\n", c.Host)
 	// }
-	// fmt.Fprintf(w, "Username\t%s\n", c.ClientConfig.Username)
+	fmt.Fprintf(w, "Username\t%s\n", c.Username)
 	fmt.Fprintf(w, "Database\t%s\n", c.Database)
 	fmt.Fprintf(w, "RetentionPolicy\t%s\n", c.RetentionPolicy)
 	fmt.Fprintf(w, "Pretty\t%v\n", c.Pretty)
@@ -576,7 +599,7 @@ func (c *Client) Settings() {
 	w.Flush()
 }
 
-func (c *Client) Query(ctx context.Context, query string) (string, error) {
+func (c *Client) query(ctx context.Context, query string) (string, error) {
 	var resContentType string
 	switch c.Format {
 	case CsvFormat:
@@ -600,7 +623,7 @@ func (c *Client) Query(ctx context.Context, query string) (string, error) {
 	return resBody, nil
 }
 
-func (c *Client) SetFormat(args []string) {
+func (c *Client) setFormat(args []string) {
 	// args[0] is "format"
 	if len(args) != 2 {
 		color.Red("Expected a format [csv, json, table]")
@@ -616,7 +639,7 @@ func (c *Client) SetFormat(args []string) {
 	}
 }
 
-func (c *Client) SetPrecision(args []string) {
+func (c *Client) setPrecision(args []string) {
 	// args[0] is "precision"
 	if len(args) != 2 {
 		color.Red("Expected a precision [ns, u, ms, s, m, or h]")
@@ -632,11 +655,11 @@ func (c *Client) SetPrecision(args []string) {
 	}
 }
 
-func (c *Client) OutputCsv(csvBody string) {
+func (c *Client) outputCsv(csvBody string) {
 	fmt.Println(csvBody)
 }
 
-func (c *Client) OutputJson(jsonBody string) {
+func (c *Client) outputJson(jsonBody string) {
 	if !c.Pretty {
 		fmt.Println(jsonBody)
 	} else {
@@ -650,7 +673,7 @@ func (c *Client) OutputJson(jsonBody string) {
 	}
 }
 
-func (c *Client) OutputTable(jsonBody string) {
+func (c *Client) outputTable(jsonBody string) {
 	var responses api.InfluxqlJsonResponse
 	if err := json.Unmarshal([]byte(jsonBody), &responses); err != nil {
 		color.Red("Failed to parse JSON response")
@@ -667,7 +690,7 @@ func (c *Client) OutputTable(jsonBody string) {
 	}
 }
 
-func (c *Client) TogglePretty() {
+func (c *Client) togglePretty() {
 	c.Pretty = !c.Pretty
 	color.HiBlack("Pretty: %v", c.Pretty)
 }
@@ -687,16 +710,18 @@ func (c *Client) use(args []string) {
 		color.Red("Unable to check databases: %v", err)
 		return
 	}
+	// discover if the parsedDb is a valid database
 	for _, db := range dbs {
 		if parsedDb == db {
 			exists := false
 			prevDb := c.Database
 			c.Database = parsedDb
-			rps, _ := c.GetRetentionPolicies(context.Background())
+			rps, _ := c.getRetentionPolicies(context.Background())
+			// discover if the parsedRp is a valid retention policy
 			for _, rp := range rps {
 				if parsedRp == rp || parsedRp == "" {
 					if parsedRp == "" {
-						c.RetentionPolicy, _ = c.GetDefaultRetentionPolicy(context.Background(), c.Database)
+						c.RetentionPolicy, _ = c.getDefaultRetentionPolicy(context.Background(), c.Database)
 					} else {
 						c.RetentionPolicy = parsedRp
 					}
@@ -729,7 +754,8 @@ func (c *Client) use(args []string) {
 
 }
 
-func (c *Client) GetRetentionPolicies(ctx context.Context) ([]string, error) {
+// Get retention policies from the currently used database
+func (c *Client) getRetentionPolicies(ctx context.Context) ([]string, error) {
 	singleSeries, err := c.getDataSingleSeries(ctx,
 		fmt.Sprintf("SHOW RETENTION POLICIES ON %q", c.Database))
 	if err != nil {
@@ -755,7 +781,8 @@ func (c *Client) GetRetentionPolicies(ctx context.Context) ([]string, error) {
 	return retentionPolicies, nil
 }
 
-func (c *Client) GetDefaultRetentionPolicy(ctx context.Context, db string) (string, error) {
+// Get the default retention policy for a given database
+func (c *Client) getDefaultRetentionPolicy(ctx context.Context, db string) (string, error) {
 	singleSeries, err := c.getDataSingleSeries(ctx,
 		fmt.Sprintf("SHOW RETENTION POLICIES ON %q", db))
 	if err != nil {
@@ -793,6 +820,7 @@ func (c *Client) GetDefaultRetentionPolicy(ctx context.Context, db string) (stri
 	return "", fmt.Errorf("no default retention policy")
 }
 
+// Get list of database names
 func (c *Client) GetDatabases(ctx context.Context) ([]string, error) {
 	singleSeries, err := c.getDataSingleSeries(ctx, "SHOW DATABASES")
 	if err != nil {
@@ -813,6 +841,7 @@ func (c *Client) GetDatabases(ctx context.Context) ([]string, error) {
 	return databases, nil
 }
 
+// Get list of measurements for currently used database and retention policy
 func (c *Client) GetMeasurements(ctx context.Context) ([]string, error) {
 	singleSeries, err := c.getDataSingleSeries(ctx, "SHOW MEASUREMENTS")
 	if err != nil {
@@ -832,6 +861,7 @@ func (c *Client) GetMeasurements(ctx context.Context) ([]string, error) {
 	return measures, nil
 }
 
+// Helper function to execute query & parse response, expecting a single series
 func (c *Client) getDataSingleSeries(ctx context.Context, query string) (*api.InfluxqlJsonResponseSeries, error) {
 	resBody, err := c.GetLegacyQuery(ctx).
 		U(c.Username).
@@ -860,6 +890,8 @@ func (c *Client) getDataSingleSeries(ctx context.Context, query string) (*api.In
 	return &series[0], nil
 }
 
+// Parse database and retention policy from byte slice.
+// Expects format like "db"."rp", db.rp, db, "db".
 func parseDatabaseAndRetentionPolicy(stmt []byte) (string, string, error) {
 	var db, rp []byte
 	var quoted bool
