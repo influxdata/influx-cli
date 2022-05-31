@@ -18,31 +18,31 @@ import (
 // Task struct for Task
 type Task struct {
 	Id string `json:"id" yaml:"id"`
-	// Type of the task, useful for filtering a task list.
+	// The type of the task, useful for filtering a task list.
 	Type *string `json:"type,omitempty" yaml:"type,omitempty"`
-	// ID of the organization that owns the task.
+	// The ID of the organization that owns the task.
 	OrgID string `json:"orgID" yaml:"orgID"`
-	// Name of the organization that owns the task.
+	// The name of the organization that owns the task.
 	Org *string `json:"org,omitempty" yaml:"org,omitempty"`
-	// Name of the task.
+	// The name of the task.
 	Name string `json:"name" yaml:"name"`
-	// ID of the user who owns this Task.
+	// The ID of the user who owns this Task.
 	OwnerID *string `json:"ownerID,omitempty" yaml:"ownerID,omitempty"`
-	// Description of the task.
+	// The description of the task.
 	Description *string         `json:"description,omitempty" yaml:"description,omitempty"`
 	Status      *TaskStatusType `json:"status,omitempty" yaml:"status,omitempty"`
 	Labels      *[]Label        `json:"labels,omitempty" yaml:"labels,omitempty"`
-	// ID of the authorization used when the task communicates with the query engine.
+	// The ID of the authorization used when the task communicates with the query engine.
 	AuthorizationID *string `json:"authorizationID,omitempty" yaml:"authorizationID,omitempty"`
-	// Flux script to run for this task.
+	// The Flux script to run for this task.
 	Flux string `json:"flux" yaml:"flux"`
-	// Interval at which the task runs. `every` also determines when the task first runs, depending on the specified time. Value is a [duration literal](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals)).
+	// An interval ([duration literal](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals))) at which the task runs. `every` also determines when the task first runs, depending on the specified time.
 	Every *string `json:"every,omitempty" yaml:"every,omitempty"`
-	// [Cron expression](https://en.wikipedia.org/wiki/Cron#Overview) that defines the schedule on which the task runs. Cron scheduling is based on system time. Value is a [Cron expression](https://en.wikipedia.org/wiki/Cron#Overview).
+	// [Cron expression](https://en.wikipedia.org/wiki/Cron#Overview) that defines the schedule on which the task runs. InfluxDB bases cron runs on the system time.
 	Cron *string `json:"cron,omitempty" yaml:"cron,omitempty"`
-	// [Duration](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals) to delay execution of the task after the scheduled time has elapsed. `0` removes the offset. The value is a [duration literal](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals).
+	// A [duration](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals) to delay execution of the task after the scheduled time has elapsed. `0` removes the offset.
 	Offset *string `json:"offset,omitempty" yaml:"offset,omitempty"`
-	// Timestamp of the latest scheduled and completed run. Value is a timestamp in [RFC3339 date/time format](https://docs.influxdata.com/flux/v0.x/data-types/basic/time/#time-syntax).
+	// A timestamp ([RFC3339 date/time format](https://docs.influxdata.com/flux/v0.x/data-types/basic/time/#time-syntax)) of the latest scheduled and completed run.
 	LatestCompleted *time.Time `json:"latestCompleted,omitempty" yaml:"latestCompleted,omitempty"`
 	LastRunStatus   *string    `json:"lastRunStatus,omitempty" yaml:"lastRunStatus,omitempty"`
 	LastRunError    *string    `json:"lastRunError,omitempty" yaml:"lastRunError,omitempty"`

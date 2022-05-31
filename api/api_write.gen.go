@@ -29,19 +29,43 @@ type WriteApi interface {
 			 * PostWrite Write data
 			 * Writes data to a bucket.
 
-		To write data into InfluxDB, you need the following:
+		Use this endpoint to send data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/line-protocol/) format to InfluxDB.
 
-		- **organization name or ID** – _See [View organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/view-orgs/#view-your-organization-id) for instructions on viewing your organization ID._
-		- **bucket** – _See [View buckets]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/view-buckets/) for
-		 instructions on viewing your bucket ID._
-		- **API token** – _See [View tokens]({{% INFLUXDB_DOCS_URL %}}/security/tokens/view-tokens/)
-		 for instructions on viewing your API token._
-		- **InfluxDB URL** – _See [InfluxDB URLs]({{% INFLUXDB_DOCS_URL %}}/reference/urls/)_.
-		- data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/line-protocol) format.
+		#### InfluxDB Cloud
 
-		InfluxDB Cloud enforces rate and size limits different from InfluxDB OSS. For details, see Responses.
+		- Takes the following steps when you send a write request:
 
-		For more information and examples, see the following:
+		  1. Validates the request and queues the write.
+		  2. If the write is queued, responds with an HTTP `204` status code.
+		  3. Handles the write asynchronously and reaches eventual consistency.
+
+		  An HTTP `2xx` status code acknowledges that the write or delete is queued.
+		  To ensure that InfluxDB Cloud handles writes and deletes in the order you request them,
+		  wait for a response before you send the next request.
+
+		  Because writes are asynchronous, data might not yet be written
+		  when you receive the response.
+
+		#### InfluxDB OSS
+
+		- Validates the request, handles the write synchronously,
+		  and then responds with success or failure.
+		- If all points were written successfully, returns `204`,
+		  otherwise returns the first line that failed.
+
+		#### Required permissions
+
+		- `write-buckets` or `write-bucket BUCKET_ID`.
+
+		  `BUCKET_ID` is the ID of the destination bucket.
+
+		#### Rate limits (with InfluxDB Cloud)
+
+		`write` rate limits apply.
+		For more information, see [limits and adjustable quotas](https://docs.influxdata.com/influxdb/cloud/account-management/limits/).
+
+		#### Related guides
+
 		- [Write data with the InfluxDB API]({{% INFLUXDB_DOCS_URL %}}/write-data/developer-tools/api).
 		- [Optimize writes to InfluxDB]({{% INFLUXDB_DOCS_URL %}}/write-data/best-practices/optimize-writes/).
 		- [Troubleshoot issues writing data]({{% INFLUXDB_DOCS_URL %}}/write-data/troubleshoot/)
@@ -174,19 +198,43 @@ func (r ApiPostWriteRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
  * PostWrite Write data
  * Writes data to a bucket.
 
-To write data into InfluxDB, you need the following:
+Use this endpoint to send data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/line-protocol/) format to InfluxDB.
 
-- **organization name or ID** – _See [View organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/view-orgs/#view-your-organization-id) for instructions on viewing your organization ID._
-- **bucket** – _See [View buckets]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/view-buckets/) for
- instructions on viewing your bucket ID._
-- **API token** – _See [View tokens]({{% INFLUXDB_DOCS_URL %}}/security/tokens/view-tokens/)
- for instructions on viewing your API token._
-- **InfluxDB URL** – _See [InfluxDB URLs]({{% INFLUXDB_DOCS_URL %}}/reference/urls/)_.
-- data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/line-protocol) format.
+#### InfluxDB Cloud
 
-InfluxDB Cloud enforces rate and size limits different from InfluxDB OSS. For details, see Responses.
+- Takes the following steps when you send a write request:
 
-For more information and examples, see the following:
+  1. Validates the request and queues the write.
+  2. If the write is queued, responds with an HTTP `204` status code.
+  3. Handles the write asynchronously and reaches eventual consistency.
+
+  An HTTP `2xx` status code acknowledges that the write or delete is queued.
+  To ensure that InfluxDB Cloud handles writes and deletes in the order you request them,
+  wait for a response before you send the next request.
+
+  Because writes are asynchronous, data might not yet be written
+  when you receive the response.
+
+#### InfluxDB OSS
+
+- Validates the request, handles the write synchronously,
+  and then responds with success or failure.
+- If all points were written successfully, returns `204`,
+  otherwise returns the first line that failed.
+
+#### Required permissions
+
+- `write-buckets` or `write-bucket BUCKET_ID`.
+
+  `BUCKET_ID` is the ID of the destination bucket.
+
+#### Rate limits (with InfluxDB Cloud)
+
+`write` rate limits apply.
+For more information, see [limits and adjustable quotas](https://docs.influxdata.com/influxdb/cloud/account-management/limits/).
+
+#### Related guides
+
 - [Write data with the InfluxDB API]({{% INFLUXDB_DOCS_URL %}}/write-data/developer-tools/api).
 - [Optimize writes to InfluxDB]({{% INFLUXDB_DOCS_URL %}}/write-data/best-practices/optimize-writes/).
 - [Troubleshoot issues writing data]({{% INFLUXDB_DOCS_URL %}}/write-data/troubleshoot/)

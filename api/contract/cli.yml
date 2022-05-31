@@ -6,17 +6,17 @@ servers:
   - url: /
 paths:
   /query:
-    $ref: "./overrides/paths/legacy_query.yml"
+    $ref: "./openapi/src/legacy/paths/query.yml"
   /health:
     $ref: "./openapi/src/oss/paths/health.yml"
   /ping:
-    $ref: "./overrides/paths/ping.yml"
+    $ref: "./openapi/src/common/paths/ping.yml"
   /private/legacy/authorizations:
-    $ref: "./openapi/src/oss/paths/legacy_authorizations.yml"
+    $ref: "./openapi/src/legacy/paths/legacy_authorizations.yml"
   /private/legacy/authorizations/{authID}:
-    $ref: "./openapi/src/oss/paths/legacy_authorizations_authID.yml"
+    $ref: "./openapi/src/legacy/paths/legacy_authorizations_authID.yml"
   /private/legacy/authorizations/{authID}/password:
-    $ref: "./openapi/src/oss/paths/legacy_authorizations_authID_password.yml"
+    $ref: "./openapi/src/legacy/paths/legacy_authorizations_authID_password.yml"
   /api/v2/setup:
     $ref: "./openapi/src/common/paths/setup.yml"
   /api/v2/write:
@@ -226,9 +226,9 @@ components:
     Query:
       $ref: "./overrides/schemas/Query.yml"
     InfluxqlCsvResponse:
-      $ref: "./overrides/schemas/InfluxqlCsvResponse.yml"
+      $ref: "./openapi/src/legacy/schemas/InfluxqlCsvResponse.yml"
     InfluxqlJsonResponse:
-      $ref: "./overrides/schemas/InfluxqlJsonResponse.yml"
+      $ref: "./openapi/src/legacy/schemas/InfluxqlJsonResponse.yml"
     Dialect:
       $ref: "./openapi/src/common/schemas/Dialect.yml"
     Extern:
@@ -434,7 +434,7 @@ components:
     Authorizations:
       $ref: "./openapi/src/common/schemas/Authorizations.yml"
     LegacyAuthorizationPostRequest:
-      $ref: "./openapi/src/oss/schemas/LegacyAuthorizationPostRequest.yml"
+      $ref: "./openapi/src/legacy/schemas/LegacyAuthorizationPostRequest.yml"
     AuthorizationPostRequest:
       $ref: "./openapi/src/common/schemas/AuthorizationPostRequest.yml"
     RemoteConnection:

@@ -119,6 +119,12 @@ func NewConfiguration() *Configuration {
 					Description: "No description provided",
 				},
 			},
+			"PingApiService.HeadPing": {
+				{
+					URL:         "",
+					Description: "No description provided",
+				},
+			},
 		},
 	}
 	return cfg

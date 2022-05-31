@@ -26,7 +26,8 @@ var (
 type LegacyQueryApi interface {
 
 	/*
-	 * GetLegacyQuery Query InfluxDB through the 1.x legacy compatibility API
+	 * GetLegacyQuery Query with the 1.x compatibility API
+	 * Queries InfluxDB using InfluxQL.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetLegacyQueryRequest
 	 */
@@ -154,7 +155,8 @@ func (r ApiGetLegacyQueryRequest) ExecuteWithHttpInfo() (string, *_nethttp.Respo
 }
 
 /*
- * GetLegacyQuery Query InfluxDB through the 1.x legacy compatibility API
+ * GetLegacyQuery Query with the 1.x compatibility API
+ * Queries InfluxDB using InfluxQL.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetLegacyQueryRequest
  */

@@ -17,11 +17,11 @@ import (
 
 // DeletePredicateRequest The delete predicate request.
 type DeletePredicateRequest struct {
-	// RFC3339Nano
+	// A timestamp ([RFC3339 date/time format](https://docs.influxdata.com/flux/v0.x/data-types/basic/time/#time-syntax)).
 	Start time.Time `json:"start" yaml:"start"`
-	// RFC3339Nano
+	// A timestamp ([RFC3339 date/time format](https://docs.influxdata.com/flux/v0.x/data-types/basic/time/#time-syntax)).
 	Stop time.Time `json:"stop" yaml:"stop"`
-	// InfluxQL-like delete statement
+	// An expression in [delete predicate syntax]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/delete-predicate/).
 	Predicate *string `json:"predicate,omitempty" yaml:"predicate,omitempty"`
 }
 
