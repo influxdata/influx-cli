@@ -2,6 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
+	"os"
 	"strings"
 
 	"github.com/influxdata/influx-cli/v2/clients/script"
@@ -59,6 +62,7 @@ func newScriptsListCmd() cli.Command {
 
 func newScriptsCreateCmd() cli.Command {
 	var params script.CreateParams
+	var scriptFile string
 	flags := []cli.Flag{
 		&cli.StringFlag{
 			Name:        "description, d",
@@ -79,7 +83,13 @@ func newScriptsCreateCmd() cli.Command {
 			Name:        "script, s",
 			Usage:       "Contents of the script to be executed",
 			Destination: &params.Script,
-		}}
+		},
+		&cli.StringFlag{
+			Name:        "file, f",
+			Usage:       "File name containing the contents of the script to be executed",
+			Destination: &scriptFile,
+		},
+	}
 	flags = append(flags, commonFlags()...)
 
 	return cli.Command{
@@ -88,6 +98,18 @@ func newScriptsCreateCmd() cli.Command {
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
+			if len(params.Script) > 0 && len(scriptFile) > 0 {
+				return errors.New("Cannot specify both a script string and a file.")
+			}
+
+			if len(scriptFile) > 0 {
+				data, err := os.ReadFile(scriptFile)
+				if err != nil {
+					return fmt.Errorf("failed to create script: %q", err)
+				}
+				params.Script = string(data)
+			}
+
 			api := getAPI(ctx)
 			client := script.Client{
 				CLI:                 getCLI(ctx),
@@ -198,6 +220,7 @@ func newScriptsUpdateCmd() cli.Command {
 func newScriptsInvokeCmd() cli.Command {
 	var params script.InvokeParams
 	var jsonParams string
+	var jsonFile string
 	flags := []cli.Flag{
 		&cli.StringFlag{
 			Name:        "scriptID, i",
@@ -208,7 +231,13 @@ func newScriptsInvokeCmd() cli.Command {
 			Name:        "params, p",
 			Usage:       "JSON string containing the parameters",
 			Destination: &jsonParams,
-		}}
+		},
+		&cli.StringFlag{
+			Name:        "file, f",
+			Usage:       "File name containing the script parameters, in JSON",
+			Destination: &jsonFile,
+		},
+	}
 	flags = append(flags, commonFlags()...)
 
 	return cli.Command{
@@ -217,6 +246,18 @@ func newScriptsInvokeCmd() cli.Command {
 		Flags:  flags,
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
+			if len(jsonParams) > 0 && len(jsonFile) > 0 {
+				return errors.New("Cannot specify both a parameter string and a file.")
+			}
+
+			if len(jsonFile) > 0 {
+				data, err := os.ReadFile(jsonFile)
+				if err != nil {
+					return fmt.Errorf("failed to invoke script: %q", err)
+				}
+				jsonParams = string(data)
+			}
+
 			api := getAPI(ctx)
 			client := script.Client{
 				CLI:                 getCLI(ctx),
