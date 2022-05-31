@@ -125,6 +125,22 @@ type UpdateParams struct {
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
+	// Retrieve the original since we might carry over some unchanged details.
+	oldScript, err := c.GetScriptsID(ctx, params.ScriptID).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to update script: %q", err)
+	}
+
+	if len(params.Description) == 0 {
+		params.Description = *oldScript.Description
+	}
+	if len(params.Name) == 0 {
+		params.Name = oldScript.Name
+	}
+	if len(params.Script) == 0 {
+		params.Script = oldScript.Script
+	}
+
 	req := api.ScriptUpdateRequest{
 		Name:        &params.Name,
 		Description: &params.Description,
