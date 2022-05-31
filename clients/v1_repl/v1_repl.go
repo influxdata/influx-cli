@@ -709,17 +709,18 @@ func (c *Client) use(args []string) {
 			rps, _ := c.getRetentionPolicies(context.Background())
 			// discover if the parsedRp is a valid retention policy
 			for _, rp := range rps {
-				if parsedRp == rp || parsedRp == "" {
-					if parsedRp == "" {
-						c.RetentionPolicy, _ = c.getDefaultRetentionPolicy(context.Background(), c.Database)
-					} else {
-						c.RetentionPolicy = parsedRp
-					}
-					c.RetentionPolicies = rps
-					exists = true
-					c.Measurements, _ = c.GetMeasurements(context.Background())
-					break
+				switch parsedRp {
+				case "":
+					c.RetentionPolicy, _ = c.getDefaultRetentionPolicy(context.Background(), c.Database)
+				case rp:
+					c.RetentionPolicy = parsedRp
+				default:
+					continue
 				}
+				c.RetentionPolicies = rps
+				exists = true
+				c.Measurements, _ = c.GetMeasurements(context.Background())
+				break
 			}
 			if !exists {
 				color.Red("No such retention policy %q exists on %q", parsedRp, c.Database)
