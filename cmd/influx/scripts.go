@@ -99,7 +99,7 @@ func newScriptsCreateCmd() cli.Command {
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
 			if len(params.Script) > 0 && len(scriptFile) > 0 {
-				return errors.New("Cannot specify both a script string and a file.")
+				return errors.New("cannot specify both a script string and a file")
 			}
 
 			if len(scriptFile) > 0 {
@@ -247,7 +247,7 @@ func newScriptsInvokeCmd() cli.Command {
 		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
 			if len(jsonParams) > 0 && len(jsonFile) > 0 {
-				return errors.New("Cannot specify both a parameter string and a file.")
+				return errors.New("cannot specify both a parameter string and a file")
 			}
 
 			if len(jsonFile) > 0 {
