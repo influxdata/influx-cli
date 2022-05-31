@@ -84,20 +84,8 @@ func DefaultPersistentQueryParams() PersistentQueryParams {
 }
 
 func (c *Client) readHistory() []string {
-	// Only load/write history if HOME environment variable is set.
-	var historyDir string
-	if runtime.GOOS == "windows" {
-		if userDir := os.Getenv("USERPROFILE"); userDir != "" {
-			historyDir = userDir
-		}
-	}
-
-	if homeDir := os.Getenv("HOME"); homeDir != "" {
-		historyDir = homeDir
-	}
 	// Attempt to load the history file.
-	if historyDir != "" {
-		c.historyFilePath = filepath.Join(historyDir, ".influx_history")
+	if c.historyFilePath != "" {
 		if historyFile, err := os.Open(c.historyFilePath); err == nil {
 			var history []string
 			scanner := bufio.NewScanner(historyFile)
@@ -117,20 +105,7 @@ func (c *Client) readHistory() []string {
 }
 
 func (c *Client) writeCommandToHistory(cmd string) {
-	// Only load/write history if HOME environment variable is set.
-	var historyDir string
-	if runtime.GOOS == "windows" {
-		if userDir := os.Getenv("USERPROFILE"); userDir != "" {
-			historyDir = userDir
-		}
-	}
-
-	if homeDir := os.Getenv("HOME"); homeDir != "" {
-		historyDir = homeDir
-	}
-	// Attempt to append to the history file.
-	if historyDir != "" {
-		c.historyFilePath = filepath.Join(historyDir, ".influx_history")
+	if c.historyFilePath != "" {
 		if historyFile, err := os.OpenFile(c.historyFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
 			historyFile.WriteString(cmd + "\n")
 			historyFile.Close()
@@ -147,6 +122,21 @@ func (c *Client) Create(ctx context.Context) error {
 	build := res.Header.Get("X-Influxdb-Build")
 	version := res.Header.Get("X-Influxdb-Version")
 	color.Cyan("Connected to InfluxDB %s %s", build, version)
+
+	// compute historyFilePath at REPL start
+	// Only load/write history if HOME environment variable is set.
+	var historyDir string
+	if runtime.GOOS == "windows" {
+		if userDir := os.Getenv("USERPROFILE"); userDir != "" {
+			historyDir = userDir
+		}
+	}
+	if homeDir := os.Getenv("HOME"); homeDir != "" {
+		historyDir = homeDir
+	}
+	if historyDir != "" {
+		c.historyFilePath = filepath.Join(historyDir, ".influx_history")
+	}
 
 	p := prompt.New(c.executor,
 		c.completer,
