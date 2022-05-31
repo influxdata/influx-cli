@@ -89,6 +89,58 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 	})
 }
 
+type DeleteParams struct {
+	ScriptID string
+}
+
+func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
+	err := c.DeleteScriptsID(ctx, params.ScriptID).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to delete script: %q", err)
+	} else {
+		return nil
+	}
+}
+
+type RetrieveParams struct {
+	ScriptID string
+}
+
+func (c Client) Retrieve(ctx context.Context, params *RetrieveParams) error {
+	script, err := c.GetScriptsID(ctx, params.ScriptID).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve script: %q", err)
+	}
+
+	return c.printScripts(printPayload{
+		scripts: []api.Script{script},
+	})
+}
+
+type UpdateParams struct {
+	ScriptID    string
+	Description string
+	Name        string
+	Script      string
+}
+
+func (c Client) Update(ctx context.Context, params *UpdateParams) error {
+	req := api.ScriptUpdateRequest{
+		Name:        &params.Name,
+		Description: &params.Description,
+		Script:      &params.Script,
+	}
+
+	script, err := c.PatchScriptsID(ctx, params.ScriptID).ScriptUpdateRequest(req).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to update script: %q", err)
+	}
+
+	return c.printScripts(printPayload{
+		scripts: []api.Script{script},
+	})
+}
+
 type InvokeParams struct {
 	ScriptID string
 	Params   map[string]interface{}

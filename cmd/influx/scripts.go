@@ -100,40 +100,97 @@ func newScriptsCreateCmd() cli.Command {
 }
 
 func newScriptsDeleteCmd() cli.Command {
+	var params script.DeleteParams
+	flags := []cli.Flag{
+		&cli.StringFlag{
+			Name:        "scriptID, i",
+			Usage:       "Script identifier",
+			Destination: &params.ScriptID,
+		}}
+	flags = append(flags, commonFlags()...)
+
 	return cli.Command{
 		Name:   "delete",
 		Usage:  "Deletes a script",
-		Flags:  nil,
-		Before: middleware.NoArgs,
+		Flags:  flags,
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
-			panic("not implemented")
-			return nil
+			api := getAPI(ctx)
+			client := script.Client{
+				CLI:                 getCLI(ctx),
+				InvocableScriptsApi: api.InvocableScriptsApi,
+			}
+
+			return client.Delete(getContext(ctx), &params)
 		},
 	}
 }
 
 func newScriptsRetrieveCmd() cli.Command {
+	var params script.RetrieveParams
+	flags := []cli.Flag{
+		&cli.StringFlag{
+			Name:        "scriptID, i",
+			Usage:       "Script identifier",
+			Destination: &params.ScriptID,
+		}}
+	flags = append(flags, commonFlags()...)
+
 	return cli.Command{
 		Name:   "retrieve",
 		Usage:  "Retrieves a script",
-		Flags:  nil,
-		Before: middleware.NoArgs,
+		Flags:  flags,
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
-			panic("not implemented")
-			return nil
+			api := getAPI(ctx)
+			client := script.Client{
+				CLI:                 getCLI(ctx),
+				InvocableScriptsApi: api.InvocableScriptsApi,
+			}
+
+			return client.Retrieve(getContext(ctx), &params)
 		},
 	}
 }
 
 func newScriptsUpdateCmd() cli.Command {
+	var params script.UpdateParams
+	flags := []cli.Flag{
+		&cli.StringFlag{
+			Name:        "scriptID, i",
+			Usage:       "Script identifier",
+			Destination: &params.ScriptID,
+		},
+		&cli.StringFlag{
+			Name:        "description, d",
+			Usage:       "New script description",
+			Destination: &params.Description,
+		},
+		&cli.StringFlag{
+			Name:        "name, n",
+			Usage:       "New script name",
+			Destination: &params.Name,
+		},
+		&cli.StringFlag{
+			Name:        "script, s",
+			Usage:       "New script contents",
+			Destination: &params.Script,
+		}}
+	flags = append(flags, commonFlags()...)
+
 	return cli.Command{
 		Name:   "update",
 		Usage:  "Updates a script",
-		Flags:  nil,
-		Before: middleware.NoArgs,
+		Flags:  flags,
+		Before: middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
-			panic("not implemented")
-			return nil
+			api := getAPI(ctx)
+			client := script.Client{
+				CLI:                 getCLI(ctx),
+				InvocableScriptsApi: api.InvocableScriptsApi,
+			}
+
+			return client.Update(getContext(ctx), &params)
 		},
 	}
 }
