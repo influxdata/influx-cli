@@ -277,7 +277,7 @@ func (c Client) insert(cmd string) {
 	}
 	writeReq := c.PostWrite(context.Background()).
 		Bucket(bucketID).
-		Precision(api.WritePrecision(c.Precision)).
+		Precision(api.WritePrecision(c.Precision)). // TODO: fix, rfc3339 wouldn't be a valid writePrecision but is a valid query precision
 		ContentEncoding("gzip").
 		Body(buf.Bytes())
 	if c.OrgID != "" {
@@ -404,14 +404,17 @@ func (c *Client) query(ctx context.Context, query string) (string, error) {
 	default:
 		return "", fmt.Errorf("unexpected format: %s", c.Format)
 	}
-	resBody, err := c.GetLegacyQuery(ctx).
+	res := c.GetLegacyQuery(ctx).
 		U(c.Username).
 		P(c.Password).
 		Db(c.Database).
 		Q(query).
 		Rp(c.RetentionPolicy).
-		Accept(resContentType).
-		Execute()
+		Accept(resContentType)
+	if c.Precision != "rfc3339" && c.Precision != "" {
+		res.Epoch(c.Precision)
+	}
+	resBody, err := res.Execute()
 	if err != nil {
 		return "", err
 	}
@@ -437,12 +440,12 @@ func (c *Client) setFormat(args []string) {
 func (c *Client) setPrecision(args []string) {
 	// args[0] is "precision"
 	if len(args) != 2 {
-		color.Red("Expected a precision [ns, u, ms, s, m, or h]")
+		color.Red("Expected a precision [rfc3339, ns, u, ms, s, m, or h]")
 		return
 	}
 	precision := args[1]
 	switch precision {
-	case "ns", "u", "µ", "ms", "s", "m", "h":
+	case "rfc3339", "ns", "u", "µ", "ms", "s", "m", "h":
 		c.Precision = precision
 	default:
 		color.HiRed("Unimplemented precision %q, keeping %s precision.", precision, c.Precision)
@@ -659,14 +662,17 @@ func (c *Client) GetMeasurements(ctx context.Context) ([]string, error) {
 
 // Helper function to execute query & parse response, expecting a single series
 func (c *Client) getDataSingleSeries(ctx context.Context, query string) (*api.InfluxqlJsonResponseSeries, error) {
-	resBody, err := c.GetLegacyQuery(ctx).
+	res := c.GetLegacyQuery(ctx).
 		U(c.Username).
 		P(c.Password).
 		Db(c.Database).
 		Q(query).
 		Rp(c.RetentionPolicy).
-		Accept("application/json").
-		Execute()
+		Accept("application/json")
+	if c.Precision != "rfc3339" && c.Precision != "" {
+		res.Epoch(c.Precision)
+	}
+	resBody, err := res.Execute()
 	if err != nil {
 		return nil, err
 	}
