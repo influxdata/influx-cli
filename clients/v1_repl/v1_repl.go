@@ -229,9 +229,6 @@ var allInfluxQLKeywords []prompt.Suggest = []prompt.Suggest{
 }
 
 var replKeywords []prompt.Suggest = []prompt.Suggest{
-	// TODO: provide a way to connect to a new endpoint during the same REPL session
-	// {Text: "connect", Description: "Connect to another node"},
-	// {Text: "auth", Description: "Prompt for username and password"},
 	{Text: "pretty", Description: "Toggle pretty print for the json format"},
 	{Text: "use", Description: "Set current database"},
 	{Text: "precision", Description: "Specify the format of the timestamp"},
@@ -313,17 +310,10 @@ func (c *Client) executor(cmd string) {
 		os.Exit(0)
 	case "gopher":
 		c.gopher()
-
-	// TODO: Allow user to change API in REPL session
-	// case "connect":
-	// 	return c.Connect(cmd)
-	// case "auth":
-	// 	c.SetAuth(cmd)
-
-	// ? Should this command be supported in 2.x
-	// case "node":
-	// 	c.node(cmd)
-
+	case "node":
+		color.Yellow("The 'node' command is enterprise only, not available in the influx 2.x CLI - were you looking for the 1.x InfluxDB CLI?")
+	case "consistency":
+		color.Yellow("The 'consistency' command is not available in the influx 2.x CLI - were you looking for the 1.x InfluxDB CLI?")
 	case "help":
 		c.help()
 	case "history":
@@ -489,7 +479,7 @@ var (
 )
 
 func (c *Client) runAndShowQuery(query string) {
-	// ? Should this function have support to guide users trying to use deprecated InfluxQL queries
+	// TODO: guide users trying to use deprecated InfluxQL queries
 	response, err := c.query(context.Background(), query)
 	if err != nil {
 		color.HiRed("Query failed.")
@@ -545,10 +535,7 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 
 func (c *Client) help() {
 	fmt.Println(`Usage:
-        ` +
-		// ! UNSUPPORTED connect <host:port>   connects to another node specified by host:port
-		// ! UNSUPPORTED auth                  prompts for username and password
-		`pretty                toggles pretty print for the json format
+		pretty                toggles pretty print for the json format
         use <db_name>         sets current database
         format <format>       specifies the format of the server responses: json, csv, or column
         precision <format>    specifies the format of the timestamp: h, m, s, ms, u or ns
@@ -562,10 +549,16 @@ func (c *Client) help() {
         show measurements     show measurement information
         show tag keys         show tag key information
         show field keys       show field key information
+		insert <point>        insert point into currently-used database
 
         A full list of influxql commands can be found at:
-        https://docs.influxdata.com/influxdb/latest/query_language/spec/`)
-	// ? Maybe add keybindings information like <CTRL+L> clearing the screen, <CTRL+D> exitting, etc
+        https://docs.influxdata.com/influxdb/latest/query_language/spec/
+		
+	Keybindings:
+		<CTRL+D>      exit 
+		<CTRL+L>      clear screen
+		<UP ARROW>    previous command
+		<DOWN ARROW>  next command`)
 }
 
 func (c *Client) settings() {
@@ -573,12 +566,6 @@ func (c *Client) settings() {
 	w.Init(os.Stdout, 0, 1, 1, ' ', 0)
 	fmt.Fprintln(w, "Setting\tValue")
 	fmt.Fprintln(w, "--------\t--------")
-	// TODO: No supported way to access or change host & port in a REPL session
-	// if c.Port > 0 {
-	// 	fmt.Fprintf(w, "Host\t%s:%d\n", c.Host, c.Port)
-	// } else {
-	// 	fmt.Fprintf(w, "Host\t%s\n", c.Host)
-	// }
 	fmt.Fprintf(w, "Username\t%s\n", c.Username)
 	fmt.Fprintf(w, "Database\t%s\n", c.Database)
 	fmt.Fprintf(w, "RetentionPolicy\t%s\n", c.RetentionPolicy)
