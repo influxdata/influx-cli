@@ -16,7 +16,6 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fatih/color"
-	"github.com/influxdata/go-prompt"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 )
@@ -138,108 +137,16 @@ func (c *Client) Create(ctx context.Context) error {
 		c.historyFilePath = filepath.Join(historyDir, ".influx_history")
 	}
 
-	p := prompt.New(c.executor,
-		c.completer,
-		prompt.OptionTitle("InfluxQL Shell"),
-		prompt.OptionHistory(c.readHistory()),
-		prompt.OptionDescriptionTextColor(prompt.Cyan),
-		prompt.OptionPrefixTextColor(prompt.Green),
-		prompt.OptionCompletionWordSeparator(" ", "."),
-	)
 	c.Databases, _ = c.GetDatabases(ctx)
-	p.Run()
+	color.Cyan("InfluxQL Shell")
+
+	scanner := bufio.NewScanner(os.Stdin)
+	fmt.Printf("%s", color.GreenString("> "))
+	for scanner.Scan() {
+		c.executor(scanner.Text())
+		fmt.Printf("%s", color.GreenString("> "))
+	}
 	return nil
-}
-
-var allInfluxQLKeywords []prompt.Suggest = []prompt.Suggest{
-	// * Commented out are unsupported keywords in 2.x
-	{Text: "ALL"},
-	// {Text: "ALTER"},
-	{Text: "ANY"},
-	{Text: "AS"},
-	{Text: "ASC"},
-	{Text: "BEGIN"},
-	{Text: "BY"},
-	// {Text: "CREATE"},
-	{Text: "CONTINUOUS"},
-	{Text: "DATABASE"},
-	{Text: "DATABASES"},
-	{Text: "DEFAULT"},
-	{Text: "DELETE"},
-	{Text: "DESC"},
-	{Text: "DESTINATIONS"},
-	{Text: "DIAGNOSTICS"},
-	{Text: "DISTINCT"},
-	{Text: "DROP"},
-	{Text: "DURATION"},
-	{Text: "END"},
-	{Text: "EVERY"},
-	{Text: "EXPLAIN"},
-	{Text: "FIELD"},
-	{Text: "FOR"},
-	{Text: "FROM"},
-	// {Text: "GRANT"},
-	{Text: "GRANTS"},
-	{Text: "GROUP"},
-	{Text: "GROUPS"},
-	{Text: "IN"},
-	{Text: "INF"},
-	{Text: "INSERT", Description: "Insert line protocol data"},
-	{Text: "INTO"},
-	{Text: "KEY"},
-	{Text: "KEYS"},
-	// {Text: "KILL"},
-	{Text: "LIMIT"},
-	{Text: "SHOW"},
-	{Text: "MEASUREMENT"},
-	{Text: "MEASUREMENTS"},
-	{Text: "NAME"},
-	{Text: "OFFSET"},
-	{Text: "ON"},
-	{Text: "ORDER"},
-	{Text: "PASSWORD"},
-	{Text: "POLICY"},
-	{Text: "POLICIES"},
-	{Text: "PRIVILEGES"},
-	{Text: "QUERIES"},
-	{Text: "QUERY"},
-	{Text: "READ"},
-	{Text: "REPLICATION"},
-	{Text: "RESAMPLE"},
-	{Text: "RETENTION"},
-	// {Text: "REVOKE"},
-	{Text: "SELECT"},
-	{Text: "SERIES"},
-	{Text: "SET"},
-	{Text: "SHARD"},
-	{Text: "SHARDS"},
-	{Text: "SLIMIT"},
-	{Text: "SOFFSET"},
-	{Text: "STATS"},
-	{Text: "SUBSCRIPTION"},
-	{Text: "SUBSCRIPTIONS"},
-	{Text: "TAG"},
-	{Text: "TO"},
-	{Text: "USER"},
-	{Text: "USERS"},
-	{Text: "VALUES"},
-	{Text: "WHERE"},
-	{Text: "WITH"},
-	{Text: "WRITE"},
-}
-
-var replKeywords []prompt.Suggest = []prompt.Suggest{
-	{Text: "pretty", Description: "Toggle pretty print for the json format"},
-	{Text: "use", Description: "Set current database"},
-	{Text: "precision", Description: "Specify the format of the timestamp"},
-	{Text: "history", Description: "Display shell history"},
-	{Text: "settings", Description: "Output the current shell settings"},
-	{Text: "clear", Description: "Clears settings such as database"},
-	{Text: "exit", Description: "Exit the InfluxQL shell"},
-	{Text: "quit", Description: "Exit the InfluxQL shell"},
-	{Text: "gopher", Description: "Display the Go Gopher"},
-	{Text: "help", Description: "Display help options"},
-	{Text: "format", Description: "Specify the data display format"},
 }
 
 func (c *Client) gopher() {
@@ -442,44 +349,6 @@ func (c *Client) runAndShowQuery(query string) {
 	}
 	displayFunc := displayMap[c.Format]
 	displayFunc(response)
-}
-
-// This function generates the prompt autocompletions
-func (c *Client) completer(d prompt.Document) []prompt.Suggest {
-	currentLineUpper := strings.ToUpper(d.CurrentLine())
-	var s []prompt.Suggest
-	if strings.HasPrefix(currentLineUpper, "FORMAT ") {
-		s = append(s, prompt.Suggest{Text: "table", Description: "Format Type"})
-		s = append(s, prompt.Suggest{Text: "json", Description: "Format Type"})
-		s = append(s, prompt.Suggest{Text: "csv", Description: "Format Type"})
-		return prompt.FilterFuzzy(s, d.GetWordBeforeCursor(), true)
-	} else if strings.HasPrefix(currentLineUpper, "USE ") {
-		for _, db := range c.Databases {
-			s = append(s, prompt.Suggest{Text: "\"" + db + "\"", Description: "Table Name"})
-		}
-		return prompt.FilterFuzzy(s, d.GetWordBeforeCursor(), true)
-	} else if strings.HasPrefix(currentLineUpper, "SELECT ") {
-		if isMatch, _ := regexp.Match(`FROM `+identRegex("from_clause")+`?$`, []byte(currentLineUpper)); isMatch {
-			if c.Database != "" && c.RetentionPolicy != "" {
-				for _, m := range c.Measurements {
-					s = append(s, prompt.Suggest{Text: "\"" + m + "\"", Description: fmt.Sprintf("Measurement on \"%s\".\"%s\"", c.Database, c.RetentionPolicy)})
-				}
-			}
-			if c.Database != "" {
-				for _, rp := range c.RetentionPolicies {
-					s = append(s, prompt.Suggest{Text: "\"" + rp + "\"", Description: "Retention Policy on " + c.Database})
-				}
-			}
-			for _, db := range c.Databases {
-				s = append(s, prompt.Suggest{Text: "\"" + db + "\"", Description: "Table Name"})
-			}
-			return prompt.FilterFuzzy(s, d.GetWordBeforeCursorUntilAnySeparator(" ", "."), true)
-		}
-	}
-	return append(
-		prompt.FilterHasPrefix(replKeywords, strings.ToLower(d.CurrentLine()), false),
-		prompt.FilterHasPrefix(allInfluxQLKeywords, strings.ToUpper(d.GetWordBeforeCursor()), true)...,
-	)
 }
 
 func (c *Client) help() {
