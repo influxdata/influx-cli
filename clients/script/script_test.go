@@ -66,3 +66,65 @@ func Test_SimpleCreate(t *testing.T) {
 
 	require.NoError(t, client.Create(context.Background(), &params))
 }
+
+func ptrFactory[T any](arg T) *T {
+	return &arg
+}
+
+func Test_SimpleList(t *testing.T) {
+	t.Parallel()
+
+	ctrl := gomock.NewController(t)
+	scriptsApi := mock.NewMockInvocableScriptsApi(ctrl)
+
+	scripts := []api.Script{{
+		Id:          ptrFactory("123456789"),
+		Name:        "simple",
+		Description: ptrFactory("First script"),
+		OrgID:       "1111111111111",
+		Script:      `from(bucket: "sample_data") |> range(start: -10h)`,
+		Language:    ptrFactory(api.SCRIPTLANGUAGE_FLUX),
+	}, {
+		Id:          ptrFactory("000000001"),
+		Name:        "another",
+		Description: ptrFactory("Second script"),
+		OrgID:       "9111111111119",
+		Script:      `from(bucket: "sample_data") |> range(start: -5h)`,
+		Language:    ptrFactory(api.SCRIPTLANGUAGE_FLUX),
+	},
+	}
+
+	scriptsApi.EXPECT().GetScripts(gomock.Any()).Return(api.ApiGetScriptsRequest{
+		ApiService: scriptsApi,
+	})
+
+	scriptsApi.EXPECT().GetScriptsExecute(gomock.Any()).Return(api.Scripts{
+		Scripts: &scripts,
+	}, nil)
+
+	stdio := mock.NewMockStdIO(ctrl)
+	client := script.Client{
+		CLI:                 clients.CLI{StdIO: stdio, PrintAsJSON: true},
+		InvocableScriptsApi: scriptsApi,
+	}
+
+	stdio.EXPECT().Write(tmock.MatchedBy(func(in []byte) bool {
+		t.Logf("Stdio output: %s", in)
+		inStr := string(in)
+		// Verify we print the basic details of all scripts in some form.
+		success := true
+		for _, script := range scripts {
+			success = success && strings.Contains(inStr, *script.Id)
+			success = success && strings.Contains(inStr, script.Name)
+			success = success && strings.Contains(inStr, script.OrgID)
+		}
+		return success
+	}))
+
+	params := script.ListParams{
+		Limit:  10,
+		Offset: 0,
+	}
+
+	require.NoError(t, client.List(context.Background(), &params))
+}
