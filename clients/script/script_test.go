@@ -67,8 +67,9 @@ func Test_SimpleCreate(t *testing.T) {
 	require.NoError(t, client.Create(context.Background(), &params))
 }
 
-func ptrFactory[T any](arg T) *T {
-	return &arg
+func strFactory(arg interface{}) *string {
+	val := (arg.(string)) // Docker image runs Go 1.17, so we can't use generics here.
+	return &val
 }
 
 func Test_SimpleList(t *testing.T) {
@@ -77,20 +78,21 @@ func Test_SimpleList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	scriptsApi := mock.NewMockInvocableScriptsApi(ctrl)
 
+	language := api.SCRIPTLANGUAGE_FLUX
 	scripts := []api.Script{{
-		Id:          ptrFactory("123456789"),
+		Id:          strFactory("123456789"),
 		Name:        "simple",
-		Description: ptrFactory("First script"),
+		Description: strFactory("First script"),
 		OrgID:       "1111111111111",
 		Script:      `from(bucket: "sample_data") |> range(start: -10h)`,
-		Language:    ptrFactory(api.SCRIPTLANGUAGE_FLUX),
+		Language:    &language,
 	}, {
-		Id:          ptrFactory("000000001"),
+		Id:          strFactory("000000001"),
 		Name:        "another",
-		Description: ptrFactory("Second script"),
+		Description: strFactory("Second script"),
 		OrgID:       "9111111111119",
 		Script:      `from(bucket: "sample_data") |> range(start: -5h)`,
-		Language:    ptrFactory(api.SCRIPTLANGUAGE_FLUX),
+		Language:    &language,
 	},
 	}
 
