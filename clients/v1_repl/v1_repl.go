@@ -5,12 +5,15 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
+	"sort"
 	"strings"
 	"text/tabwriter"
 
@@ -77,7 +80,7 @@ func (c *Client) clear(cmd string) {
 
 func DefaultPersistentQueryParams() PersistentQueryParams {
 	return PersistentQueryParams{
-		Format:    CsvFormat,
+		Format:    ColumnFormat,
 		Precision: "ns",
 	}
 }
@@ -327,25 +330,32 @@ func (c Client) getBucketIdForDBRP(db string, rp string) (string, error) {
 }
 
 type FormatType string
+type FormatFunc func(api.InfluxqlJsonResponse)
 
 var (
-	CsvFormat   FormatType = "csv"
-	JsonFormat  FormatType = "json"
-	TableFormat FormatType = "table"
+	CsvFormat    FormatType = "csv"
+	JsonFormat   FormatType = "json"
+	ColumnFormat FormatType = "column"
+	TableFormat  FormatType = "table"
 )
 
 func (c *Client) runAndShowQuery(query string) {
 	// TODO: guide users trying to use deprecated InfluxQL queries
-	response, err := c.query(context.Background(), query)
+	responseStr, err := c.query(context.Background(), query)
 	if err != nil {
 		color.HiRed("Query failed.")
 		color.Red("%v", err)
 		return
 	}
-	displayMap := map[FormatType]func(string){
-		CsvFormat:   c.outputCsv,
-		JsonFormat:  c.outputJson,
-		TableFormat: c.outputTable,
+	var response api.InfluxqlJsonResponse
+	if err := json.Unmarshal([]byte(responseStr), &response); err != nil {
+		color.Red("Failed to parse JSON response: %v", err)
+	}
+	displayMap := map[FormatType]FormatFunc{
+		CsvFormat:    c.outputCsv,
+		JsonFormat:   c.outputJson,
+		ColumnFormat: c.outputColumns,
+		TableFormat:  c.outputTable,
 	}
 	displayFunc := displayMap[c.Format]
 	displayFunc(response)
@@ -355,7 +365,7 @@ func (c *Client) help() {
 	fmt.Println(`Usage:
 		pretty                toggles pretty print for the json format
         use <db_name>         sets current database
-        format <format>       specifies the format of the server responses: json, csv, or column
+        format <format>       specifies the format of the server responses: json, csv, column, table
         precision <format>    specifies the format of the timestamp: h, m, s, ms, u or ns
         history               displays command history
         settings              outputs the current settings for the shell
@@ -395,22 +405,13 @@ func (c *Client) settings() {
 }
 
 func (c *Client) query(ctx context.Context, query string) (string, error) {
-	var resContentType string
-	switch c.Format {
-	case CsvFormat:
-		resContentType = "application/csv"
-	case JsonFormat, TableFormat:
-		resContentType = "application/json"
-	default:
-		return "", fmt.Errorf("unexpected format: %s", c.Format)
-	}
 	res := c.GetLegacyQuery(ctx).
 		U(c.Username).
 		P(c.Password).
 		Db(c.Database).
 		Q(query).
 		Rp(c.RetentionPolicy).
-		Accept(resContentType)
+		Accept("application/json")
 	if c.Precision != "rfc3339" && c.Precision != "" {
 		res.Epoch(c.Precision)
 	}
@@ -424,16 +425,16 @@ func (c *Client) query(ctx context.Context, query string) (string, error) {
 func (c *Client) setFormat(args []string) {
 	// args[0] is "format"
 	if len(args) != 2 {
-		color.Red("Expected a format [csv, json, table]")
+		color.Red("Expected a format [csv, json, column, table]")
 		return
 	}
 	newFormat := FormatType(args[1])
 	switch newFormat {
-	case CsvFormat, JsonFormat, TableFormat:
+	case CsvFormat, JsonFormat, ColumnFormat, TableFormat:
 		c.Format = newFormat
 	default:
 		color.HiRed("Unimplemented format %q, keeping %s format.", newFormat, c.Format)
-		color.HiBlack("Choose a format from [csv, json, table]")
+		color.HiBlack("Choose a format from [csv, json, column, table]")
 	}
 }
 
@@ -453,32 +454,183 @@ func (c *Client) setPrecision(args []string) {
 	}
 }
 
-func (c *Client) outputCsv(csvBody string) {
-	fmt.Println(csvBody)
+func tagsEqual(prev, current map[string]string) bool {
+	return reflect.DeepEqual(prev, current)
 }
 
-func (c *Client) outputJson(jsonBody string) {
-	if !c.Pretty {
-		fmt.Println(jsonBody)
-	} else {
-		var buf bytes.Buffer
-		if err := json.Indent(&buf, []byte(jsonBody), "", "  "); err != nil {
-			color.Red("Unable to prettify json response.")
-			fmt.Println(jsonBody)
-		} else {
-			fmt.Println(buf.String())
+func columnsEqual(prev, current []string) bool {
+	return reflect.DeepEqual(prev, current)
+}
+
+func headersEqual(prev, current api.InfluxqlJsonResponseSeries) bool {
+	if prev.Name != current.Name {
+		return false
+	}
+	return tagsEqual(prev.GetTags(), current.GetTags()) && columnsEqual(prev.GetColumns(), current.GetColumns())
+}
+
+// formatResults will behave differently if you are formatting for columns or csv
+func (c *Client) formatResults(result api.InfluxqlJsonResponseResults, separator string, suppressHeaders bool) []string {
+	rows := []string{}
+	// Create a tabbed writer for each result as they won't always line up
+	for i, row := range result.GetSeries() {
+		// gather tags
+		tags := []string{}
+		for k, v := range row.GetTags() {
+			tags = append(tags, fmt.Sprintf("%s=%s", k, v))
+			sort.Strings(tags)
+		}
+		columnNames := []string{}
+		// Only put name/tags in a column if format is csv
+		if c.Format == CsvFormat {
+			if len(tags) > 0 {
+				columnNames = append([]string{"tags"}, columnNames...)
+			}
+
+			if row.GetName() != "" {
+				columnNames = append([]string{"name"}, columnNames...)
+			}
+		}
+		columnNames = append(columnNames, row.GetColumns()...)
+		// Output a line separator if we have more than one set or results and format is column
+		if i > 0 && c.Format == ColumnFormat && !suppressHeaders {
+			rows = append(rows, "")
+		}
+		// If we are column format, we break out the name/tag to separate lines
+		if c.Format == ColumnFormat && !suppressHeaders {
+			if row.GetName() != "" {
+				n := fmt.Sprintf("name: %s", row.GetName())
+				rows = append(rows, n)
+			}
+			if len(tags) > 0 {
+				t := fmt.Sprintf("tags: %s", (strings.Join(tags, ", ")))
+				rows = append(rows, t)
+			}
+		}
+		if !suppressHeaders {
+			rows = append(rows, strings.Join(columnNames, separator))
+		}
+		// if format is column, write dashes under each column
+		if c.Format == ColumnFormat && !suppressHeaders {
+			lines := []string{}
+			for _, columnName := range columnNames {
+				lines = append(lines, strings.Repeat("-", len(columnName)))
+			}
+			rows = append(rows, strings.Join(lines, separator))
+		}
+		for _, v := range row.GetValues() {
+			var values []string
+			if c.Format == CsvFormat {
+				if row.GetName() != "" {
+					values = append(values, row.GetName())
+				}
+				if len(tags) > 0 {
+					values = append(values, strings.Join(tags, ","))
+				}
+			}
+			for _, vv := range v {
+				values = append(values, interfaceToString(vv))
+			}
+			rows = append(rows, strings.Join(values, separator))
 		}
 	}
+	return rows
 }
 
-func (c *Client) outputTable(jsonBody string) {
-	var responses api.InfluxqlJsonResponse
-	if err := json.Unmarshal([]byte(jsonBody), &responses); err != nil {
-		color.Red("Failed to parse JSON response")
+func interfaceToString(v interface{}) string {
+	switch t := v.(type) {
+	case nil:
+		return ""
+	case bool:
+		return fmt.Sprintf("%v", v)
+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, uintptr:
+		return fmt.Sprintf("%d", t)
+	case float32, float64:
+		return fmt.Sprintf("%v", t)
+	default:
+		return fmt.Sprintf("%v", t)
 	}
-	for _, res := range responses.GetResults() {
+}
+
+func (c *Client) outputCsv(response api.InfluxqlJsonResponse) {
+	csvw := csv.NewWriter(os.Stdout)
+	var previousHeaders api.InfluxqlJsonResponseSeries
+	for _, result := range response.GetResults() {
+		if result.Error != nil {
+			color.Red("Error: %v", result.GetError())
+			continue
+		}
+		series := result.GetSeries()
+		suppressHeaders := len(series) > 0 && headersEqual(previousHeaders, series[0])
+		if !suppressHeaders && len(result.GetSeries()) > 0 {
+			previousHeaders = result.GetSeries()[0]
+		}
+		// Create a tabbed writer for each result as they won't always line up
+		rows := c.formatResults(result, "\t", suppressHeaders)
+		for _, r := range rows {
+			csvw.Write(strings.Split(r, "\t"))
+		}
+	}
+	csvw.Flush()
+}
+
+func (c *Client) outputJson(response api.InfluxqlJsonResponse) {
+	var data []byte
+	var err error
+	if c.Pretty {
+		data, err = json.MarshalIndent(response, "", "    ")
+	} else {
+		data, err = json.Marshal(response)
+	}
+	if err != nil {
+		color.Red("Unable to parse json: %s\n", err)
+		return
+	}
+	fmt.Println(string(data))
+}
+
+func (c *Client) outputColumns(response api.InfluxqlJsonResponse) {
+	// Create a tabbed writer for each result as they won't always line up
+	writer := new(tabwriter.Writer)
+	writer.Init(os.Stdin, 0, 8, 1, ' ', 0)
+
+	var previousHeaders api.InfluxqlJsonResponseSeries
+	for i, result := range response.GetResults() {
+		if result.Error != nil {
+			color.Red("Error: %v", result.GetError())
+			continue
+		}
+		// TODO: can we deprecate messages or do these need to be included in the openapi schema too?
+		// Print out all messages first
+		// for _, m := range result.GetMessages {
+		// 	fmt.Fprintf(w, "%s: %s.\n", m.Level, m.Text)
+		// }
+
+		// Check to see if the headers are the same as the previous row.  If so, suppress them in the output
+		suppressHeaders := len(result.GetSeries()) > 0 && headersEqual(previousHeaders, result.GetSeries()[0])
+		if !suppressHeaders && len(result.GetSeries()) > 0 {
+			previousHeaders = result.GetSeries()[0]
+		}
+
+		// If we are suppressing headers, don't output the extra line return. If we
+		// aren't suppressing headers, then we put out line returns between results
+		// (not before the first result, and not after the last result).
+		if !suppressHeaders && i > 0 {
+			fmt.Fprintln(writer, "")
+		}
+
+		rows := c.formatResults(result, "\t", suppressHeaders)
+		for _, r := range rows {
+			fmt.Fprintln(writer, r)
+		}
+	}
+	writer.Flush()
+}
+
+func (c *Client) outputTable(response api.InfluxqlJsonResponse) {
+	for _, res := range response.GetResults() {
 		if res.Error != nil {
-			color.Red("Query Error: %s", *res.Error)
+			color.Red("Query Error: %s", res.GetError())
 			continue
 		}
 		for _, series := range res.GetSeries() {
