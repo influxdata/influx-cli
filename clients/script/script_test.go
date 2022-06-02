@@ -128,3 +128,73 @@ func Test_SimpleList(t *testing.T) {
 
 	require.NoError(t, client.List(context.Background(), &params))
 }
+
+func Test_Update(t *testing.T) {
+	t.Parallel()
+
+	ctrl := gomock.NewController(t)
+	scriptsApi := mock.NewMockInvocableScriptsApi(ctrl)
+
+	var (
+		scriptId         = "123456789"
+		scriptName       = "simple"
+		scriptDescOld    = "A basic script to be created"
+		scriptDescNew    = "An updated script"
+		scriptOrgId      = "1111111111111"
+		scriptContentOld = `from(bucket: "sample_data") |> range(start: -10h)`
+		scriptContentNew = `from(bucket: "devbucket") |> range(start: -100h)`
+		scriptLanguage   = api.SCRIPTLANGUAGE_FLUX
+	)
+
+	// If we change the logic for handling parameter defaulting, the GetScriptsID calls need to be removed.
+	scriptsApi.EXPECT().GetScriptsID(gomock.Any(), scriptId).Return(api.ApiGetScriptsIDRequest{
+		ApiService: scriptsApi,
+	})
+
+	scriptsApi.EXPECT().GetScriptsIDExecute(gomock.Any()).Return(api.Script{
+		Id:          &scriptId,
+		Name:        scriptName,
+		Description: &scriptDescOld,
+		OrgID:       scriptOrgId,
+		Script:      scriptContentOld,
+		Language:    &scriptLanguage,
+	}, nil)
+
+	scriptsApi.EXPECT().PatchScriptsID(gomock.Any(), scriptId).Return(api.ApiPatchScriptsIDRequest{
+		ApiService: scriptsApi,
+	})
+
+	scriptsApi.EXPECT().PatchScriptsIDExecute(gomock.Any()).Return(api.Script{
+		Id:          &scriptId,
+		Name:        scriptName,
+		Description: &scriptDescNew,
+		OrgID:       scriptOrgId,
+		Script:      scriptContentNew,
+		Language:    &scriptLanguage,
+	}, nil)
+
+	stdio := mock.NewMockStdIO(ctrl)
+	client := script.Client{
+		CLI:                 clients.CLI{StdIO: stdio, PrintAsJSON: true},
+		InvocableScriptsApi: scriptsApi,
+	}
+
+	stdio.EXPECT().Write(tmock.MatchedBy(func(in []byte) bool {
+		t.Logf("Stdio output: %s", in)
+		inStr := string(in)
+		// Verify we print the updated script's details.
+		return strings.Contains(inStr, scriptId) &&
+			strings.Contains(inStr, scriptName) &&
+			strings.Contains(inStr, scriptDescNew) &&
+			strings.Contains(inStr, scriptOrgId)
+	}))
+
+	updateParams := script.UpdateParams{
+		ScriptID:    scriptId,
+		Description: scriptDescNew,
+		Name:        scriptName,
+		Script:      scriptContentNew,
+	}
+
+	require.NoError(t, client.Update(context.Background(), &updateParams))
+}
