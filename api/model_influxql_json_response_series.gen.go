@@ -16,9 +16,11 @@ import (
 
 // InfluxqlJsonResponseSeries struct for InfluxqlJsonResponseSeries
 type InfluxqlJsonResponseSeries struct {
-	Name    *string          `json:"name,omitempty" yaml:"name,omitempty"`
-	Columns *[]string        `json:"columns,omitempty" yaml:"columns,omitempty"`
-	Values  *[][]interface{} `json:"values,omitempty" yaml:"values,omitempty"`
+	Name    *string            `json:"name,omitempty" yaml:"name,omitempty"`
+	Tags    *map[string]string `json:"tags,omitempty" yaml:"tags,omitempty"`
+	Partial *bool              `json:"partial,omitempty" yaml:"partial,omitempty"`
+	Columns *[]string          `json:"columns,omitempty" yaml:"columns,omitempty"`
+	Values  *[][]interface{}   `json:"values,omitempty" yaml:"values,omitempty"`
 }
 
 // NewInfluxqlJsonResponseSeries instantiates a new InfluxqlJsonResponseSeries object
@@ -68,6 +70,70 @@ func (o *InfluxqlJsonResponseSeries) HasName() bool {
 // SetName gets a reference to the given string and assigns it to the Name field.
 func (o *InfluxqlJsonResponseSeries) SetName(v string) {
 	o.Name = &v
+}
+
+// GetTags returns the Tags field value if set, zero value otherwise.
+func (o *InfluxqlJsonResponseSeries) GetTags() map[string]string {
+	if o == nil || o.Tags == nil {
+		var ret map[string]string
+		return ret
+	}
+	return *o.Tags
+}
+
+// GetTagsOk returns a tuple with the Tags field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *InfluxqlJsonResponseSeries) GetTagsOk() (*map[string]string, bool) {
+	if o == nil || o.Tags == nil {
+		return nil, false
+	}
+	return o.Tags, true
+}
+
+// HasTags returns a boolean if a field has been set.
+func (o *InfluxqlJsonResponseSeries) HasTags() bool {
+	if o != nil && o.Tags != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetTags gets a reference to the given map[string]string and assigns it to the Tags field.
+func (o *InfluxqlJsonResponseSeries) SetTags(v map[string]string) {
+	o.Tags = &v
+}
+
+// GetPartial returns the Partial field value if set, zero value otherwise.
+func (o *InfluxqlJsonResponseSeries) GetPartial() bool {
+	if o == nil || o.Partial == nil {
+		var ret bool
+		return ret
+	}
+	return *o.Partial
+}
+
+// GetPartialOk returns a tuple with the Partial field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *InfluxqlJsonResponseSeries) GetPartialOk() (*bool, bool) {
+	if o == nil || o.Partial == nil {
+		return nil, false
+	}
+	return o.Partial, true
+}
+
+// HasPartial returns a boolean if a field has been set.
+func (o *InfluxqlJsonResponseSeries) HasPartial() bool {
+	if o != nil && o.Partial != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetPartial gets a reference to the given bool and assigns it to the Partial field.
+func (o *InfluxqlJsonResponseSeries) SetPartial(v bool) {
+	o.Partial = &v
 }
 
 // GetColumns returns the Columns field value if set, zero value otherwise.
@@ -138,6 +204,12 @@ func (o InfluxqlJsonResponseSeries) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Name != nil {
 		toSerialize["name"] = o.Name
+	}
+	if o.Tags != nil {
+		toSerialize["tags"] = o.Tags
+	}
+	if o.Partial != nil {
+		toSerialize["partial"] = o.Partial
 	}
 	if o.Columns != nil {
 		toSerialize["columns"] = o.Columns
