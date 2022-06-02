@@ -17,6 +17,7 @@ import (
 // InfluxqlJsonResponseResults struct for InfluxqlJsonResponseResults
 type InfluxqlJsonResponseResults struct {
 	StatementId *int32                        `json:"statement_id,omitempty" yaml:"statement_id,omitempty"`
+	Error       *string                       `json:"error,omitempty" yaml:"error,omitempty"`
 	Series      *[]InfluxqlJsonResponseSeries `json:"series,omitempty" yaml:"series,omitempty"`
 }
 
@@ -69,6 +70,38 @@ func (o *InfluxqlJsonResponseResults) SetStatementId(v int32) {
 	o.StatementId = &v
 }
 
+// GetError returns the Error field value if set, zero value otherwise.
+func (o *InfluxqlJsonResponseResults) GetError() string {
+	if o == nil || o.Error == nil {
+		var ret string
+		return ret
+	}
+	return *o.Error
+}
+
+// GetErrorOk returns a tuple with the Error field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *InfluxqlJsonResponseResults) GetErrorOk() (*string, bool) {
+	if o == nil || o.Error == nil {
+		return nil, false
+	}
+	return o.Error, true
+}
+
+// HasError returns a boolean if a field has been set.
+func (o *InfluxqlJsonResponseResults) HasError() bool {
+	if o != nil && o.Error != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetError gets a reference to the given string and assigns it to the Error field.
+func (o *InfluxqlJsonResponseResults) SetError(v string) {
+	o.Error = &v
+}
+
 // GetSeries returns the Series field value if set, zero value otherwise.
 func (o *InfluxqlJsonResponseResults) GetSeries() []InfluxqlJsonResponseSeries {
 	if o == nil || o.Series == nil {
@@ -105,6 +138,9 @@ func (o InfluxqlJsonResponseResults) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.StatementId != nil {
 		toSerialize["statement_id"] = o.StatementId
+	}
+	if o.Error != nil {
+		toSerialize["error"] = o.Error
 	}
 	if o.Series != nil {
 		toSerialize["series"] = o.Series

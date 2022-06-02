@@ -477,6 +477,10 @@ func (c *Client) outputTable(jsonBody string) {
 		color.Red("Failed to parse JSON response")
 	}
 	for _, res := range responses.GetResults() {
+		if res.Error != nil {
+			color.Red("Query Error: %s", *res.Error)
+			continue
+		}
 		for _, series := range res.GetSeries() {
 			color.Magenta("Table View (press q to exit interactive mode):")
 			p := tea.NewProgram(NewModel(series))
