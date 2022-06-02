@@ -105,7 +105,7 @@ func newScriptsCreateCmd() cli.Command {
 			if len(scriptFile) > 0 {
 				data, err := os.ReadFile(scriptFile)
 				if err != nil {
-					return fmt.Errorf("failed to create script: %q", err)
+					return fmt.Errorf("failed to create script: %v", err)
 				}
 				params.Script = string(data)
 			}
@@ -253,7 +253,7 @@ func newScriptsInvokeCmd() cli.Command {
 			if len(jsonFile) > 0 {
 				data, err := os.ReadFile(jsonFile)
 				if err != nil {
-					return fmt.Errorf("failed to invoke script: %q", err)
+					return fmt.Errorf("failed to invoke script: %v", err)
 				}
 				jsonParams = string(data)
 			}

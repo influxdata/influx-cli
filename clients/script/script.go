@@ -14,13 +14,9 @@ type Client struct {
 	api.InvocableScriptsApi
 }
 
-type printPayload struct {
-	scripts []api.Script
-}
-
-func (c Client) printScripts(payload printPayload) error {
+func (c Client) printScripts(scripts []api.Script) error {
 	if c.PrintAsJSON {
-		return c.PrintJSON(payload.scripts)
+		return c.PrintJSON(scripts)
 	}
 
 	headers := []string{
@@ -32,7 +28,7 @@ func (c Client) printScripts(payload printPayload) error {
 	}
 
 	var rows []map[string]interface{}
-	for _, s := range payload.scripts {
+	for _, s := range scripts {
 		row := map[string]interface{}{
 			"ID":              *s.Id,
 			"Name":            s.Name,
@@ -54,14 +50,15 @@ type ListParams struct {
 
 func (c Client) List(ctx context.Context, params *ListParams) error {
 	req := c.GetScripts(ctx)
+	if params != nil {
+		req = req.Limit(int32(params.Limit)).Offset(int32(params.Offset))
+	}
 	res, err := req.Execute()
 	if err != nil {
-		return fmt.Errorf("failed to list scripts: %q", err)
+		return fmt.Errorf("failed to list scripts: %v", err)
 	}
 
-	return c.printScripts(printPayload{
-		scripts: *res.Scripts,
-	})
+	return c.printScripts(*res.Scripts)
 }
 
 type CreateParams struct {
@@ -81,12 +78,10 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 	script, err := c.PostScripts(ctx).ScriptCreateRequest(req).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to create script: %q", err)
+		return fmt.Errorf("failed to create script: %v", err)
 	}
 
-	return c.printScripts(printPayload{
-		scripts: []api.Script{script},
-	})
+	return c.printScripts([]api.Script{script})
 }
 
 type DeleteParams struct {
@@ -96,10 +91,9 @@ type DeleteParams struct {
 func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
 	err := c.DeleteScriptsID(ctx, params.ScriptID).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to delete script: %q", err)
-	} else {
-		return nil
+		return fmt.Errorf("failed to delete script: %v", err)
 	}
+	return nil
 }
 
 type RetrieveParams struct {
@@ -109,12 +103,10 @@ type RetrieveParams struct {
 func (c Client) Retrieve(ctx context.Context, params *RetrieveParams) error {
 	script, err := c.GetScriptsID(ctx, params.ScriptID).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to retrieve script: %q", err)
+		return fmt.Errorf("failed to retrieve script: %v", err)
 	}
 
-	return c.printScripts(printPayload{
-		scripts: []api.Script{script},
-	})
+	return c.printScripts([]api.Script{script})
 }
 
 type UpdateParams struct {
@@ -128,7 +120,7 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	// Retrieve the original since we might carry over some unchanged details.
 	oldScript, err := c.GetScriptsID(ctx, params.ScriptID).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to update script: %q", err)
+		return fmt.Errorf("failed to update script: %v", err)
 	}
 
 	if len(params.Description) == 0 {
@@ -149,12 +141,10 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 
 	script, err := c.PatchScriptsID(ctx, params.ScriptID).ScriptUpdateRequest(req).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to update script: %q", err)
+		return fmt.Errorf("failed to update script: %v", err)
 	}
 
-	return c.printScripts(printPayload{
-		scripts: []api.Script{script},
-	})
+	return c.printScripts([]api.Script{script})
 }
 
 type InvokeParams struct {
@@ -169,7 +159,7 @@ func (c Client) Invoke(ctx context.Context, params *InvokeParams) error {
 
 	resp, err := c.PostScriptsIDInvoke(ctx, params.ScriptID).ScriptInvocationParams(req).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to invoke script: %q", err)
+		return fmt.Errorf("failed to invoke script: %v", err)
 	}
 	defer resp.Body.Close()
 
