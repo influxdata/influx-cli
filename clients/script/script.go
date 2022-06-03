@@ -2,6 +2,7 @@ package script
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/influxdata/influx-cli/v2/api"
@@ -69,6 +70,10 @@ type CreateParams struct {
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
+	if params == nil {
+		return errors.New("failed to create script: no parameters provided")
+	}
+
 	req := api.ScriptCreateRequest{
 		Name:        params.Name,
 		Description: params.Description,
