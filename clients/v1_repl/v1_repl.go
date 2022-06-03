@@ -17,6 +17,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fatih/color"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
@@ -335,6 +336,7 @@ var (
 	CsvFormat    FormatType = "csv"
 	JsonFormat   FormatType = "json"
 	ColumnFormat FormatType = "column"
+	TableFormat  FormatType = "table"
 )
 
 func (c *Client) runAndShowQuery(query string) {
@@ -353,6 +355,7 @@ func (c *Client) runAndShowQuery(query string) {
 		CsvFormat:    c.outputCsv,
 		JsonFormat:   c.outputJson,
 		ColumnFormat: c.outputColumns,
+		TableFormat:  c.outputTable,
 	}
 	displayFunc := displayMap[c.Format]
 	displayFunc(response)
@@ -362,7 +365,7 @@ func (c *Client) help() {
 	fmt.Println(`Usage:
 		pretty                toggles pretty print for the json format
         use <db_name>         sets current database
-        format <format>       specifies the format of the server responses: json, csv, column
+        format <format>       specifies the format of the server responses: json, csv, column, table
         precision <format>    specifies the format of the timestamp: h, m, s, ms, u or ns
         history               displays command history
         settings              outputs the current settings for the shell
@@ -422,16 +425,16 @@ func (c *Client) query(ctx context.Context, query string) (string, error) {
 func (c *Client) setFormat(args []string) {
 	// args[0] is "format"
 	if len(args) != 2 {
-		color.Red("Expected a format [csv, json, column]")
+		color.Red("Expected a format [csv, json, column, table]")
 		return
 	}
 	newFormat := FormatType(args[1])
 	switch newFormat {
-	case CsvFormat, JsonFormat, ColumnFormat:
+	case CsvFormat, JsonFormat, ColumnFormat, TableFormat:
 		c.Format = newFormat
 	default:
 		color.HiRed("Unimplemented format %q, keeping %s format.", newFormat, c.Format)
-		color.HiBlack("Choose a format from [csv, json, column]")
+		color.HiBlack("Choose a format from [csv, json, column, table]")
 	}
 }
 
@@ -554,7 +557,7 @@ func (c *Client) outputCsv(response api.InfluxqlJsonResponse) {
 	var previousHeaders api.InfluxqlJsonResponseSeries
 	for _, result := range response.GetResults() {
 		if result.Error != nil {
-			color.Red("Query Error: %v", result.GetError())
+			color.Red("Error: %v", result.GetError())
 			continue
 		}
 		series := result.GetSeries()
@@ -594,7 +597,7 @@ func (c *Client) outputColumns(response api.InfluxqlJsonResponse) {
 	var previousHeaders api.InfluxqlJsonResponseSeries
 	for i, result := range response.GetResults() {
 		if result.Error != nil {
-			color.Red("Query Error: %v", result.GetError())
+			color.Red("Error: %v", result.GetError())
 			continue
 		}
 		// TODO: can we deprecate messages or do these need to be included in the openapi schema too?
@@ -622,6 +625,23 @@ func (c *Client) outputColumns(response api.InfluxqlJsonResponse) {
 		}
 	}
 	writer.Flush()
+}
+
+func (c *Client) outputTable(response api.InfluxqlJsonResponse) {
+	for _, res := range response.GetResults() {
+		if res.Error != nil {
+			color.Red("Query Error: %s", res.GetError())
+			continue
+		}
+		for _, series := range res.GetSeries() {
+			color.Magenta("Table View (press q to exit interactive mode):")
+			p := tea.NewProgram(NewModel(series))
+			if err := p.Start(); err != nil {
+				color.Red("Failed to display table")
+			}
+			fmt.Printf("\n")
+		}
+	}
 }
 
 func (c *Client) togglePretty() {
