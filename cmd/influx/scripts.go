@@ -52,7 +52,7 @@ func newScriptsListCmd() cli.Command {
 			api := getAPI(ctx)
 			client := script.Client{
 				CLI:                 getCLI(ctx),
-				InvocableScriptsApi: api.InvocableScriptsApi,
+				InvokableScriptsApi: api.InvokableScriptsApi,
 			}
 
 			return client.List(getContext(ctx), &params)
@@ -113,7 +113,7 @@ func newScriptsCreateCmd() cli.Command {
 			api := getAPI(ctx)
 			client := script.Client{
 				CLI:                 getCLI(ctx),
-				InvocableScriptsApi: api.InvocableScriptsApi,
+				InvokableScriptsApi: api.InvokableScriptsApi,
 			}
 
 			return client.Create(getContext(ctx), &params)
@@ -140,7 +140,7 @@ func newScriptsDeleteCmd() cli.Command {
 			api := getAPI(ctx)
 			client := script.Client{
 				CLI:                 getCLI(ctx),
-				InvocableScriptsApi: api.InvocableScriptsApi,
+				InvokableScriptsApi: api.InvokableScriptsApi,
 			}
 
 			return client.Delete(getContext(ctx), &params)
@@ -167,7 +167,7 @@ func newScriptsRetrieveCmd() cli.Command {
 			api := getAPI(ctx)
 			client := script.Client{
 				CLI:                 getCLI(ctx),
-				InvocableScriptsApi: api.InvocableScriptsApi,
+				InvokableScriptsApi: api.InvokableScriptsApi,
 			}
 
 			return client.Retrieve(getContext(ctx), &params)
@@ -209,7 +209,7 @@ func newScriptsUpdateCmd() cli.Command {
 			api := getAPI(ctx)
 			client := script.Client{
 				CLI:                 getCLI(ctx),
-				InvocableScriptsApi: api.InvocableScriptsApi,
+				InvokableScriptsApi: api.InvokableScriptsApi,
 			}
 
 			return client.Update(getContext(ctx), &params)
@@ -261,7 +261,7 @@ func newScriptsInvokeCmd() cli.Command {
 			api := getAPI(ctx)
 			client := script.Client{
 				CLI:                 getCLI(ctx),
-				InvocableScriptsApi: api.InvocableScriptsApi,
+				InvokableScriptsApi: api.InvokableScriptsApi,
 			}
 
 			params.Params = make(map[string]interface{})

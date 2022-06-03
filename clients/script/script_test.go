@@ -45,7 +45,7 @@ func Test_SimpleCreate(t *testing.T) {
 	stdio := mock.NewMockStdIO(ctrl)
 	client := script.Client{
 		CLI:                 clients.CLI{StdIO: stdio, PrintAsJSON: true},
-		InvocableScriptsApi: scriptsApi,
+		InvokableScriptsApi: scriptsApi,
 	}
 
 	stdio.EXPECT().Write(tmock.MatchedBy(func(in []byte) bool {
@@ -107,7 +107,7 @@ func Test_SimpleList(t *testing.T) {
 	stdio := mock.NewMockStdIO(ctrl)
 	client := script.Client{
 		CLI:                 clients.CLI{StdIO: stdio, PrintAsJSON: true},
-		InvocableScriptsApi: scriptsApi,
+		InvokableScriptsApi: scriptsApi,
 	}
 
 	stdio.EXPECT().Write(tmock.MatchedBy(func(in []byte) bool {
@@ -178,7 +178,7 @@ func Test_Update(t *testing.T) {
 	stdio := mock.NewMockStdIO(ctrl)
 	client := script.Client{
 		CLI:                 clients.CLI{StdIO: stdio, PrintAsJSON: true},
-		InvocableScriptsApi: scriptsApi,
+		InvokableScriptsApi: scriptsApi,
 	}
 
 	stdio.EXPECT().Write(tmock.MatchedBy(func(in []byte) bool {

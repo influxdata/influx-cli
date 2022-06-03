@@ -49,7 +49,7 @@ type TasksApi interface {
 	DeleteTasksIDExecuteWithHttpInfo(r ApiDeleteTasksIDRequest) (*_nethttp.Response, error)
 
 	/*
-	 * DeleteTasksIDRunsID Cancel a running task
+	 * DeleteTasksIDRunsID Cancel a running task.  #### InfluxDB Cloud    - Doesn't support this operation.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param taskID The task ID.
 	 * @param runID The run ID.
@@ -157,7 +157,7 @@ type TasksApi interface {
 	GetTasksIDRunsExecuteWithHttpInfo(r ApiGetTasksIDRunsRequest) (Runs, *_nethttp.Response, error)
 
 	/*
-	 * GetTasksIDRunsID Retrieve a single run for a task
+	 * GetTasksIDRunsID Retrieve a single run for a task.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param taskID The task ID.
 	 * @param runID The run ID.
@@ -479,7 +479,7 @@ func (r ApiDeleteTasksIDRunsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response
 }
 
 /*
- * DeleteTasksIDRunsID Cancel a running task
+ * DeleteTasksIDRunsID Cancel a running task.  #### InfluxDB Cloud    - Doesn't support this operation.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param taskID The task ID.
  * @param runID The run ID.
@@ -578,6 +578,17 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecuteWithHttpInfo(r ApiDeleteTask
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 405 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -1421,7 +1432,7 @@ func (r ApiGetTasksIDRunsIDRequest) ExecuteWithHttpInfo() (Run, *_nethttp.Respon
 }
 
 /*
- * GetTasksIDRunsID Retrieve a single run for a task
+ * GetTasksIDRunsID Retrieve a single run for a task.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param taskID The task ID.
  * @param runID The run ID.

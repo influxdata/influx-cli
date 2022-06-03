@@ -11,7 +11,7 @@ import (
 
 type Client struct {
 	clients.CLI
-	api.InvocableScriptsApi
+	api.InvokableScriptsApi
 }
 
 func (c Client) printScripts(scripts []api.Script) error {

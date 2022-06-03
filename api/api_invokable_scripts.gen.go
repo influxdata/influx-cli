@@ -24,7 +24,7 @@ var (
 	_ _context.Context
 )
 
-type InvocableScriptsApi interface {
+type InvokableScriptsApi interface {
 
 	/*
 	 * DeleteScriptsID Delete a script
@@ -70,7 +70,7 @@ type InvocableScriptsApi interface {
 
 	/*
 	 * GetScriptsID Retrieve a script
-	 * Uses script ID to retrieve details of an invocable script.
+	 * Uses script ID to retrieve details of an invokable script.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param scriptID The script ID.
 	 * @return ApiGetScriptsIDRequest
@@ -93,7 +93,7 @@ type InvocableScriptsApi interface {
 
 	/*
 	 * PatchScriptsID Update a script
-	 * Updates properties (`name`, `description`, and `script`) of an invocable script.
+	 * Updates properties (`name`, `description`, and `script`) of an invokable script.
 
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param scriptID The script ID.
@@ -160,12 +160,12 @@ type InvocableScriptsApi interface {
 	PostScriptsIDInvokeExecuteWithHttpInfo(r ApiPostScriptsIDInvokeRequest) (*_nethttp.Response, *_nethttp.Response, error)
 }
 
-// InvocableScriptsApiService InvocableScriptsApi service
-type InvocableScriptsApiService service
+// InvokableScriptsApiService InvokableScriptsApi service
+type InvokableScriptsApiService service
 
 type ApiDeleteScriptsIDRequest struct {
 	ctx        _context.Context
-	ApiService InvocableScriptsApi
+	ApiService InvokableScriptsApi
 	scriptID   string
 }
 
@@ -192,7 +192,7 @@ func (r ApiDeleteScriptsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, er
  * @param scriptID The ID of the script to delete.
  * @return ApiDeleteScriptsIDRequest
  */
-func (a *InvocableScriptsApiService) DeleteScriptsID(ctx _context.Context, scriptID string) ApiDeleteScriptsIDRequest {
+func (a *InvokableScriptsApiService) DeleteScriptsID(ctx _context.Context, scriptID string) ApiDeleteScriptsIDRequest {
 	return ApiDeleteScriptsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -203,7 +203,7 @@ func (a *InvocableScriptsApiService) DeleteScriptsID(ctx _context.Context, scrip
 /*
  * Execute executes the request
  */
-func (a *InvocableScriptsApiService) DeleteScriptsIDExecute(r ApiDeleteScriptsIDRequest) error {
+func (a *InvokableScriptsApiService) DeleteScriptsIDExecute(r ApiDeleteScriptsIDRequest) error {
 	_, err := a.DeleteScriptsIDExecuteWithHttpInfo(r)
 	return err
 }
@@ -213,7 +213,7 @@ func (a *InvocableScriptsApiService) DeleteScriptsIDExecute(r ApiDeleteScriptsID
  * returned HTTP response as it will have already been read and closed; access to the response body content should be
  * achieved through the returned response model if applicable.
  */
-func (a *InvocableScriptsApiService) DeleteScriptsIDExecuteWithHttpInfo(r ApiDeleteScriptsIDRequest) (*_nethttp.Response, error) {
+func (a *InvokableScriptsApiService) DeleteScriptsIDExecuteWithHttpInfo(r ApiDeleteScriptsIDRequest) (*_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -222,7 +222,7 @@ func (a *InvocableScriptsApiService) DeleteScriptsIDExecuteWithHttpInfo(r ApiDel
 		localVarFileBytes    []byte
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvocableScriptsApiService.DeleteScriptsID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvokableScriptsApiService.DeleteScriptsID")
 	if err != nil {
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
@@ -296,7 +296,7 @@ func (a *InvocableScriptsApiService) DeleteScriptsIDExecuteWithHttpInfo(r ApiDel
 
 type ApiGetScriptsRequest struct {
 	ctx        _context.Context
-	ApiService InvocableScriptsApi
+	ApiService InvokableScriptsApi
 	limit      *int32
 	offset     *int32
 }
@@ -330,7 +330,7 @@ func (r ApiGetScriptsRequest) ExecuteWithHttpInfo() (Scripts, *_nethttp.Response
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetScriptsRequest
  */
-func (a *InvocableScriptsApiService) GetScripts(ctx _context.Context) ApiGetScriptsRequest {
+func (a *InvokableScriptsApiService) GetScripts(ctx _context.Context) ApiGetScriptsRequest {
 	return ApiGetScriptsRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -341,7 +341,7 @@ func (a *InvocableScriptsApiService) GetScripts(ctx _context.Context) ApiGetScri
  * Execute executes the request
  * @return Scripts
  */
-func (a *InvocableScriptsApiService) GetScriptsExecute(r ApiGetScriptsRequest) (Scripts, error) {
+func (a *InvokableScriptsApiService) GetScriptsExecute(r ApiGetScriptsRequest) (Scripts, error) {
 	returnVal, _, err := a.GetScriptsExecuteWithHttpInfo(r)
 	return returnVal, err
 }
@@ -352,7 +352,7 @@ func (a *InvocableScriptsApiService) GetScriptsExecute(r ApiGetScriptsRequest) (
  * achieved through the returned response model if applicable.
  * @return Scripts
  */
-func (a *InvocableScriptsApiService) GetScriptsExecuteWithHttpInfo(r ApiGetScriptsRequest) (Scripts, *_nethttp.Response, error) {
+func (a *InvokableScriptsApiService) GetScriptsExecuteWithHttpInfo(r ApiGetScriptsRequest) (Scripts, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -362,7 +362,7 @@ func (a *InvocableScriptsApiService) GetScriptsExecuteWithHttpInfo(r ApiGetScrip
 		localVarReturnValue  Scripts
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvocableScriptsApiService.GetScripts")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvokableScriptsApiService.GetScripts")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
@@ -460,7 +460,7 @@ func (a *InvocableScriptsApiService) GetScriptsExecuteWithHttpInfo(r ApiGetScrip
 
 type ApiGetScriptsIDRequest struct {
 	ctx        _context.Context
-	ApiService InvocableScriptsApi
+	ApiService InvokableScriptsApi
 	scriptID   string
 }
 
@@ -482,12 +482,12 @@ func (r ApiGetScriptsIDRequest) ExecuteWithHttpInfo() (Script, *_nethttp.Respons
 
 /*
  * GetScriptsID Retrieve a script
- * Uses script ID to retrieve details of an invocable script.
+ * Uses script ID to retrieve details of an invokable script.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param scriptID The script ID.
  * @return ApiGetScriptsIDRequest
  */
-func (a *InvocableScriptsApiService) GetScriptsID(ctx _context.Context, scriptID string) ApiGetScriptsIDRequest {
+func (a *InvokableScriptsApiService) GetScriptsID(ctx _context.Context, scriptID string) ApiGetScriptsIDRequest {
 	return ApiGetScriptsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -499,7 +499,7 @@ func (a *InvocableScriptsApiService) GetScriptsID(ctx _context.Context, scriptID
  * Execute executes the request
  * @return Script
  */
-func (a *InvocableScriptsApiService) GetScriptsIDExecute(r ApiGetScriptsIDRequest) (Script, error) {
+func (a *InvokableScriptsApiService) GetScriptsIDExecute(r ApiGetScriptsIDRequest) (Script, error) {
 	returnVal, _, err := a.GetScriptsIDExecuteWithHttpInfo(r)
 	return returnVal, err
 }
@@ -510,7 +510,7 @@ func (a *InvocableScriptsApiService) GetScriptsIDExecute(r ApiGetScriptsIDReques
  * achieved through the returned response model if applicable.
  * @return Script
  */
-func (a *InvocableScriptsApiService) GetScriptsIDExecuteWithHttpInfo(r ApiGetScriptsIDRequest) (Script, *_nethttp.Response, error) {
+func (a *InvokableScriptsApiService) GetScriptsIDExecuteWithHttpInfo(r ApiGetScriptsIDRequest) (Script, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -520,7 +520,7 @@ func (a *InvocableScriptsApiService) GetScriptsIDExecuteWithHttpInfo(r ApiGetScr
 		localVarReturnValue  Script
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvocableScriptsApiService.GetScriptsID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvokableScriptsApiService.GetScriptsID")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
@@ -613,7 +613,7 @@ func (a *InvocableScriptsApiService) GetScriptsIDExecuteWithHttpInfo(r ApiGetScr
 
 type ApiPatchScriptsIDRequest struct {
 	ctx                 _context.Context
-	ApiService          InvocableScriptsApi
+	ApiService          InvokableScriptsApi
 	scriptID            string
 	scriptUpdateRequest *ScriptUpdateRequest
 }
@@ -644,13 +644,13 @@ func (r ApiPatchScriptsIDRequest) ExecuteWithHttpInfo() (Script, *_nethttp.Respo
 
 /*
  * PatchScriptsID Update a script
- * Updates properties (`name`, `description`, and `script`) of an invocable script.
+ * Updates properties (`name`, `description`, and `script`) of an invokable script.
 
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param scriptID The script ID.
  * @return ApiPatchScriptsIDRequest
  */
-func (a *InvocableScriptsApiService) PatchScriptsID(ctx _context.Context, scriptID string) ApiPatchScriptsIDRequest {
+func (a *InvokableScriptsApiService) PatchScriptsID(ctx _context.Context, scriptID string) ApiPatchScriptsIDRequest {
 	return ApiPatchScriptsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -662,7 +662,7 @@ func (a *InvocableScriptsApiService) PatchScriptsID(ctx _context.Context, script
  * Execute executes the request
  * @return Script
  */
-func (a *InvocableScriptsApiService) PatchScriptsIDExecute(r ApiPatchScriptsIDRequest) (Script, error) {
+func (a *InvokableScriptsApiService) PatchScriptsIDExecute(r ApiPatchScriptsIDRequest) (Script, error) {
 	returnVal, _, err := a.PatchScriptsIDExecuteWithHttpInfo(r)
 	return returnVal, err
 }
@@ -673,7 +673,7 @@ func (a *InvocableScriptsApiService) PatchScriptsIDExecute(r ApiPatchScriptsIDRe
  * achieved through the returned response model if applicable.
  * @return Script
  */
-func (a *InvocableScriptsApiService) PatchScriptsIDExecuteWithHttpInfo(r ApiPatchScriptsIDRequest) (Script, *_nethttp.Response, error) {
+func (a *InvokableScriptsApiService) PatchScriptsIDExecuteWithHttpInfo(r ApiPatchScriptsIDRequest) (Script, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPatch
 		localVarPostBody     interface{}
@@ -683,7 +683,7 @@ func (a *InvocableScriptsApiService) PatchScriptsIDExecuteWithHttpInfo(r ApiPatc
 		localVarReturnValue  Script
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvocableScriptsApiService.PatchScriptsID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvokableScriptsApiService.PatchScriptsID")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
@@ -781,7 +781,7 @@ func (a *InvocableScriptsApiService) PatchScriptsIDExecuteWithHttpInfo(r ApiPatc
 
 type ApiPostScriptsRequest struct {
 	ctx                 _context.Context
-	ApiService          InvocableScriptsApi
+	ApiService          InvokableScriptsApi
 	scriptCreateRequest *ScriptCreateRequest
 }
 
@@ -806,7 +806,7 @@ func (r ApiPostScriptsRequest) ExecuteWithHttpInfo() (Script, *_nethttp.Response
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiPostScriptsRequest
  */
-func (a *InvocableScriptsApiService) PostScripts(ctx _context.Context) ApiPostScriptsRequest {
+func (a *InvokableScriptsApiService) PostScripts(ctx _context.Context) ApiPostScriptsRequest {
 	return ApiPostScriptsRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -817,7 +817,7 @@ func (a *InvocableScriptsApiService) PostScripts(ctx _context.Context) ApiPostSc
  * Execute executes the request
  * @return Script
  */
-func (a *InvocableScriptsApiService) PostScriptsExecute(r ApiPostScriptsRequest) (Script, error) {
+func (a *InvokableScriptsApiService) PostScriptsExecute(r ApiPostScriptsRequest) (Script, error) {
 	returnVal, _, err := a.PostScriptsExecuteWithHttpInfo(r)
 	return returnVal, err
 }
@@ -828,7 +828,7 @@ func (a *InvocableScriptsApiService) PostScriptsExecute(r ApiPostScriptsRequest)
  * achieved through the returned response model if applicable.
  * @return Script
  */
-func (a *InvocableScriptsApiService) PostScriptsExecuteWithHttpInfo(r ApiPostScriptsRequest) (Script, *_nethttp.Response, error) {
+func (a *InvokableScriptsApiService) PostScriptsExecuteWithHttpInfo(r ApiPostScriptsRequest) (Script, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -838,7 +838,7 @@ func (a *InvocableScriptsApiService) PostScriptsExecuteWithHttpInfo(r ApiPostScr
 		localVarReturnValue  Script
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvocableScriptsApiService.PostScripts")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvokableScriptsApiService.PostScripts")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
@@ -935,7 +935,7 @@ func (a *InvocableScriptsApiService) PostScriptsExecuteWithHttpInfo(r ApiPostScr
 
 type ApiPostScriptsIDInvokeRequest struct {
 	ctx                    _context.Context
-	ApiService             InvocableScriptsApi
+	ApiService             InvokableScriptsApi
 	scriptID               string
 	scriptInvocationParams *ScriptInvocationParams
 }
@@ -971,7 +971,7 @@ func (r ApiPostScriptsIDInvokeRequest) ExecuteWithHttpInfo() (*_nethttp.Response
  * @param scriptID
  * @return ApiPostScriptsIDInvokeRequest
  */
-func (a *InvocableScriptsApiService) PostScriptsIDInvoke(ctx _context.Context, scriptID string) ApiPostScriptsIDInvokeRequest {
+func (a *InvokableScriptsApiService) PostScriptsIDInvoke(ctx _context.Context, scriptID string) ApiPostScriptsIDInvokeRequest {
 	return ApiPostScriptsIDInvokeRequest{
 		ApiService: a,
 		ctx:        ctx,
@@ -983,7 +983,7 @@ func (a *InvocableScriptsApiService) PostScriptsIDInvoke(ctx _context.Context, s
  * Execute executes the request
  * @return *os.File
  */
-func (a *InvocableScriptsApiService) PostScriptsIDInvokeExecute(r ApiPostScriptsIDInvokeRequest) (*_nethttp.Response, error) {
+func (a *InvokableScriptsApiService) PostScriptsIDInvokeExecute(r ApiPostScriptsIDInvokeRequest) (*_nethttp.Response, error) {
 	returnVal, _, err := a.PostScriptsIDInvokeExecuteWithHttpInfo(r)
 	return returnVal, err
 }
@@ -994,7 +994,7 @@ func (a *InvocableScriptsApiService) PostScriptsIDInvokeExecute(r ApiPostScripts
  * achieved through the returned response model if applicable.
  * @return *os.File
  */
-func (a *InvocableScriptsApiService) PostScriptsIDInvokeExecuteWithHttpInfo(r ApiPostScriptsIDInvokeRequest) (*_nethttp.Response, *_nethttp.Response, error) {
+func (a *InvokableScriptsApiService) PostScriptsIDInvokeExecuteWithHttpInfo(r ApiPostScriptsIDInvokeRequest) (*_nethttp.Response, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1004,7 +1004,7 @@ func (a *InvocableScriptsApiService) PostScriptsIDInvokeExecuteWithHttpInfo(r Ap
 		localVarReturnValue  *_nethttp.Response
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvocableScriptsApiService.PostScriptsIDInvoke")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvokableScriptsApiService.PostScriptsIDInvoke")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
