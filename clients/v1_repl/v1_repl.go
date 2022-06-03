@@ -762,15 +762,14 @@ func (c *Client) GetDatabases(ctx context.Context) ([]string, error) {
 		return []string{}, err
 	}
 	values := singleSeries.GetValues()
-	if len(values) != 1 {
-		return []string{}, fmt.Errorf("expected a single array in values array")
-	}
 	var databases []string
-	for _, db := range values[0] {
-		if db, ok := db.(string); ok {
-			databases = append(databases, db)
-		} else {
-			return []string{}, fmt.Errorf("expected database names to be strings")
+	for _, value := range values {
+		for _, db := range value {
+			if db, ok := db.(string); ok {
+				databases = append(databases, db)
+			} else {
+				return []string{}, fmt.Errorf("expected database names to be strings")
+			}
 		}
 	}
 	return databases, nil
