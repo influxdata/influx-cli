@@ -33,8 +33,6 @@ type Client struct {
 type PersistentQueryParams struct {
 	clients.OrgParams
 	Database        string
-	Password        string
-	Username        string
 	RetentionPolicy string
 	Precision       string
 	Format          FormatType
@@ -243,7 +241,7 @@ var (
 )
 
 func (c *Client) runAndShowQuery(query string) {
-	// TODO: guide users trying to use deprecated InfluxQL queries
+	// TODO: guide users trying to use deprecated InfluxQL queries: https://github.com/influxdata/influx-cli/issues/397
 	responseStr, err := c.query(context.Background(), query)
 	if err != nil {
 		color.HiRed("Query failed.")
@@ -296,7 +294,6 @@ func (c *Client) settings() {
 	w.Init(os.Stdout, 0, 1, 1, ' ', 0)
 	fmt.Fprintln(w, "Setting\tValue")
 	fmt.Fprintln(w, "--------\t--------")
-	fmt.Fprintf(w, "Username\t%s\n", c.Username)
 	fmt.Fprintf(w, "Database\t%s\n", c.Database)
 	fmt.Fprintf(w, "RetentionPolicy\t%s\n", c.RetentionPolicy)
 	fmt.Fprintf(w, "Pretty\t%v\n", c.Pretty)
@@ -308,14 +305,13 @@ func (c *Client) settings() {
 
 func (c *Client) query(ctx context.Context, query string) (string, error) {
 	res := c.GetLegacyQuery(ctx).
-		U(c.Username).
-		P(c.Password).
 		Db(c.Database).
 		Q(query).
 		Rp(c.RetentionPolicy).
 		Accept("application/json")
+	// when precision is blank, the API uses RFC339 timestamps
 	if c.Precision != "rfc3339" && c.Precision != "" {
-		res.Epoch(c.Precision)
+		res = res.Epoch(c.Precision)
 	}
 	resBody, err := res.Execute()
 	if err != nil {
@@ -698,8 +694,6 @@ func (c *Client) GetMeasurements(ctx context.Context) ([]string, error) {
 // Helper function to execute query & parse response, expecting a single series
 func (c *Client) getDataSingleSeries(ctx context.Context, query string) (*api.InfluxqlJsonResponseSeries, error) {
 	res := c.GetLegacyQuery(ctx).
-		U(c.Username).
-		P(c.Password).
 		Db(c.Database).
 		Q(query).
 		Rp(c.RetentionPolicy).
