@@ -28,7 +28,7 @@ type Client struct {
 	api.LegacyQueryApi
 	api.PingApi
 	api.OrganizationsApi
-	api.WriteApi
+	api.LegacyWriteApi
 	api.DBRPsApi
 }
 
@@ -242,14 +242,6 @@ func (c Client) insert(cmd string) {
 		db = getIdentFromMatches(insertIntoMatches, "db")
 		rp = getIdentFromMatches(insertIntoMatches, "rp")
 		point = getIdentFromMatches(insertIntoMatches, "point")
-		if db != "" && rp == "" {
-			defaultRp, err := c.getDefaultRetentionPolicy(context.Background(), db)
-			if err != nil {
-				color.Red("Unable to get default retention policy for %q", db)
-				return
-			}
-			rp = defaultRp
-		}
 	} else if !strings.HasPrefix(strings.ToUpper(cmd), "INSERT INTO") && insertMatches != nil {
 		db = c.Database
 		rp = c.RetentionPolicy
@@ -272,23 +264,13 @@ func (c Client) insert(cmd string) {
 		color.Red("Failed to gzip points")
 		return
 	}
-	bucketID, err := c.getBucketIdForDBRP(db, rp)
-	if err != nil {
-		color.Red("Unable to match DBRP to BucketID: %v", err)
-		return
-	}
-	writeReq := c.PostWrite(context.Background()).
-		Bucket(bucketID).
-		Precision(api.WritePrecision(c.Precision)). // TODO: fix, rfc3339 wouldn't be a valid writePrecision but is a valid query precision
+	writeReq := c.PostLegacyWrite(context.Background()).
+		Db(db).
+		Rp(rp).
+		Precision(c.Precision). // TODO: fix, rfc3339 wouldn't be a valid writePrecision but is a valid query precision
 		ContentEncoding("gzip").
-		Body(buf.Bytes())
-	if c.OrgID != "" {
-		writeReq = writeReq.Org(c.OrgID)
-	} else if c.OrgName != "" {
-		writeReq = writeReq.Org(c.OrgName)
-	} else {
-		writeReq = writeReq.Org(c.ActiveConfig.Org)
-	}
+		Body(buf.String())
+
 	if err := writeReq.Execute(); err != nil {
 		color.Red("ERR: %v", err)
 		if c.Database == "" {
@@ -297,35 +279,6 @@ func (c Client) insert(cmd string) {
 			return
 		}
 	}
-}
-
-// Reverse search for a bucket from db & rp
-func (c Client) getBucketIdForDBRP(db string, rp string) (string, error) {
-	dbrpsReq := c.GetDBRPs(context.Background())
-	if c.OrgID != "" {
-		dbrpsReq = dbrpsReq.OrgID(c.OrgID)
-	}
-	if c.OrgName != "" {
-		dbrpsReq = dbrpsReq.Org(c.OrgName)
-	}
-	if c.OrgID == "" && c.OrgName == "" {
-		dbrpsReq = dbrpsReq.Org(c.ActiveConfig.Org)
-	}
-	dbrps, err := dbrpsReq.Execute()
-	if err != nil {
-		return "", err
-	}
-	bucketID := ""
-	for _, dbrp := range *dbrps.Content {
-		if dbrp.Database == db && dbrp.RetentionPolicy == rp {
-			bucketID = dbrp.BucketID
-			break
-		}
-	}
-	if bucketID == "" {
-		return "", fmt.Errorf("unable to find bucket ID for %q.%q", db, rp)
-	}
-	return bucketID, nil
 }
 
 type FormatType string
@@ -597,11 +550,6 @@ func (c *Client) outputColumns(response api.InfluxqlJsonResponse) {
 			color.Red("Query Error: %v", result.GetError())
 			continue
 		}
-		// TODO: can we deprecate messages or do these need to be included in the openapi schema too?
-		// Print out all messages first
-		// for _, m := range result.GetMessages {
-		// 	fmt.Fprintf(w, "%s: %s.\n", m.Level, m.Text)
-		// }
 
 		// Check to see if the headers are the same as the previous row.  If so, suppress them in the output
 		suppressHeaders := len(result.GetSeries()) > 0 && headersEqual(previousHeaders, result.GetSeries()[0])
