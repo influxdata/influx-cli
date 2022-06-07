@@ -146,7 +146,7 @@ func (c *Client) executor(cmd string) {
 
 // Create a regex string for a named InfluxQL identifier, quoted or unquoted
 func identRegex(name string) string {
-	return `((?P<` + name + `>\w+)|(\"(?P<` + name + `_quote>.+)\"))`
+	return `((?P<` + name + `>\w+)|(\"(?P<` + name + `_quote>.+?)\"))`
 }
 
 // Get the value of a named InfluxQL identifier from a regex match map.
@@ -176,15 +176,18 @@ func reSubMatchMap(r *regexp.Regexp, str string) *map[string]string {
 	return &subMatchMap
 }
 
-// the (?i) clause makes the regex match case-insensitive
-var insertIntoRegex string = `^(?i)INSERT(\s+)INTO(\s+)` + identRegex("db") + `(\.` + identRegex("rp") + `)?(\s+)(?P<point>.+)$`
-var insertRegex string = `^(?i)INSERT(\s+)(?P<point>.+)$`
-
-func (c Client) insert(cmd string) {
+// Returns parsed database, retention policy, point, and if the command was an INSERT statement
+// if db and rp are both blank and command was INSERT statement, it was an "INSERT <point>" statement
+func ParseInsert(cmd string) (string, string, string, bool) {
+	// the (?i) clause makes the regex match case-insensitive
+	var insertIntoStart string = `^(?i)INSERT(\s+)INTO`
+	var insertIntoRegex string = insertIntoStart + `(\s+)` + identRegex("db") + `(\.` + identRegex("rp") + `)?(\s+)(?P<point>.+)$`
+	var insertRegex string = `^(?i)INSERT(\s+)(?P<point>.+)$`
 	var db string
 	var rp string
 	var point string
 	insertRgx := regexp.MustCompile(insertRegex)
+	insertIntoStartRgx := regexp.MustCompile(insertIntoStart)
 	insertIntoRgx := regexp.MustCompile(insertIntoRegex)
 	insertMatches := reSubMatchMap(insertRgx, cmd)
 	insertIntoMatches := reSubMatchMap(insertIntoRgx, cmd)
@@ -192,19 +195,23 @@ func (c Client) insert(cmd string) {
 		db = getIdentFromMatches(insertIntoMatches, "db")
 		rp = getIdentFromMatches(insertIntoMatches, "rp")
 		point = getIdentFromMatches(insertIntoMatches, "point")
-	} else if !insertIntoRgx.Match([]byte(cmd)) && insertMatches != nil {
-		db = c.Database
-		rp = c.RetentionPolicy
+	} else if !insertIntoStartRgx.Match([]byte(cmd)) && insertMatches != nil {
 		point = getIdentFromMatches(insertMatches, "point")
-		if db == "" {
-			color.Red("Please run \"use <database>\" to run \"INSERT <point\"")
-			return
-		}
 	} else {
+		return "", "", "", false
+	}
+	return db, rp, point, true
+}
+
+func (c Client) insert(cmd string) {
+	db, rp, point, isInsertCmd := ParseInsert(cmd)
+	if !isInsertCmd || point == "" {
 		color.Red("Expected \"INSERT INTO <database>.<retention_policy> <point>\" OR \"INSERT <point>\".")
 		return
+	} else if db == "" && rp == "" { // this is an "INSERT <point>" command
+		db = c.Database
+		rp = c.RetentionPolicy
 	}
-
 	buf := bytes.Buffer{}
 	gzw := gzip.NewWriter(&buf)
 
