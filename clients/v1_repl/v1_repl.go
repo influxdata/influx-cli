@@ -178,8 +178,9 @@ func reSubMatchMap(r *regexp.Regexp, str string) *map[string]string {
 	return &subMatchMap
 }
 
-var insertIntoRegex string = `^(?i)INSERT INTO ` + identRegex("db") + `(\.` + identRegex("rp") + `)? (?P<point>.+)$`
-var insertRegex string = `^(?i)INSERT (?P<point>.+)$`
+// the (?i) clause makes the regex match case-insensitive
+var insertIntoRegex string = `^(?i)INSERT(\s+)INTO(\s+)` + identRegex("db") + `(\.` + identRegex("rp") + `)?(\s+)(?P<point>.+)$`
+var insertRegex string = `^(?i)INSERT(\s+)(?P<point>.+)$`
 
 func (c Client) insert(cmd string) {
 	var db string
@@ -193,7 +194,7 @@ func (c Client) insert(cmd string) {
 		db = getIdentFromMatches(insertIntoMatches, "db")
 		rp = getIdentFromMatches(insertIntoMatches, "rp")
 		point = getIdentFromMatches(insertIntoMatches, "point")
-	} else if !strings.HasPrefix(strings.ToUpper(cmd), "INSERT INTO") && insertMatches != nil {
+	} else if !insertIntoRgx.Match([]byte(cmd)) && insertMatches != nil {
 		db = c.Database
 		rp = c.RetentionPolicy
 		point = getIdentFromMatches(insertMatches, "point")
@@ -218,7 +219,7 @@ func (c Client) insert(cmd string) {
 	writeReq := c.PostLegacyWrite(context.Background()).
 		Db(db).
 		Rp(rp).
-		Precision(c.Precision). // TODO: fix, rfc3339 wouldn't be a valid writePrecision but is a valid query precision
+		Precision(c.Precision).
 		ContentEncoding("gzip").
 		Body(buf.String())
 
@@ -264,7 +265,7 @@ func (c *Client) runAndShowQuery(query string) {
 
 func (c *Client) help() {
 	fmt.Println(`Usage:
-		pretty                toggles pretty print for the json format
+        pretty                toggles pretty print for the json format
         use <db_name>         sets current database
         format <format>       specifies the format of the server responses: json, csv, column
         precision <format>    specifies the format of the timestamp: h, m, s, ms, u or ns
