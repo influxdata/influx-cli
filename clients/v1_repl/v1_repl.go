@@ -704,6 +704,7 @@ func (c *Client) getDataSingleSeries(ctx context.Context, query string) (*api.In
 		Q(query).
 		Rp(c.RetentionPolicy).
 		Accept("application/json")
+	// when c.Precision is empty, the API returns timestamps in RFC3339 format
 	if c.Precision != "rfc3339" && c.Precision != "" {
 		res.Epoch(c.Precision)
 	}
