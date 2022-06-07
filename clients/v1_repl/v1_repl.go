@@ -9,10 +9,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
 	"reflect"
 	"regexp"
-	"runtime"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -41,7 +39,6 @@ type PersistentQueryParams struct {
 	Precision       string
 	Format          FormatType
 	Pretty          bool
-	historyFilePath string
 	// Autocompletion Storage
 	Databases         []string
 	RetentionPolicies []string
@@ -84,36 +81,6 @@ func DefaultPersistentQueryParams() PersistentQueryParams {
 	}
 }
 
-func (c *Client) readHistory() []string {
-	// Attempt to load the history file.
-	if c.historyFilePath != "" {
-		if historyFile, err := os.Open(c.historyFilePath); err == nil {
-			var history []string
-			scanner := bufio.NewScanner(historyFile)
-			for scanner.Scan() {
-				history = append(history, scanner.Text())
-			}
-			historyFile.Close()
-			// Limit to last 100 elements
-			historyElems := 100
-			if len(history) > historyElems {
-				history = history[len(history)-historyElems:]
-			}
-			return history
-		}
-	}
-	return []string{}
-}
-
-func (c *Client) writeCommandToHistory(cmd string) {
-	if c.historyFilePath != "" {
-		if historyFile, err := os.OpenFile(c.historyFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
-			historyFile.WriteString(cmd + "\n")
-			historyFile.Close()
-		}
-	}
-}
-
 func (c *Client) Create(ctx context.Context) error {
 	res, err := c.GetPing(ctx).ExecuteWithHttpInfo()
 	if err != nil {
@@ -123,21 +90,6 @@ func (c *Client) Create(ctx context.Context) error {
 	build := res.Header.Get("X-Influxdb-Build")
 	version := res.Header.Get("X-Influxdb-Version")
 	color.Cyan("Connected to InfluxDB %s %s", build, version)
-
-	// compute historyFilePath at REPL start
-	// Only load/write history if HOME environment variable is set.
-	var historyDir string
-	if runtime.GOOS == "windows" {
-		if userDir := os.Getenv("USERPROFILE"); userDir != "" {
-			historyDir = userDir
-		}
-	}
-	if homeDir := os.Getenv("HOME"); homeDir != "" {
-		historyDir = homeDir
-	}
-	if historyDir != "" {
-		c.historyFilePath = filepath.Join(historyDir, ".influx_history")
-	}
 
 	c.Databases, _ = c.GetDatabases(ctx)
 	color.Cyan("InfluxQL Shell")
@@ -160,7 +112,6 @@ func (c *Client) executor(cmd string) {
 	if cmd == "" {
 		return
 	}
-	defer c.writeCommandToHistory(cmd)
 	cmdArgs := strings.Split(cmd, " ")
 	switch strings.ToLower(cmdArgs[0]) {
 	case "quit", "exit":
@@ -175,7 +126,7 @@ func (c *Client) executor(cmd string) {
 	case "help":
 		c.help()
 	case "history":
-		color.HiBlack(strings.Join(c.readHistory(), "\n"))
+		color.Yellow("The 'history' command is not yet implemented in 2.x")
 	case "format":
 		c.setFormat(cmdArgs)
 	case "precision":
