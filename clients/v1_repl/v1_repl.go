@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -221,7 +222,8 @@ func (c Client) insert(cmd string) {
 		color.Red("Failed to gzip points")
 		return
 	}
-	writeReq := c.PostLegacyWrite(context.Background()).
+	ctx := context.Background()
+	writeReq := c.PostLegacyWrite(ctx).
 		Db(db).
 		Rp(rp).
 		Precision(c.Precision).
