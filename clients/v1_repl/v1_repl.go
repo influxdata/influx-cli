@@ -229,10 +229,18 @@ func (c Client) insert(cmd string) {
 		Body(buf.String())
 
 	if err := writeReq.Execute(); err != nil {
+		if err.Error() == "" {
+			err = ctx.Err()
+			if err == context.Canceled {
+				err = errors.New("aborted by user")
+			} else if err == nil {
+				err = errors.New("no data received")
+			}
+		}
 		color.Red("ERR: %v", err)
 		if c.Database == "" {
-			fmt.Println("Note: error may be due to not setting a database or retention policy.")
-			fmt.Println(`Please set a database with the command "use <database>"`)
+			color.Yellow("Note: error may be due to not setting a database or retention policy.")
+			color.Yellow(`Please set a database with the command "use <database>"`)
 			return
 		}
 	}
@@ -249,15 +257,28 @@ var (
 
 func (c *Client) runAndShowQuery(query string) {
 	// TODO: guide users trying to use deprecated InfluxQL queries: https://github.com/influxdata/influx-cli/issues/397
-	responseStr, err := c.query(context.Background(), query)
+	ctx := context.Background()
+	responseStr, err := c.query(ctx, query)
 	if err != nil {
-		color.HiRed("Query failed.")
-		color.Red("%v", err)
+		if err.Error() == "" {
+			err = ctx.Err()
+			if err == context.Canceled {
+				err = errors.New("aborted by user")
+			} else if err == nil {
+				err = errors.New("no data received")
+			}
+		}
+		color.Red("ERR: %v", err)
 		return
 	}
 	var response api.InfluxqlJsonResponse
 	if err := json.Unmarshal([]byte(responseStr), &response); err != nil {
 		color.Red("Failed to parse JSON response: %v", err)
+		if c.Database == "" {
+			color.Yellow("Warning: It is possible this error is due to not setting a database.")
+			color.Yellow(`Please set a database with the command "use <database>".`)
+		}
+		return
 	}
 	displayMap := map[FormatType]FormatFunc{
 		CsvFormat:    c.outputCsv,

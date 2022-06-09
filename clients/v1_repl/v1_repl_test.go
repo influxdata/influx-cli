@@ -38,6 +38,18 @@ func (it *InsertTestCase) Test(t *testing.T) {
 
 var insertIntoCmds = []InsertTestCase{
 	{
+		cmd:           `insert into ` + quotedDb + " " + point,
+		expectedDb:    db,
+		expectedRp:    "",
+		expectedPoint: point,
+	},
+	{
+		cmd:           `insert into ` + quotedDb + "." + quotedRp + " " + point,
+		expectedDb:    db,
+		expectedRp:    rp,
+		expectedPoint: point,
+	},
+	{
 		cmd:           `insert   into   ` + quotedDb + "   " + point,
 		expectedDb:    db,
 		expectedRp:    "",
