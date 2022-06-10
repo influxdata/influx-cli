@@ -43,6 +43,7 @@ type PersistentQueryParams struct {
 	Pretty          bool
 	// Autocompletion Storage
 	historyFilePath   string
+	historyLimit      int
 	Databases         []string
 	RetentionPolicies []string
 	Measurements      []string
@@ -67,6 +68,15 @@ func (c *Client) readHistory() []string {
 		}
 	}
 	return []string{}
+}
+
+func (c *Client) rewriteHistoryFile(history []string) {
+	if c.historyFilePath != "" {
+		if historyFile, err := os.OpenFile(c.historyFilePath, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
+			historyFile.WriteString(strings.Join(history, "\n"))
+			historyFile.Close()
+		}
+	}
 }
 
 func (c *Client) writeCommandToHistory(cmd string) {
@@ -109,8 +119,9 @@ func (c *Client) clear(cmd string) {
 
 func DefaultPersistentQueryParams() PersistentQueryParams {
 	return PersistentQueryParams{
-		Format:    ColumnFormat,
-		Precision: "ns",
+		Format:       ColumnFormat,
+		Precision:    "ns",
+		historyLimit: 100,
 	}
 }
 
@@ -135,14 +146,17 @@ func (c *Client) Create(ctx context.Context) error {
 	if homeDir := os.Getenv("HOME"); homeDir != "" {
 		historyDir = homeDir
 	}
+	var history []string
 	if historyDir != "" {
 		c.historyFilePath = filepath.Join(historyDir, ".influx_history")
+		history = c.readHistory()
+		c.rewriteHistoryFile(history)
 	}
 
 	p := prompt.New(c.executor,
 		c.completer,
 		prompt.OptionTitle("InfluxQL Shell"),
-		prompt.OptionHistory(c.readHistory()),
+		prompt.OptionHistory(history),
 		prompt.OptionDescriptionTextColor(prompt.Cyan),
 		prompt.OptionPrefixTextColor(prompt.Green),
 		prompt.OptionCompletionWordSeparator(" ", "."),
@@ -267,7 +281,7 @@ func (c *Client) executor(cmd string) {
 	case "help":
 		c.help()
 	case "history":
-		color.Yellow("The 'history' command is not yet implemented in 2.x")
+		color.HiBlack(strings.Join(c.readHistory(), "\n"))
 	case "format":
 		c.setFormat(cmdArgs)
 	case "precision":
