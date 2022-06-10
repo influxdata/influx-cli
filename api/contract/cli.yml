@@ -7,6 +7,8 @@ servers:
 paths:
   /query:
     $ref: "./openapi/src/legacy/paths/query.yml"
+  /write:
+    $ref: "./openapi/src/legacy/paths/write.yml"
   /health:
     $ref: "./openapi/src/oss/paths/health.yml"
   /ping:
