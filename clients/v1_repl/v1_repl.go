@@ -5,16 +5,19 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
+	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
+	"sort"
 	"strings"
 	"text/tabwriter"
 
-	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fatih/color"
 	"github.com/influxdata/go-prompt"
 	"github.com/influxdata/influx-cli/v2/api"
@@ -27,24 +30,52 @@ type Client struct {
 	api.LegacyQueryApi
 	api.PingApi
 	api.OrganizationsApi
-	api.WriteApi
+	api.LegacyWriteApi
 	api.DBRPsApi
 }
 
 type PersistentQueryParams struct {
 	clients.OrgParams
 	Database        string
-	Password        string
-	Username        string
 	RetentionPolicy string
 	Precision       string
 	Format          FormatType
 	Pretty          bool
-	historyFilePath string
 	// Autocompletion Storage
+	historyFilePath   string
 	Databases         []string
 	RetentionPolicies []string
 	Measurements      []string
+}
+
+func (c *Client) readHistory() []string {
+	// Attempt to load the history file.
+	if c.historyFilePath != "" {
+		if historyFile, err := os.Open(c.historyFilePath); err == nil {
+			var history []string
+			scanner := bufio.NewScanner(historyFile)
+			for scanner.Scan() {
+				history = append(history, scanner.Text())
+			}
+			historyFile.Close()
+			// Limit to last 100 elements
+			historyElems := 100
+			if len(history) > historyElems {
+				history = history[len(history)-historyElems:]
+			}
+			return history
+		}
+	}
+	return []string{}
+}
+
+func (c *Client) writeCommandToHistory(cmd string) {
+	if c.historyFilePath != "" {
+		if historyFile, err := os.OpenFile(c.historyFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
+			historyFile.WriteString(cmd + "\n")
+			historyFile.Close()
+		}
+	}
 }
 
 func (c *Client) clear(cmd string) {
@@ -78,38 +109,8 @@ func (c *Client) clear(cmd string) {
 
 func DefaultPersistentQueryParams() PersistentQueryParams {
 	return PersistentQueryParams{
-		Format:    CsvFormat,
+		Format:    ColumnFormat,
 		Precision: "ns",
-	}
-}
-
-func (c *Client) readHistory() []string {
-	// Attempt to load the history file.
-	if c.historyFilePath != "" {
-		if historyFile, err := os.Open(c.historyFilePath); err == nil {
-			var history []string
-			scanner := bufio.NewScanner(historyFile)
-			for scanner.Scan() {
-				history = append(history, scanner.Text())
-			}
-			historyFile.Close()
-			// Limit to last 100 elements
-			historyElems := 100
-			if len(history) > historyElems {
-				history = history[len(history)-historyElems:]
-			}
-			return history
-		}
-	}
-	return []string{}
-}
-
-func (c *Client) writeCommandToHistory(cmd string) {
-	if c.historyFilePath != "" {
-		if historyFile, err := os.OpenFile(c.historyFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
-			historyFile.WriteString(cmd + "\n")
-			historyFile.Close()
-		}
 	}
 }
 
@@ -266,7 +267,7 @@ func (c *Client) executor(cmd string) {
 	case "help":
 		c.help()
 	case "history":
-		color.HiBlack(strings.Join(c.readHistory(), "\n"))
+		color.Yellow("The 'history' command is not yet implemented in 2.x")
 	case "format":
 		c.setFormat(cmdArgs)
 	case "precision":
@@ -288,7 +289,7 @@ func (c *Client) executor(cmd string) {
 
 // Create a regex string for a named InfluxQL identifier, quoted or unquoted
 func identRegex(name string) string {
-	return `((?P<` + name + `>\w+)|(\"(?P<` + name + `_quote>.+)\"))`
+	return `((?P<` + name + `>\w+)|(\"(?P<` + name + `_quote>.+?)\"))`
 }
 
 // Get the value of a named InfluxQL identifier from a regex match map.
@@ -318,14 +319,18 @@ func reSubMatchMap(r *regexp.Regexp, str string) *map[string]string {
 	return &subMatchMap
 }
 
-var insertIntoRegex string = `^(?i)INSERT INTO ` + identRegex("db") + `(\.` + identRegex("rp") + `)? (?P<point>.+)$`
-var insertRegex string = `^(?i)INSERT (?P<point>.+)$`
-
-func (c Client) insert(cmd string) {
+// Returns parsed database, retention policy, point, and if the command was an INSERT statement
+// if db and rp are both blank and command was INSERT statement, it was an "INSERT <point>" statement
+func ParseInsert(cmd string) (string, string, string, bool) {
+	// the (?i) clause makes the regex match case-insensitive
+	var insertIntoStart string = `^(?i)INSERT(\s+)INTO`
+	var insertIntoRegex string = insertIntoStart + `(\s+)` + identRegex("db") + `(\.` + identRegex("rp") + `)?(\s+)(?P<point>.+)$`
+	var insertRegex string = `^(?i)INSERT(\s+)(?P<point>.+)$`
 	var db string
 	var rp string
 	var point string
 	insertRgx := regexp.MustCompile(insertRegex)
+	insertIntoStartRgx := regexp.MustCompile(insertIntoStart)
 	insertIntoRgx := regexp.MustCompile(insertIntoRegex)
 	insertMatches := reSubMatchMap(insertRgx, cmd)
 	insertIntoMatches := reSubMatchMap(insertIntoRgx, cmd)
@@ -333,27 +338,23 @@ func (c Client) insert(cmd string) {
 		db = getIdentFromMatches(insertIntoMatches, "db")
 		rp = getIdentFromMatches(insertIntoMatches, "rp")
 		point = getIdentFromMatches(insertIntoMatches, "point")
-		if db != "" && rp == "" {
-			defaultRp, err := c.getDefaultRetentionPolicy(context.Background(), db)
-			if err != nil {
-				color.Red("Unable to get default retention policy for %q", db)
-				return
-			}
-			rp = defaultRp
-		}
-	} else if !strings.HasPrefix(strings.ToUpper(cmd), "INSERT INTO") && insertMatches != nil {
-		db = c.Database
-		rp = c.RetentionPolicy
+	} else if !insertIntoStartRgx.Match([]byte(cmd)) && insertMatches != nil {
 		point = getIdentFromMatches(insertMatches, "point")
-		if db == "" {
-			color.Red("Please run \"use <database>\" to run \"INSERT <point\"")
-			return
-		}
 	} else {
+		return "", "", "", false
+	}
+	return db, rp, point, true
+}
+
+func (c Client) insert(cmd string) {
+	db, rp, point, isInsertCmd := ParseInsert(cmd)
+	if !isInsertCmd || point == "" {
 		color.Red("Expected \"INSERT INTO <database>.<retention_policy> <point>\" OR \"INSERT <point>\".")
 		return
+	} else if db == "" && rp == "" { // this is an "INSERT <point>" command
+		db = c.Database
+		rp = c.RetentionPolicy
 	}
-
 	buf := bytes.Buffer{}
 	gzw := gzip.NewWriter(&buf)
 
@@ -363,82 +364,70 @@ func (c Client) insert(cmd string) {
 		color.Red("Failed to gzip points")
 		return
 	}
-	bucketID, err := c.getBucketIdForDBRP(db, rp)
-	if err != nil {
-		color.Red("Unable to match DBRP to BucketID: %v", err)
-		return
-	}
-	writeReq := c.PostWrite(context.Background()).
-		Bucket(bucketID).
-		Precision(api.WritePrecision(c.Precision)).
+	ctx := context.Background()
+	writeReq := c.PostLegacyWrite(ctx).
+		Db(db).
+		Rp(rp).
+		Precision(c.Precision).
 		ContentEncoding("gzip").
-		Body(buf.Bytes())
-	if c.OrgID != "" {
-		writeReq = writeReq.Org(c.OrgID)
-	} else if c.OrgName != "" {
-		writeReq = writeReq.Org(c.OrgName)
-	} else {
-		writeReq = writeReq.Org(c.ActiveConfig.Org)
-	}
+		Body(buf.String())
+
 	if err := writeReq.Execute(); err != nil {
+		if err.Error() == "" {
+			err = ctx.Err()
+			if err == context.Canceled {
+				err = errors.New("aborted by user")
+			} else if err == nil {
+				err = errors.New("no data received")
+			}
+		}
 		color.Red("ERR: %v", err)
 		if c.Database == "" {
-			fmt.Println("Note: error may be due to not setting a database or retention policy.")
-			fmt.Println(`Please set a database with the command "use <database>"`)
+			color.Yellow("Note: error may be due to not setting a database or retention policy.")
+			color.Yellow(`Please set a database with the command "use <database>"`)
 			return
 		}
 	}
 }
 
-// Reverse search for a bucket from db & rp
-func (c Client) getBucketIdForDBRP(db string, rp string) (string, error) {
-	dbrpsReq := c.GetDBRPs(context.Background())
-	if c.OrgID != "" {
-		dbrpsReq = dbrpsReq.OrgID(c.OrgID)
-	}
-	if c.OrgName != "" {
-		dbrpsReq = dbrpsReq.Org(c.OrgName)
-	}
-	if c.OrgID == "" && c.OrgName == "" {
-		dbrpsReq = dbrpsReq.Org(c.ActiveConfig.Org)
-	}
-	dbrps, err := dbrpsReq.Execute()
-	if err != nil {
-		return "", err
-	}
-	bucketID := ""
-	for _, dbrp := range *dbrps.Content {
-		if dbrp.Database == db && dbrp.RetentionPolicy == rp {
-			bucketID = dbrp.BucketID
-			break
-		}
-	}
-	if bucketID == "" {
-		return "", fmt.Errorf("unable to find bucket ID for %q.%q", db, rp)
-	}
-	return bucketID, nil
-}
-
 type FormatType string
+type FormatFunc func(api.InfluxqlJsonResponse)
 
 var (
-	CsvFormat   FormatType = "csv"
-	JsonFormat  FormatType = "json"
-	TableFormat FormatType = "table"
+	CsvFormat    FormatType = "csv"
+	JsonFormat   FormatType = "json"
+	ColumnFormat FormatType = "column"
 )
 
 func (c *Client) runAndShowQuery(query string) {
-	// TODO: guide users trying to use deprecated InfluxQL queries
-	response, err := c.query(context.Background(), query)
+	// TODO: guide users trying to use deprecated InfluxQL queries: https://github.com/influxdata/influx-cli/issues/397
+	ctx := context.Background()
+	responseStr, err := c.query(ctx, query)
 	if err != nil {
-		color.HiRed("Query failed.")
-		color.Red("%v", err)
+		if err.Error() == "" {
+			err = ctx.Err()
+			if err == context.Canceled {
+				err = errors.New("aborted by user")
+			} else if err == nil {
+				err = errors.New("no data received")
+			}
+		}
+		color.Red("ERR: %v", err)
 		return
 	}
-	displayMap := map[FormatType]func(string){
-		CsvFormat:   c.outputCsv,
-		JsonFormat:  c.outputJson,
-		TableFormat: c.outputTable,
+	var response api.InfluxqlJsonResponse
+	if err := json.Unmarshal([]byte(responseStr), &response); err != nil {
+		color.Red("Failed to parse JSON response: %v", err)
+		if c.Database == "" {
+			color.Yellow("Warning: It is possible this error is due to not setting a database.")
+			color.Yellow(`Please set a database with the command "use <database>".`)
+		}
+		return
+	}
+	displayMap := map[FormatType]FormatFunc{
+		CsvFormat:    c.outputCsv,
+		JsonFormat:   c.outputJson,
+		ColumnFormat: c.outputColumns,
 	}
 	displayFunc := displayMap[c.Format]
 	displayFunc(response)
@@ -484,9 +473,9 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 
 func (c *Client) help() {
 	fmt.Println(`Usage:
-		pretty                toggles pretty print for the json format
+        pretty                toggles pretty print for the json format
         use <db_name>         sets current database
-        format <format>       specifies the format of the server responses: json, csv, or column
+        format <format>       specifies the format of the server responses: json, csv, column
         precision <format>    specifies the format of the timestamp: h, m, s, ms, u or ns
         history               displays command history
         settings              outputs the current settings for the shell
@@ -515,7 +504,6 @@ func (c *Client) settings() {
 	w.Init(os.Stdout, 0, 1, 1, ' ', 0)
 	fmt.Fprintln(w, "Setting\tValue")
 	fmt.Fprintln(w, "--------\t--------")
-	fmt.Fprintf(w, "Username\t%s\n", c.Username)
 	fmt.Fprintf(w, "Database\t%s\n", c.Database)
 	fmt.Fprintf(w, "RetentionPolicy\t%s\n", c.RetentionPolicy)
 	fmt.Fprintf(w, "Pretty\t%v\n", c.Pretty)
@@ -526,23 +514,16 @@ func (c *Client) settings() {
 }
 
 func (c *Client) query(ctx context.Context, query string) (string, error) {
-	var resContentType string
-	switch c.Format {
-	case CsvFormat:
-		resContentType = "application/csv"
-	case JsonFormat, TableFormat:
-		resContentType = "application/json"
-	default:
-		return "", fmt.Errorf("unexpected format: %s", c.Format)
-	}
-	resBody, err := c.GetLegacyQuery(ctx).
-		U(c.Username).
-		P(c.Password).
+	res := c.GetLegacyQuery(ctx).
 		Db(c.Database).
 		Q(query).
 		Rp(c.RetentionPolicy).
-		Accept(resContentType).
-		Execute()
+		Accept("application/json")
+	// when precision is blank, the API uses RFC339 timestamps
+	if c.Precision != "rfc3339" && c.Precision != "" {
+		res = res.Epoch(c.Precision)
+	}
+	resBody, err := res.Execute()
 	if err != nil {
 		return "", err
 	}
@@ -552,28 +533,28 @@ func (c *Client) query(ctx context.Context, query string) (string, error) {
 func (c *Client) setFormat(args []string) {
 	// args[0] is "format"
 	if len(args) != 2 {
-		color.Red("Expected a format [csv, json, table]")
+		color.Red("Expected a format [csv, json, column]")
 		return
 	}
 	newFormat := FormatType(args[1])
 	switch newFormat {
-	case CsvFormat, JsonFormat, TableFormat:
+	case CsvFormat, JsonFormat, ColumnFormat:
 		c.Format = newFormat
 	default:
 		color.HiRed("Unimplemented format %q, keeping %s format.", newFormat, c.Format)
-		color.HiBlack("Choose a format from [csv, json, table]")
+		color.HiBlack("Choose a format from [csv, json, column]")
 	}
 }
 
 func (c *Client) setPrecision(args []string) {
 	// args[0] is "precision"
 	if len(args) != 2 {
-		color.Red("Expected a precision [ns, u, ms, s, m, or h]")
+		color.Red("Expected a precision [rfc3339, ns, u, ms, s, m, or h]")
 		return
 	}
 	precision := args[1]
 	switch precision {
-	case "ns", "u", "µ", "ms", "s", "m", "h":
+	case "rfc3339", "ns", "u", "µ", "ms", "s", "m", "h":
 		c.Precision = precision
 	default:
 		color.HiRed("Unimplemented precision %q, keeping %s precision.", precision, c.Precision)
@@ -581,39 +562,172 @@ func (c *Client) setPrecision(args []string) {
 	}
 }
 
-func (c *Client) outputCsv(csvBody string) {
-	fmt.Println(csvBody)
+func tagsEqual(prev, current map[string]string) bool {
+	return reflect.DeepEqual(prev, current)
 }
 
-func (c *Client) outputJson(jsonBody string) {
-	if !c.Pretty {
-		fmt.Println(jsonBody)
-	} else {
-		var buf bytes.Buffer
-		if err := json.Indent(&buf, []byte(jsonBody), "", "  "); err != nil {
-			color.Red("Unable to prettify json response.")
-			fmt.Println(jsonBody)
-		} else {
-			fmt.Println(buf.String())
+func columnsEqual(prev, current []string) bool {
+	return reflect.DeepEqual(prev, current)
+}
+
+func headersEqual(prev, current api.InfluxqlJsonResponseSeries) bool {
+	if prev.Name != current.Name {
+		return false
+	}
+	return tagsEqual(prev.GetTags(), current.GetTags()) && columnsEqual(prev.GetColumns(), current.GetColumns())
+}
+
+// formatResults will behave differently if you are formatting for columns or csv
+func (c *Client) formatResults(result api.InfluxqlJsonResponseResults, separator string, suppressHeaders bool) []string {
+	rows := []string{}
+	// Create a tabbed writer for each result as they won't always line up
+	for i, row := range result.GetSeries() {
+		// gather tags
+		tags := []string{}
+		for k, v := range row.GetTags() {
+			tags = append(tags, fmt.Sprintf("%s=%s", k, v))
+			sort.Strings(tags)
 		}
-	}
-}
-
-func (c *Client) outputTable(jsonBody string) {
-	var responses api.InfluxqlJsonResponse
-	if err := json.Unmarshal([]byte(jsonBody), &responses); err != nil {
-		color.Red("Failed to parse JSON response")
-	}
-	for _, res := range responses.GetResults() {
-		for _, series := range res.GetSeries() {
-			color.Magenta("Table View (press q to exit interactive mode):")
-			p := tea.NewProgram(NewModel(series))
-			if err := p.Start(); err != nil {
-				color.Red("Failed to display table")
+		columnNames := []string{}
+		// Only put name/tags in a column if format is csv
+		if c.Format == CsvFormat {
+			if len(tags) > 0 {
+				columnNames = append([]string{"tags"}, columnNames...)
 			}
-			fmt.Printf("\n")
+
+			if row.GetName() != "" {
+				columnNames = append([]string{"name"}, columnNames...)
+			}
+		}
+		columnNames = append(columnNames, row.GetColumns()...)
+		// Output a line separator if we have more than one set or results and format is column
+		if i > 0 && c.Format == ColumnFormat && !suppressHeaders {
+			rows = append(rows, "")
+		}
+		// If we are column format, we break out the name/tag to separate lines
+		if c.Format == ColumnFormat && !suppressHeaders {
+			if row.GetName() != "" {
+				n := fmt.Sprintf("name: %s", row.GetName())
+				rows = append(rows, n)
+			}
+			if len(tags) > 0 {
+				t := fmt.Sprintf("tags: %s", (strings.Join(tags, ", ")))
+				rows = append(rows, t)
+			}
+		}
+		if !suppressHeaders {
+			rows = append(rows, strings.Join(columnNames, separator))
+		}
+		// if format is column, write dashes under each column
+		if c.Format == ColumnFormat && !suppressHeaders {
+			lines := []string{}
+			for _, columnName := range columnNames {
+				lines = append(lines, strings.Repeat("-", len(columnName)))
+			}
+			rows = append(rows, strings.Join(lines, separator))
+		}
+		for _, v := range row.GetValues() {
+			var values []string
+			if c.Format == CsvFormat {
+				if row.GetName() != "" {
+					values = append(values, row.GetName())
+				}
+				if len(tags) > 0 {
+					values = append(values, strings.Join(tags, ","))
+				}
+			}
+			for _, vv := range v {
+				values = append(values, interfaceToString(vv))
+			}
+			rows = append(rows, strings.Join(values, separator))
 		}
 	}
+	return rows
+}
+
+func interfaceToString(v interface{}) string {
+	switch t := v.(type) {
+	case nil:
+		return ""
+	case bool:
+		return fmt.Sprintf("%v", v)
+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, uintptr:
+		return fmt.Sprintf("%d", t)
+	case float32, float64:
+		return fmt.Sprintf("%v", t)
+	default:
+		return fmt.Sprintf("%v", t)
+	}
+}
+
+func (c *Client) outputCsv(response api.InfluxqlJsonResponse) {
+	csvw := csv.NewWriter(os.Stdout)
+	var previousHeaders api.InfluxqlJsonResponseSeries
+	for _, result := range response.GetResults() {
+		if result.Error != nil {
+			color.Red("Query Error: %v", result.GetError())
+			continue
+		}
+		series := result.GetSeries()
+		suppressHeaders := len(series) > 0 && headersEqual(previousHeaders, series[0])
+		if !suppressHeaders && len(result.GetSeries()) > 0 {
+			previousHeaders = result.GetSeries()[0]
+		}
+		// Create a tabbed writer for each result as they won't always line up
+		rows := c.formatResults(result, "\t", suppressHeaders)
+		for _, r := range rows {
+			csvw.Write(strings.Split(r, "\t"))
+		}
+	}
+	csvw.Flush()
+}
+
+func (c *Client) outputJson(response api.InfluxqlJsonResponse) {
+	var data []byte
+	var err error
+	if c.Pretty {
+		data, err = json.MarshalIndent(response, "", "    ")
+	} else {
+		data, err = json.Marshal(response)
+	}
+	if err != nil {
+		color.Red("Unable to parse json: %s\n", err)
+		return
+	}
+	fmt.Println(string(data))
+}
+
+func (c *Client) outputColumns(response api.InfluxqlJsonResponse) {
+	// Create a tabbed writer for each result as they won't always line up
+	writer := new(tabwriter.Writer)
+	writer.Init(os.Stdin, 0, 8, 1, ' ', 0)
+
+	var previousHeaders api.InfluxqlJsonResponseSeries
+	for i, result := range response.GetResults() {
+		if result.Error != nil {
+			color.Red("Query Error: %v", result.GetError())
+			continue
+		}
+
+		// Check to see if the headers are the same as the previous row.  If so, suppress them in the output
+		suppressHeaders := len(result.GetSeries()) > 0 && headersEqual(previousHeaders, result.GetSeries()[0])
+		if !suppressHeaders && len(result.GetSeries()) > 0 {
+			previousHeaders = result.GetSeries()[0]
+		}
+
+		// If we are suppressing headers, don't output the extra line return. If we
+		// aren't suppressing headers, then we put out line returns between results
+		// (not before the first result, and not after the last result).
+		if !suppressHeaders && i > 0 {
+			fmt.Fprintln(writer, "")
+		}
+
+		rows := c.formatResults(result, "\t", suppressHeaders)
+		for _, r := range rows {
+			fmt.Fprintln(writer, r)
+		}
+	}
+	writer.Flush()
 }
 
 func (c *Client) togglePretty() {
@@ -754,15 +868,14 @@ func (c *Client) GetDatabases(ctx context.Context) ([]string, error) {
 		return []string{}, err
 	}
 	values := singleSeries.GetValues()
-	if len(values) != 1 {
-		return []string{}, fmt.Errorf("expected a single array in values array")
-	}
 	var databases []string
-	for _, db := range values[0] {
-		if db, ok := db.(string); ok {
-			databases = append(databases, db)
-		} else {
-			return []string{}, fmt.Errorf("expected database names to be strings")
+	for _, value := range values {
+		for _, db := range value {
+			if db, ok := db.(string); ok {
+				databases = append(databases, db)
+			} else {
+				return []string{}, fmt.Errorf("expected database names to be strings")
+			}
 		}
 	}
 	return databases, nil
@@ -790,14 +903,16 @@ func (c *Client) GetMeasurements(ctx context.Context) ([]string, error) {
 
 // Helper function to execute query & parse response, expecting a single series
 func (c *Client) getDataSingleSeries(ctx context.Context, query string) (*api.InfluxqlJsonResponseSeries, error) {
-	resBody, err := c.GetLegacyQuery(ctx).
-		U(c.Username).
-		P(c.Password).
+	res := c.GetLegacyQuery(ctx).
 		Db(c.Database).
 		Q(query).
 		Rp(c.RetentionPolicy).
-		Accept("application/json").
-		Execute()
+		Accept("application/json")
+	// when c.Precision is empty, the API returns timestamps in RFC3339 format
+	if c.Precision != "rfc3339" && c.Precision != "" {
+		res.Epoch(c.Precision)
+	}
+	resBody, err := res.Execute()
 	if err != nil {
 		return nil, err
 	}

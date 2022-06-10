@@ -34,7 +34,7 @@ func newV1ReplCmd() cli.Command {
 				PingApi:               api.PingApi,
 				LegacyQueryApi:        api.LegacyQueryApi,
 				OrganizationsApi:      api.OrganizationsApi,
-				WriteApi:              api.WriteApi,
+				LegacyWriteApi:        api.LegacyWriteApi,
 				DBRPsApi:              api.DBRPsApi,
 			}
 			color.Cyan("InfluxQL Shell %s", version)
