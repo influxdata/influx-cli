@@ -228,7 +228,7 @@ func (a *ReplicationsApiService) DeleteReplicationByIDExecuteWithHttpInfo(r ApiD
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/replications/{replicationID}"
+	localVarPath := localBasePath + "/api/v2/replications/{replicationID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"replicationID"+"}", _neturl.PathEscape(parameterToString(r.replicationID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -384,7 +384,7 @@ func (a *ReplicationsApiService) GetReplicationByIDExecuteWithHttpInfo(r ApiGetR
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/replications/{replicationID}"
+	localVarPath := localBasePath + "/api/v2/replications/{replicationID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"replicationID"+"}", _neturl.PathEscape(parameterToString(r.replicationID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -584,7 +584,7 @@ func (a *ReplicationsApiService) GetReplicationsExecuteWithHttpInfo(r ApiGetRepl
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/replications"
+	localVarPath := localBasePath + "/api/v2/replications"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -789,7 +789,7 @@ func (a *ReplicationsApiService) PatchReplicationByIDExecuteWithHttpInfo(r ApiPa
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/replications/{replicationID}"
+	localVarPath := localBasePath + "/api/v2/replications/{replicationID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"replicationID"+"}", _neturl.PathEscape(parameterToString(r.replicationID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -990,7 +990,7 @@ func (a *ReplicationsApiService) PostReplicationExecuteWithHttpInfo(r ApiPostRep
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/replications"
+	localVarPath := localBasePath + "/api/v2/replications"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -1169,7 +1169,7 @@ func (a *ReplicationsApiService) PostValidateReplicationByIDExecuteWithHttpInfo(
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/replications/{replicationID}/validate"
+	localVarPath := localBasePath + "/api/v2/replications/{replicationID}/validate"
 	localVarPath = strings.Replace(localVarPath, "{"+"replicationID"+"}", _neturl.PathEscape(parameterToString(r.replicationID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

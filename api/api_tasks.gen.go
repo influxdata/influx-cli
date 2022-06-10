@@ -49,7 +49,7 @@ type TasksApi interface {
 	DeleteTasksIDExecuteWithHttpInfo(r ApiDeleteTasksIDRequest) (*_nethttp.Response, error)
 
 	/*
-	 * DeleteTasksIDRunsID Cancel a running task
+	 * DeleteTasksIDRunsID Cancel a running task.  #### InfluxDB Cloud    - Doesn't support this operation.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param taskID The task ID.
 	 * @param runID The run ID.
@@ -157,7 +157,7 @@ type TasksApi interface {
 	GetTasksIDRunsExecuteWithHttpInfo(r ApiGetTasksIDRunsRequest) (Runs, *_nethttp.Response, error)
 
 	/*
-	 * GetTasksIDRunsID Retrieve a single run for a task
+	 * GetTasksIDRunsID Retrieve a single run for a task.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param taskID The task ID.
 	 * @param runID The run ID.
@@ -368,7 +368,7 @@ func (a *TasksApiService) DeleteTasksIDExecuteWithHttpInfo(r ApiDeleteTasksIDReq
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks/{taskID}"
+	localVarPath := localBasePath + "/api/v2/tasks/{taskID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -479,7 +479,7 @@ func (r ApiDeleteTasksIDRunsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response
 }
 
 /*
- * DeleteTasksIDRunsID Cancel a running task
+ * DeleteTasksIDRunsID Cancel a running task.  #### InfluxDB Cloud    - Doesn't support this operation.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param taskID The task ID.
  * @param runID The run ID.
@@ -521,7 +521,7 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecuteWithHttpInfo(r ApiDeleteTask
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks/{taskID}/runs/{runID}"
+	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs/{runID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"runID"+"}", _neturl.PathEscape(parameterToString(r.runID, "")), -1)
 
@@ -578,6 +578,17 @@ func (a *TasksApiService) DeleteTasksIDRunsIDExecuteWithHttpInfo(r ApiDeleteTask
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 405 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -728,7 +739,7 @@ func (a *TasksApiService) GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tas
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks"
+	localVarPath := localBasePath + "/api/v2/tasks"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -915,7 +926,7 @@ func (a *TasksApiService) GetTasksIDExecuteWithHttpInfo(r ApiGetTasksIDRequest) 
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks/{taskID}"
+	localVarPath := localBasePath + "/api/v2/tasks/{taskID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1079,7 +1090,7 @@ func (a *TasksApiService) GetTasksIDLogsExecuteWithHttpInfo(r ApiGetTasksIDLogsR
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks/{taskID}/logs"
+	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/logs"
 	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1279,7 +1290,7 @@ func (a *TasksApiService) GetTasksIDRunsExecuteWithHttpInfo(r ApiGetTasksIDRunsR
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks/{taskID}/runs"
+	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs"
 	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1421,7 +1432,7 @@ func (r ApiGetTasksIDRunsIDRequest) ExecuteWithHttpInfo() (Run, *_nethttp.Respon
 }
 
 /*
- * GetTasksIDRunsID Retrieve a single run for a task
+ * GetTasksIDRunsID Retrieve a single run for a task.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param taskID The task ID.
  * @param runID The run ID.
@@ -1466,7 +1477,7 @@ func (a *TasksApiService) GetTasksIDRunsIDExecuteWithHttpInfo(r ApiGetTasksIDRun
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks/{taskID}/runs/{runID}"
+	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs/{runID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"runID"+"}", _neturl.PathEscape(parameterToString(r.runID, "")), -1)
 
@@ -1642,7 +1653,7 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecuteWithHttpInfo(r ApiGetTasksI
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks/{taskID}/runs/{runID}/logs"
+	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs/{runID}/logs"
 	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"runID"+"}", _neturl.PathEscape(parameterToString(r.runID, "")), -1)
 
@@ -1817,7 +1828,7 @@ func (a *TasksApiService) PatchTasksIDExecuteWithHttpInfo(r ApiPatchTasksIDReque
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks/{taskID}"
+	localVarPath := localBasePath + "/api/v2/tasks/{taskID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1984,7 +1995,7 @@ func (a *TasksApiService) PostTasksExecuteWithHttpInfo(r ApiPostTasksRequest) (T
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks"
+	localVarPath := localBasePath + "/api/v2/tasks"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -2161,7 +2172,7 @@ func (a *TasksApiService) PostTasksIDRunsExecuteWithHttpInfo(r ApiPostTasksIDRun
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks/{taskID}/runs"
+	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs"
 	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -2347,7 +2358,7 @@ func (a *TasksApiService) PostTasksIDRunsIDRetryExecuteWithHttpInfo(r ApiPostTas
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/tasks/{taskID}/runs/{runID}/retry"
+	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs/{runID}/retry"
 	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"runID"+"}", _neturl.PathEscape(parameterToString(r.runID, "")), -1)
 

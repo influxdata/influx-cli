@@ -26,10 +26,45 @@ var (
 type DeleteApi interface {
 
 	/*
-	 * PostDelete Delete data
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostDeleteRequest
-	 */
+			 * PostDelete Delete data
+			 * Deletes data from a bucket.
+
+		Use this endpoint to delete points from a bucket in a specified time range.
+
+		#### InfluxDB Cloud
+
+		- Does the following when you send a delete request:
+
+		  1. Validates the request and queues the delete.
+		  2. Returns _success_ if queued; _error_ otherwise.
+		  3. Handles the delete asynchronously.
+
+		#### InfluxDB OSS
+
+		- Validates the request, handles the delete synchronously,
+		  and then responds with success or failure.
+
+		#### Required permissions
+
+		- `write-buckets` or `write-bucket BUCKET_ID`.
+
+		  `BUCKET_ID` is the ID of the destination bucket.
+
+		#### Rate limits (with InfluxDB Cloud)
+
+		`write` rate limits apply.
+		For more information, see [limits and adjustable quotas](https://docs.influxdata.com/influxdb/cloud/account-management/limits/).
+
+		#### Related guides
+
+		- [Delete data]({{% INFLUXDB_DOCS_URL %}}/write-data/delete-data/).
+		- Learn how to use [delete predicate syntax]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/delete-predicate/).
+		- Learn how InfluxDB handles [deleted tags](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementtagkeys/)
+		  and [deleted fields](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementfieldkeys/).
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiPostDeleteRequest
+	*/
 	PostDelete(ctx _context.Context) ApiPostDeleteRequest
 
 	/*
@@ -117,9 +152,44 @@ func (r ApiPostDeleteRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) 
 
 /*
  * PostDelete Delete data
+ * Deletes data from a bucket.
+
+Use this endpoint to delete points from a bucket in a specified time range.
+
+#### InfluxDB Cloud
+
+- Does the following when you send a delete request:
+
+  1. Validates the request and queues the delete.
+  2. Returns _success_ if queued; _error_ otherwise.
+  3. Handles the delete asynchronously.
+
+#### InfluxDB OSS
+
+- Validates the request, handles the delete synchronously,
+  and then responds with success or failure.
+
+#### Required permissions
+
+- `write-buckets` or `write-bucket BUCKET_ID`.
+
+  `BUCKET_ID` is the ID of the destination bucket.
+
+#### Rate limits (with InfluxDB Cloud)
+
+`write` rate limits apply.
+For more information, see [limits and adjustable quotas](https://docs.influxdata.com/influxdb/cloud/account-management/limits/).
+
+#### Related guides
+
+- [Delete data]({{% INFLUXDB_DOCS_URL %}}/write-data/delete-data/).
+- Learn how to use [delete predicate syntax]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/delete-predicate/).
+- Learn how InfluxDB handles [deleted tags](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementtagkeys/)
+  and [deleted fields](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementfieldkeys/).
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiPostDeleteRequest
- */
+*/
 func (a *DeleteApiService) PostDelete(ctx _context.Context) ApiPostDeleteRequest {
 	return ApiPostDeleteRequest{
 		ApiService: a,
@@ -154,7 +224,7 @@ func (a *DeleteApiService) PostDeleteExecuteWithHttpInfo(r ApiPostDeleteRequest)
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/delete"
+	localVarPath := localBasePath + "/api/v2/delete"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -227,28 +297,6 @@ func (a *DeleteApiService) PostDeleteExecuteWithHttpInfo(r ApiPostDeleteRequest)
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v Error
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarHTTPResponse, newErr
-			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-			newErr.model = &v
-			return localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v Error
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarHTTPResponse, newErr
-			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-			newErr.model = &v
-			return localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {

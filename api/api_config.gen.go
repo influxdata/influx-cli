@@ -26,10 +26,19 @@ var (
 type ConfigApi interface {
 
 	/*
-	 * GetConfig Get the run-time configuration of the instance
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiGetConfigRequest
-	 */
+			 * GetConfig Retrieve runtime configuration
+			 * Returns the active runtime configuration of the InfluxDB instance.
+
+		In InfluxDB v2.2+, use this endpoint to view your active runtime configuration,
+		including flags and environment variables.
+
+		#### Related guides
+
+		- [View your runtime server configuration]({{% INFLUXDB_DOCS_URL %}}/reference/config-options/#view-your-runtime-server-configuration)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiGetConfigRequest
+	*/
 	GetConfig(ctx _context.Context) ApiGetConfigRequest
 
 	/*
@@ -73,10 +82,19 @@ func (r ApiGetConfigRequest) ExecuteWithHttpInfo() (Config, *_nethttp.Response, 
 }
 
 /*
- * GetConfig Get the run-time configuration of the instance
+ * GetConfig Retrieve runtime configuration
+ * Returns the active runtime configuration of the InfluxDB instance.
+
+In InfluxDB v2.2+, use this endpoint to view your active runtime configuration,
+including flags and environment variables.
+
+#### Related guides
+
+- [View your runtime server configuration]({{% INFLUXDB_DOCS_URL %}}/reference/config-options/#view-your-runtime-server-configuration)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetConfigRequest
- */
+*/
 func (a *ConfigApiService) GetConfig(ctx _context.Context) ApiGetConfigRequest {
 	return ApiGetConfigRequest{
 		ApiService: a,
@@ -114,7 +132,7 @@ func (a *ConfigApiService) GetConfigExecuteWithHttpInfo(r ApiGetConfigRequest) (
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/config"
+	localVarPath := localBasePath + "/api/v2/config"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

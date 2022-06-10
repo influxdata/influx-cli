@@ -273,7 +273,7 @@ func (a *OrganizationsApiService) DeleteOrgsIDExecuteWithHttpInfo(r ApiDeleteOrg
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs/{orgID}"
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -437,7 +437,7 @@ func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecuteWithHttpInfo(r Api
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs/{orgID}/members/{userID}"
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/members/{userID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
@@ -626,7 +626,7 @@ func (a *OrganizationsApiService) GetOrgsExecuteWithHttpInfo(r ApiGetOrgsRequest
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs"
+	localVarPath := localBasePath + "/api/v2/orgs"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -807,7 +807,7 @@ func (a *OrganizationsApiService) GetOrgsIDExecuteWithHttpInfo(r ApiGetOrgsIDReq
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs/{orgID}"
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -971,7 +971,7 @@ func (a *OrganizationsApiService) GetOrgsIDMembersExecuteWithHttpInfo(r ApiGetOr
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs/{orgID}/members"
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/members"
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1155,7 +1155,7 @@ func (a *OrganizationsApiService) PatchOrgsIDExecuteWithHttpInfo(r ApiPatchOrgsI
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs/{orgID}"
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1322,7 +1322,7 @@ func (a *OrganizationsApiService) PostOrgsExecuteWithHttpInfo(r ApiPostOrgsReque
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs"
+	localVarPath := localBasePath + "/api/v2/orgs"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -1499,7 +1499,7 @@ func (a *OrganizationsApiService) PostOrgsIDMembersExecuteWithHttpInfo(r ApiPost
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs/{orgID}/members"
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/members"
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

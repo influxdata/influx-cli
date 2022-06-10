@@ -187,7 +187,7 @@ func (a *DashboardsApiService) GetDashboardsExecuteWithHttpInfo(r ApiGetDashboar
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/dashboards"
+	localVarPath := localBasePath + "/api/v2/dashboards"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

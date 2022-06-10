@@ -208,7 +208,7 @@ func (a *TelegrafsApiService) DeleteTelegrafsIDExecuteWithHttpInfo(r ApiDeleteTe
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/telegrafs/{telegrafID}"
+	localVarPath := localBasePath + "/api/v2/telegrafs/{telegrafID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"telegrafID"+"}", _neturl.PathEscape(parameterToString(r.telegrafID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -351,7 +351,7 @@ func (a *TelegrafsApiService) GetTelegrafsExecuteWithHttpInfo(r ApiGetTelegrafsR
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/telegrafs"
+	localVarPath := localBasePath + "/api/v2/telegrafs"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -526,7 +526,7 @@ func (a *TelegrafsApiService) GetTelegrafsIDExecuteWithHttpInfo(r ApiGetTelegraf
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/telegrafs/{telegrafID}"
+	localVarPath := localBasePath + "/api/v2/telegrafs/{telegrafID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"telegrafID"+"}", _neturl.PathEscape(parameterToString(r.telegrafID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -691,7 +691,7 @@ func (a *TelegrafsApiService) PostTelegrafsExecuteWithHttpInfo(r ApiPostTelegraf
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/telegrafs"
+	localVarPath := localBasePath + "/api/v2/telegrafs"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -868,7 +868,7 @@ func (a *TelegrafsApiService) PutTelegrafsIDExecuteWithHttpInfo(r ApiPutTelegraf
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/telegrafs/{telegrafID}"
+	localVarPath := localBasePath + "/api/v2/telegrafs/{telegrafID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"telegrafID"+"}", _neturl.PathEscape(parameterToString(r.telegrafID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

@@ -26,7 +26,8 @@ var (
 type HealthApi interface {
 
 	/*
-	 * GetHealth Get the health of an instance
+	 * GetHealth Retrieve the health of the instance
+	 * Returns the health of the instance.
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetHealthRequest
 	 */
@@ -73,7 +74,8 @@ func (r ApiGetHealthRequest) ExecuteWithHttpInfo() (HealthCheck, *_nethttp.Respo
 }
 
 /*
- * GetHealth Get the health of an instance
+ * GetHealth Retrieve the health of the instance
+ * Returns the health of the instance.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetHealthRequest
  */

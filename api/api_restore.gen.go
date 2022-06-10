@@ -226,7 +226,7 @@ func (a *RestoreApiService) PostRestoreBucketIDExecuteWithHttpInfo(r ApiPostRest
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/restore/buckets/{bucketID}"
+	localVarPath := localBasePath + "/api/v2/restore/buckets/{bucketID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -396,7 +396,7 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecuteWithHttpInfo(r ApiPo
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/restore/bucketMetadata"
+	localVarPath := localBasePath + "/api/v2/restore/bucketMetadata"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -580,7 +580,7 @@ func (a *RestoreApiService) PostRestoreKVExecuteWithHttpInfo(r ApiPostRestoreKVR
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/restore/kv"
+	localVarPath := localBasePath + "/api/v2/restore/kv"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -767,7 +767,7 @@ func (a *RestoreApiService) PostRestoreSQLExecuteWithHttpInfo(r ApiPostRestoreSQ
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/restore/sql"
+	localVarPath := localBasePath + "/api/v2/restore/sql"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -946,7 +946,7 @@ func (a *RestoreApiService) PostRestoreShardIdExecuteWithHttpInfo(r ApiPostResto
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/restore/shards/{shardID}"
+	localVarPath := localBasePath + "/api/v2/restore/shards/{shardID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"shardID"+"}", _neturl.PathEscape(parameterToString(r.shardID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

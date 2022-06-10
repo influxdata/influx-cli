@@ -135,7 +135,7 @@ func (a *TemplatesApiService) ApplyTemplateExecuteWithHttpInfo(r ApiApplyTemplat
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/templates/apply"
+	localVarPath := localBasePath + "/api/v2/templates/apply"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -300,7 +300,7 @@ func (a *TemplatesApiService) ExportTemplateExecuteWithHttpInfo(r ApiExportTempl
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/templates/export"
+	localVarPath := localBasePath + "/api/v2/templates/export"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

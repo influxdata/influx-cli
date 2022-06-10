@@ -138,7 +138,7 @@ func (a *SetupApiService) GetSetupExecuteWithHttpInfo(r ApiGetSetupRequest) (Inl
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/setup"
+	localVarPath := localBasePath + "/api/v2/setup"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -292,7 +292,7 @@ func (a *SetupApiService) PostSetupExecuteWithHttpInfo(r ApiPostSetupRequest) (O
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/setup"
+	localVarPath := localBasePath + "/api/v2/setup"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

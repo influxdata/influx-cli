@@ -226,7 +226,7 @@ func (a *DBRPsApiService) DeleteDBRPIDExecuteWithHttpInfo(r ApiDeleteDBRPIDReque
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/dbrps/{dbrpID}"
+	localVarPath := localBasePath + "/api/v2/dbrps/{dbrpID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"dbrpID"+"}", _neturl.PathEscape(parameterToString(r.dbrpID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -440,7 +440,7 @@ func (a *DBRPsApiService) GetDBRPsExecuteWithHttpInfo(r ApiGetDBRPsRequest) (DBR
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/dbrps"
+	localVarPath := localBasePath + "/api/v2/dbrps"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -653,7 +653,7 @@ func (a *DBRPsApiService) GetDBRPsIDExecuteWithHttpInfo(r ApiGetDBRPsIDRequest) 
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/dbrps/{dbrpID}"
+	localVarPath := localBasePath + "/api/v2/dbrps/{dbrpID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"dbrpID"+"}", _neturl.PathEscape(parameterToString(r.dbrpID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -861,7 +861,7 @@ func (a *DBRPsApiService) PatchDBRPIDExecuteWithHttpInfo(r ApiPatchDBRPIDRequest
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/dbrps/{dbrpID}"
+	localVarPath := localBasePath + "/api/v2/dbrps/{dbrpID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"dbrpID"+"}", _neturl.PathEscape(parameterToString(r.dbrpID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1056,7 +1056,7 @@ func (a *DBRPsApiService) PostDBRPExecuteWithHttpInfo(r ApiPostDBRPRequest) (DBR
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/dbrps"
+	localVarPath := localBasePath + "/api/v2/dbrps"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

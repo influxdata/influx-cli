@@ -167,7 +167,7 @@ func (a *SecretsApiService) GetOrgsIDSecretsExecuteWithHttpInfo(r ApiGetOrgsIDSe
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs/{orgID}/secrets"
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/secrets"
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -337,7 +337,7 @@ func (a *SecretsApiService) PatchOrgsIDSecretsExecuteWithHttpInfo(r ApiPatchOrgs
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs/{orgID}/secrets"
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/secrets"
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -493,7 +493,7 @@ func (a *SecretsApiService) PostOrgsIDSecretsExecuteWithHttpInfo(r ApiPostOrgsID
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs/{orgID}/secrets/{delete}"
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/secrets/{delete}"
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

@@ -201,7 +201,7 @@ func (a *StacksApiService) CreateStackExecuteWithHttpInfo(r ApiCreateStackReques
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/stacks"
+	localVarPath := localBasePath + "/api/v2/stacks"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -363,7 +363,7 @@ func (a *StacksApiService) DeleteStackExecuteWithHttpInfo(r ApiDeleteStackReques
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/stacks/{stack_id}"
+	localVarPath := localBasePath + "/api/v2/stacks/{stack_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"stack_id"+"}", _neturl.PathEscape(parameterToString(r.stackId, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -516,7 +516,7 @@ func (a *StacksApiService) ListStacksExecuteWithHttpInfo(r ApiListStacksRequest)
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/stacks"
+	localVarPath := localBasePath + "/api/v2/stacks"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -693,7 +693,7 @@ func (a *StacksApiService) ReadStackExecuteWithHttpInfo(r ApiReadStackRequest) (
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/stacks/{stack_id}"
+	localVarPath := localBasePath + "/api/v2/stacks/{stack_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"stack_id"+"}", _neturl.PathEscape(parameterToString(r.stackId, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -854,7 +854,7 @@ func (a *StacksApiService) UpdateStackExecuteWithHttpInfo(r ApiUpdateStackReques
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/stacks/{stack_id}"
+	localVarPath := localBasePath + "/api/v2/stacks/{stack_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"stack_id"+"}", _neturl.PathEscape(parameterToString(r.stackId, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
