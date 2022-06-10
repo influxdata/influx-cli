@@ -438,7 +438,7 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 	currentLineUpper := strings.ToUpper(d.CurrentLine())
 	var s []prompt.Suggest
 	if strings.HasPrefix(currentLineUpper, "FORMAT ") {
-		s = append(s, prompt.Suggest{Text: "table", Description: "Format Type"})
+		s = append(s, prompt.Suggest{Text: "column", Description: "Format Type"})
 		s = append(s, prompt.Suggest{Text: "json", Description: "Format Type"})
 		s = append(s, prompt.Suggest{Text: "csv", Description: "Format Type"})
 		return prompt.FilterFuzzy(s, d.GetWordBeforeCursor(), true)
