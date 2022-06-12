@@ -2,7 +2,6 @@ package v1repl
 
 import (
 	"fmt"
-	"math"
 	"os"
 	"strings"
 
@@ -20,17 +19,10 @@ const (
 
 type Model struct {
 	rows        []table.Row
-	visibleCols []table.Column
 	allCols     []table.Column
-	colWidths   []int
 	colNames    []string
-	colOffset   int
 	simpleTable table.Model
-	totalMargin int
 	totalWidth  int
-	rowsPerPage int
-	currentPage int
-	pageCount   int
 }
 
 func NewModel(res api.InfluxqlJsonResponseSeries) Model {
@@ -77,45 +69,34 @@ func NewModel(res api.InfluxqlJsonResponseSeries) Model {
 	}
 	colNames = append([]string{"index"}, colNames...)
 	m := Model{
-		rows:        rows,
-		visibleCols: cols,
-		allCols:     cols,
-		colNames:    colNames,
-		colWidths:   colWidths,
-		rowsPerPage: 15,
-		pageCount:   int(math.Ceil(float64(len(rows)) / float64(15))),
-		currentPage: 0,
+		rows:     rows,
+		allCols:  cols,
+		colNames: colNames,
 	}
-	m.regeneratePage()
-	return m
-}
+	keybind := table.DefaultKeyMap()
+	keybind.RowUp.SetEnabled(false)
+	keybind.RowDown.SetEnabled(false)
+	keybind.PageDown.SetKeys("down")
+	keybind.PageUp.SetKeys("up")
+	keybind.ScrollLeft.SetKeys("left")
+	keybind.ScrollRight.SetKeys("right")
+	keybind.Filter.Unbind()
+	keybind.FilterBlur.Unbind()
+	keybind.FilterClear.Unbind()
 
-func (m *Model) regeneratePage() {
-	pageEnd := (m.currentPage + 1) * m.rowsPerPage
-	if len(m.rows) < pageEnd {
-		pageEnd = len(m.rows)
-	}
-	targetWidth := m.totalWidth - m.totalMargin
-	visibleWidth := m.getVisibleTableWidth()
-	if targetWidth > visibleWidth {
-		targetWidth = visibleWidth
-	}
-	m.visibleCols = append([]table.Column{m.allCols[0]},
-		m.allCols[m.colOffset+1:]...)
-	m.simpleTable = table.New(m.visibleCols).
-		WithRows(m.rows[m.currentPage*m.rowsPerPage : pageEnd]).
+	m.simpleTable = table.New(m.allCols).
+		WithRows(m.rows).
+		WithPageSize(15).
+		WithMaxTotalWidth(500).
+		WithHorizontalFreezeColumnCount(1).
 		WithStaticFooter(
 			fmt.Sprintf("%d Columns, %d Rows, Page %d/%d",
-				len(m.visibleCols), len(m.rows), m.currentPage+1, m.pageCount)).
-		WithTargetWidth(targetWidth)
-}
-
-func (m Model) getVisibleTableWidth() int {
-	width := 2 + m.colWidths[0]
-	for _, colWidth := range m.colWidths[1+m.colOffset:] {
-		width += colWidth + 1
-	}
-	return width
+				len(m.allCols), len(m.rows), m.simpleTable.CurrentPage(), m.simpleTable.MaxPages())).
+		HighlightStyle(lipgloss.NewStyle()).
+		Focused(true).
+		SelectableRows(false).
+		WithKeyMap(keybind)
+	return m
 }
 
 func (m Model) Init() tea.Cmd {
@@ -131,8 +112,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.simpleTable, cmd = m.simpleTable.Update(msg)
 	cmds = append(cmds, cmd)
 
-	if m.pageCount == 1 {
-		fmt.Printf("\n")
+	if m.simpleTable.MaxPages() == 1 {
+		m.simpleTable = m.simpleTable.Focused(false)
 		cmds = append(cmds, tea.Quit)
 	}
 
@@ -140,37 +121,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "ctrl+d", "esc", "q":
+			m.simpleTable = m.simpleTable.Focused(false)
 			fmt.Printf("\n")
 			cmds = append(cmds, tea.Quit)
-
-		case "left":
-			if m.colOffset > 0 {
-				m.colOffset--
-				m.regeneratePage()
-			}
-
-		case "right":
-			if m.colOffset < len(m.allCols)-2 {
-				m.colOffset++
-				m.regeneratePage()
-			}
-		case "down":
-			if m.currentPage < m.pageCount-1 {
-				m.currentPage++
-				m.regeneratePage()
-			}
-		case "up":
-			if m.currentPage > 0 {
-				m.currentPage--
-				m.regeneratePage()
-			}
 		}
 	case tea.WindowSizeMsg:
 		m.totalWidth = msg.Width
-		m.rowsPerPage = msg.Height - 7
-		m.pageCount = int(math.Ceil(float64(len(m.rows)) / float64(m.rowsPerPage)))
-		m.regeneratePage()
+		m.simpleTable = m.simpleTable.WithPageSize(msg.Height - 7).
+			WithMaxTotalWidth(msg.Width)
 	}
+	m.simpleTable = m.simpleTable.WithStaticFooter(
+		fmt.Sprintf("%d Columns, %d Rows, Page %d/%d",
+			len(m.allCols), len(m.rows), m.simpleTable.CurrentPage(), m.simpleTable.MaxPages()))
 	return m, tea.Batch(cmds...)
 }
 
@@ -178,6 +140,8 @@ func (m Model) View() string {
 	body := strings.Builder{}
 
 	body.WriteString(m.simpleTable.View())
-
+	if m.simpleTable.MaxPages() == 1 {
+		body.WriteString("\n")
+	}
 	return body.String()
 }

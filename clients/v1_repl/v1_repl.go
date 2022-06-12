@@ -76,7 +76,7 @@ func (c *Client) clear(cmd string) {
 
 func DefaultPersistentQueryParams() PersistentQueryParams {
 	return PersistentQueryParams{
-		Format:    ColumnFormat,
+		Format:    TableFormat,
 		Precision: "ns",
 	}
 }
