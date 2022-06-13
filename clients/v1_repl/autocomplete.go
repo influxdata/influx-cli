@@ -22,6 +22,39 @@ func (c *Client) suggestUse(remainder string) (map[string]SuggestNode, string) {
 	return s, remainder
 }
 
+func (c *Client) suggestDropDatabase(remainder string) (map[string]SuggestNode, string) {
+	s := map[string]SuggestNode{}
+	for _, db := range c.Databases {
+		s["\""+db+"\""] = SuggestNode{Description: "Table Name"}
+	}
+	return s, remainder
+}
+
+func (c *Client) suggestDropMeasurement(remainder string) (map[string]SuggestNode, string) {
+	s := map[string]SuggestNode{}
+	if c.Database != "" && c.RetentionPolicy != "" {
+		for _, m := range c.Measurements {
+			s["\""+m+"\""] = SuggestNode{Description: fmt.Sprintf("Measurement on \"%s\".\"%s\"", c.Database, c.RetentionPolicy)}
+		}
+	}
+	return s, remainder
+}
+
+func (c *Client) suggestDelete(remainder string) (map[string]SuggestNode, string) {
+	s := map[string]SuggestNode{}
+	fromReg := regexp.MustCompile(`(?i)FROM(\s+)` + identRegex("from_clause") + `?$`)
+	matches := reSubMatchMap(fromReg, remainder)
+	if matches != nil {
+		if c.Database != "" && c.RetentionPolicy != "" {
+			for _, m := range c.Measurements {
+				s["\""+m+"\""] = SuggestNode{Description: fmt.Sprintf("Measurement on \"%s\".\"%s\"", c.Database, c.RetentionPolicy)}
+			}
+		}
+		return s, getIdentFromMatches(matches, "from_clause")
+	}
+	return s, remainder
+}
+
 func (c *Client) suggestSelect(remainder string) (map[string]SuggestNode, string) {
 	s := map[string]SuggestNode{}
 	fromReg := regexp.MustCompile(`(?i)FROM(\s+)` + identRegex("from_clause") + `?$`)
@@ -46,33 +79,30 @@ func (c *Client) suggestSelect(remainder string) (map[string]SuggestNode, string
 }
 
 func getSuggestions(remainder string, s map[string]SuggestNode) ([]prompt.Suggest, string) {
-	// if remainder == "" {
-	// 	return []prompt.Suggest{}
-	// }
-	firstWord, rest, gotWord := strings.Cut(remainder, " ")
-	leftOver := firstWord
-	if gotWord {
-		if node, found := s[strings.ToLower(firstWord)]; found {
-			if node.subsuggestFn == nil {
-				return []prompt.Suggest{}, rest
+	if len(remainder) > 0 {
+		for term, node := range s {
+			if strings.HasPrefix(strings.ToLower(remainder), term) || strings.HasPrefix(strings.ToUpper(remainder), term) {
+				// if the cursor is at the end of a just completed word without trailing space, don't give autosuggestions yet
+				if len(term) >= len(remainder) {
+					return []prompt.Suggest{}, ""
+				}
+				// remainder is everything after the just-matched term
+				rem := strings.TrimLeft(remainder[len(term):], " ")
+				// if sugsuggestFn is nil, this is a terminating suggestion (leaf node with no more following suggestions)
+				if node.subsuggestFn == nil {
+					return []prompt.Suggest{}, rem
+				}
+				sugs, rem := node.subsuggestFn(rem)
+				return getSuggestions(rem, sugs)
 			}
-			sugs, rem := node.subsuggestFn(rest)
-			return getSuggestions(rem, sugs)
-		} else if node, found := s[strings.ToUpper(firstWord)]; found {
-			if node.subsuggestFn == nil {
-				return []prompt.Suggest{}, rest
-			}
-			sugs, rem := node.subsuggestFn(rest)
-			return getSuggestions(rem, sugs)
-		} else if rest == "" {
-			leftOver = remainder
 		}
 	}
+	// if no match was found, convert the s map into suggestions and filter by the remaining characters
 	var sugs []prompt.Suggest
 	for text, node := range s {
 		sugs = append(sugs, prompt.Suggest{Text: text, Description: node.Description})
 	}
-	return prompt.FilterFuzzy(sugs, leftOver, true), leftOver
+	return prompt.FilterFuzzy(sugs, remainder, true), remainder
 }
 
 func (c *Client) completer(d prompt.Document) []prompt.Suggest {
@@ -115,7 +145,7 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 		"SELECT":      {subsuggestFn: c.suggestSelect},
 		"INSERT":      {},
 		"INSERT INTO": {},
-		"DELETE":      {},
+		"DELETE":      {subsuggestFn: c.suggestDelete},
 		"SHOW": {subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
 			return map[string]SuggestNode{
 				// "CONTINUOUS QUERIES":            {},
@@ -155,8 +185,8 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 		"DROP": {subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
 			return map[string]SuggestNode{
 				"CONTINUOUS QUERY": {},
-				"DATABASE":         {},
-				"MEASUREMENT":      {},
+				"DATABASE":         {subsuggestFn: c.suggestDropDatabase},
+				"MEASUREMENT":      {subsuggestFn: c.suggestDropMeasurement},
 				"RETENTION POLICY": {},
 				"SERIES":           {},
 				"SHARD":            {},
