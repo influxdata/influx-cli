@@ -4,7 +4,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
-	repl "github.com/influxdata/influx-cli/v2/clients/v1_repl"
+	shell "github.com/influxdata/influx-cli/v2/clients/v1_shell"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
 )
@@ -14,13 +14,13 @@ type Client struct {
 	api.LegacyQueryApi
 }
 
-func newV1ReplCmd() cli.Command {
+func newV1ShellCmd() cli.Command {
 	var orgParams clients.OrgParams
-	persistentQueryParams := repl.DefaultPersistentQueryParams()
+	persistentQueryParams := shell.DefaultPersistentQueryParams()
 	return cli.Command{
-		Name:        "repl",
-		Usage:       "Start an InfluxQL REPL",
-		Description: "Start an InfluxQL REPL",
+		Name:        "shell",
+		Usage:       "Start an InfluxQL shell",
+		Description: "Start an InfluxQL shell",
 		Before:      middleware.WithBeforeFns(withCli(), withApi(true)),
 		Flags:       append(commonFlagsNoPrint(), getOrgFlags(&orgParams)...),
 		Action: func(ctx *cli.Context) error {
@@ -28,7 +28,7 @@ func newV1ReplCmd() cli.Command {
 				return err
 			}
 			api := getAPI(ctx)
-			c := repl.Client{
+			c := shell.Client{
 				CLI:                   getCLI(ctx),
 				PersistentQueryParams: persistentQueryParams,
 				PingApi:               api.PingApi,

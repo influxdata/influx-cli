@@ -13,7 +13,7 @@ func newV1SubCommand() cli.Command {
 		Subcommands: []cli.Command{
 			newV1DBRPCmd(),
 			newV1AuthCommand(),
-			newV1ReplCmd(),
+			newV1ShellCmd(),
 		},
 	}
 }
