@@ -1,4 +1,4 @@
-package v1repl
+package v1shell
 
 import (
 	"bufio"
@@ -10,13 +10,16 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"regexp"
+	"runtime"
 	"sort"
 	"strings"
 	"text/tabwriter"
 
 	"github.com/fatih/color"
+	"github.com/influxdata/go-prompt"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
 )
@@ -39,9 +42,57 @@ type PersistentQueryParams struct {
 	Format          FormatType
 	Pretty          bool
 	// Autocompletion Storage
+	historyFilePath   string
+	historyLimit      int
 	Databases         []string
 	RetentionPolicies []string
 	Measurements      []string
+}
+
+func DefaultPersistentQueryParams() PersistentQueryParams {
+	return PersistentQueryParams{
+		Format:       ColumnFormat,
+		Precision:    "ns",
+		historyLimit: 1000,
+	}
+}
+
+func (c *Client) readHistory() []string {
+	// Attempt to load the history file.
+	if c.historyFilePath != "" {
+		if historyFile, err := os.Open(c.historyFilePath); err == nil {
+			var history []string
+			scanner := bufio.NewScanner(historyFile)
+			for scanner.Scan() {
+				history = append(history, scanner.Text())
+			}
+			historyFile.Close()
+			// Limit to last n elements
+			if len(history) > c.historyLimit {
+				history = history[len(history)-c.historyLimit:]
+			}
+			return history
+		}
+	}
+	return []string{}
+}
+
+func (c *Client) rewriteHistoryFile(history []string) {
+	if c.historyFilePath != "" {
+		if historyFile, err := os.Create(c.historyFilePath); err == nil {
+			historyFile.WriteString(strings.Join(history, "\n"))
+			historyFile.Close()
+		}
+	}
+}
+
+func (c *Client) writeCommandToHistory(cmd string) {
+	if c.historyFilePath != "" {
+		if historyFile, err := os.OpenFile(c.historyFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666); err == nil {
+			historyFile.WriteString(cmd + "\n")
+			historyFile.Close()
+		}
+	}
 }
 
 func (c *Client) clear(cmd string) {
@@ -73,13 +124,6 @@ func (c *Client) clear(cmd string) {
 	}
 }
 
-func DefaultPersistentQueryParams() PersistentQueryParams {
-	return PersistentQueryParams{
-		Format:    ColumnFormat,
-		Precision: "ns",
-	}
-}
-
 func (c *Client) Create(ctx context.Context) error {
 	res, err := c.GetPing(ctx).ExecuteWithHttpInfo()
 	if err != nil {
@@ -90,15 +134,35 @@ func (c *Client) Create(ctx context.Context) error {
 	version := res.Header.Get("X-Influxdb-Version")
 	color.Cyan("Connected to InfluxDB %s %s", build, version)
 
-	c.Databases, _ = c.GetDatabases(ctx)
-	color.Cyan("InfluxQL Shell")
-
-	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Printf("%s", color.GreenString("> "))
-	for scanner.Scan() {
-		c.executor(scanner.Text())
-		fmt.Printf("%s", color.GreenString("> "))
+	// compute historyFilePath at REPL start
+	// Only load/write history if HOME environment variable is set.
+	var historyDir string
+	if runtime.GOOS == "windows" {
+		if userDir := os.Getenv("USERPROFILE"); userDir != "" {
+			historyDir = userDir
+		}
 	}
+	if homeDir := os.Getenv("HOME"); homeDir != "" {
+		historyDir = homeDir
+	}
+	var history []string
+	if historyDir != "" {
+		c.historyFilePath = filepath.Join(historyDir, ".influx_history")
+		history = c.readHistory()
+		// rewriting history now truncates the history file down to c.historyLimit lines of history
+		c.rewriteHistoryFile(history)
+	}
+
+	p := prompt.New(c.executor,
+		c.completer,
+		prompt.OptionTitle("InfluxQL Shell"),
+		prompt.OptionHistory(history),
+		prompt.OptionDescriptionTextColor(prompt.Cyan),
+		prompt.OptionPrefixTextColor(prompt.Green),
+		prompt.OptionCompletionWordSeparator(" ", "."),
+	)
+	c.Databases, _ = c.GetDatabases(ctx)
+	p.Run()
 	return nil
 }
 
@@ -111,6 +175,7 @@ func (c *Client) executor(cmd string) {
 	if cmd == "" {
 		return
 	}
+	defer c.writeCommandToHistory(cmd)
 	cmdArgs := strings.Split(cmd, " ")
 	switch strings.ToLower(cmdArgs[0]) {
 	case "quit", "exit":
@@ -125,7 +190,7 @@ func (c *Client) executor(cmd string) {
 	case "help":
 		c.help()
 	case "history":
-		color.Yellow("The 'history' command is not yet implemented in 2.x")
+		color.HiBlack(strings.Join(c.readHistory(), "\n"))
 	case "format":
 		c.setFormat(cmdArgs)
 	case "precision":
@@ -225,7 +290,7 @@ func (c Client) insert(cmd string) {
 
 	switch c.Precision {
 	case "h", "m", "rfc3339":
-		color.Red("Current precision %q unsupported for writes. Use [s, ms, ns, us]", c.Precision)
+		color.Red("Current precision %q unsupported for writes. Use precision [s, ms, ns, us]", c.Precision)
 		return
 	}
 	ctx := context.Background()

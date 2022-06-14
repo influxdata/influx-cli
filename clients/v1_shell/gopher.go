@@ -1,4 +1,4 @@
-package v1repl
+package v1shell
 
 var Gopher string = `
                                           .-::-::://:-::-    .:/++/'
