@@ -22,14 +22,6 @@ func (c *Client) suggestUse(remainder string) (map[string]SuggestNode, string) {
 	return s, remainder
 }
 
-func (c *Client) suggestDropDatabase(remainder string) (map[string]SuggestNode, string) {
-	s := map[string]SuggestNode{}
-	for _, db := range c.Databases {
-		s["\""+db+"\""] = SuggestNode{Description: "Table Name"}
-	}
-	return s, remainder
-}
-
 func (c *Client) suggestDropMeasurement(remainder string) (map[string]SuggestNode, string) {
 	s := map[string]SuggestNode{}
 	if c.Database != "" && c.RetentionPolicy != "" {
@@ -173,25 +165,25 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 				"USERS":                     {},
 			}, rem
 		}},
-		"CREATE": {subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
-			return map[string]SuggestNode{
-				"CONTINUOUS QUERY": {},
-				// "DATABASE":         {},
-				"USER":             {},
-				"RETENTION POLICY": {},
-				"SUBSCRIPTION":     {},
-			}, rem
-		}},
+		// "CREATE": {subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
+		// 	return map[string]SuggestNode{
+		// 		"CONTINUOUS QUERY": {},
+		// 		"DATABASE":         {},
+		// 		"USER":             {},
+		// 		"RETENTION POLICY": {},
+		// 		"SUBSCRIPTION":     {},
+		// 	}, rem
+		// }},
 		"DROP": {subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
 			return map[string]SuggestNode{
-				"CONTINUOUS QUERY": {},
-				"DATABASE":         {subsuggestFn: c.suggestDropDatabase},
-				"MEASUREMENT":      {subsuggestFn: c.suggestDropMeasurement},
-				"RETENTION POLICY": {},
-				"SERIES":           {},
-				"SHARD":            {},
-				"SUBSCRIPTION":     {},
-				"USER":             {},
+				// "CONTINUOUS QUERY": {},
+				// "DATABASE":         {subsuggestFn: c.suggestDropDatabase},
+				"MEASUREMENT": {subsuggestFn: c.suggestDropMeasurement},
+				// "RETENTION POLICY": {},
+				// "SERIES":           {},
+				// "SHARD":            {},
+				// "SUBSCRIPTION":     {},
+				// "USER":             {},
 			}, rem
 		}},
 		"EXPLAIN":         {},
