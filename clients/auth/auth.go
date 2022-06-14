@@ -444,6 +444,9 @@ func (c Client) printAuth(opts printParams) error {
 }
 
 func makePermResource(permType string, id string, orgId string) api.PermissionResource {
+	if permType == "orgs" || permType == "users" {
+		orgId = ""
+	}
 	pr := api.PermissionResource{Type: permType}
 	if id != "" {
 		pr.Id = &id

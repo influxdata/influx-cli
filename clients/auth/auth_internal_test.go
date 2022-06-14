@@ -41,6 +41,20 @@ func Test_makePermResource(t *testing.T) {
 			inOrgId:  "45678",
 			expected: api.PermissionResource{Type: "qux", Id: api.PtrString("12345"), OrgID: api.PtrString("45678")},
 		},
+		{
+			name:     "users",
+			inType:   "users",
+			inId:     "12345",
+			inOrgId:  "45678",
+			expected: api.PermissionResource{Type: "users", Id: api.PtrString("12345"), OrgID: nil},
+		},
+		{
+			name:     "orgs",
+			inType:   "orgs",
+			inId:     "12345",
+			inOrgId:  "45678",
+			expected: api.PermissionResource{Type: "orgs", Id: api.PtrString("12345"), OrgID: nil},
+		},
 	}
 
 	for _, tc := range testCases {
