@@ -92,32 +92,35 @@ func newApp() cli.App {
 	}
 }
 
-// This replaces `-t "-FOO-TOKEN"` with `-t=-FOO-TOKEN` in os.Args
+// This creates a new slice and replaces `-t "-FOO-TOKEN"` with `-t=-FOO-TOKEN`
 // This is necessary to do because the command line arg:
 //  `-t "-FOO-TOKEN"`` will be parsed as two separate flags instead of a flag and token value.
-func replaceTokenArg() {
-	for i, arg := range os.Args {
+func replaceTokenArg(args []string) []string {
+	newArgs := make([]string, len(args))
+	copy(newArgs, args)
+	for i, arg := range newArgs {
 		switch arg {
 		case "--token", "-t":
 			// if last element, this will be invalid later
-			if i == len(os.Args)-1 {
+			if i == len(args)-1 {
 				break
 			}
-			os.Args[i] = strings.Join(os.Args[i:i+2], "=")
+			newArgs[i] = strings.Join(newArgs[i:i+2], "=")
 			// if there are 2+ elements after this
-			if len(os.Args) > i+2 {
-				os.Args = append(os.Args[:i+1], os.Args[i+2:]...)
+			if len(newArgs) > i+2 {
+				newArgs = append(newArgs[:i+1], newArgs[i+2:]...)
 			} else {
-				os.Args = os.Args[:i+1]
+				newArgs = newArgs[:i+1]
 			}
 		}
 	}
+	return newArgs
 }
 
 func main() {
 	app := newApp()
-	replaceTokenArg()
-	if err := app.Run(os.Args); err != nil {
+	args := replaceTokenArg(os.Args)
+	if err := app.Run(args); err != nil {
 		// Errors will normally be handled by cli.HandleExitCoder via ExitErrHandler set on app. Any error not implementing
 		// the cli.ExitCoder interface can be handled here.
 		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
