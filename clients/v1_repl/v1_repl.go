@@ -223,6 +223,12 @@ func (c Client) insert(cmd string) {
 		color.Red("Failed to gzip points")
 		return
 	}
+
+	switch c.Precision {
+	case "h", "m", "rfc3339":
+		color.Red("Current precision %q unsupported for writes. Use [s, ms, ns, us]", c.Precision)
+		return
+	}
 	ctx := context.Background()
 	writeReq := c.PostLegacyWrite(ctx).
 		Db(db).
@@ -299,7 +305,7 @@ func (c *Client) help() {
         pretty                toggles pretty print for the json format
         use <db_name>         sets current database
         format <format>       specifies the format of the server responses: json, csv, column, table
-        precision <format>    specifies the format of the timestamp: h, m, s, ms, u or ns
+        precision <format>    specifies the format of the timestamp: rfc3339, h, m, s, ms, u or ns
         history               displays command history
         settings              outputs the current settings for the shell
         clear                 clears settings such as database or retention policy.  run 'clear' for help
@@ -381,7 +387,7 @@ func (c *Client) setPrecision(args []string) {
 		c.Precision = precision
 	default:
 		color.HiRed("Unimplemented precision %q, keeping %s precision.", precision, c.Precision)
-		color.HiBlack("Choose a precision from [ns, u, ms, s, m, or h]")
+		color.HiBlack("Choose a precision from [rfc3339, ns, u, ms, s, m, or h]")
 	}
 }
 
@@ -556,11 +562,10 @@ func (c *Client) outputColumns(response api.InfluxqlJsonResponse) {
 func (c *Client) outputTable(response api.InfluxqlJsonResponse) {
 	for _, res := range response.GetResults() {
 		if res.Error != nil {
-			color.Red("Query Error: %s", res.GetError())
+			color.Red("Error: %v", res.GetError())
 			continue
 		}
 		for _, series := range res.GetSeries() {
-			color.Magenta("Table View (press q to exit interactive mode):")
 			p := tea.NewProgram(NewModel(series))
 			if err := p.Start(); err != nil {
 				color.Red("Failed to display table")

@@ -100,6 +100,9 @@ func NewModel(res api.InfluxqlJsonResponseSeries) Model {
 }
 
 func (m Model) Init() tea.Cmd {
+	if m.simpleTable.MaxPages() > 1 {
+		color.Magenta("Interactive Table View (press q to exit mode):")
+	}
 	return nil
 }
 
