@@ -9,9 +9,11 @@ import (
 	"github.com/influxdata/go-prompt"
 )
 
+type subsuggestFnType = func(string) (map[string]SuggestNode, string)
+
 type SuggestNode struct {
 	Description  string
-	subsuggestFn func(string) (map[string]SuggestNode, string)
+	subsuggestFn subsuggestFnType
 }
 
 func (c *Client) suggestUse(remainder string) (map[string]SuggestNode, string) {
@@ -97,87 +99,96 @@ func getSuggestions(remainder string, s map[string]SuggestNode) ([]prompt.Sugges
 	return prompt.FilterFuzzy(sugs, remainder, true), remainder
 }
 
+// recursively creates a SuggestNode for each space-delimited word for each subsuggestion
+func newSugNodeFn(subsugs ...string) subsuggestFnType {
+	s := make(map[string]SuggestNode)
+	for _, sug := range subsugs {
+		word, rest, found := strings.Cut(sug, " ")
+		if !found {
+			s[word] = SuggestNode{}
+		} else {
+			s[word] = SuggestNode{subsuggestFn: newSugNodeFn(rest)}
+		}
+	}
+	return func(rem string) (map[string]SuggestNode, string) {
+		return s, rem
+	}
+}
+
 func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 	// the commented-out lines are unsupported in 2.x
 	suggestions := map[string]SuggestNode{
 		"use":    {Description: "Set current database", subsuggestFn: c.suggestUse},
 		"pretty": {Description: "Toggle pretty print for the json format"},
-		"precision": {Description: "Specify the format of the timestamp", subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
-			return map[string]SuggestNode{
-				"rfc3339": {},
-				"ns":      {},
-				"u":       {},
-				"ms":      {},
-				"s":       {},
-				"m":       {},
-				"h":       {},
-			}, rem
-		}},
+		"precision": {Description: "Specify the format of the timestamp",
+			subsuggestFn: newSugNodeFn(
+				"rfc3339",
+				"ns",
+				"u",
+				"ms",
+				"s",
+				"m",
+				"h",
+			)},
 		"history":  {Description: "Display shell history"},
 		"settings": {Description: "Output the current shell settings"},
-		"clear": {Description: "Clears settings such as database", subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
-			return map[string]SuggestNode{
-				"db":               {},
-				"database":         {},
-				"retention policy": {},
-				"rp":               {},
-			}, rem
-		}},
+		"clear": {Description: "Clears settings such as database",
+			subsuggestFn: newSugNodeFn(
+				"db",
+				"database",
+				"retention policy",
+				"rp",
+			)},
 		"exit":   {Description: "Exit the InfluxQL shell"},
 		"quit":   {Description: "Exit the InfluxQL shell"},
 		"gopher": {Description: "Display the Go Gopher"},
 		"help":   {Description: "Display help options"},
-		"format": {Description: "Specify the data display format", subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
-			return map[string]SuggestNode{
-				"column": {},
-				"csv":    {},
-				"json":   {},
-			}, rem
-		}},
+		"format": {Description: "Specify the data display format",
+			subsuggestFn: newSugNodeFn(
+				"column",
+				"csv",
+				"json",
+			)},
 		"SELECT":      {subsuggestFn: c.suggestSelect},
 		"INSERT":      {},
 		"INSERT INTO": {},
 		"DELETE":      {subsuggestFn: c.suggestDelete},
-		"SHOW": {subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
-			return map[string]SuggestNode{
-				// "CONTINUOUS QUERIES":            {},
-				"DATABASES": {},
-				// "DIAGNOSTICS":                   {},
-				"FIELD KEY CARDINALITY": {},
-				"FIELD KEYS":            {},
-				// "GRANTS":                {},
-				// "MEASUREMENT CARDINALITY":       {},
-				"MEASUREMENT EXACT CARDINALITY": {},
-				"MEASUREMENTS":                  {},
-				// "QUERIES":                 {},
-				// "RETENTION POLICIES":      {},
-				"SERIES": {},
-				// "SERIES CARDINALITY": {},
-				"SERIES EXACT CARDINALITY": {},
-				// "SHARD GROUPS":            {},
-				// "SHARDS":                  {},
-				// "STATS":                   {},
-				// "SUBSCRIPTIONS":           {},
-				"TAG KEY CARDINALITY":       {},
-				"TAG KEY EXACT CARDINALITY": {},
-				"TAG KEYS":                  {},
-				"TAG VALUES":                {},
-				"USERS":                     {},
-			}, rem
-		}},
-		// "CREATE": {subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
-		// 	return map[string]SuggestNode{
-		// 		"CONTINUOUS QUERY": {},
-		// 		"DATABASE":         {},
-		// 		"USER":             {},
-		// 		"RETENTION POLICY": {},
-		// 		"SUBSCRIPTION":     {},
-		// 	}, rem
-		// }},
+		"SHOW": {subsuggestFn: newSugNodeFn(
+			// "CONTINUOUS QUERIES",
+			"DATABASES",
+			// "DIAGNOSTICS",
+			"FIELD KEY CARDINALITY",
+			"FIELD KEYS",
+			// "GRANTS",
+			// "MEASUREMENT CARDINALITY",
+			"MEASUREMENT EXACT CARDINALITY",
+			"MEASUREMENTS",
+			// "QUERIES",
+			// "RETENTION POLICIES",
+			"SERIES",
+			// "SERIES CARDINALITY",
+			"SERIES EXACT CARDINALITY",
+			// "SHARD GROUPS",
+			// "SHARDS",
+			// "STATS",
+			// "SUBSCRIPTIONS",
+			"TAG KEY CARDINALITY",
+			"TAG KEY EXACT CARDINALITY",
+			"TAG KEYS",
+			"TAG VALUES",
+			// "USERS",
+		)},
+		// "CREATE": {subsuggestFn: newSugNodeFn(
+		// 	"CONTINUOUS QUERY",
+		// 	"DATABASE",
+		// 	"USER",
+		// 	"RETENTION POLICY",
+		// 	"SUBSCRIPTION",
+		// )},
 		"DROP": {subsuggestFn: func(rem string) (map[string]SuggestNode, string) {
 			return map[string]SuggestNode{
 				// "CONTINUOUS QUERY": {},
-				// "DATABASE":         {subsuggestFn: c.suggestDropDatabase},
+				// "DATABASE":         {},
 				"MEASUREMENT": {subsuggestFn: c.suggestDropMeasurement},
 				// "RETENTION POLICY": {},
 				// "SERIES":           {},
@@ -186,8 +197,7 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 				// "USER":             {},
 			}, rem
 		}},
-		"EXPLAIN":         {},
-		"EXPLAIN ANALYZE": {},
+		"EXPLAIN": {subsuggestFn: newSugNodeFn("ANALYZE")},
 		// "GRANT":   {},
 		// "REVOKE":  {},
 		// "ALTER RETENTION POLICY": {},
