@@ -1,9 +1,9 @@
-package v1repl_test
+package v1shell_test
 
 import (
 	"testing"
 
-	v1repl "github.com/influxdata/influx-cli/v2/clients/v1_repl"
+	v1shell "github.com/influxdata/influx-cli/v2/clients/v1_shell"
 )
 
 var point = `weather,location=us-midwest temperature=82 1465839830100400200`
@@ -20,7 +20,7 @@ type InsertTestCase struct {
 }
 
 func (it *InsertTestCase) Test(t *testing.T) {
-	db, rp, point, isInsert := v1repl.ParseInsert(it.cmd)
+	db, rp, point, isInsert := v1shell.ParseInsert(it.cmd)
 	if !isInsert {
 		t.Errorf("%q should be a valid INSERT command", it.cmd)
 	} else {
@@ -135,7 +135,7 @@ func TestParseInsertInto(t *testing.T) {
 func TestParseInsertInvalid(t *testing.T) {
 	t.Parallel()
 	for _, cmd := range invalidCmds {
-		if _, _, _, isValid := v1repl.ParseInsert(cmd); isValid {
+		if _, _, _, isValid := v1shell.ParseInsert(cmd); isValid {
 			t.Errorf("%q should be an invalid INSERT command", cmd)
 		}
 	}
