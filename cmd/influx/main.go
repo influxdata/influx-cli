@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/fatih/color"
-	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
+	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
+	"github.com/urfave/cli"
 )
 
 // Fields set via ldflags at build time.
