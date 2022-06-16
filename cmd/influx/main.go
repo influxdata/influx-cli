@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/fatih/color"
+	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
+	"github.com/urfave/cli"
 	"os"
 	"strings"
 	"time"
-
-	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
-	"github.com/urfave/cli"
 )
 
 // Fields set via ldflags at build time.
@@ -104,6 +104,13 @@ func replaceTokenArg(args []string) []string {
 			// if last element, this will be invalid later
 			if i == len(args)-1 {
 				break
+			}
+			if strings.HasPrefix(newArgs[i+1], "-") {
+				color.HiYellow("warning: %s %s interpreted as %s=%s, consider using %s=%s syntax when tokens start with a hyphen",
+					newArgs[i], newArgs[i+1],
+					newArgs[i], newArgs[i+1],
+					newArgs[i], newArgs[i+1],
+				)
 			}
 			newArgs[i] = strings.Join(newArgs[i:i+2], "=")
 			// if there are 2+ elements after this
