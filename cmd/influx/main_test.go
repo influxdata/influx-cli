@@ -148,6 +148,171 @@ func TestApp_HostSpecificErrors(t *testing.T) {
 	}
 }
 
+func TestReplaceTokenArg(t *testing.T) {
+	tests := []struct {
+		name       string
+		argsBefore []string
+		argsAfter  []string
+	}{
+		{
+			name: "short token flag second to last arg",
+			argsBefore: []string{
+				"config",
+				"create",
+				"-n",
+				"targetflux",
+				"-u",
+				"http://localhost:8087",
+				"-t",
+				"-therestofmytoken",
+				"-o",
+				"organisation",
+			},
+			argsAfter: []string{
+				"config",
+				"create",
+				"-n",
+				"targetflux",
+				"-u",
+				"http://localhost:8087",
+				"-t=-therestofmytoken",
+				"-o",
+				"organisation",
+			},
+		},
+		{
+			name: "long token flag second to last arg",
+			argsBefore: []string{
+				"config",
+				"create",
+				"-n",
+				"targetflux",
+				"-u",
+				"http://localhost:8087",
+				"--token",
+				"-foo_token",
+				"-o",
+				"organisation",
+			},
+			argsAfter: []string{
+				"config",
+				"create",
+				"-n",
+				"targetflux",
+				"-u",
+				"http://localhost:8087",
+				"--token=-foo_token",
+				"-o",
+				"organisation",
+			},
+		},
+		{
+			name: "short token flag last arg",
+			argsBefore: []string{
+				"config",
+				"create",
+				"-n",
+				"targetflux",
+				"-u",
+				"http://localhost:8087",
+				"-o",
+				"organisation",
+				"-t",
+				"-therestofmytoken",
+			},
+			argsAfter: []string{
+				"config",
+				"create",
+				"-n",
+				"targetflux",
+				"-u",
+				"http://localhost:8087",
+				"-o",
+				"organisation",
+				"-t=-therestofmytoken",
+			},
+		},
+		{
+			name: "long token flag last arg",
+			argsBefore: []string{
+				"config",
+				"create",
+				"-n",
+				"targetflux",
+				"-u",
+				"http://localhost:8087",
+				"-o",
+				"organisation",
+				"--token",
+				"-foo_token",
+			},
+			argsAfter: []string{
+				"config",
+				"create",
+				"-n",
+				"targetflux",
+				"-u",
+				"http://localhost:8087",
+				"-o",
+				"organisation",
+				"--token=-foo_token",
+			},
+		},
+		{
+			name: "no token flag",
+			argsBefore: []string{
+				"v1",
+				"shell",
+			},
+			argsAfter: []string{
+				"v1",
+				"shell",
+			},
+		},
+		{
+			name: "unprovided token value for flag",
+			argsBefore: []string{
+				"v1",
+				"shell",
+				"--token",
+			},
+			argsAfter: []string{
+				"v1",
+				"shell",
+				"--token",
+			},
+		},
+		{
+			name: "no token flag, other flags",
+			argsBefore: []string{
+				"v1",
+				"shell",
+				"-u",
+				"http://localhost:8087",
+				"-o",
+				"organisation",
+			},
+			argsAfter: []string{
+				"v1",
+				"shell",
+				"-u",
+				"http://localhost:8087",
+				"-o",
+				"organisation",
+			},
+		},
+		{
+			name:       "no args",
+			argsBefore: []string{},
+			argsAfter:  []string{},
+		},
+	}
+	for _, tt := range tests {
+		newArgs := ReplaceTokenArg(tt.argsBefore)
+		require.Equal(t, tt.argsAfter, newArgs)
+	}
+}
+
 type testWriter struct {
 	b       *bytes.Buffer
 	written bool

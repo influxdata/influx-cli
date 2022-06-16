@@ -96,30 +96,22 @@ func newApp() cli.App {
 // This creates a new slice and replaces `-t "-FOO-TOKEN"` with `-t=-FOO-TOKEN`
 // This is necessary to do because the command line arg:
 //  `-t "-FOO-TOKEN"`` will be parsed as two separate flags instead of a flag and token value.
-func replaceTokenArg(args []string) []string {
+func ReplaceTokenArg(args []string) []string {
+	if len(args) == 0 {
+		return []string{}
+	}
 	newArgs := make([]string, len(args))
 	copy(newArgs, args)
-	for i, arg := range newArgs {
+	for i, arg := range newArgs[:len(newArgs)-1] {
 		switch arg {
 		case "--token", "-t":
-			// if last element, this will be invalid later
-			if i == len(args)-1 {
-				break
-			}
 			if strings.HasPrefix(newArgs[i+1], "-") {
-				color.HiYellow("warning: %s %s interpreted as %s=%s, consider using %s=%s syntax when tokens start with a hyphen",
-					newArgs[i], newArgs[i+1],
-					newArgs[i], newArgs[i+1],
+				color.HiYellow("warning: %[1]s %[2]s interpreted as %[1]s=%[2]s, consider using %[1]s=%[2]s syntax when tokens start with a hyphen",
 					newArgs[i], newArgs[i+1],
 				)
 			}
 			newArgs[i] = strings.Join(newArgs[i:i+2], "=")
-			// if there are 2+ elements after this
-			if len(newArgs) > i+2 {
-				newArgs = append(newArgs[:i+1], newArgs[i+2:]...)
-			} else {
-				newArgs = newArgs[:i+1]
-			}
+			newArgs = append(newArgs[:i+1], newArgs[i+2:]...)
 		}
 	}
 	return newArgs
@@ -127,7 +119,7 @@ func replaceTokenArg(args []string) []string {
 
 func main() {
 	app := newApp()
-	args := replaceTokenArg(os.Args)
+	args := ReplaceTokenArg(os.Args)
 	if err := app.Run(args); err != nil {
 		// Errors will normally be handled by cli.HandleExitCoder via ExitErrHandler set on app. Any error not implementing
 		// the cli.ExitCoder interface can be handled here.
