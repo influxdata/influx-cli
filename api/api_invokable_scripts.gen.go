@@ -227,7 +227,7 @@ func (a *InvokableScriptsApiService) DeleteScriptsIDExecuteWithHttpInfo(r ApiDel
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/scripts/{scriptID}"
+	localVarPath := localBasePath + "/api/v2/scripts/{scriptID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"scriptID"+"}", _neturl.PathEscape(parameterToString(r.scriptID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -367,7 +367,7 @@ func (a *InvokableScriptsApiService) GetScriptsExecuteWithHttpInfo(r ApiGetScrip
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/scripts"
+	localVarPath := localBasePath + "/api/v2/scripts"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -525,7 +525,7 @@ func (a *InvokableScriptsApiService) GetScriptsIDExecuteWithHttpInfo(r ApiGetScr
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/scripts/{scriptID}"
+	localVarPath := localBasePath + "/api/v2/scripts/{scriptID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"scriptID"+"}", _neturl.PathEscape(parameterToString(r.scriptID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -688,7 +688,7 @@ func (a *InvokableScriptsApiService) PatchScriptsIDExecuteWithHttpInfo(r ApiPatc
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/scripts/{scriptID}"
+	localVarPath := localBasePath + "/api/v2/scripts/{scriptID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"scriptID"+"}", _neturl.PathEscape(parameterToString(r.scriptID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -843,7 +843,7 @@ func (a *InvokableScriptsApiService) PostScriptsExecuteWithHttpInfo(r ApiPostScr
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/scripts"
+	localVarPath := localBasePath + "/api/v2/scripts"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -1009,7 +1009,7 @@ func (a *InvokableScriptsApiService) PostScriptsIDInvokeExecuteWithHttpInfo(r Ap
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/scripts/{scriptID}/invoke"
+	localVarPath := localBasePath + "/api/v2/scripts/{scriptID}/invoke"
 	localVarPath = strings.Replace(localVarPath, "{"+"scriptID"+"}", _neturl.PathEscape(parameterToString(r.scriptID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

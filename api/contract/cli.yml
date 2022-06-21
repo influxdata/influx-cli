@@ -119,11 +119,11 @@ paths:
     $ref: "./openapi/src/oss/paths/replications_replicationID_validate.yml"
   /api/v2/config:
     $ref: "./openapi/src/oss/paths/config.yml"
-  /scripts:
+  /api/v2/scripts:
     $ref: "./openapi/src/svc/invocable-scripts/paths/scripts.yml"
-  /scripts/{scriptID}:
+  /api/v2/scripts/{scriptID}:
     $ref: "./openapi/src/svc/invocable-scripts/paths/scripts_scriptID.yml"
-  /scripts/{scriptID}/invoke:
+  /api/v2/scripts/{scriptID}/invoke:
     $ref: "./overrides/paths/scripts_scriptID_invoke.yml"
 components:
   parameters:
