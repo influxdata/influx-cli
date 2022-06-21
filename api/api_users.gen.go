@@ -228,7 +228,7 @@ func (a *UsersApiService) DeleteUsersIDExecuteWithHttpInfo(r ApiDeleteUsersIDReq
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/users/{userID}"
+	localVarPath := localBasePath + "/api/v2/users/{userID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -407,7 +407,7 @@ func (a *UsersApiService) GetUsersExecuteWithHttpInfo(r ApiGetUsersRequest) (Use
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/users"
+	localVarPath := localBasePath + "/api/v2/users"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -585,7 +585,7 @@ func (a *UsersApiService) GetUsersIDExecuteWithHttpInfo(r ApiGetUsersIDRequest) 
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/users/{userID}"
+	localVarPath := localBasePath + "/api/v2/users/{userID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -758,7 +758,7 @@ func (a *UsersApiService) PatchUsersIDExecuteWithHttpInfo(r ApiPatchUsersIDReque
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/users/{userID}"
+	localVarPath := localBasePath + "/api/v2/users/{userID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -925,7 +925,7 @@ func (a *UsersApiService) PostUsersExecuteWithHttpInfo(r ApiPostUsersRequest) (U
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/users"
+	localVarPath := localBasePath + "/api/v2/users"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -1099,7 +1099,7 @@ func (a *UsersApiService) PostUsersIDPasswordExecuteWithHttpInfo(r ApiPostUsersI
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/users/{userID}/password"
+	localVarPath := localBasePath + "/api/v2/users/{userID}/password"
 	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

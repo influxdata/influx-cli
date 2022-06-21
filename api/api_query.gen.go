@@ -159,7 +159,7 @@ func (a *QueryApiService) PostQueryExecuteWithHttpInfo(r ApiPostQueryRequest) (*
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/query"
+	localVarPath := localBasePath + "/api/v2/query"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

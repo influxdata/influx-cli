@@ -3,123 +3,121 @@ info:
   title: Subset of Influx API covered by Influx CLI
   version: 2.0.0
 servers:
-  - url: /api/v2
+  - url: /
 paths:
-  /health:
-    servers:
-      - url: ''
-    $ref: "./openapi/src/oss/paths/health.yml"
-  /setup:
-    $ref: "./openapi/src/common/paths/setup.yml"
-  /write:
-    $ref: "./openapi/src/common/paths/write.yml"
-  /buckets:
-    $ref: "./openapi/src/common/paths/buckets.yml"
-  /buckets/{bucketID}:
-    $ref: "./openapi/src/common/paths/buckets_bucketID.yml"
-  /orgs:
-    $ref: "./openapi/src/common/paths/orgs.yml"
-  /orgs/{orgID}:
-    $ref: "./openapi/src/common/paths/orgs_orgID.yml"
-  /orgs/{orgID}/members:
-    $ref: "./openapi/src/common/paths/orgs_orgID_members.yml"
-  /orgs/{orgID}/members/{userID}:
-    $ref: "./openapi/src/common/paths/orgs_orgID_members_userID.yml"
-  /orgs/{orgID}/secrets:
-    $ref: "./openapi/src/common/paths/orgs_orgID_secrets.yml"
-  /orgs/{orgID}/secrets/{delete}:
-    $ref: "./openapi/src/common/paths/orgs_orgID_secrets_delete.yml"
-  /buckets/{bucketID}/schema/measurements:
-    $ref: "./openapi/src/cloud/paths/measurements.yml"
-  /buckets/{bucketID}/schema/measurements/{measurementID}:
-    $ref: "./openapi/src/cloud/paths/measurements_measurementID.yml"
   /query:
-    $ref: "./overrides/paths/query.yml"
-  /users:
-    $ref: "./openapi/src/common/paths/users.yml"
-  /users/{userID}:
-    $ref: "./openapi/src/common/paths/users_userID.yml"
-  "/users/{userID}/password":
-    $ref: "./openapi/src/common/paths/users_userID_password.yml"
-  /delete:
-    $ref: "./openapi/src/common/paths/delete.yml"
-  /tasks:
-    $ref: "./openapi/src/common/paths/tasks.yml"
-  /tasks/{taskID}:
-    $ref: "./openapi/src/common/paths/tasks_taskID.yml"
-  /tasks/{taskID}/runs:
-    $ref: "./openapi/src/common/paths/tasks_taskID_runs.yml"
-  /tasks/{taskID}/runs/{runID}:
-    $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID.yml"
-  /tasks/{taskID}/runs/{runID}/retry:
-    $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID_retry.yml"
-  /tasks/{taskID}/logs:
-    $ref: "./openapi/src/common/paths/tasks_taskID_logs.yml"
-  /tasks/{taskID}/runs/{runID}/logs:
-    $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID_logs.yml"
-  /backup/kv:
-    $ref: "./openapi/src/oss/paths/backup_kv.yml"
-  /backup/metadata:
-    $ref: "./overrides/paths/backup_metadata.yml"
-  /backup/shards/{shardID}:
-    $ref: "./openapi/src/oss/paths/backup_shards_shardID.yml"
-  /resources:
-    $ref: "./openapi/src/common/paths/resources.yml"
-  /restore/kv:
-    $ref: "./openapi/src/oss/paths/restore_kv.yml"
-  /restore/sql:
-    $ref: "./openapi/src/oss/paths/restore_sql.yml"
-  /restore/buckets/{bucketID}:
-    $ref: "./openapi/src/oss/paths/restore_bucket_bucketID.yml"
-  /restore/bucketMetadata:
-    $ref: "./openapi/src/oss/paths/restore_bucketMetadata.yml"
-  /restore/shards/{shardID}:
-    $ref: "./openapi/src/oss/paths/restore_shards_shardID.yml"
-  "/telegrafs":
-    $ref: "./openapi/src/common/paths/telegrafs.yml"
-  "/telegrafs/{telegrafID}":
-    $ref: "./overrides/paths/telegrafs_telegrafID.yml"
-  /dashboards:
-    $ref: "./overrides/paths/dashboards.yml"
-  /templates/export:
-    $ref: "./overrides/paths/templates_export.yml"
-  /templates/apply:
-    $ref: "./overrides/paths/templates_apply.yml"
-  /stacks:
-    $ref: "./overrides/paths/stacks.yml"
-  /stacks/{stack_id}:
-    $ref: "./overrides/paths/stacks_stack_id.yml"
-  /dbrps:
-    $ref: "./openapi/src/common/paths/dbrps.yml"
-  "/dbrps/{dbrpID}":
-    $ref: "./openapi/src/common/paths/dbrps_dbrpID.yml"
-  /legacy/authorizations:
-    servers:
-      - url: "/private"
+    $ref: "./openapi/src/legacy/paths/query.yml"
+  /write:
+    $ref: "./openapi/src/legacy/paths/write.yml"
+  /health:
+    $ref: "./openapi/src/oss/paths/health.yml"
+  /ping:
+    $ref: "./openapi/src/common/paths/ping.yml"
+  /private/legacy/authorizations:
     $ref: "./openapi/src/legacy/paths/legacy_authorizations.yml"
-  /legacy/authorizations/{authID}:
-    servers:
-      - url: "/private"
+  /private/legacy/authorizations/{authID}:
     $ref: "./openapi/src/legacy/paths/legacy_authorizations_authID.yml"
-  /legacy/authorizations/{authID}/password:
-    servers:
-      - url: "/private"
+  /private/legacy/authorizations/{authID}/password:
     $ref: "./openapi/src/legacy/paths/legacy_authorizations_authID_password.yml"
-  /authorizations:
+  /api/v2/setup:
+    $ref: "./openapi/src/common/paths/setup.yml"
+  /api/v2/write:
+    $ref: "./openapi/src/common/paths/write.yml"
+  /api/v2/buckets:
+    $ref: "./openapi/src/common/paths/buckets.yml"
+  /api/v2/buckets/{bucketID}:
+    $ref: "./openapi/src/common/paths/buckets_bucketID.yml"
+  /api/v2/orgs:
+    $ref: "./openapi/src/common/paths/orgs.yml"
+  /api/v2/orgs/{orgID}:
+    $ref: "./openapi/src/common/paths/orgs_orgID.yml"
+  /api/v2/orgs/{orgID}/members:
+    $ref: "./openapi/src/common/paths/orgs_orgID_members.yml"
+  /api/v2/orgs/{orgID}/members/{userID}:
+    $ref: "./openapi/src/common/paths/orgs_orgID_members_userID.yml"
+  /api/v2/orgs/{orgID}/secrets:
+    $ref: "./openapi/src/common/paths/orgs_orgID_secrets.yml"
+  /api/v2/orgs/{orgID}/secrets/{delete}:
+    $ref: "./openapi/src/common/paths/orgs_orgID_secrets_delete.yml"
+  /api/v2/buckets/{bucketID}/schema/measurements:
+    $ref: "./openapi/src/cloud/paths/measurements.yml"
+  /api/v2/buckets/{bucketID}/schema/measurements/{measurementID}:
+    $ref: "./openapi/src/cloud/paths/measurements_measurementID.yml"
+  /api/v2/query:
+    $ref: "./overrides/paths/query.yml"
+  /api/v2/users:
+    $ref: "./openapi/src/common/paths/users.yml"
+  /api/v2/users/{userID}:
+    $ref: "./openapi/src/common/paths/users_userID.yml"
+  "/api/v2/users/{userID}/password":
+    $ref: "./openapi/src/common/paths/users_userID_password.yml"
+  /api/v2/delete:
+    $ref: "./openapi/src/common/paths/delete.yml"
+  /api/v2/tasks:
+    $ref: "./openapi/src/common/paths/tasks.yml"
+  /api/v2/tasks/{taskID}:
+    $ref: "./openapi/src/common/paths/tasks_taskID.yml"
+  /api/v2/tasks/{taskID}/runs:
+    $ref: "./openapi/src/common/paths/tasks_taskID_runs.yml"
+  /api/v2/tasks/{taskID}/runs/{runID}:
+    $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID.yml"
+  /api/v2/tasks/{taskID}/runs/{runID}/retry:
+    $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID_retry.yml"
+  /api/v2/tasks/{taskID}/logs:
+    $ref: "./openapi/src/common/paths/tasks_taskID_logs.yml"
+  /api/v2/tasks/{taskID}/runs/{runID}/logs:
+    $ref: "./openapi/src/common/paths/tasks_taskID_runs_runID_logs.yml"
+  /api/v2/backup/kv:
+    $ref: "./openapi/src/oss/paths/backup_kv.yml"
+  /api/v2/backup/metadata:
+    $ref: "./overrides/paths/backup_metadata.yml"
+  /api/v2/backup/shards/{shardID}:
+    $ref: "./openapi/src/oss/paths/backup_shards_shardID.yml"
+  /api/v2/resources:
+    $ref: "./openapi/src/common/paths/resources.yml"
+  /api/v2/restore/kv:
+    $ref: "./openapi/src/oss/paths/restore_kv.yml"
+  /api/v2/restore/sql:
+    $ref: "./openapi/src/oss/paths/restore_sql.yml"
+  /api/v2/restore/buckets/{bucketID}:
+    $ref: "./openapi/src/oss/paths/restore_bucket_bucketID.yml"
+  /api/v2/restore/bucketMetadata:
+    $ref: "./openapi/src/oss/paths/restore_bucketMetadata.yml"
+  /api/v2/restore/shards/{shardID}:
+    $ref: "./openapi/src/oss/paths/restore_shards_shardID.yml"
+  "/api/v2/telegrafs":
+    $ref: "./openapi/src/common/paths/telegrafs.yml"
+  "/api/v2/telegrafs/{telegrafID}":
+    $ref: "./overrides/paths/telegrafs_telegrafID.yml"
+  /api/v2/dashboards:
+    $ref: "./overrides/paths/dashboards.yml"
+  /api/v2/templates/export:
+    $ref: "./overrides/paths/templates_export.yml"
+  /api/v2/templates/apply:
+    $ref: "./overrides/paths/templates_apply.yml"
+  /api/v2/stacks:
+    $ref: "./overrides/paths/stacks.yml"
+  /api/v2/stacks/{stack_id}:
+    $ref: "./overrides/paths/stacks_stack_id.yml"
+  /api/v2/dbrps:
+    $ref: "./openapi/src/common/paths/dbrps.yml"
+  "/api/v2/dbrps/{dbrpID}":
+    $ref: "./openapi/src/common/paths/dbrps_dbrpID.yml"
+  /api/v2/authorizations:
     $ref: "./openapi/src/common/paths/authorizations.yml"
-  /authorizations/{authID}:
+  /api/v2/authorizations/{authID}:
     $ref: "./openapi/src/common/paths/authorizations_authID.yml"
-  /remotes:
+  /api/v2/remotes:
     $ref: "./openapi/src/oss/paths/remotes.yml"
-  /remotes/{remoteID}:
+  /api/v2/remotes/{remoteID}:
     $ref: "./openapi/src/oss/paths/remotes_remoteID.yml"
-  /replications:
+  /api/v2/replications:
     $ref: "./openapi/src/oss/paths/replications.yml"
-  /replications/{replicationID}:
+  /api/v2/replications/{replicationID}:
     $ref: "./openapi/src/oss/paths/replications_replicationID.yml"
-  /replications/{replicationID}/validate:
+  /api/v2/replications/{replicationID}/validate:
     $ref: "./openapi/src/oss/paths/replications_replicationID_validate.yml"
-  /config:
+  /api/v2/config:
     $ref: "./openapi/src/oss/paths/config.yml"
   /scripts:
     $ref: "./openapi/src/svc/invocable-scripts/paths/scripts.yml"
@@ -235,6 +233,10 @@ components:
       $ref: "./openapi/src/cloud/schemas/MeasurementSchemaUpdateRequest.yml"
     Query:
       $ref: "./overrides/schemas/Query.yml"
+    InfluxqlCsvResponse:
+      $ref: "./openapi/src/legacy/schemas/InfluxqlCsvResponse.yml"
+    InfluxqlJsonResponse:
+      $ref: "./openapi/src/legacy/schemas/InfluxqlJsonResponse.yml"
     Dialect:
       $ref: "./openapi/src/common/schemas/Dialect.yml"
     Extern:

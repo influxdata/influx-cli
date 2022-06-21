@@ -213,7 +213,7 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecuteWithHttpInfo(r A
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements"
+	localVarPath := localBasePath + "/api/v2/buckets/{bucketID}/schema/measurements"
 	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -404,7 +404,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecuteWithHttpInfo(r ApiG
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements/{measurementID}"
+	localVarPath := localBasePath + "/api/v2/buckets/{bucketID}/schema/measurements/{measurementID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"measurementID"+"}", _neturl.PathEscape(parameterToString(r.measurementID, "")), -1)
 
@@ -582,7 +582,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecuteWithHttpInfo(r Api
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements"
+	localVarPath := localBasePath + "/api/v2/buckets/{bucketID}/schema/measurements"
 	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -783,7 +783,7 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecuteWithHttpInfo(r A
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/buckets/{bucketID}/schema/measurements/{measurementID}"
+	localVarPath := localBasePath + "/api/v2/buckets/{bucketID}/schema/measurements/{measurementID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"bucketID"+"}", _neturl.PathEscape(parameterToString(r.bucketID, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"measurementID"+"}", _neturl.PathEscape(parameterToString(r.measurementID, "")), -1)
 

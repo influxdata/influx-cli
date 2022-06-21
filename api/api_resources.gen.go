@@ -114,7 +114,7 @@ func (a *ResourcesApiService) GetResourcesExecuteWithHttpInfo(r ApiGetResourcesR
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/resources"
+	localVarPath := localBasePath + "/api/v2/resources"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

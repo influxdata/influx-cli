@@ -159,7 +159,7 @@ func (a *BackupApiService) GetBackupKVExecuteWithHttpInfo(r ApiGetBackupKVReques
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/backup/kv"
+	localVarPath := localBasePath + "/api/v2/backup/kv"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -303,7 +303,7 @@ func (a *BackupApiService) GetBackupMetadataExecuteWithHttpInfo(r ApiGetBackupMe
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/backup/metadata"
+	localVarPath := localBasePath + "/api/v2/backup/metadata"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -470,7 +470,7 @@ func (a *BackupApiService) GetBackupShardIdExecuteWithHttpInfo(r ApiGetBackupSha
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/backup/shards/{shardID}"
+	localVarPath := localBasePath + "/api/v2/backup/shards/{shardID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"shardID"+"}", _neturl.PathEscape(parameterToString(r.shardID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

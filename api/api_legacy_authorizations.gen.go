@@ -228,7 +228,7 @@ func (a *LegacyAuthorizationsApiService) DeleteLegacyAuthorizationsIDExecuteWith
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations/{authID}"
+	localVarPath := localBasePath + "/private/legacy/authorizations/{authID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -416,7 +416,7 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsExecuteWithHttpI
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations"
+	localVarPath := localBasePath + "/private/legacy/authorizations"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -597,7 +597,7 @@ func (a *LegacyAuthorizationsApiService) GetLegacyAuthorizationsIDExecuteWithHtt
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations/{authID}"
+	localVarPath := localBasePath + "/private/legacy/authorizations/{authID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -770,7 +770,7 @@ func (a *LegacyAuthorizationsApiService) PatchLegacyAuthorizationsIDExecuteWithH
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations/{authID}"
+	localVarPath := localBasePath + "/private/legacy/authorizations/{authID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -937,7 +937,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecuteWithHttp
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations"
+	localVarPath := localBasePath + "/private/legacy/authorizations"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -1122,7 +1122,7 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsIDPasswordExecu
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/legacy/authorizations/{authID}/password"
+	localVarPath := localBasePath + "/private/legacy/authorizations/{authID}/password"
 	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

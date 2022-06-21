@@ -208,7 +208,7 @@ func (a *RemoteConnectionsApiService) DeleteRemoteConnectionByIDExecuteWithHttpI
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/remotes/{remoteID}"
+	localVarPath := localBasePath + "/api/v2/remotes/{remoteID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"remoteID"+"}", _neturl.PathEscape(parameterToString(r.remoteID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -364,7 +364,7 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionByIDExecuteWithHttpInfo
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/remotes/{remoteID}"
+	localVarPath := localBasePath + "/api/v2/remotes/{remoteID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"remoteID"+"}", _neturl.PathEscape(parameterToString(r.remoteID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -555,7 +555,7 @@ func (a *RemoteConnectionsApiService) GetRemoteConnectionsExecuteWithHttpInfo(r 
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/remotes"
+	localVarPath := localBasePath + "/api/v2/remotes"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -748,7 +748,7 @@ func (a *RemoteConnectionsApiService) PatchRemoteConnectionByIDExecuteWithHttpIn
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/remotes/{remoteID}"
+	localVarPath := localBasePath + "/api/v2/remotes/{remoteID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"remoteID"+"}", _neturl.PathEscape(parameterToString(r.remoteID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -928,7 +928,7 @@ func (a *RemoteConnectionsApiService) PostRemoteConnectionExecuteWithHttpInfo(r 
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/remotes"
+	localVarPath := localBasePath + "/api/v2/remotes"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

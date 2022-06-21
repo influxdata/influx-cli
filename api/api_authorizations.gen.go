@@ -208,7 +208,7 @@ func (a *AuthorizationsApiService) DeleteAuthorizationsIDExecuteWithHttpInfo(r A
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/authorizations/{authID}"
+	localVarPath := localBasePath + "/api/v2/authorizations/{authID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -378,7 +378,7 @@ func (a *AuthorizationsApiService) GetAuthorizationsExecuteWithHttpInfo(r ApiGet
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/authorizations"
+	localVarPath := localBasePath + "/api/v2/authorizations"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -553,7 +553,7 @@ func (a *AuthorizationsApiService) GetAuthorizationsIDExecuteWithHttpInfo(r ApiG
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/authorizations/{authID}"
+	localVarPath := localBasePath + "/api/v2/authorizations/{authID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -726,7 +726,7 @@ func (a *AuthorizationsApiService) PatchAuthorizationsIDExecuteWithHttpInfo(r Ap
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/authorizations/{authID}"
+	localVarPath := localBasePath + "/api/v2/authorizations/{authID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -893,7 +893,7 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecuteWithHttpInfo(r ApiPo
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/authorizations"
+	localVarPath := localBasePath + "/api/v2/authorizations"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

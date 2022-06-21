@@ -224,7 +224,7 @@ func (a *DeleteApiService) PostDeleteExecuteWithHttpInfo(r ApiPostDeleteRequest)
 		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/delete"
+	localVarPath := localBasePath + "/api/v2/delete"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

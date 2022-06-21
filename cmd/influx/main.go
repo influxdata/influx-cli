@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
 )
@@ -92,9 +94,34 @@ func newApp() cli.App {
 	}
 }
 
+// This creates a new slice and replaces `-t "-FOO-TOKEN"` with `-t=-FOO-TOKEN`
+// This is necessary to do because the command line arg:
+//  `-t "-FOO-TOKEN"`` will be parsed as two separate flags instead of a flag and token value.
+func ReplaceTokenArg(args []string) []string {
+	if len(args) == 0 {
+		return []string{}
+	}
+	newArgs := make([]string, len(args))
+	copy(newArgs, args)
+	for i, arg := range newArgs[:len(newArgs)-1] {
+		switch arg {
+		case "--token", "-t":
+			if strings.HasPrefix(newArgs[i+1], "-") {
+				color.HiYellow("warning: %[1]s %[2]s interpreted as %[1]s=%[2]s, consider using %[1]s=%[2]s syntax when tokens start with a hyphen",
+					newArgs[i], newArgs[i+1],
+				)
+			}
+			newArgs[i] = strings.Join(newArgs[i:i+2], "=")
+			newArgs = append(newArgs[:i+1], newArgs[i+2:]...)
+		}
+	}
+	return newArgs
+}
+
 func main() {
 	app := newApp()
-	if err := app.Run(os.Args); err != nil {
+	args := ReplaceTokenArg(os.Args)
+	if err := app.Run(args); err != nil {
 		// Errors will normally be handled by cli.HandleExitCoder via ExitErrHandler set on app. Any error not implementing
 		// the cli.ExitCoder interface can be handled here.
 		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
