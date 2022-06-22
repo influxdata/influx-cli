@@ -31,6 +31,7 @@ func cloudOnlyCommands() []cli.Command {
 	// will be returned if these commands are run on an InfluxDB OSS host.
 	cmds := []cli.Command{
 		newBucketSchemaCmd(),
+		newScriptsCmd(),
 	}
 
 	return middleware.AddMWToCmds(cmds, middleware.CloudOnly)

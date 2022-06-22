@@ -80,31 +80,3 @@ func (mr *MockHealthApiMockRecorder) GetHealthExecuteWithHttpInfo(arg0 interface
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHealthExecuteWithHttpInfo", reflect.TypeOf((*MockHealthApi)(nil).GetHealthExecuteWithHttpInfo), arg0)
 }
-
-// OnlyCloud mocks base method.
-func (m *MockHealthApi) OnlyCloud() api.HealthApi {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OnlyCloud")
-	ret0, _ := ret[0].(api.HealthApi)
-	return ret0
-}
-
-// OnlyCloud indicates an expected call of OnlyCloud.
-func (mr *MockHealthApiMockRecorder) OnlyCloud() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyCloud", reflect.TypeOf((*MockHealthApi)(nil).OnlyCloud))
-}
-
-// OnlyOSS mocks base method.
-func (m *MockHealthApi) OnlyOSS() api.HealthApi {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OnlyOSS")
-	ret0, _ := ret[0].(api.HealthApi)
-	return ret0
-}
-
-// OnlyOSS indicates an expected call of OnlyOSS.
-func (mr *MockHealthApiMockRecorder) OnlyOSS() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyOSS", reflect.TypeOf((*MockHealthApi)(nil).OnlyOSS))
-}

@@ -169,34 +169,6 @@ func (mr *MockBucketsApiMockRecorder) GetBucketsIDExecuteWithHttpInfo(arg0 inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBucketsIDExecuteWithHttpInfo", reflect.TypeOf((*MockBucketsApi)(nil).GetBucketsIDExecuteWithHttpInfo), arg0)
 }
 
-// OnlyCloud mocks base method.
-func (m *MockBucketsApi) OnlyCloud() api.BucketsApi {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OnlyCloud")
-	ret0, _ := ret[0].(api.BucketsApi)
-	return ret0
-}
-
-// OnlyCloud indicates an expected call of OnlyCloud.
-func (mr *MockBucketsApiMockRecorder) OnlyCloud() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyCloud", reflect.TypeOf((*MockBucketsApi)(nil).OnlyCloud))
-}
-
-// OnlyOSS mocks base method.
-func (m *MockBucketsApi) OnlyOSS() api.BucketsApi {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OnlyOSS")
-	ret0, _ := ret[0].(api.BucketsApi)
-	return ret0
-}
-
-// OnlyOSS indicates an expected call of OnlyOSS.
-func (mr *MockBucketsApiMockRecorder) OnlyOSS() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyOSS", reflect.TypeOf((*MockBucketsApi)(nil).OnlyOSS))
-}
-
 // PatchBucketsID mocks base method.
 func (m *MockBucketsApi) PatchBucketsID(arg0 context.Context, arg1 string) api.ApiPatchBucketsIDRequest {
 	m.ctrl.T.Helper()

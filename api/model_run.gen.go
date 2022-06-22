@@ -24,6 +24,8 @@ type Run struct {
 	ScheduledFor *time.Time `json:"scheduledFor,omitempty" yaml:"scheduledFor,omitempty"`
 	// An array of logs associated with the run.
 	Log *[]LogEvent `json:"log,omitempty" yaml:"log,omitempty"`
+	// Flux used for the task
+	Flux *string `json:"flux,omitempty" yaml:"flux,omitempty"`
 	// Time run started executing, RFC3339Nano.
 	StartedAt *time.Time `json:"startedAt,omitempty" yaml:"startedAt,omitempty"`
 	// Time run finished executing, RFC3339Nano.
@@ -210,6 +212,38 @@ func (o *Run) SetLog(v []LogEvent) {
 	o.Log = &v
 }
 
+// GetFlux returns the Flux field value if set, zero value otherwise.
+func (o *Run) GetFlux() string {
+	if o == nil || o.Flux == nil {
+		var ret string
+		return ret
+	}
+	return *o.Flux
+}
+
+// GetFluxOk returns a tuple with the Flux field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Run) GetFluxOk() (*string, bool) {
+	if o == nil || o.Flux == nil {
+		return nil, false
+	}
+	return o.Flux, true
+}
+
+// HasFlux returns a boolean if a field has been set.
+func (o *Run) HasFlux() bool {
+	if o != nil && o.Flux != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetFlux gets a reference to the given string and assigns it to the Flux field.
+func (o *Run) SetFlux(v string) {
+	o.Flux = &v
+}
+
 // GetStartedAt returns the StartedAt field value if set, zero value otherwise.
 func (o *Run) GetStartedAt() time.Time {
 	if o == nil || o.StartedAt == nil {
@@ -354,6 +388,9 @@ func (o Run) MarshalJSON() ([]byte, error) {
 	}
 	if o.Log != nil {
 		toSerialize["log"] = o.Log
+	}
+	if o.Flux != nil {
+		toSerialize["flux"] = o.Flux
 	}
 	if o.StartedAt != nil {
 		toSerialize["startedAt"] = o.StartedAt
