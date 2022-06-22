@@ -36,34 +36,6 @@ func (m *MockWriteApi) EXPECT() *MockWriteApiMockRecorder {
 	return m.recorder
 }
 
-// OnlyCloud mocks base method.
-func (m *MockWriteApi) OnlyCloud() api.WriteApi {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OnlyCloud")
-	ret0, _ := ret[0].(api.WriteApi)
-	return ret0
-}
-
-// OnlyCloud indicates an expected call of OnlyCloud.
-func (mr *MockWriteApiMockRecorder) OnlyCloud() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyCloud", reflect.TypeOf((*MockWriteApi)(nil).OnlyCloud))
-}
-
-// OnlyOSS mocks base method.
-func (m *MockWriteApi) OnlyOSS() api.WriteApi {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OnlyOSS")
-	ret0, _ := ret[0].(api.WriteApi)
-	return ret0
-}
-
-// OnlyOSS indicates an expected call of OnlyOSS.
-func (mr *MockWriteApiMockRecorder) OnlyOSS() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnlyOSS", reflect.TypeOf((*MockWriteApi)(nil).OnlyOSS))
-}
-
 // PostWrite mocks base method.
 func (m *MockWriteApi) PostWrite(arg0 context.Context) api.ApiPostWriteRequest {
 	m.ctrl.T.Helper()

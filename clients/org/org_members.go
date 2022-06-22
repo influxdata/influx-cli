@@ -11,6 +11,7 @@ import (
 type AddMemberParams struct {
 	clients.OrgParams
 	MemberId string
+	IsOwner  bool
 }
 
 func (c Client) AddMember(ctx context.Context, params *AddMemberParams) (err error) {
@@ -46,6 +47,10 @@ func (c Client) ListMembers(ctx context.Context, params *ListMemberParams) (err 
 	if err != nil {
 		return fmt.Errorf("failed to find members of org %q: %w", orgID, err)
 	}
+	owners, err := c.GetOrgsIDOwners(ctx, orgID).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to find owners of org %q: %w", orgID, err)
+	}
 
 	type indexedUser struct {
 		user  api.UserResponse
@@ -55,10 +60,8 @@ func (c Client) ListMembers(ctx context.Context, params *ListMemberParams) (err 
 	semChan := make(chan struct{}, maxConcurrentGetUserRequests)
 	errChan := make(chan error)
 
-	var resourceMembers []api.ResourceMember
-	if members.Users != nil {
-		resourceMembers = *members.Users
-	}
+	resourceMembers := members.GetUsers()
+
 	// Fetch user details about all members of the org.
 	for i, member := range resourceMembers {
 		go func(i int, memberId string) {
