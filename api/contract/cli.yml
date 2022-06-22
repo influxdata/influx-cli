@@ -35,6 +35,10 @@ paths:
     $ref: "./openapi/src/common/paths/orgs_orgID_members.yml"
   /api/v2/orgs/{orgID}/members/{userID}:
     $ref: "./openapi/src/common/paths/orgs_orgID_members_userID.yml"
+  /api/v2/orgs/{orgID}/owners:
+    $ref: "./openapi/src/common/paths/orgs_orgID_owners.yml"
+  /api/v2/orgs/{orgID}/owners/{userID}:
+    $ref: "./openapi/src/common/paths/orgs_orgID_owners_userID.yml"
   /api/v2/orgs/{orgID}/secrets:
     $ref: "./openapi/src/common/paths/orgs_orgID_secrets.yml"
   /api/v2/orgs/{orgID}/secrets/{delete}:
