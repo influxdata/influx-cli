@@ -18,7 +18,7 @@ func Test_SimpleCreate(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
-	scriptsApi := mock.NewMockInvocableScriptsApi(ctrl)
+	scriptsApi := mock.NewMockInvokableScriptsApi(ctrl)
 
 	var (
 		scriptId       = "123456789"
@@ -76,7 +76,7 @@ func Test_SimpleList(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
-	scriptsApi := mock.NewMockInvocableScriptsApi(ctrl)
+	scriptsApi := mock.NewMockInvokableScriptsApi(ctrl)
 
 	language := api.SCRIPTLANGUAGE_FLUX
 	scripts := []api.Script{{
@@ -135,7 +135,7 @@ func Test_Update(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
-	scriptsApi := mock.NewMockInvocableScriptsApi(ctrl)
+	scriptsApi := mock.NewMockInvokableScriptsApi(ctrl)
 
 	var (
 		scriptId         = "123456789"
