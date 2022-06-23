@@ -64,6 +64,9 @@ checktidy:
 checkopenapi:
 	./etc/checkopenapi.sh
 
+checkgenerate:
+	./etc/checkgenerate.sh
+
 staticcheck: $(SOURCES)
 	go run honnef.co/go/tools/cmd/staticcheck -go $(GOVERSION) ./...
 
