@@ -17,15 +17,39 @@ const (
 	colPadding int = 2
 )
 
+type EndingStatus uint
+
+const (
+	quitStatus EndingStatus = iota
+	goToPrevTableStatus
+	goToNextTableStatus
+)
+
 type Model struct {
-	rows        []table.Row
-	allCols     []table.Column
-	colNames    []string
-	simpleTable table.Model
-	totalWidth  int
+	name               string
+	tags               map[string]string
+	curResult          int
+	resultMax          int
+	curSeries          int
+	seriesMax          int
+	rows               []table.Row
+	allCols            []table.Column
+	colNames           []string
+	simpleTable        table.Model
+	totalWidth         int
+	endingStatus       EndingStatus
+	tableScreenPadding int
 }
 
-func NewModel(res api.InfluxqlJsonResponseSeries) Model {
+func NewModel(
+	res api.InfluxqlJsonResponseSeries,
+	name string,
+	tags map[string]string,
+	curRes int,
+	resMax int,
+	curSer int,
+	serMax int) Model {
+
 	cols := make([]table.Column, len(*res.Columns)+1)
 	colWidths := make([]int, len(*res.Columns)+1)
 	rows := make([]table.Row, len(*res.Values))
@@ -68,16 +92,27 @@ func NewModel(res api.InfluxqlJsonResponseSeries) Model {
 			WithStyle(lipgloss.NewStyle().Align(lipgloss.Center))
 	}
 	colNames = append([]string{"index"}, colNames...)
+	screenPadding := 10
+	if len(tags) > 0 {
+		screenPadding += 2
+	}
 	m := Model{
-		rows:     rows,
-		allCols:  cols,
-		colNames: colNames,
+		name:               name,
+		tags:               tags,
+		curResult:          curRes,
+		resultMax:          resMax,
+		curSeries:          curSer,
+		seriesMax:          serMax,
+		rows:               rows,
+		allCols:            cols,
+		colNames:           colNames,
+		tableScreenPadding: screenPadding,
 	}
 	keybind := table.DefaultKeyMap()
 	keybind.RowUp.SetEnabled(false)
 	keybind.RowDown.SetEnabled(false)
-	keybind.PageDown.SetKeys("down")
-	keybind.PageUp.SetKeys("up")
+	keybind.PageUp.SetEnabled(false)
+	keybind.PageDown.SetEnabled(false)
 	keybind.ScrollLeft.SetKeys("left")
 	keybind.ScrollRight.SetKeys("right")
 	keybind.Filter.Unbind()
@@ -100,8 +135,20 @@ func NewModel(res api.InfluxqlJsonResponseSeries) Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	if m.simpleTable.MaxPages() > 1 {
-		color.Magenta("Interactive Table View (press q to exit mode):")
+	color.Magenta("Interactive Table View (press q to exit mode):")
+	builder := strings.Builder{}
+	fmt.Printf("Name: %s\n", color.GreenString(m.name))
+	if len(m.tags) > 0 {
+		fmt.Print("Tags: ")
+		for key, val := range m.tags {
+			if key == "" || val == "" {
+				continue
+			}
+			builder.WriteString(fmt.Sprintf("%s=%s, ", color.YellowString(key), color.CyanString(val)))
+		}
+		tagline := builder.String()
+		fmt.Print(tagline[:len(tagline)-2])
+		fmt.Println("")
 	}
 	return nil
 }
@@ -115,27 +162,56 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.simpleTable, cmd = m.simpleTable.Update(msg)
 	cmds = append(cmds, cmd)
 
-	if m.simpleTable.MaxPages() == 1 {
-		m.simpleTable = m.simpleTable.Focused(false)
-		cmds = append(cmds, tea.Quit)
-	}
-
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "ctrl+d", "esc", "q":
 			m.simpleTable = m.simpleTable.Focused(false)
 			fmt.Printf("\n")
+			m.endingStatus = quitStatus
 			cmds = append(cmds, tea.Quit)
+		case "shift+up":
+			if !(m.curResult == 1 && m.curSeries == 1) {
+				m.endingStatus = goToPrevTableStatus
+				cmds = append(cmds, tea.Quit)
+			}
+		case "shift+down":
+			if !(m.curResult == m.resultMax && m.curSeries == m.seriesMax) {
+				m.endingStatus = goToNextTableStatus
+				cmds = append(cmds, tea.Quit)
+			}
+		case "up":
+			if m.simpleTable.CurrentPage() == 1 {
+				if !(m.curResult == 1 && m.curSeries == 1) {
+					m.endingStatus = goToPrevTableStatus
+					cmds = append(cmds, tea.Quit)
+				}
+			} else {
+				m.simpleTable = m.simpleTable.PageUp()
+			}
+		case "down":
+			if m.simpleTable.CurrentPage() == m.simpleTable.MaxPages() {
+				if !(m.curResult == m.resultMax && m.curSeries == m.seriesMax) {
+					m.endingStatus = goToNextTableStatus
+					cmds = append(cmds, tea.Quit)
+				}
+			} else {
+				m.simpleTable = m.simpleTable.PageDown()
+			}
+		case "<":
+			m.simpleTable = m.simpleTable.PageFirst()
+		case ">":
+			m.simpleTable = m.simpleTable.PageLast()
 		}
 	case tea.WindowSizeMsg:
 		m.totalWidth = msg.Width
-		m.simpleTable = m.simpleTable.WithPageSize(msg.Height - 7).
+		m.simpleTable = m.simpleTable.WithPageSize(msg.Height - m.tableScreenPadding).
 			WithMaxTotalWidth(msg.Width)
 	}
 	m.simpleTable = m.simpleTable.WithStaticFooter(
-		fmt.Sprintf("%d Columns, %d Rows, Page %d/%d",
-			len(m.allCols), len(m.rows), m.simpleTable.CurrentPage(), m.simpleTable.MaxPages()))
+		fmt.Sprintf("%d Columns, %d Rows, Page %d/%d\nResult %d/%d, Series %d/%d",
+			len(m.allCols), len(m.rows), m.simpleTable.CurrentPage(), m.simpleTable.MaxPages(),
+			m.curResult, m.resultMax, m.curSeries, m.seriesMax))
 	return m, tea.Batch(cmds...)
 }
 
@@ -143,8 +219,6 @@ func (m Model) View() string {
 	body := strings.Builder{}
 
 	body.WriteString(m.simpleTable.View())
-	if m.simpleTable.MaxPages() == 1 {
-		body.WriteString("\n")
-	}
+	body.WriteString("\n")
 	return body.String()
 }

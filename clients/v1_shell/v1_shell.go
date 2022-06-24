@@ -90,7 +90,7 @@ func (c *Client) rewriteHistoryFile(history []string) {
 func (c *Client) writeCommandToHistory(cmd string) {
 	if c.historyFilePath != "" {
 		if historyFile, err := os.OpenFile(c.historyFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666); err == nil {
-			historyFile.WriteString(cmd + "\n")
+			historyFile.WriteString(strings.TrimSpace(cmd) + "\n")
 			historyFile.Close()
 		}
 	}
@@ -625,17 +625,46 @@ func (c *Client) outputColumns(response api.InfluxqlJsonResponse) {
 }
 
 func (c *Client) outputTable(response api.InfluxqlJsonResponse) {
-	for _, res := range response.GetResults() {
+	allResults := response.GetResults()
+	resIdx := 0
+	seriesIdx := 0
+outer:
+	for resIdx < len(allResults) {
+		res := allResults[resIdx]
 		if res.Error != nil {
 			color.Red("Error: %v", res.GetError())
-			continue
+			resIdx++
 		}
-		for _, series := range res.GetSeries() {
-			p := tea.NewProgram(NewModel(series))
-			if err := p.Start(); err != nil {
+		allSeries := res.GetSeries()
+		for seriesIdx < len(allSeries) {
+			series := allSeries[seriesIdx]
+			p := tea.NewProgram(NewModel(series, series.GetName(), series.GetTags(), resIdx+1, len(allResults), seriesIdx+1, len(allSeries)))
+			model, err := p.StartReturningModel()
+			if err != nil {
 				color.Red("Failed to display table")
+				seriesIdx++
+			} else {
+				if tableModel, ok := model.(Model); ok {
+					switch tableModel.endingStatus {
+					case goToNextTableStatus:
+						seriesIdx++
+					case goToPrevTableStatus:
+						seriesIdx--
+					case quitStatus:
+						break outer
+					}
+				}
 			}
 			fmt.Printf("\n")
+			if seriesIdx >= len(allSeries) {
+				resIdx++
+				seriesIdx = 0
+				break
+			} else if seriesIdx < 0 {
+				resIdx--
+				seriesIdx = len(allResults[resIdx].GetSeries()) - 1
+				break
+			}
 		}
 	}
 }
