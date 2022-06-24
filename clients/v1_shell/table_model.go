@@ -22,6 +22,7 @@ type EndingStatus uint
 const (
 	quitStatus EndingStatus = iota
 	goToPrevTableStatus
+	goToPrevTableJumpFirstPageStatus
 	goToNextTableStatus
 )
 
@@ -43,6 +44,7 @@ type Model struct {
 
 func NewModel(
 	res api.InfluxqlJsonResponseSeries,
+	jumpToFirstPage bool,
 	name string,
 	tags map[string]string,
 	curRes int,
@@ -94,7 +96,7 @@ func NewModel(
 	colNames = append([]string{"index"}, colNames...)
 	screenPadding := 10
 	if len(tags) > 0 {
-		screenPadding += 2
+		screenPadding++
 	}
 	m := Model{
 		name:               name,
@@ -131,6 +133,10 @@ func NewModel(
 		Focused(true).
 		SelectableRows(false).
 		WithKeyMap(keybind)
+
+	if jumpToFirstPage {
+		m.simpleTable = m.simpleTable.PageLast()
+	}
 	return m
 }
 
@@ -172,7 +178,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, tea.Quit)
 		case "shift+up":
 			if !(m.curResult == 1 && m.curSeries == 1) {
-				m.endingStatus = goToPrevTableStatus
+				m.endingStatus = goToPrevTableJumpFirstPageStatus
 				cmds = append(cmds, tea.Quit)
 			}
 		case "shift+down":

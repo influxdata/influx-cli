@@ -628,6 +628,7 @@ func (c *Client) outputTable(response api.InfluxqlJsonResponse) {
 	allResults := response.GetResults()
 	resIdx := 0
 	seriesIdx := 0
+	jumpToLastPage := false
 outer:
 	for resIdx < len(allResults) {
 		res := allResults[resIdx]
@@ -638,8 +639,16 @@ outer:
 		allSeries := res.GetSeries()
 		for seriesIdx < len(allSeries) {
 			series := allSeries[seriesIdx]
-			p := tea.NewProgram(NewModel(series, series.GetName(), series.GetTags(), resIdx+1, len(allResults), seriesIdx+1, len(allSeries)))
+			p := tea.NewProgram(NewModel(series,
+				jumpToLastPage,
+				series.GetName(),
+				series.GetTags(),
+				resIdx+1,
+				len(allResults),
+				seriesIdx+1,
+				len(allSeries)))
 			model, err := p.StartReturningModel()
+			jumpToLastPage = false
 			if err != nil {
 				color.Red("Failed to display table")
 				seriesIdx++
@@ -649,6 +658,9 @@ outer:
 					case goToNextTableStatus:
 						seriesIdx++
 					case goToPrevTableStatus:
+						jumpToLastPage = true
+						seriesIdx--
+					case goToPrevTableJumpFirstPageStatus:
 						seriesIdx--
 					case quitStatus:
 						break outer
