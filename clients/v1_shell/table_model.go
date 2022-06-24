@@ -141,7 +141,7 @@ func NewModel(
 }
 
 func (m Model) Init() tea.Cmd {
-	color.Magenta("Interactive Table View (press q to exit mode, shift+up/down to navigate series):")
+	color.Magenta("Interactive Table View (press q to exit mode, shift+up/down to navigate tables):")
 	builder := strings.Builder{}
 	fmt.Printf("Name: %s\n", color.GreenString(m.name))
 	if len(m.tags) > 0 {
@@ -215,9 +215,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			WithMaxTotalWidth(msg.Width)
 	}
 	m.simpleTable = m.simpleTable.WithStaticFooter(
-		fmt.Sprintf("%d Columns, %d Rows, Page %d/%d\nResult %d/%d, Series %d/%d",
+		fmt.Sprintf("%d Columns, %d Rows, Page %d/%d\nTable %d/%d, Statement %d/%d",
 			len(m.allCols), len(m.rows), m.simpleTable.CurrentPage(), m.simpleTable.MaxPages(),
-			m.curResult, m.resultMax, m.curSeries, m.seriesMax))
+			m.curSeries, m.seriesMax,
+			m.curResult, m.resultMax))
 	return m, tea.Batch(cmds...)
 }
 
