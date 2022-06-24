@@ -148,6 +148,7 @@ func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 				"column",
 				"csv",
 				"json",
+				"table",
 			)},
 		"SELECT":      {subsuggestFn: c.suggestSelect},
 		"INSERT":      {},

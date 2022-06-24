@@ -18,6 +18,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fatih/color"
 	"github.com/influxdata/go-prompt"
 	"github.com/influxdata/influx-cli/v2/api"
@@ -51,7 +52,7 @@ type PersistentQueryParams struct {
 
 func DefaultPersistentQueryParams() PersistentQueryParams {
 	return PersistentQueryParams{
-		Format:       ColumnFormat,
+		Format:       TableFormat,
 		Precision:    "ns",
 		historyLimit: 1000,
 	}
@@ -89,7 +90,7 @@ func (c *Client) rewriteHistoryFile(history []string) {
 func (c *Client) writeCommandToHistory(cmd string) {
 	if c.historyFilePath != "" {
 		if historyFile, err := os.OpenFile(c.historyFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666); err == nil {
-			historyFile.WriteString(cmd + "\n")
+			historyFile.WriteString(strings.TrimSpace(cmd) + "\n")
 			historyFile.Close()
 		}
 	}
@@ -326,6 +327,7 @@ var (
 	CsvFormat    FormatType = "csv"
 	JsonFormat   FormatType = "json"
 	ColumnFormat FormatType = "column"
+	TableFormat  FormatType = "table"
 )
 
 func (c *Client) runAndShowQuery(query string) {
@@ -357,6 +359,7 @@ func (c *Client) runAndShowQuery(query string) {
 		CsvFormat:    c.outputCsv,
 		JsonFormat:   c.outputJson,
 		ColumnFormat: c.outputColumns,
+		TableFormat:  c.outputTable,
 	}
 	displayFunc := displayMap[c.Format]
 	displayFunc(response)
@@ -366,7 +369,7 @@ func (c *Client) help() {
 	fmt.Println(`Usage:
         pretty                toggles pretty print for the json format
         use <db_name>         sets current database
-        format <format>       specifies the format of the server responses: json, csv, column
+        format <format>       specifies the format of the server responses: json, csv, column, table
         precision <format>    specifies the format of the timestamp: rfc3339, h, m, s, ms, u or ns
         history               displays command history
         settings              outputs the current settings for the shell
@@ -387,7 +390,9 @@ func (c *Client) help() {
 		<CTRL+D>      exit 
 		<CTRL+L>      clear screen
 		<UP ARROW>    previous command
-		<DOWN ARROW>  next command`)
+		<DOWN ARROW>  next command
+		<TAB>         next suggestion
+		<SHIFT+TAB>   previous suggestion`)
 }
 
 func (c *Client) settings() {
@@ -424,16 +429,16 @@ func (c *Client) query(ctx context.Context, query string) (string, error) {
 func (c *Client) setFormat(args []string) {
 	// args[0] is "format"
 	if len(args) != 2 {
-		color.Red("Expected a format [csv, json, column]")
+		color.Red("Expected a format [csv, json, column, table]")
 		return
 	}
 	newFormat := FormatType(args[1])
 	switch newFormat {
-	case CsvFormat, JsonFormat, ColumnFormat:
+	case CsvFormat, JsonFormat, ColumnFormat, TableFormat:
 		c.Format = newFormat
 	default:
 		color.HiRed("Unimplemented format %q, keeping %s format.", newFormat, c.Format)
-		color.HiBlack("Choose a format from [csv, json, column]")
+		color.HiBlack("Choose a format from [csv, json, column, table]")
 	}
 }
 
@@ -556,7 +561,7 @@ func (c *Client) outputCsv(response api.InfluxqlJsonResponse) {
 	var previousHeaders api.InfluxqlJsonResponseSeries
 	for _, result := range response.GetResults() {
 		if result.Error != nil {
-			color.Red("Query Error: %v", result.GetError())
+			color.Red("Error: %v", result.GetError())
 			continue
 		}
 		series := result.GetSeries()
@@ -596,7 +601,7 @@ func (c *Client) outputColumns(response api.InfluxqlJsonResponse) {
 	var previousHeaders api.InfluxqlJsonResponseSeries
 	for i, result := range response.GetResults() {
 		if result.Error != nil {
-			color.Red("Query Error: %v", result.GetError())
+			color.Red("Error: %v", result.GetError())
 			continue
 		}
 
@@ -619,6 +624,63 @@ func (c *Client) outputColumns(response api.InfluxqlJsonResponse) {
 		}
 	}
 	writer.Flush()
+}
+
+func (c *Client) outputTable(response api.InfluxqlJsonResponse) {
+	allResults := response.GetResults()
+	resIdx := 0
+	seriesIdx := 0
+	jumpToLastPage := false
+outer:
+	for resIdx < len(allResults) {
+		res := allResults[resIdx]
+		if res.Error != nil {
+			color.Red("Error: %v", res.GetError())
+			resIdx++
+		}
+		allSeries := res.GetSeries()
+		for seriesIdx < len(allSeries) {
+			series := allSeries[seriesIdx]
+			p := tea.NewProgram(NewModel(series,
+				jumpToLastPage,
+				series.GetName(),
+				series.GetTags(),
+				resIdx+1,
+				len(allResults),
+				seriesIdx+1,
+				len(allSeries)))
+			model, err := p.StartReturningModel()
+			jumpToLastPage = false
+			if err != nil {
+				color.Red("Failed to display table")
+				seriesIdx++
+			} else {
+				if tableModel, ok := model.(Model); ok {
+					switch tableModel.endingStatus {
+					case goToNextTableStatus:
+						seriesIdx++
+					case goToPrevTableStatus:
+						jumpToLastPage = true
+						seriesIdx--
+					case goToPrevTableJumpFirstPageStatus:
+						seriesIdx--
+					case quitStatus:
+						break outer
+					}
+				}
+			}
+			fmt.Printf("\n")
+			if seriesIdx >= len(allSeries) {
+				resIdx++
+				seriesIdx = 0
+				break
+			} else if seriesIdx < 0 {
+				resIdx--
+				seriesIdx = len(allResults[resIdx].GetSeries()) - 1
+				break
+			}
+		}
+	}
 }
 
 func (c *Client) togglePretty() {
