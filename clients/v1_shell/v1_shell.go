@@ -381,18 +381,18 @@ func (c *Client) help() {
         show measurements     show measurement information
         show tag keys         show tag key information
         show field keys       show field key information
-		insert <point>        insert point into currently-used database
+        insert <point>        insert point into currently-used database
 
         A full list of influxql commands can be found at:
         https://docs.influxdata.com/influxdb/latest/query_language/spec/
 		
 	Keybindings:
-		<CTRL+D>      exit 
-		<CTRL+L>      clear screen
-		<UP ARROW>    previous command
-		<DOWN ARROW>  next command
-		<TAB>         next suggestion
-		<SHIFT+TAB>   previous suggestion`)
+	  <CTRL+D>      exit 
+	  <CTRL+L>      clear screen
+	  <UP ARROW>    previous command
+	  <DOWN ARROW>  next command
+	  <TAB>         next suggestion
+	  <SHIFT+TAB>   previous suggestion`)
 }
 
 func (c *Client) settings() {
