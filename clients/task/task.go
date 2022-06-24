@@ -19,7 +19,12 @@ type Client struct {
 
 type CreateParams struct {
 	clients.OrgParams
-	FluxQuery string
+	FluxQuery    string
+	Name         string
+	Every        string
+	Cron         string
+	ScriptID     string
+	ScriptParams string
 }
 
 type NameOrID struct {
@@ -73,9 +78,14 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		return err
 	}
 	createRequest := api.TaskCreateRequest{
-		Flux:  params.FluxQuery,
-		OrgID: org.IDOrNil(),
-		Org:   org.NameOrNil(),
+		OrgID:            org.IDOrNil(),
+		Org:              org.NameOrNil(),
+		Name:             &params.Name,
+		Every:            &params.Every,
+		Cron:             &params.Cron,
+		Flux:             &params.FluxQuery,
+		ScriptID:         &params.ScriptID,
+		ScriptParameters: &params.ScriptParams,
 	}
 	task, err := c.PostTasks(ctx).TaskCreateRequest(createRequest).Execute()
 	if err != nil {

@@ -48,7 +48,11 @@ type Task struct {
 	LastRunError    *string    `json:"lastRunError,omitempty" yaml:"lastRunError,omitempty"`
 	CreatedAt       *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
 	UpdatedAt       *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
-	Links           *TaskLinks `json:"links,omitempty" yaml:"links,omitempty"`
+	// Script ID that is executed when the task runs instead of some given Flux.
+	ScriptID *string `json:"scriptID,omitempty" yaml:"scriptID,omitempty"`
+	// If the task executes a script instead of custom Flux, these are the parameter inputs fed to the script.
+	ScriptParameters *string    `json:"scriptParameters,omitempty" yaml:"scriptParameters,omitempty"`
+	Links            *TaskLinks `json:"links,omitempty" yaml:"links,omitempty"`
 }
 
 // NewTask instantiates a new Task object
@@ -648,6 +652,70 @@ func (o *Task) SetUpdatedAt(v time.Time) {
 	o.UpdatedAt = &v
 }
 
+// GetScriptID returns the ScriptID field value if set, zero value otherwise.
+func (o *Task) GetScriptID() string {
+	if o == nil || o.ScriptID == nil {
+		var ret string
+		return ret
+	}
+	return *o.ScriptID
+}
+
+// GetScriptIDOk returns a tuple with the ScriptID field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Task) GetScriptIDOk() (*string, bool) {
+	if o == nil || o.ScriptID == nil {
+		return nil, false
+	}
+	return o.ScriptID, true
+}
+
+// HasScriptID returns a boolean if a field has been set.
+func (o *Task) HasScriptID() bool {
+	if o != nil && o.ScriptID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetScriptID gets a reference to the given string and assigns it to the ScriptID field.
+func (o *Task) SetScriptID(v string) {
+	o.ScriptID = &v
+}
+
+// GetScriptParameters returns the ScriptParameters field value if set, zero value otherwise.
+func (o *Task) GetScriptParameters() string {
+	if o == nil || o.ScriptParameters == nil {
+		var ret string
+		return ret
+	}
+	return *o.ScriptParameters
+}
+
+// GetScriptParametersOk returns a tuple with the ScriptParameters field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Task) GetScriptParametersOk() (*string, bool) {
+	if o == nil || o.ScriptParameters == nil {
+		return nil, false
+	}
+	return o.ScriptParameters, true
+}
+
+// HasScriptParameters returns a boolean if a field has been set.
+func (o *Task) HasScriptParameters() bool {
+	if o != nil && o.ScriptParameters != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetScriptParameters gets a reference to the given string and assigns it to the ScriptParameters field.
+func (o *Task) SetScriptParameters(v string) {
+	o.ScriptParameters = &v
+}
+
 // GetLinks returns the Links field value if set, zero value otherwise.
 func (o *Task) GetLinks() TaskLinks {
 	if o == nil || o.Links == nil {
@@ -738,6 +806,12 @@ func (o Task) MarshalJSON() ([]byte, error) {
 	}
 	if o.UpdatedAt != nil {
 		toSerialize["updatedAt"] = o.UpdatedAt
+	}
+	if o.ScriptID != nil {
+		toSerialize["scriptID"] = o.ScriptID
+	}
+	if o.ScriptParameters != nil {
+		toSerialize["scriptParameters"] = o.ScriptParameters
 	}
 	if o.Links != nil {
 		toSerialize["links"] = o.Links

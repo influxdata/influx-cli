@@ -22,18 +22,27 @@ type TaskCreateRequest struct {
 	Org    *string         `json:"org,omitempty" yaml:"org,omitempty"`
 	Status *TaskStatusType `json:"status,omitempty" yaml:"status,omitempty"`
 	// The Flux script to run for this task.
-	Flux string `json:"flux" yaml:"flux"`
+	Flux *string `json:"flux,omitempty" yaml:"flux,omitempty"`
 	// An optional description of the task.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
+	// The name of the task.
+	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
+	// An interval at which the task runs.
+	Every *string `json:"every,omitempty" yaml:"every,omitempty"`
+	// Cron expression that defines the schedule on which the task runs.
+	Cron *string `json:"cron,omitempty" yaml:"cron,omitempty"`
+	// The optional script to execute instead of Flux.
+	ScriptID *string `json:"scriptID,omitempty" yaml:"scriptID,omitempty"`
+	// If a script is provided instead of Flux, these are the parameters to execute the script with.
+	ScriptParameters *string `json:"scriptParameters,omitempty" yaml:"scriptParameters,omitempty"`
 }
 
 // NewTaskCreateRequest instantiates a new TaskCreateRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTaskCreateRequest(flux string) *TaskCreateRequest {
+func NewTaskCreateRequest() *TaskCreateRequest {
 	this := TaskCreateRequest{}
-	this.Flux = flux
 	return &this
 }
 
@@ -141,28 +150,36 @@ func (o *TaskCreateRequest) SetStatus(v TaskStatusType) {
 	o.Status = &v
 }
 
-// GetFlux returns the Flux field value
+// GetFlux returns the Flux field value if set, zero value otherwise.
 func (o *TaskCreateRequest) GetFlux() string {
-	if o == nil {
+	if o == nil || o.Flux == nil {
 		var ret string
 		return ret
 	}
-
-	return o.Flux
+	return *o.Flux
 }
 
-// GetFluxOk returns a tuple with the Flux field value
+// GetFluxOk returns a tuple with the Flux field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TaskCreateRequest) GetFluxOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Flux == nil {
 		return nil, false
 	}
-	return &o.Flux, true
+	return o.Flux, true
 }
 
-// SetFlux sets field value
+// HasFlux returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasFlux() bool {
+	if o != nil && o.Flux != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetFlux gets a reference to the given string and assigns it to the Flux field.
 func (o *TaskCreateRequest) SetFlux(v string) {
-	o.Flux = v
+	o.Flux = &v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -197,6 +214,166 @@ func (o *TaskCreateRequest) SetDescription(v string) {
 	o.Description = &v
 }
 
+// GetName returns the Name field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetName() string {
+	if o == nil || o.Name == nil {
+		var ret string
+		return ret
+	}
+	return *o.Name
+}
+
+// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetNameOk() (*string, bool) {
+	if o == nil || o.Name == nil {
+		return nil, false
+	}
+	return o.Name, true
+}
+
+// HasName returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasName() bool {
+	if o != nil && o.Name != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetName gets a reference to the given string and assigns it to the Name field.
+func (o *TaskCreateRequest) SetName(v string) {
+	o.Name = &v
+}
+
+// GetEvery returns the Every field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetEvery() string {
+	if o == nil || o.Every == nil {
+		var ret string
+		return ret
+	}
+	return *o.Every
+}
+
+// GetEveryOk returns a tuple with the Every field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetEveryOk() (*string, bool) {
+	if o == nil || o.Every == nil {
+		return nil, false
+	}
+	return o.Every, true
+}
+
+// HasEvery returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasEvery() bool {
+	if o != nil && o.Every != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetEvery gets a reference to the given string and assigns it to the Every field.
+func (o *TaskCreateRequest) SetEvery(v string) {
+	o.Every = &v
+}
+
+// GetCron returns the Cron field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetCron() string {
+	if o == nil || o.Cron == nil {
+		var ret string
+		return ret
+	}
+	return *o.Cron
+}
+
+// GetCronOk returns a tuple with the Cron field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetCronOk() (*string, bool) {
+	if o == nil || o.Cron == nil {
+		return nil, false
+	}
+	return o.Cron, true
+}
+
+// HasCron returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasCron() bool {
+	if o != nil && o.Cron != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetCron gets a reference to the given string and assigns it to the Cron field.
+func (o *TaskCreateRequest) SetCron(v string) {
+	o.Cron = &v
+}
+
+// GetScriptID returns the ScriptID field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetScriptID() string {
+	if o == nil || o.ScriptID == nil {
+		var ret string
+		return ret
+	}
+	return *o.ScriptID
+}
+
+// GetScriptIDOk returns a tuple with the ScriptID field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetScriptIDOk() (*string, bool) {
+	if o == nil || o.ScriptID == nil {
+		return nil, false
+	}
+	return o.ScriptID, true
+}
+
+// HasScriptID returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasScriptID() bool {
+	if o != nil && o.ScriptID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetScriptID gets a reference to the given string and assigns it to the ScriptID field.
+func (o *TaskCreateRequest) SetScriptID(v string) {
+	o.ScriptID = &v
+}
+
+// GetScriptParameters returns the ScriptParameters field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetScriptParameters() string {
+	if o == nil || o.ScriptParameters == nil {
+		var ret string
+		return ret
+	}
+	return *o.ScriptParameters
+}
+
+// GetScriptParametersOk returns a tuple with the ScriptParameters field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetScriptParametersOk() (*string, bool) {
+	if o == nil || o.ScriptParameters == nil {
+		return nil, false
+	}
+	return o.ScriptParameters, true
+}
+
+// HasScriptParameters returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasScriptParameters() bool {
+	if o != nil && o.ScriptParameters != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetScriptParameters gets a reference to the given string and assigns it to the ScriptParameters field.
+func (o *TaskCreateRequest) SetScriptParameters(v string) {
+	o.ScriptParameters = &v
+}
+
 func (o TaskCreateRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.OrgID != nil {
@@ -208,11 +385,26 @@ func (o TaskCreateRequest) MarshalJSON() ([]byte, error) {
 	if o.Status != nil {
 		toSerialize["status"] = o.Status
 	}
-	if true {
+	if o.Flux != nil {
 		toSerialize["flux"] = o.Flux
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
+	}
+	if o.Name != nil {
+		toSerialize["name"] = o.Name
+	}
+	if o.Every != nil {
+		toSerialize["every"] = o.Every
+	}
+	if o.Cron != nil {
+		toSerialize["cron"] = o.Cron
+	}
+	if o.ScriptID != nil {
+		toSerialize["scriptID"] = o.ScriptID
+	}
+	if o.ScriptParameters != nil {
+		toSerialize["scriptParameters"] = o.ScriptParameters
 	}
 	return json.Marshal(toSerialize)
 }
