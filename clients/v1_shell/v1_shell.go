@@ -390,7 +390,9 @@ func (c *Client) help() {
 		<CTRL+D>      exit 
 		<CTRL+L>      clear screen
 		<UP ARROW>    previous command
-		<DOWN ARROW>  next command`)
+		<DOWN ARROW>  next command
+		<TAB>         next suggestion
+		<SHIFT+TAB>   previous suggestion`)
 }
 
 func (c *Client) settings() {

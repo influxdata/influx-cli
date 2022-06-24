@@ -141,7 +141,7 @@ func NewModel(
 }
 
 func (m Model) Init() tea.Cmd {
-	color.Magenta("Interactive Table View (press q to exit mode):")
+	color.Magenta("Interactive Table View (press q to exit mode, shift+up/down to navigate series):")
 	builder := strings.Builder{}
 	fmt.Printf("Name: %s\n", color.GreenString(m.name))
 	if len(m.tags) > 0 {
