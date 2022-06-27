@@ -159,13 +159,12 @@ func TestClient_ListMembers(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name                     string
-		params                   org.ListMemberParams
-		defaultOrgName           string
-		registerOrgExpectations  func(*testing.T, *mock.MockOrganizationsApi)
-		registerUserExpectations func(*testing.T, *mock.MockUsersApi)
-		expectedOut              []string
-		expectedErr              string
+		name                    string
+		params                  org.ListMemberParams
+		defaultOrgName          string
+		registerOrgExpectations func(*testing.T, *mock.MockOrganizationsApi)
+		expectedOut             []string
+		expectedErr             string
 	}{
 		{
 			name:           "no members",
@@ -181,6 +180,10 @@ func TestClient_ListMembers(t *testing.T) {
 				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1)
 				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).Return(req)
 				orgApi.EXPECT().GetOrgsIDMembersExecute(gomock.Eq(req)).Return(api.ResourceMembers{}, nil)
+
+				ownerReq := api.ApiGetOrgsIDOwnersRequest{ApiService: orgApi}.OrgID(id1)
+				orgApi.EXPECT().GetOrgsIDOwners(gomock.Any(), gomock.Eq(id1)).Return(ownerReq)
+				orgApi.EXPECT().GetOrgsIDOwnersExecute(gomock.Eq(ownerReq)).Return(api.ResourceOwners{}, nil)
 			},
 		},
 		{
@@ -200,21 +203,51 @@ func TestClient_ListMembers(t *testing.T) {
 				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1)
 				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).Return(req)
 				orgApi.EXPECT().GetOrgsIDMembersExecute(gomock.Eq(req)).
-					Return(api.ResourceMembers{Users: &[]api.ResourceMember{{Id: api.PtrString(id2)}}}, nil)
-			},
-			registerUserExpectations: func(t *testing.T, userApi *mock.MockUsersApi) {
-				req := api.ApiGetUsersIDRequest{ApiService: userApi}.UserID(id2)
-				userApi.EXPECT().GetUsersID(gomock.Any(), gomock.Eq(id2)).Return(req)
-				userApi.EXPECT().GetUsersIDExecute(gomock.Eq(req)).Return(api.UserResponse{
-					Id:     api.PtrString(id2),
-					Name:   "user1",
-					Status: api.PtrString("active"),
-				}, nil)
+					Return(api.ResourceMembers{Users: &[]api.ResourceMember{{
+						Id:     api.PtrString(id2),
+						Name:   "user1",
+						Role:   api.PtrString("member"),
+						Status: api.PtrString("active"),
+					}}}, nil)
+
+				ownerReq := api.ApiGetOrgsIDOwnersRequest{ApiService: orgApi}.OrgID(id1)
+				orgApi.EXPECT().GetOrgsIDOwners(gomock.Any(), gomock.Eq(id1)).Return(ownerReq)
+				orgApi.EXPECT().GetOrgsIDOwnersExecute(gomock.Eq(ownerReq)).Return(api.ResourceOwners{}, nil)
 			},
 			expectedOut: []string{`2222222222222222\s+user1\s+member\s+active`},
 		},
 		{
-			name: "many members",
+			name: "one owner",
+			params: org.ListMemberParams{
+				OrgParams: clients.OrgParams{OrgName: "org"},
+			},
+			defaultOrgName: "my-org",
+			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
+				orgApi.EXPECT().GetOrgs(gomock.Any()).Return(api.ApiGetOrgsRequest{ApiService: orgApi})
+				orgApi.EXPECT().GetOrgsExecute(tmock.MatchedBy(func(in api.ApiGetOrgsRequest) bool {
+					return assert.Equal(t, "org", *in.GetOrg())
+				})).Return(api.Organizations{
+					Orgs: &[]api.Organization{{Id: api.PtrString(id1)}},
+				}, nil)
+
+				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1)
+				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).Return(req)
+				orgApi.EXPECT().GetOrgsIDMembersExecute(gomock.Eq(req)).
+					Return(api.ResourceMembers{}, nil)
+
+				ownerReq := api.ApiGetOrgsIDOwnersRequest{ApiService: orgApi}.OrgID(id1)
+				orgApi.EXPECT().GetOrgsIDOwners(gomock.Any(), gomock.Eq(id1)).Return(ownerReq)
+				orgApi.EXPECT().GetOrgsIDOwnersExecute(gomock.Eq(ownerReq)).Return(api.ResourceOwners{Users: &[]api.ResourceOwner{{
+					Id:     api.PtrString(id2),
+					Name:   "user1",
+					Role:   api.PtrString("owner"),
+					Status: api.PtrString("active"),
+				}}}, nil)
+			},
+			expectedOut: []string{`2222222222222222\s+user1\s+owner\s+active`},
+		},
+		{
+			name: "many users/members",
 			params: org.ListMemberParams{
 				OrgParams: clients.OrgParams{OrgID: id1},
 			},
@@ -224,27 +257,44 @@ func TestClient_ListMembers(t *testing.T) {
 				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).Return(req)
 				members := make([]api.ResourceMember, 11)
 				for i := 0; i < 11; i++ {
-					members[i] = api.ResourceMember{Id: api.PtrString(fmt.Sprintf("%016d", i))}
-				}
-				orgApi.EXPECT().GetOrgsIDMembersExecute(gomock.Eq(req)).Return(api.ResourceMembers{Users: &members}, nil)
-			},
-			registerUserExpectations: func(t *testing.T, userApi *mock.MockUsersApi) {
-				for i := 0; i < 11; i++ {
-					id := fmt.Sprintf("%016d", i)
 					status := "active"
 					if i%2 == 0 {
 						status = "inactive"
 					}
-					req := api.ApiGetUsersIDRequest{ApiService: userApi}.UserID(id)
-					userApi.EXPECT().GetUsersID(gomock.Any(), gomock.Eq(id)).Return(req)
-					userApi.EXPECT().GetUsersIDExecute(gomock.Eq(req)).Return(api.UserResponse{
-						Id:     &id,
+					members[i] = api.ResourceMember{
+						Id:     api.PtrString(fmt.Sprintf("%016d", i)),
 						Name:   fmt.Sprintf("user%d", i),
 						Status: &status,
-					}, nil)
+						Role:   api.PtrString("member"),
+					}
 				}
+				orgApi.EXPECT().GetOrgsIDMembersExecute(gomock.Eq(req)).Return(api.ResourceMembers{Users: &members}, nil)
+
+				owners := make([]api.ResourceOwner, 5)
+				offset := 11
+				for i := offset; i < 5+offset; i++ {
+					status := "active"
+					if i%2 == 0 {
+						status = "inactive"
+					}
+					owners[i-offset] = api.ResourceOwner{
+						Id:     api.PtrString(fmt.Sprintf("%016d", i)),
+						Name:   fmt.Sprintf("user%d", i),
+						Status: &status,
+						Role:   api.PtrString("owner"),
+					}
+				}
+				ownerReq := api.ApiGetOrgsIDOwnersRequest{ApiService: orgApi}.OrgID(id1)
+				orgApi.EXPECT().GetOrgsIDOwners(gomock.Any(), gomock.Eq(id1)).Return(ownerReq)
+				orgApi.EXPECT().GetOrgsIDOwnersExecute(gomock.Eq(ownerReq)).Return(api.ResourceOwners{Users: &owners}, nil)
 			},
 			expectedOut: []string{
+				`0000000000000011\s+user11\s+owner\s+active`,
+				`0000000000000012\s+user12\s+owner\s+inactive`,
+				`0000000000000013\s+user13\s+owner\s+active`,
+				`0000000000000014\s+user14\s+owner\s+inactive`,
+				`0000000000000015\s+user15\s+owner\s+active`,
+
 				`0000000000000000\s+user0\s+member\s+inactive`,
 				`0000000000000001\s+user1\s+member\s+active`,
 				`0000000000000002\s+user2\s+member\s+inactive`,
@@ -270,24 +320,6 @@ func TestClient_ListMembers(t *testing.T) {
 			expectedErr: "not found",
 		},
 		{
-			name: "no such user",
-			params: org.ListMemberParams{
-				OrgParams: clients.OrgParams{OrgID: id1},
-			},
-			registerOrgExpectations: func(t *testing.T, orgApi *mock.MockOrganizationsApi) {
-				req := api.ApiGetOrgsIDMembersRequest{ApiService: orgApi}.OrgID(id1)
-				orgApi.EXPECT().GetOrgsIDMembers(gomock.Any(), gomock.Eq(id1)).Return(req)
-				orgApi.EXPECT().GetOrgsIDMembersExecute(gomock.Eq(req)).
-					Return(api.ResourceMembers{Users: &[]api.ResourceMember{{Id: api.PtrString(id2)}}}, nil)
-			},
-			registerUserExpectations: func(t *testing.T, userApi *mock.MockUsersApi) {
-				req := api.ApiGetUsersIDRequest{ApiService: userApi}.UserID(id2)
-				userApi.EXPECT().GetUsersID(gomock.Any(), gomock.Eq(id2)).Return(req)
-				userApi.EXPECT().GetUsersIDExecute(gomock.Eq(req)).Return(api.UserResponse{}, errors.New("not found"))
-			},
-			expectedErr: "user \"2222222222222222\": not found",
-		},
-		{
 			name:        "missing org",
 			expectedErr: clients.ErrMustSpecifyOrg.Error(),
 		},
@@ -303,9 +335,6 @@ func TestClient_ListMembers(t *testing.T) {
 			userApi := mock.NewMockUsersApi(ctrl)
 			if tc.registerOrgExpectations != nil {
 				tc.registerOrgExpectations(t, orgApi)
-			}
-			if tc.registerUserExpectations != nil {
-				tc.registerUserExpectations(t, userApi)
 			}
 
 			stdout := bytes.Buffer{}
