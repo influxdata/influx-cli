@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-declare -r GO_VERSION=1.18.1
+declare -r GO_VERSION=1.18.3
 
 # Hashes are from the table at https://golang.org/dl/
 function go_hash () {
   case $1 in
     linux_amd64)
-      echo b3b815f47ababac13810fc6021eb73d65478e0b2db4b09d348eefad9581a2334
+      echo 956f8507b302ab0bb747613695cdae10af99bbd39a90cae522b7c0302cc27245
       ;;
     linux_arm64)
-      echo 56a91851c97fb4697077abbca38860f735c32b38993ff79b088dac46e4735633
+      echo beacbe1441bee4d7978b900136d1d6a71d150f0a9bb77e9d50c822065623a35a
       ;;
     mac)
-      echo 63e5035312a9906c98032d9c73d036b6ce54f8632b194228bd08fe3b9fe4ab01
+      echo a23a24c5528671d444328a36a98056902f699a5a211b6ad5db29ca0c012e0085
       ;;
     windows)
-      echo c30bc3f1f7314a953fe208bd9cd5e24bd9403392a6c556ced3677f9f70f71fe1
+      echo 9c46023f3ad0300fcfd1e62f2b6c2dfd9667b1f2f5c7a720b14b792af831f071
       ;;
   esac
 }

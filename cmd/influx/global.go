@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/url"
 	"runtime"
+	"strings"
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
@@ -96,7 +97,7 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 
 	if ctx.IsSet(extraHttpHeaderFlagName) {
 		for _, h := range ctx.StringSlice(extraHttpHeaderFlagName) {
-			k, v, ok := stringsCut(h, ":")
+			k, v, ok := strings.Cut(h, ":")
 			if !ok {
 				return nil, fmt.Errorf(`header flag syntax "key:value", missing value in %q`, h)
 			}
