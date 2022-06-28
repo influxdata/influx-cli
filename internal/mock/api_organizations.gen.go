@@ -122,6 +122,49 @@ func (mr *MockOrganizationsApiMockRecorder) DeleteOrgsIDMembersIDExecuteWithHttp
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDMembersIDExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).DeleteOrgsIDMembersIDExecuteWithHttpInfo), arg0)
 }
 
+// DeleteOrgsIDOwnersID mocks base method.
+func (m *MockOrganizationsApi) DeleteOrgsIDOwnersID(arg0 context.Context, arg1, arg2 string) api.ApiDeleteOrgsIDOwnersIDRequest {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOrgsIDOwnersID", arg0, arg1, arg2)
+	ret0, _ := ret[0].(api.ApiDeleteOrgsIDOwnersIDRequest)
+	return ret0
+}
+
+// DeleteOrgsIDOwnersID indicates an expected call of DeleteOrgsIDOwnersID.
+func (mr *MockOrganizationsApiMockRecorder) DeleteOrgsIDOwnersID(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDOwnersID", reflect.TypeOf((*MockOrganizationsApi)(nil).DeleteOrgsIDOwnersID), arg0, arg1, arg2)
+}
+
+// DeleteOrgsIDOwnersIDExecute mocks base method.
+func (m *MockOrganizationsApi) DeleteOrgsIDOwnersIDExecute(arg0 api.ApiDeleteOrgsIDOwnersIDRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOrgsIDOwnersIDExecute", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteOrgsIDOwnersIDExecute indicates an expected call of DeleteOrgsIDOwnersIDExecute.
+func (mr *MockOrganizationsApiMockRecorder) DeleteOrgsIDOwnersIDExecute(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDOwnersIDExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).DeleteOrgsIDOwnersIDExecute), arg0)
+}
+
+// DeleteOrgsIDOwnersIDExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) DeleteOrgsIDOwnersIDExecuteWithHttpInfo(arg0 api.ApiDeleteOrgsIDOwnersIDRequest) (*http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOrgsIDOwnersIDExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteOrgsIDOwnersIDExecuteWithHttpInfo indicates an expected call of DeleteOrgsIDOwnersIDExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) DeleteOrgsIDOwnersIDExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDOwnersIDExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).DeleteOrgsIDOwnersIDExecuteWithHttpInfo), arg0)
+}
+
 // GetOrgs mocks base method.
 func (m *MockOrganizationsApi) GetOrgs(arg0 context.Context) api.ApiGetOrgsRequest {
 	m.ctrl.T.Helper()
@@ -257,6 +300,51 @@ func (mr *MockOrganizationsApiMockRecorder) GetOrgsIDMembersExecuteWithHttpInfo(
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDMembersExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).GetOrgsIDMembersExecuteWithHttpInfo), arg0)
 }
 
+// GetOrgsIDOwners mocks base method.
+func (m *MockOrganizationsApi) GetOrgsIDOwners(arg0 context.Context, arg1 string) api.ApiGetOrgsIDOwnersRequest {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrgsIDOwners", arg0, arg1)
+	ret0, _ := ret[0].(api.ApiGetOrgsIDOwnersRequest)
+	return ret0
+}
+
+// GetOrgsIDOwners indicates an expected call of GetOrgsIDOwners.
+func (mr *MockOrganizationsApiMockRecorder) GetOrgsIDOwners(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDOwners", reflect.TypeOf((*MockOrganizationsApi)(nil).GetOrgsIDOwners), arg0, arg1)
+}
+
+// GetOrgsIDOwnersExecute mocks base method.
+func (m *MockOrganizationsApi) GetOrgsIDOwnersExecute(arg0 api.ApiGetOrgsIDOwnersRequest) (api.ResourceOwners, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrgsIDOwnersExecute", arg0)
+	ret0, _ := ret[0].(api.ResourceOwners)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOrgsIDOwnersExecute indicates an expected call of GetOrgsIDOwnersExecute.
+func (mr *MockOrganizationsApiMockRecorder) GetOrgsIDOwnersExecute(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDOwnersExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).GetOrgsIDOwnersExecute), arg0)
+}
+
+// GetOrgsIDOwnersExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) GetOrgsIDOwnersExecuteWithHttpInfo(arg0 api.ApiGetOrgsIDOwnersRequest) (api.ResourceOwners, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrgsIDOwnersExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.ResourceOwners)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetOrgsIDOwnersExecuteWithHttpInfo indicates an expected call of GetOrgsIDOwnersExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) GetOrgsIDOwnersExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgsIDOwnersExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).GetOrgsIDOwnersExecuteWithHttpInfo), arg0)
+}
+
 // PatchOrgsID mocks base method.
 func (m *MockOrganizationsApi) PatchOrgsID(arg0 context.Context, arg1 string) api.ApiPatchOrgsIDRequest {
 	m.ctrl.T.Helper()
@@ -390,4 +478,49 @@ func (m *MockOrganizationsApi) PostOrgsIDMembersExecuteWithHttpInfo(arg0 api.Api
 func (mr *MockOrganizationsApiMockRecorder) PostOrgsIDMembersExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostOrgsIDMembersExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).PostOrgsIDMembersExecuteWithHttpInfo), arg0)
+}
+
+// PostOrgsIDOwners mocks base method.
+func (m *MockOrganizationsApi) PostOrgsIDOwners(arg0 context.Context, arg1 string) api.ApiPostOrgsIDOwnersRequest {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostOrgsIDOwners", arg0, arg1)
+	ret0, _ := ret[0].(api.ApiPostOrgsIDOwnersRequest)
+	return ret0
+}
+
+// PostOrgsIDOwners indicates an expected call of PostOrgsIDOwners.
+func (mr *MockOrganizationsApiMockRecorder) PostOrgsIDOwners(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostOrgsIDOwners", reflect.TypeOf((*MockOrganizationsApi)(nil).PostOrgsIDOwners), arg0, arg1)
+}
+
+// PostOrgsIDOwnersExecute mocks base method.
+func (m *MockOrganizationsApi) PostOrgsIDOwnersExecute(arg0 api.ApiPostOrgsIDOwnersRequest) (api.ResourceOwner, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostOrgsIDOwnersExecute", arg0)
+	ret0, _ := ret[0].(api.ResourceOwner)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PostOrgsIDOwnersExecute indicates an expected call of PostOrgsIDOwnersExecute.
+func (mr *MockOrganizationsApiMockRecorder) PostOrgsIDOwnersExecute(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostOrgsIDOwnersExecute", reflect.TypeOf((*MockOrganizationsApi)(nil).PostOrgsIDOwnersExecute), arg0)
+}
+
+// PostOrgsIDOwnersExecuteWithHttpInfo mocks base method.
+func (m *MockOrganizationsApi) PostOrgsIDOwnersExecuteWithHttpInfo(arg0 api.ApiPostOrgsIDOwnersRequest) (api.ResourceOwner, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostOrgsIDOwnersExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(api.ResourceOwner)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// PostOrgsIDOwnersExecuteWithHttpInfo indicates an expected call of PostOrgsIDOwnersExecuteWithHttpInfo.
+func (mr *MockOrganizationsApiMockRecorder) PostOrgsIDOwnersExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostOrgsIDOwnersExecuteWithHttpInfo", reflect.TypeOf((*MockOrganizationsApi)(nil).PostOrgsIDOwnersExecuteWithHttpInfo), arg0)
 }

@@ -68,6 +68,27 @@ type OrganizationsApi interface {
 	DeleteOrgsIDMembersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDMembersIDRequest) (*_nethttp.Response, error)
 
 	/*
+	 * DeleteOrgsIDOwnersID Remove an owner from an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param userID The ID of the owner to remove.
+	 * @param orgID The organization ID.
+	 * @return ApiDeleteOrgsIDOwnersIDRequest
+	 */
+	DeleteOrgsIDOwnersID(ctx _context.Context, userID string, orgID string) ApiDeleteOrgsIDOwnersIDRequest
+
+	/*
+	 * DeleteOrgsIDOwnersIDExecute executes the request
+	 */
+	DeleteOrgsIDOwnersIDExecute(r ApiDeleteOrgsIDOwnersIDRequest) error
+
+	/*
+	 * DeleteOrgsIDOwnersIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	DeleteOrgsIDOwnersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDOwnersIDRequest) (*_nethttp.Response, error)
+
+	/*
 	 * GetOrgs List all organizations
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ApiGetOrgsRequest
@@ -133,6 +154,28 @@ type OrganizationsApi interface {
 	GetOrgsIDMembersExecuteWithHttpInfo(r ApiGetOrgsIDMembersRequest) (ResourceMembers, *_nethttp.Response, error)
 
 	/*
+	 * GetOrgsIDOwners List all owners of an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param orgID The organization ID.
+	 * @return ApiGetOrgsIDOwnersRequest
+	 */
+	GetOrgsIDOwners(ctx _context.Context, orgID string) ApiGetOrgsIDOwnersRequest
+
+	/*
+	 * GetOrgsIDOwnersExecute executes the request
+	 * @return ResourceOwners
+	 */
+	GetOrgsIDOwnersExecute(r ApiGetOrgsIDOwnersRequest) (ResourceOwners, error)
+
+	/*
+	 * GetOrgsIDOwnersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return ResourceOwners
+	 */
+	GetOrgsIDOwnersExecuteWithHttpInfo(r ApiGetOrgsIDOwnersRequest) (ResourceOwners, *_nethttp.Response, error)
+
+	/*
 	 * PatchOrgsID Update an organization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param orgID The ID of the organization to get.
@@ -196,6 +239,28 @@ type OrganizationsApi interface {
 	 * @return ResourceMember
 	 */
 	PostOrgsIDMembersExecuteWithHttpInfo(r ApiPostOrgsIDMembersRequest) (ResourceMember, *_nethttp.Response, error)
+
+	/*
+	 * PostOrgsIDOwners Add an owner to an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param orgID The organization ID.
+	 * @return ApiPostOrgsIDOwnersRequest
+	 */
+	PostOrgsIDOwners(ctx _context.Context, orgID string) ApiPostOrgsIDOwnersRequest
+
+	/*
+	 * PostOrgsIDOwnersExecute executes the request
+	 * @return ResourceOwner
+	 */
+	PostOrgsIDOwnersExecute(r ApiPostOrgsIDOwnersRequest) (ResourceOwner, error)
+
+	/*
+	 * PostOrgsIDOwnersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return ResourceOwner
+	 */
+	PostOrgsIDOwnersExecuteWithHttpInfo(r ApiPostOrgsIDOwnersRequest) (ResourceOwner, *_nethttp.Response, error)
 }
 
 // OrganizationsApiService OrganizationsApi service
@@ -438,6 +503,160 @@ func (a *OrganizationsApiService) DeleteOrgsIDMembersIDExecuteWithHttpInfo(r Api
 	}
 
 	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/members/{userID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
+
+type ApiDeleteOrgsIDOwnersIDRequest struct {
+	ctx          _context.Context
+	ApiService   OrganizationsApi
+	userID       string
+	orgID        string
+	zapTraceSpan *string
+}
+
+func (r ApiDeleteOrgsIDOwnersIDRequest) UserID(userID string) ApiDeleteOrgsIDOwnersIDRequest {
+	r.userID = userID
+	return r
+}
+func (r ApiDeleteOrgsIDOwnersIDRequest) GetUserID() string {
+	return r.userID
+}
+
+func (r ApiDeleteOrgsIDOwnersIDRequest) OrgID(orgID string) ApiDeleteOrgsIDOwnersIDRequest {
+	r.orgID = orgID
+	return r
+}
+func (r ApiDeleteOrgsIDOwnersIDRequest) GetOrgID() string {
+	return r.orgID
+}
+
+func (r ApiDeleteOrgsIDOwnersIDRequest) ZapTraceSpan(zapTraceSpan string) ApiDeleteOrgsIDOwnersIDRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiDeleteOrgsIDOwnersIDRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiDeleteOrgsIDOwnersIDRequest) Execute() error {
+	return r.ApiService.DeleteOrgsIDOwnersIDExecute(r)
+}
+
+func (r ApiDeleteOrgsIDOwnersIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteOrgsIDOwnersIDExecuteWithHttpInfo(r)
+}
+
+/*
+ * DeleteOrgsIDOwnersID Remove an owner from an organization
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param userID The ID of the owner to remove.
+ * @param orgID The organization ID.
+ * @return ApiDeleteOrgsIDOwnersIDRequest
+ */
+func (a *OrganizationsApiService) DeleteOrgsIDOwnersID(ctx _context.Context, userID string, orgID string) ApiDeleteOrgsIDOwnersIDRequest {
+	return ApiDeleteOrgsIDOwnersIDRequest{
+		ApiService: a,
+		ctx:        ctx,
+		userID:     userID,
+		orgID:      orgID,
+	}
+}
+
+/*
+ * Execute executes the request
+ */
+func (a *OrganizationsApiService) DeleteOrgsIDOwnersIDExecute(r ApiDeleteOrgsIDOwnersIDRequest) error {
+	_, err := a.DeleteOrgsIDOwnersIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *OrganizationsApiService) DeleteOrgsIDOwnersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDOwnersIDRequest) (*_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodDelete
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.DeleteOrgsIDOwnersID")
+	if err != nil {
+		return nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/owners/{userID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
@@ -1071,6 +1290,181 @@ func (a *OrganizationsApiService) GetOrgsIDMembersExecuteWithHttpInfo(r ApiGetOr
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiGetOrgsIDOwnersRequest struct {
+	ctx          _context.Context
+	ApiService   OrganizationsApi
+	orgID        string
+	zapTraceSpan *string
+}
+
+func (r ApiGetOrgsIDOwnersRequest) OrgID(orgID string) ApiGetOrgsIDOwnersRequest {
+	r.orgID = orgID
+	return r
+}
+func (r ApiGetOrgsIDOwnersRequest) GetOrgID() string {
+	return r.orgID
+}
+
+func (r ApiGetOrgsIDOwnersRequest) ZapTraceSpan(zapTraceSpan string) ApiGetOrgsIDOwnersRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiGetOrgsIDOwnersRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiGetOrgsIDOwnersRequest) Execute() (ResourceOwners, error) {
+	return r.ApiService.GetOrgsIDOwnersExecute(r)
+}
+
+func (r ApiGetOrgsIDOwnersRequest) ExecuteWithHttpInfo() (ResourceOwners, *_nethttp.Response, error) {
+	return r.ApiService.GetOrgsIDOwnersExecuteWithHttpInfo(r)
+}
+
+/*
+ * GetOrgsIDOwners List all owners of an organization
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The organization ID.
+ * @return ApiGetOrgsIDOwnersRequest
+ */
+func (a *OrganizationsApiService) GetOrgsIDOwners(ctx _context.Context, orgID string) ApiGetOrgsIDOwnersRequest {
+	return ApiGetOrgsIDOwnersRequest{
+		ApiService: a,
+		ctx:        ctx,
+		orgID:      orgID,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return ResourceOwners
+ */
+func (a *OrganizationsApiService) GetOrgsIDOwnersExecute(r ApiGetOrgsIDOwnersRequest) (ResourceOwners, error) {
+	returnVal, _, err := a.GetOrgsIDOwnersExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return ResourceOwners
+ */
+func (a *OrganizationsApiService) GetOrgsIDOwnersExecuteWithHttpInfo(r ApiGetOrgsIDOwnersRequest) (ResourceOwners, *_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  ResourceOwners
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.GetOrgsIDOwners")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/owners"
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	localVarBody, err := _io.ReadAll(body)
+	body.Close()
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	newErr.body = localVarBody
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiPatchOrgsIDRequest struct {
 	ctx                      _context.Context
 	ApiService               OrganizationsApi
@@ -1500,6 +1894,184 @@ func (a *OrganizationsApiService) PostOrgsIDMembersExecuteWithHttpInfo(r ApiPost
 	}
 
 	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/members"
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+	if r.addResourceMemberRequestBody == nil {
+		return localVarReturnValue, nil, reportError("addResourceMemberRequestBody is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	// body params
+	localVarPostBody = r.addResourceMemberRequestBody
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	localVarBody, err := _io.ReadAll(body)
+	body.Close()
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	newErr.body = localVarBody
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiPostOrgsIDOwnersRequest struct {
+	ctx                          _context.Context
+	ApiService                   OrganizationsApi
+	orgID                        string
+	addResourceMemberRequestBody *AddResourceMemberRequestBody
+	zapTraceSpan                 *string
+}
+
+func (r ApiPostOrgsIDOwnersRequest) OrgID(orgID string) ApiPostOrgsIDOwnersRequest {
+	r.orgID = orgID
+	return r
+}
+func (r ApiPostOrgsIDOwnersRequest) GetOrgID() string {
+	return r.orgID
+}
+
+func (r ApiPostOrgsIDOwnersRequest) AddResourceMemberRequestBody(addResourceMemberRequestBody AddResourceMemberRequestBody) ApiPostOrgsIDOwnersRequest {
+	r.addResourceMemberRequestBody = &addResourceMemberRequestBody
+	return r
+}
+func (r ApiPostOrgsIDOwnersRequest) GetAddResourceMemberRequestBody() *AddResourceMemberRequestBody {
+	return r.addResourceMemberRequestBody
+}
+
+func (r ApiPostOrgsIDOwnersRequest) ZapTraceSpan(zapTraceSpan string) ApiPostOrgsIDOwnersRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiPostOrgsIDOwnersRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiPostOrgsIDOwnersRequest) Execute() (ResourceOwner, error) {
+	return r.ApiService.PostOrgsIDOwnersExecute(r)
+}
+
+func (r ApiPostOrgsIDOwnersRequest) ExecuteWithHttpInfo() (ResourceOwner, *_nethttp.Response, error) {
+	return r.ApiService.PostOrgsIDOwnersExecuteWithHttpInfo(r)
+}
+
+/*
+ * PostOrgsIDOwners Add an owner to an organization
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The organization ID.
+ * @return ApiPostOrgsIDOwnersRequest
+ */
+func (a *OrganizationsApiService) PostOrgsIDOwners(ctx _context.Context, orgID string) ApiPostOrgsIDOwnersRequest {
+	return ApiPostOrgsIDOwnersRequest{
+		ApiService: a,
+		ctx:        ctx,
+		orgID:      orgID,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return ResourceOwner
+ */
+func (a *OrganizationsApiService) PostOrgsIDOwnersExecute(r ApiPostOrgsIDOwnersRequest) (ResourceOwner, error) {
+	returnVal, _, err := a.PostOrgsIDOwnersExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return ResourceOwner
+ */
+func (a *OrganizationsApiService) PostOrgsIDOwnersExecuteWithHttpInfo(r ApiPostOrgsIDOwnersRequest) (ResourceOwner, *_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodPost
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  ResourceOwner
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrganizationsApiService.PostOrgsIDOwners")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/owners"
 	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

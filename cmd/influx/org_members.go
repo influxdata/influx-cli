@@ -45,6 +45,11 @@ func newOrgMembersAddCmd() cli.Command {
 				EnvVar:      "INFLUX_ORG_ID",
 				Destination: &params.OrgID,
 			},
+			&cli.BoolFlag{
+				Name:        "owner",
+				Usage:       "Set new member as an owner",
+				Destination: &params.IsOwner,
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			client := org.Client{
