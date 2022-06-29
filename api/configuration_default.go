@@ -29,7 +29,7 @@ func NewAPIConfig(params ConfigParams) *Configuration {
 	apiConfig.HTTPClient = &http.Client{Transport: clientTransport}
 	if params.Token != nil && *params.Token != "" {
 		apiConfig.DefaultHeader["Authorization"] = fmt.Sprintf("Token %s", *params.Token)
-	} else if params.Cookie != nil {
+	} else if params.Cookie != nil && *params.Cookie != "" {
 		apiConfig.DefaultHeader["Cookie"] = fmt.Sprintf("influxdb-oss-session=%s", *params.Cookie)
 	}
 	if params.TraceId != nil {
