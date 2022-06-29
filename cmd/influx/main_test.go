@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path"
 	"testing"
 
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
@@ -135,6 +137,8 @@ func TestApp_HostSpecificErrors(t *testing.T) {
 			args := []string{
 				"influx",
 				"ping",
+				"--configs-path",
+				path.Join(os.TempDir(), "configs"),
 				"--host",
 				svr.URL,
 			}
