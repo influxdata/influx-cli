@@ -11,6 +11,7 @@ type ConfigParams struct {
 	Host             *url.URL
 	UserAgent        string
 	Token            *string
+	Cookie           *string
 	TraceId          *string
 	AllowInsecureTLS bool
 	Debug            bool
@@ -26,8 +27,10 @@ func NewAPIConfig(params ConfigParams) *Configuration {
 	apiConfig.Scheme = params.Host.Scheme
 	apiConfig.UserAgent = params.UserAgent
 	apiConfig.HTTPClient = &http.Client{Transport: clientTransport}
-	if params.Token != nil {
+	if params.Token != nil && *params.Token != "" {
 		apiConfig.DefaultHeader["Authorization"] = fmt.Sprintf("Token %s", *params.Token)
+	} else if params.Cookie != nil {
+		apiConfig.DefaultHeader["Cookie"] = fmt.Sprintf("influxdb-oss-session=%s", *params.Cookie)
 	}
 	if params.TraceId != nil {
 		// NOTE: This is circumventing our codegen. If the header we use for tracing ever changes,

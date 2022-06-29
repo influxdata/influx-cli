@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"net/url"
@@ -45,6 +46,18 @@ func (c Client) Create(cfg config.Config) error {
 		return fmt.Errorf("failed to create config %q: %w", name, err)
 	}
 	return c.printConfigs(configPrintOpts{config: &cfg})
+}
+
+func (c Client) CreateWithUserPass(cfg config.Config, userPass string) error {
+	if userPass != "" && cfg.Token != "" {
+		return fmt.Errorf("token and username-password cannot be specified together, please choose just one")
+	}
+
+	if cfg.Token == "" && userPass != "" {
+		cfg.Cookie = base64.StdEncoding.EncodeToString([]byte(userPass))
+	}
+
+	return c.Create(cfg)
 }
 
 func (c Client) Delete(names []string) error {

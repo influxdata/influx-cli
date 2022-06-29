@@ -10,6 +10,7 @@ import (
 
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
+	"github.com/influxdata/influx-cli/v2/clients/signin"
 	"github.com/influxdata/influx-cli/v2/config"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/influxdata/influx-cli/v2/pkg/signals"
@@ -86,8 +87,14 @@ func newApiClient(ctx *cli.Context, configSvc config.Service, injectToken bool) 
 	}
 	configParams.Host = parsedHost
 
-	if injectToken {
+	if injectToken && cfg.Token != "" {
 		configParams.Token = &cfg.Token
+	} else if cfg.Cookie != "" {
+		cookie, err := signin.GetCookie(getContext(ctx), configParams, cfg.Cookie)
+		if err != nil {
+			return nil, fmt.Errorf("error creating session: %w", err)
+		}
+		configParams.Cookie = &cookie
 	}
 	if ctx.IsSet(traceIdFlagName) {
 		configParams.TraceId = api.PtrString(ctx.String(traceIdFlagName))
