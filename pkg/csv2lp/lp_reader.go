@@ -26,7 +26,6 @@ func LineProtocolFilter(reader io.Reader) *LineProtocolFilterReader {
 
 func (state *LineProtocolFilterReader) Read(b []byte) (int, error) {
 	for {
-		// buf := make([]byte, len(b))
 		bytesRead, err := state.lineReader.Read(b)
 		if err != nil {
 			return bytesRead, err
