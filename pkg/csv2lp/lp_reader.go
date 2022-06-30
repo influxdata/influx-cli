@@ -3,6 +3,8 @@ package csv2lp
 import (
 	"io"
 	"log"
+
+	"github.com/influxdata/influxdb/v2/models"
 )
 
 // LineProtocolFilterReader wraps a line reader and parses points, skipping if invalid
@@ -31,9 +33,9 @@ func (state *LineProtocolFilterReader) Read(b []byte) (int, error) {
 		}
 		state.LineNumber = state.lineReader.LastLineNumber
 		buf := b[0:bytesRead]
-		pts, err := ParsePoints(buf) // any time precision because we won't actually use this point
+		pts, err := models.ParsePoints(buf) // any time precision because we won't actually use this point
 		if err != nil {
-			log.Printf("invalid point on line %d: %q\n", state.LineNumber, buf)
+			log.Printf("invalid point on line %d: %v\n", state.LineNumber, err)
 			continue
 		} else if len(pts) == 0 { // no points on this line
 			continue
