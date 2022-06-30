@@ -50,7 +50,8 @@ func NewModel(
 	curRes int,
 	resMax int,
 	curSer int,
-	serMax int) Model {
+	serMax int,
+	scientific bool) Model {
 
 	cols := make([]table.Column, len(*res.Columns)+1)
 	colWidths := make([]int, len(*res.Columns)+1)
@@ -75,7 +76,11 @@ func NewModel(
 				colLen = len(val)
 				alignment[colI+1] = lipgloss.Left
 			case float32, float64:
-				item = fmt.Sprintf("%.10e", val)
+				if scientific {
+					item = fmt.Sprintf("%.10e", val)
+				} else {
+					item = fmt.Sprintf("%.10f", val)
+				}
 				colLen = len(item)
 				alignment[colI+1] = lipgloss.Right
 			default:
@@ -222,9 +227,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.simpleTable = m.simpleTable.PageDown()
 			}
-		case "<":
+		case "[":
 			m.simpleTable = m.simpleTable.PageFirst()
-		case ">":
+		case "]":
 			m.simpleTable = m.simpleTable.PageLast()
 		}
 	case tea.WindowSizeMsg:

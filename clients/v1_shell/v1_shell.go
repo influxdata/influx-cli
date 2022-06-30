@@ -42,6 +42,7 @@ type PersistentQueryParams struct {
 	Precision       string
 	Format          FormatType
 	Pretty          bool
+	Scientific      bool
 	// Autocompletion Storage
 	historyFilePath   string
 	historyLimit      int
@@ -200,6 +201,8 @@ func (c *Client) executor(cmd string) {
 		c.settings()
 	case "pretty":
 		c.togglePretty()
+	case "scientific":
+		c.toggleScientific()
 	case "use":
 		c.use(cmdArgs)
 	case "insert":
@@ -367,9 +370,10 @@ func (c *Client) runAndShowQuery(query string) {
 
 func (c *Client) help() {
 	fmt.Println(`Usage:
-        pretty                toggles pretty print for the json format
         use <db_name>         sets current database
         format <format>       specifies the format of the server responses: json, csv, column, table
+		pretty                toggles pretty print for the json format
+		scientific            toggles scientific numeric format for table format
         precision <format>    specifies the format of the timestamp: rfc3339, h, m, s, ms, u or ns
         history               displays command history
         settings              outputs the current settings for the shell
@@ -403,6 +407,7 @@ func (c *Client) settings() {
 	fmt.Fprintf(w, "Database\t%s\n", c.Database)
 	fmt.Fprintf(w, "RetentionPolicy\t%s\n", c.RetentionPolicy)
 	fmt.Fprintf(w, "Pretty\t%v\n", c.Pretty)
+	fmt.Fprintf(w, "Scientific\t%v\n", c.Scientific)
 	fmt.Fprintf(w, "Format\t%s\n", c.Format)
 	fmt.Fprintf(w, "Precision\t%s\n", c.Precision)
 	fmt.Fprintln(w)
@@ -648,7 +653,10 @@ outer:
 				resIdx+1,
 				len(allResults),
 				seriesIdx+1,
-				len(allSeries)))
+				len(allSeries),
+				c.Scientific),
+			// tea.WithAltScreen(),
+			)
 			model, err := p.StartReturningModel()
 			jumpToLastPage = false
 			if err != nil {
@@ -686,6 +694,11 @@ outer:
 func (c *Client) togglePretty() {
 	c.Pretty = !c.Pretty
 	color.HiBlack("Pretty: %v", c.Pretty)
+}
+
+func (c *Client) toggleScientific() {
+	c.Scientific = !c.Scientific
+	color.HiBlack("Scientific: %v", c.Scientific)
 }
 
 func (c *Client) use(args []string) {
