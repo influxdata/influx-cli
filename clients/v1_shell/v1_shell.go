@@ -23,6 +23,7 @@ import (
 	"github.com/influxdata/go-prompt"
 	"github.com/influxdata/influx-cli/v2/api"
 	"github.com/influxdata/influx-cli/v2/clients"
+	"github.com/muesli/termenv"
 )
 
 type Client struct {
@@ -645,6 +646,8 @@ outer:
 		}
 		allSeries := res.GetSeries()
 		for seriesIdx < len(allSeries) {
+			termenv.AltScreen()
+			defer termenv.ExitAltScreen()
 			series := allSeries[seriesIdx]
 			p := tea.NewProgram(NewModel(series,
 				jumpToLastPage,
@@ -655,7 +658,6 @@ outer:
 				seriesIdx+1,
 				len(allSeries),
 				c.Scientific),
-			// tea.WithAltScreen(),
 			)
 			model, err := p.StartReturningModel()
 			jumpToLastPage = false
