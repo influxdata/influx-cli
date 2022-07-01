@@ -18,6 +18,7 @@ require (
 	github.com/influxdata/go-prompt v0.2.7
 	github.com/influxdata/influxdb/v2 v2.3.0
 	github.com/mattn/go-isatty v0.0.14
+	github.com/muesli/termenv v0.12.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli v1.22.5
@@ -44,7 +45,6 @@ require (
 	github.com/muesli/ansi v0.0.0-20211031195517-c9f0611b6c70 // indirect
 	github.com/muesli/cancelreader v0.2.0 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
-	github.com/muesli/termenv v0.12.0 // indirect
 	github.com/pkg/term v1.2.0-beta.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect

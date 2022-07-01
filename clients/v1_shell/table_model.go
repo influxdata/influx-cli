@@ -50,40 +50,58 @@ func NewModel(
 	curRes int,
 	resMax int,
 	curSer int,
-	serMax int) Model {
+	serMax int,
+	scientific bool) Model {
 
 	cols := make([]table.Column, len(*res.Columns)+1)
 	colWidths := make([]int, len(*res.Columns)+1)
+	alignment := make([]lipgloss.Position, len(*res.Columns)+1)
 	rows := make([]table.Row, len(*res.Values))
 	colNames := *res.Columns
 	for rowI, row := range *res.Values {
 		rd := table.RowData{}
 		rd["index"] = fmt.Sprintf("%d", rowI+1)
+		alignment[0] = lipgloss.Right
 		colWidths[0] = len("index") + colPadding
 		for colI, rowVal := range row {
 			var item string
+			var colLen int
 			switch val := rowVal.(type) {
 			case int:
 				item = fmt.Sprintf("%d", val)
+				colLen = len(item)
+				alignment[colI+1] = lipgloss.Right
 			case string:
-				item = fmt.Sprintf("%q", val)
+				item = color.YellowString(val)
+				colLen = len(val)
+				alignment[colI+1] = lipgloss.Left
+			case float32, float64:
+				if scientific {
+					item = fmt.Sprintf("%.10e", val)
+				} else {
+					item = fmt.Sprintf("%.10f", val)
+				}
+				colLen = len(item)
+				alignment[colI+1] = lipgloss.Right
 			default:
 				item = fmt.Sprintf("%v", val)
+				colLen = len(item)
+				alignment[colI+1] = lipgloss.Right
 			}
 			rd[colNames[colI]] = item
-			if colWidths[colI+1] < len(item)+colPadding {
-				colWidths[colI+1] = len(item) + colPadding
+			if colWidths[colI+1] < colLen+colPadding {
+				colWidths[colI+1] = colLen + colPadding
 			}
 		}
 		rows[rowI] = table.NewRow(rd).
-			WithStyle(lipgloss.NewStyle().Align(lipgloss.Center))
+			WithStyle(lipgloss.NewStyle())
 	}
 	cols[0] = table.NewColumn("index", "index", colWidths[0])
 	indexStyle := lipgloss.NewStyle()
 	if isatty.IsTerminal(os.Stdout.Fd()) {
 		indexStyle = indexStyle.
 			Faint(true).
-			Align(lipgloss.Center)
+			Align(lipgloss.Right)
 	}
 	cols[0] = cols[0].WithStyle(indexStyle)
 	for colI, colTitle := range colNames {
@@ -91,7 +109,7 @@ func NewModel(
 			colWidths[colI+1] = len(colTitle) + colPadding
 		}
 		cols[colI+1] = table.NewColumn(colTitle, color.HiCyanString(colTitle), colWidths[colI+1]).
-			WithStyle(lipgloss.NewStyle().Align(lipgloss.Center))
+			WithStyle(lipgloss.NewStyle().Align(alignment[colI+1]))
 	}
 	colNames = append([]string{"index"}, colNames...)
 	screenPadding := 10
@@ -122,6 +140,7 @@ func NewModel(
 	keybind.FilterClear.Unbind()
 
 	m.simpleTable = table.New(m.allCols).
+		HeaderStyle(lipgloss.NewStyle().Align(lipgloss.Center)).
 		WithRows(m.rows).
 		WithPageSize(15).
 		WithMaxTotalWidth(500).
@@ -143,7 +162,11 @@ func NewModel(
 func (m Model) Init() tea.Cmd {
 	color.Magenta("Interactive Table View (press q to exit mode, shift+up/down to navigate tables):")
 	builder := strings.Builder{}
-	fmt.Printf("Name: %s\n", color.GreenString(m.name))
+	if m.name != "" {
+		fmt.Printf("Name: %s\n", color.GreenString(m.name))
+	} else {
+		fmt.Println("") // keep a consistent height, so print an empty line
+	}
 	if len(m.tags) > 0 {
 		fmt.Print("Tags: ")
 		for key, val := range m.tags {
@@ -204,9 +227,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.simpleTable = m.simpleTable.PageDown()
 			}
-		case "<":
+		case "[":
 			m.simpleTable = m.simpleTable.PageFirst()
-		case ">":
+		case "]":
 			m.simpleTable = m.simpleTable.PageLast()
 		}
 	case tea.WindowSizeMsg:

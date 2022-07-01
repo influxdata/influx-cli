@@ -118,8 +118,9 @@ func newSugNodeFn(subsugs ...string) subsuggestFnType {
 func (c *Client) completer(d prompt.Document) []prompt.Suggest {
 	// the commented-out lines are unsupported in 2.x
 	suggestions := map[string]SuggestNode{
-		"use":    {Description: "Set current database", subsuggestFn: c.suggestUse},
-		"pretty": {Description: "Toggle pretty print for the json format"},
+		"use":        {Description: "Set current database", subsuggestFn: c.suggestUse},
+		"pretty":     {Description: "Toggle pretty print for the json format"},
+		"scientific": {Description: "Toggle scientific number format for the table format"},
 		"precision": {Description: "Specify the format of the timestamp",
 			subsuggestFn: newSugNodeFn(
 				"rfc3339",
