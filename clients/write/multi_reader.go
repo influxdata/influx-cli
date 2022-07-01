@@ -278,6 +278,8 @@ func (r *MultiInputLineReader) Open(ctx context.Context) (io.Reader, io.Closer, 
 		csvReader.LineNumber = r.SkipHeader - len(r.Headers)
 		csvReader.RowSkipped = rowSkippedListener
 		reader = csvReader
+	} else if r.SkipRowOnError {
+		reader = csv2lp.LineProtocolFilter(reader)
 	}
 
 	return reader, csv2lp.MultiCloser(closers...), nil
