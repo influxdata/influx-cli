@@ -44,13 +44,14 @@ func GetCookie(ctx context.Context, params api.ConfigParams, userPass string) (s
 	})
 	res, err := client.SigninApi.PostSignin(ctx).ExecuteWithHttpInfo()
 	if err != nil {
-		return "", err
+		emsg := fmt.Errorf("error signing in, verify signin was not called against cloud influxdb: %w", err)
+		return "", emsg
 	}
 
 	cookies := res.Cookies()
 	if len(cookies) != 1 {
-		return "", fmt.Errorf("failure getting session cookie: %w", err)
+		return "", fmt.Errorf("failure getting session cookie, multiple cookies")
 	}
 
-	return cookies[0].Value, err
+	return cookies[0].Value, nil
 }
