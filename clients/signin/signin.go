@@ -17,8 +17,7 @@ func GetCookie(ctx context.Context, params api.ConfigParams, userPass string) (s
 		return "", err
 	}
 
-	userPass = strings.Trim(string(bufUserPass), "\x00")
-	splitUserPass := strings.Split(userPass, ":")
+	splitUserPass := strings.Split(string(bufUserPass), ":")
 	if len(splitUserPass) < 1 {
 		return "", fmt.Errorf("bad config")
 	}
