@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/influxdata/influx-cli/v2/clients/remote"
+	"github.com/influxdata/influx-cli/v2/clients/replication"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
 )
@@ -82,6 +85,7 @@ func newRemoteCreateCmd() cli.Command {
 
 func newRemoteDeleteCmd() cli.Command {
 	var remoteID string
+	var deleteReplications bool
 	return cli.Command{
 		Name:   "delete",
 		Usage:  "Delete an existing remote connection",
@@ -94,16 +98,40 @@ func newRemoteDeleteCmd() cli.Command {
 				Required:    true,
 				Destination: &remoteID,
 			},
+			&cli.BoolFlag{
+				Name:        "delete-replications",
+				Usage:       "Forcefully deletes any replication queues that depend on this remote",
+				Destination: &deleteReplications,
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
+			cli := getCLI(ctx)
+			context := getContext(ctx)
 
 			client := remote.Client{
-				CLI:                  getCLI(ctx),
+				CLI:                  cli,
 				RemoteConnectionsApi: api.RemoteConnectionsApi,
 			}
 
-			return client.Delete(getContext(ctx), remoteID)
+			if deleteReplications {
+				conn, err := client.Get(context, remoteID)
+				if err != nil {
+					return err
+				}
+
+				repClient := replication.Client{
+					CLI:             cli,
+					ReplicationsApi: api.ReplicationsApi,
+				}
+				if err := repClient.DeleteWithRemoteID(context, conn); err != nil {
+					fmt.Fprintln(cli.StdIO, err.Error())
+					// do not exit, still try to delete the remote, as this flag could be
+					// passed with no replications configured, which would error here
+				}
+			}
+
+			return client.Delete(context, remoteID)
 		},
 	}
 }
