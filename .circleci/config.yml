@@ -339,6 +339,12 @@ jobs:
             - run:
                 name: Publish tagged release
                 command: goreleaser release --rm-dist
+            - run:
+                command: |
+                  export DEBIAN_FRONTEND=noninteractive
+                  sudo apt-get update
+                  sudo apt-get install awscli
+                  .circleci/scripts/upload-latest-artifacts
       - store_artifacts:
           path: dist
 
