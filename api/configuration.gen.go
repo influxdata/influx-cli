@@ -125,6 +125,18 @@ func NewConfiguration() *Configuration {
 					Description: "No description provided",
 				},
 			},
+			"SystemInformationEndpointsApiService.GetHealth": {
+				{
+					URL:         "",
+					Description: "No description provided",
+				},
+			},
+			"SystemInformationEndpointsApiService.GetPing": {
+				{
+					URL:         "",
+					Description: "No description provided",
+				},
+			},
 		},
 	}
 	return cfg

@@ -17,17 +17,17 @@ import (
 // TaskUpdateRequest struct for TaskUpdateRequest
 type TaskUpdateRequest struct {
 	Status *TaskStatusType `json:"status,omitempty" yaml:"status,omitempty"`
-	// The Flux script to run for this task.
+	// The Flux script that the task runs.
 	Flux *string `json:"flux,omitempty" yaml:"flux,omitempty"`
-	// Override the 'name' option in the flux script.
+	// Update the 'name' option in the flux script.
 	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
-	// Override the 'every' option in the flux script.
+	// Update the 'every' option in the flux script.
 	Every *string `json:"every,omitempty" yaml:"every,omitempty"`
-	// Override the 'cron' option in the flux script.
+	// Update the 'cron' option in the flux script.
 	Cron *string `json:"cron,omitempty" yaml:"cron,omitempty"`
-	// Override the 'offset' option in the flux script.
+	// Update the 'offset' option in the flux script.
 	Offset *string `json:"offset,omitempty" yaml:"offset,omitempty"`
-	// An optional description of the task.
+	// Update the description of the task.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 

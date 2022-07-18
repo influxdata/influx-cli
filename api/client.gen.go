@@ -60,6 +60,8 @@ type APIClient struct {
 
 	DashboardsApi DashboardsApi
 
+	DataIOEndpointsApi DataIOEndpointsApi
+
 	DeleteApi DeleteApi
 
 	HealthApi HealthApi
@@ -88,9 +90,13 @@ type APIClient struct {
 
 	SecretsApi SecretsApi
 
+	SecurityAndAccessEndpointsApi SecurityAndAccessEndpointsApi
+
 	SetupApi SetupApi
 
 	StacksApi StacksApi
+
+	SystemInformationEndpointsApi SystemInformationEndpointsApi
 
 	TasksApi TasksApi
 
@@ -128,6 +134,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.ConfigApi = (*ConfigApiService)(&c.common)
 	c.DBRPsApi = (*DBRPsApiService)(&c.common)
 	c.DashboardsApi = (*DashboardsApiService)(&c.common)
+	c.DataIOEndpointsApi = (*DataIOEndpointsApiService)(&c.common)
 	c.DeleteApi = (*DeleteApiService)(&c.common)
 	c.HealthApi = (*HealthApiService)(&c.common)
 	c.InvokableScriptsApi = (*InvokableScriptsApiService)(&c.common)
@@ -142,8 +149,10 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.ResourcesApi = (*ResourcesApiService)(&c.common)
 	c.RestoreApi = (*RestoreApiService)(&c.common)
 	c.SecretsApi = (*SecretsApiService)(&c.common)
+	c.SecurityAndAccessEndpointsApi = (*SecurityAndAccessEndpointsApiService)(&c.common)
 	c.SetupApi = (*SetupApiService)(&c.common)
 	c.StacksApi = (*StacksApiService)(&c.common)
+	c.SystemInformationEndpointsApi = (*SystemInformationEndpointsApiService)(&c.common)
 	c.TasksApi = (*TasksApiService)(&c.common)
 	c.TelegrafsApi = (*TelegrafsApiService)(&c.common)
 	c.TemplatesApi = (*TemplatesApiService)(&c.common)

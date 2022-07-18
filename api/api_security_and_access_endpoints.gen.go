@@ -17,7 +17,6 @@ import (
 	_nethttp "net/http"
 	_neturl "net/url"
 	"strings"
-	"time"
 )
 
 // Linger please
@@ -25,726 +24,667 @@ var (
 	_ _context.Context
 )
 
-type TasksApi interface {
+type SecurityAndAccessEndpointsApi interface {
 
 	/*
-			 * DeleteTasksID Delete a task
-			 * Deletes a task and associated records.
+	 * DeleteOrgsIDMembersID Remove a member from an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param userID The ID of the member to remove.
+	 * @param orgID The organization ID.
+	 * @return ApiDeleteOrgsIDMembersIDRequest
+	 */
+	DeleteOrgsIDMembersID(ctx _context.Context, userID string, orgID string) ApiDeleteOrgsIDMembersIDRequest
 
-		Use this endpoint to delete a task and all associated records (task runs, logs, and labels).
-		Once the task is deleted, InfluxDB cancels all scheduled runs of the task.
+	/*
+	 * DeleteOrgsIDMembersIDExecute executes the request
+	 */
+	DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsIDMembersIDRequest) error
 
-		If you want to disable a task instead of delete it, [update the task status to `inactive`](#operation/PatchTasksID).
+	/*
+	 * DeleteOrgsIDMembersIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	DeleteOrgsIDMembersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDMembersIDRequest) (*_nethttp.Response, error)
+
+	/*
+	 * DeleteOrgsIDOwnersID Remove an owner from an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param userID The ID of the owner to remove.
+	 * @param orgID The organization ID.
+	 * @return ApiDeleteOrgsIDOwnersIDRequest
+	 */
+	DeleteOrgsIDOwnersID(ctx _context.Context, userID string, orgID string) ApiDeleteOrgsIDOwnersIDRequest
+
+	/*
+	 * DeleteOrgsIDOwnersIDExecute executes the request
+	 */
+	DeleteOrgsIDOwnersIDExecute(r ApiDeleteOrgsIDOwnersIDRequest) error
+
+	/*
+	 * DeleteOrgsIDOwnersIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	DeleteOrgsIDOwnersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDOwnersIDRequest) (*_nethttp.Response, error)
+
+	/*
+	 * GetAuthorizations List all authorizations
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @return ApiGetAuthorizationsRequest
+	 */
+	GetAuthorizations(ctx _context.Context) ApiGetAuthorizationsRequest
+
+	/*
+	 * GetAuthorizationsExecute executes the request
+	 * @return Authorizations
+	 */
+	GetAuthorizationsExecute(r ApiGetAuthorizationsRequest) (Authorizations, error)
+
+	/*
+	 * GetAuthorizationsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorizations
+	 */
+	GetAuthorizationsExecuteWithHttpInfo(r ApiGetAuthorizationsRequest) (Authorizations, *_nethttp.Response, error)
+
+	/*
+	 * GetAuthorizationsID Retrieve an authorization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param authID The ID of the authorization to get.
+	 * @return ApiGetAuthorizationsIDRequest
+	 */
+	GetAuthorizationsID(ctx _context.Context, authID string) ApiGetAuthorizationsIDRequest
+
+	/*
+	 * GetAuthorizationsIDExecute executes the request
+	 * @return Authorization
+	 */
+	GetAuthorizationsIDExecute(r ApiGetAuthorizationsIDRequest) (Authorization, error)
+
+	/*
+	 * GetAuthorizationsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Authorization
+	 */
+	GetAuthorizationsIDExecuteWithHttpInfo(r ApiGetAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
+
+	/*
+	 * GetOrgs List all organizations
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @return ApiGetOrgsRequest
+	 */
+	GetOrgs(ctx _context.Context) ApiGetOrgsRequest
+
+	/*
+	 * GetOrgsExecute executes the request
+	 * @return Organizations
+	 */
+	GetOrgsExecute(r ApiGetOrgsRequest) (Organizations, error)
+
+	/*
+	 * GetOrgsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Organizations
+	 */
+	GetOrgsExecuteWithHttpInfo(r ApiGetOrgsRequest) (Organizations, *_nethttp.Response, error)
+
+	/*
+	 * GetOrgsID Retrieve an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param orgID The ID of the organization to get.
+	 * @return ApiGetOrgsIDRequest
+	 */
+	GetOrgsID(ctx _context.Context, orgID string) ApiGetOrgsIDRequest
+
+	/*
+	 * GetOrgsIDExecute executes the request
+	 * @return Organization
+	 */
+	GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organization, error)
+
+	/*
+	 * GetOrgsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Organization
+	 */
+	GetOrgsIDExecuteWithHttpInfo(r ApiGetOrgsIDRequest) (Organization, *_nethttp.Response, error)
+
+	/*
+	 * GetOrgsIDMembers List all members of an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param orgID The organization ID.
+	 * @return ApiGetOrgsIDMembersRequest
+	 */
+	GetOrgsIDMembers(ctx _context.Context, orgID string) ApiGetOrgsIDMembersRequest
+
+	/*
+	 * GetOrgsIDMembersExecute executes the request
+	 * @return ResourceMembers
+	 */
+	GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersRequest) (ResourceMembers, error)
+
+	/*
+	 * GetOrgsIDMembersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return ResourceMembers
+	 */
+	GetOrgsIDMembersExecuteWithHttpInfo(r ApiGetOrgsIDMembersRequest) (ResourceMembers, *_nethttp.Response, error)
+
+	/*
+	 * GetOrgsIDOwners List all owners of an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param orgID The organization ID.
+	 * @return ApiGetOrgsIDOwnersRequest
+	 */
+	GetOrgsIDOwners(ctx _context.Context, orgID string) ApiGetOrgsIDOwnersRequest
+
+	/*
+	 * GetOrgsIDOwnersExecute executes the request
+	 * @return ResourceOwners
+	 */
+	GetOrgsIDOwnersExecute(r ApiGetOrgsIDOwnersRequest) (ResourceOwners, error)
+
+	/*
+	 * GetOrgsIDOwnersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return ResourceOwners
+	 */
+	GetOrgsIDOwnersExecuteWithHttpInfo(r ApiGetOrgsIDOwnersRequest) (ResourceOwners, *_nethttp.Response, error)
+
+	/*
+	 * GetOrgsIDSecrets List all secret keys for an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param orgID The organization ID.
+	 * @return ApiGetOrgsIDSecretsRequest
+	 */
+	GetOrgsIDSecrets(ctx _context.Context, orgID string) ApiGetOrgsIDSecretsRequest
+
+	/*
+	 * GetOrgsIDSecretsExecute executes the request
+	 * @return SecretKeysResponse
+	 */
+	GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, error)
+
+	/*
+	 * GetOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return SecretKeysResponse
+	 */
+	GetOrgsIDSecretsExecuteWithHttpInfo(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, *_nethttp.Response, error)
+
+	/*
+	 * GetUsers List all users
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @return ApiGetUsersRequest
+	 */
+	GetUsers(ctx _context.Context) ApiGetUsersRequest
+
+	/*
+	 * GetUsersExecute executes the request
+	 * @return Users
+	 */
+	GetUsersExecute(r ApiGetUsersRequest) (Users, error)
+
+	/*
+	 * GetUsersExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return Users
+	 */
+	GetUsersExecuteWithHttpInfo(r ApiGetUsersRequest) (Users, *_nethttp.Response, error)
+
+	/*
+	 * GetUsersID Retrieve a user
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param userID The user ID.
+	 * @return ApiGetUsersIDRequest
+	 */
+	GetUsersID(ctx _context.Context, userID string) ApiGetUsersIDRequest
+
+	/*
+	 * GetUsersIDExecute executes the request
+	 * @return UserResponse
+	 */
+	GetUsersIDExecute(r ApiGetUsersIDRequest) (UserResponse, error)
+
+	/*
+	 * GetUsersIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 * @return UserResponse
+	 */
+	GetUsersIDExecuteWithHttpInfo(r ApiGetUsersIDRequest) (UserResponse, *_nethttp.Response, error)
+
+	/*
+	 * PostOrgsIDSecrets Delete secrets from an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param orgID The organization ID.
+	 * @return ApiPostOrgsIDSecretsRequest
+	 */
+	PostOrgsIDSecrets(ctx _context.Context, orgID string) ApiPostOrgsIDSecretsRequest
+
+	/*
+	 * PostOrgsIDSecretsExecute executes the request
+	 */
+	PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsRequest) error
+
+	/*
+	 * PostOrgsIDSecretsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	PostOrgsIDSecretsExecuteWithHttpInfo(r ApiPostOrgsIDSecretsRequest) (*_nethttp.Response, error)
+
+	/*
+			 * PostUsersIDPassword Update a password
+			 * #### InfluxDB Cloud
+
+		InfluxDB Cloud does not support changing user passwords through the API.
+		Use the InfluxDB Cloud user interface to update your password.
 
 			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-			 * @param taskID The ID of the task to delete.
-			 * @return ApiDeleteTasksIDRequest
+			 * @param userID The user ID.
+			 * @return ApiPostUsersIDPasswordRequest
 	*/
-	DeleteTasksID(ctx _context.Context, taskID string) ApiDeleteTasksIDRequest
+	PostUsersIDPassword(ctx _context.Context, userID string) ApiPostUsersIDPasswordRequest
 
 	/*
-	 * DeleteTasksIDExecute executes the request
+	 * PostUsersIDPasswordExecute executes the request
 	 */
-	DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error
+	PostUsersIDPasswordExecute(r ApiPostUsersIDPasswordRequest) error
 
 	/*
-	 * DeleteTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * PostUsersIDPasswordExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
 	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
 	 * content should be achieved through the returned response model if applicable.
 	 */
-	DeleteTasksIDExecuteWithHttpInfo(r ApiDeleteTasksIDRequest) (*_nethttp.Response, error)
-
-	/*
-	 * DeleteTasksIDRunsID Cancel a running task.  #### InfluxDB Cloud    - Doesn't support this operation.
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param taskID The task ID.
-	 * @param runID The run ID.
-	 * @return ApiDeleteTasksIDRunsIDRequest
-	 */
-	DeleteTasksIDRunsID(ctx _context.Context, taskID string, runID string) ApiDeleteTasksIDRunsIDRequest
-
-	/*
-	 * DeleteTasksIDRunsIDExecute executes the request
-	 */
-	DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDRequest) error
-
-	/*
-	 * DeleteTasksIDRunsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 */
-	DeleteTasksIDRunsIDExecuteWithHttpInfo(r ApiDeleteTasksIDRunsIDRequest) (*_nethttp.Response, error)
-
-	/*
-			 * GetTasks List tasks
-			 * Retrieves a list of [tasks]({{% INFLUXDB_DOCS_URL %}}/process-data/).
-
-		To limit which tasks are returned, pass query parameters in your request.
-		If no query parameters are passed, InfluxDB returns all tasks up to the default `limit`.
-
-			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-			 * @return ApiGetTasksRequest
-	*/
-	GetTasks(ctx _context.Context) ApiGetTasksRequest
-
-	/*
-	 * GetTasksExecute executes the request
-	 * @return Tasks
-	 */
-	GetTasksExecute(r ApiGetTasksRequest) (Tasks, error)
-
-	/*
-	 * GetTasksExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 * @return Tasks
-	 */
-	GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tasks, *_nethttp.Response, error)
-
-	/*
-			 * GetTasksID Retrieve a task
-			 * Retrieves a [task]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#task)
-		by task ID.
-
-			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-			 * @param taskID The task ID.
-			 * @return ApiGetTasksIDRequest
-	*/
-	GetTasksID(ctx _context.Context, taskID string) ApiGetTasksIDRequest
-
-	/*
-	 * GetTasksIDExecute executes the request
-	 * @return Task
-	 */
-	GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error)
-
-	/*
-	 * GetTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 * @return Task
-	 */
-	GetTasksIDExecuteWithHttpInfo(r ApiGetTasksIDRequest) (Task, *_nethttp.Response, error)
-
-	/*
-	 * GetTasksIDLogs Retrieve all logs for a task
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param taskID The task ID.
-	 * @return ApiGetTasksIDLogsRequest
-	 */
-	GetTasksIDLogs(ctx _context.Context, taskID string) ApiGetTasksIDLogsRequest
-
-	/*
-	 * GetTasksIDLogsExecute executes the request
-	 * @return Logs
-	 */
-	GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Logs, error)
-
-	/*
-	 * GetTasksIDLogsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 * @return Logs
-	 */
-	GetTasksIDLogsExecuteWithHttpInfo(r ApiGetTasksIDLogsRequest) (Logs, *_nethttp.Response, error)
-
-	/*
-	 * GetTasksIDRuns List runs for a task
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param taskID The ID of the task to get runs for.
-	 * @return ApiGetTasksIDRunsRequest
-	 */
-	GetTasksIDRuns(ctx _context.Context, taskID string) ApiGetTasksIDRunsRequest
-
-	/*
-	 * GetTasksIDRunsExecute executes the request
-	 * @return Runs
-	 */
-	GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Runs, error)
-
-	/*
-	 * GetTasksIDRunsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 * @return Runs
-	 */
-	GetTasksIDRunsExecuteWithHttpInfo(r ApiGetTasksIDRunsRequest) (Runs, *_nethttp.Response, error)
-
-	/*
-	 * GetTasksIDRunsID Retrieve a single run for a task.
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param taskID The task ID.
-	 * @param runID The run ID.
-	 * @return ApiGetTasksIDRunsIDRequest
-	 */
-	GetTasksIDRunsID(ctx _context.Context, taskID string, runID string) ApiGetTasksIDRunsIDRequest
-
-	/*
-	 * GetTasksIDRunsIDExecute executes the request
-	 * @return Run
-	 */
-	GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) (Run, error)
-
-	/*
-	 * GetTasksIDRunsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 * @return Run
-	 */
-	GetTasksIDRunsIDExecuteWithHttpInfo(r ApiGetTasksIDRunsIDRequest) (Run, *_nethttp.Response, error)
-
-	/*
-	 * GetTasksIDRunsIDLogs Retrieve all logs for a run
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param taskID ID of task to get logs for.
-	 * @param runID ID of run to get logs for.
-	 * @return ApiGetTasksIDRunsIDLogsRequest
-	 */
-	GetTasksIDRunsIDLogs(ctx _context.Context, taskID string, runID string) ApiGetTasksIDRunsIDLogsRequest
-
-	/*
-	 * GetTasksIDRunsIDLogsExecute executes the request
-	 * @return Logs
-	 */
-	GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsRequest) (Logs, error)
-
-	/*
-	 * GetTasksIDRunsIDLogsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 * @return Logs
-	 */
-	GetTasksIDRunsIDLogsExecuteWithHttpInfo(r ApiGetTasksIDRunsIDLogsRequest) (Logs, *_nethttp.Response, error)
-
-	/*
-			 * PatchTasksID Update a task
-			 * Updates a task and then cancels all scheduled runs of the task.
-
-		Use this endpoint to modify task properties (for example: `cron`, `name`, `flux`, `status`).
-		Once InfluxDB applies the update, it cancels all scheduled runs of the task.
-
-		To update a task, pass an object that contains the updated key-value pairs.
-		To activate or inactivate a task, set the `status` property.
-		_`"status": "inactive"`_ cancels scheduled runs and prevents manual runs of the task.
-
-			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-			 * @param taskID The task ID.
-			 * @return ApiPatchTasksIDRequest
-	*/
-	PatchTasksID(ctx _context.Context, taskID string) ApiPatchTasksIDRequest
-
-	/*
-	 * PatchTasksIDExecute executes the request
-	 * @return Task
-	 */
-	PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, error)
-
-	/*
-	 * PatchTasksIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 * @return Task
-	 */
-	PatchTasksIDExecuteWithHttpInfo(r ApiPatchTasksIDRequest) (Task, *_nethttp.Response, error)
-
-	/*
-			 * PostTasks Create a task
-			 * Creates a [task]({{% INFLUXDB_DOCS_URL %}}/process-data/) and returns the created task.
-
-		#### Related guides
-
-		- [Create a task]({{% INFLUXDB_DOCS_URL %}}/process-data/manage-tasks/create-task/).
-		- [Common tasks]({{% INFLUXDB_DOCS_URL %}}/process-data/common-tasks/)
-		- [Task configuration options]({{% INFLUXDB_DOCS_URL %}}/process-data/task-options/)
-
-			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-			 * @return ApiPostTasksRequest
-	*/
-	PostTasks(ctx _context.Context) ApiPostTasksRequest
-
-	/*
-	 * PostTasksExecute executes the request
-	 * @return Task
-	 */
-	PostTasksExecute(r ApiPostTasksRequest) (Task, error)
-
-	/*
-	 * PostTasksExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 * @return Task
-	 */
-	PostTasksExecuteWithHttpInfo(r ApiPostTasksRequest) (Task, *_nethttp.Response, error)
-
-	/*
-	 * PostTasksIDRuns Manually start a task run, overriding the current schedule
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param taskID
-	 * @return ApiPostTasksIDRunsRequest
-	 */
-	PostTasksIDRuns(ctx _context.Context, taskID string) ApiPostTasksIDRunsRequest
-
-	/*
-	 * PostTasksIDRunsExecute executes the request
-	 * @return Run
-	 */
-	PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (Run, error)
-
-	/*
-	 * PostTasksIDRunsExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 * @return Run
-	 */
-	PostTasksIDRunsExecuteWithHttpInfo(r ApiPostTasksIDRunsRequest) (Run, *_nethttp.Response, error)
-
-	/*
-	 * PostTasksIDRunsIDRetry Retry a task run
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param taskID The task ID.
-	 * @param runID The run ID.
-	 * @return ApiPostTasksIDRunsIDRetryRequest
-	 */
-	PostTasksIDRunsIDRetry(ctx _context.Context, taskID string, runID string) ApiPostTasksIDRunsIDRetryRequest
-
-	/*
-	 * PostTasksIDRunsIDRetryExecute executes the request
-	 * @return Run
-	 */
-	PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRetryRequest) (Run, error)
-
-	/*
-	 * PostTasksIDRunsIDRetryExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
-	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
-	 * content should be achieved through the returned response model if applicable.
-	 * @return Run
-	 */
-	PostTasksIDRunsIDRetryExecuteWithHttpInfo(r ApiPostTasksIDRunsIDRetryRequest) (Run, *_nethttp.Response, error)
+	PostUsersIDPasswordExecuteWithHttpInfo(r ApiPostUsersIDPasswordRequest) (*_nethttp.Response, error)
 }
 
-// TasksApiService TasksApi service
-type TasksApiService service
+// SecurityAndAccessEndpointsApiService SecurityAndAccessEndpointsApi service
+type SecurityAndAccessEndpointsApiService service
 
-type ApiDeleteTasksIDRequest struct {
+type ApiDeleteOrgsIDMembersIDRequest struct {
 	ctx          _context.Context
-	ApiService   TasksApi
-	taskID       string
+	ApiService   SecurityAndAccessEndpointsApi
+	userID       string
+	orgID        string
 	zapTraceSpan *string
 }
 
-func (r ApiDeleteTasksIDRequest) TaskID(taskID string) ApiDeleteTasksIDRequest {
-	r.taskID = taskID
+func (r ApiDeleteOrgsIDMembersIDRequest) UserID(userID string) ApiDeleteOrgsIDMembersIDRequest {
+	r.userID = userID
 	return r
 }
-func (r ApiDeleteTasksIDRequest) GetTaskID() string {
-	return r.taskID
+func (r ApiDeleteOrgsIDMembersIDRequest) GetUserID() string {
+	return r.userID
 }
 
-func (r ApiDeleteTasksIDRequest) ZapTraceSpan(zapTraceSpan string) ApiDeleteTasksIDRequest {
-	r.zapTraceSpan = &zapTraceSpan
+func (r ApiDeleteOrgsIDMembersIDRequest) OrgID(orgID string) ApiDeleteOrgsIDMembersIDRequest {
+	r.orgID = orgID
 	return r
 }
-func (r ApiDeleteTasksIDRequest) GetZapTraceSpan() *string {
-	return r.zapTraceSpan
-}
-
-func (r ApiDeleteTasksIDRequest) Execute() error {
-	return r.ApiService.DeleteTasksIDExecute(r)
-}
-
-func (r ApiDeleteTasksIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
-	return r.ApiService.DeleteTasksIDExecuteWithHttpInfo(r)
-}
-
-/*
- * DeleteTasksID Delete a task
- * Deletes a task and associated records.
-
-Use this endpoint to delete a task and all associated records (task runs, logs, and labels).
-Once the task is deleted, InfluxDB cancels all scheduled runs of the task.
-
-If you want to disable a task instead of delete it, [update the task status to `inactive`](#operation/PatchTasksID).
-
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID The ID of the task to delete.
- * @return ApiDeleteTasksIDRequest
-*/
-func (a *TasksApiService) DeleteTasksID(ctx _context.Context, taskID string) ApiDeleteTasksIDRequest {
-	return ApiDeleteTasksIDRequest{
-		ApiService: a,
-		ctx:        ctx,
-		taskID:     taskID,
-	}
-}
-
-/*
- * Execute executes the request
- */
-func (a *TasksApiService) DeleteTasksIDExecute(r ApiDeleteTasksIDRequest) error {
-	_, err := a.DeleteTasksIDExecuteWithHttpInfo(r)
-	return err
-}
-
-/*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
- * returned HTTP response as it will have already been read and closed; access to the response body content should be
- * achieved through the returned response model if applicable.
- */
-func (a *TasksApiService) DeleteTasksIDExecuteWithHttpInfo(r ApiDeleteTasksIDRequest) (*_nethttp.Response, error) {
-	var (
-		localVarHTTPMethod   = _nethttp.MethodDelete
-		localVarPostBody     interface{}
-		localVarFormFileName string
-		localVarFileName     string
-		localVarFileBytes    []byte
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.DeleteTasksID")
-	if err != nil {
-		return nil, GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/api/v2/tasks/{taskID}"
-	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := _neturl.Values{}
-	localVarFormParams := _neturl.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.zapTraceSpan != nil {
-		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
-	}
-
-	newErr := GenericOpenAPIError{
-		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		body, err := GunzipIfNeeded(localVarHTTPResponse)
-		if err != nil {
-			body.Close()
-			newErr.error = err.Error()
-			return localVarHTTPResponse, newErr
-		}
-		localVarBody, err := _io.ReadAll(body)
-		body.Close()
-		if err != nil {
-			newErr.error = err.Error()
-			return localVarHTTPResponse, newErr
-		}
-		newErr.body = localVarBody
-		newErr.error = localVarHTTPResponse.Status
-		var v Error
-		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarHTTPResponse, newErr
-		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-		newErr.model = &v
-		return localVarHTTPResponse, newErr
-	}
-
-	return localVarHTTPResponse, nil
-}
-
-type ApiDeleteTasksIDRunsIDRequest struct {
-	ctx          _context.Context
-	ApiService   TasksApi
-	taskID       string
-	runID        string
-	zapTraceSpan *string
-}
-
-func (r ApiDeleteTasksIDRunsIDRequest) TaskID(taskID string) ApiDeleteTasksIDRunsIDRequest {
-	r.taskID = taskID
-	return r
-}
-func (r ApiDeleteTasksIDRunsIDRequest) GetTaskID() string {
-	return r.taskID
-}
-
-func (r ApiDeleteTasksIDRunsIDRequest) RunID(runID string) ApiDeleteTasksIDRunsIDRequest {
-	r.runID = runID
-	return r
-}
-func (r ApiDeleteTasksIDRunsIDRequest) GetRunID() string {
-	return r.runID
-}
-
-func (r ApiDeleteTasksIDRunsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiDeleteTasksIDRunsIDRequest {
-	r.zapTraceSpan = &zapTraceSpan
-	return r
-}
-func (r ApiDeleteTasksIDRunsIDRequest) GetZapTraceSpan() *string {
-	return r.zapTraceSpan
-}
-
-func (r ApiDeleteTasksIDRunsIDRequest) Execute() error {
-	return r.ApiService.DeleteTasksIDRunsIDExecute(r)
-}
-
-func (r ApiDeleteTasksIDRunsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
-	return r.ApiService.DeleteTasksIDRunsIDExecuteWithHttpInfo(r)
-}
-
-/*
- * DeleteTasksIDRunsID Cancel a running task.  #### InfluxDB Cloud    - Doesn't support this operation.
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID The task ID.
- * @param runID The run ID.
- * @return ApiDeleteTasksIDRunsIDRequest
- */
-func (a *TasksApiService) DeleteTasksIDRunsID(ctx _context.Context, taskID string, runID string) ApiDeleteTasksIDRunsIDRequest {
-	return ApiDeleteTasksIDRunsIDRequest{
-		ApiService: a,
-		ctx:        ctx,
-		taskID:     taskID,
-		runID:      runID,
-	}
-}
-
-/*
- * Execute executes the request
- */
-func (a *TasksApiService) DeleteTasksIDRunsIDExecute(r ApiDeleteTasksIDRunsIDRequest) error {
-	_, err := a.DeleteTasksIDRunsIDExecuteWithHttpInfo(r)
-	return err
-}
-
-/*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
- * returned HTTP response as it will have already been read and closed; access to the response body content should be
- * achieved through the returned response model if applicable.
- */
-func (a *TasksApiService) DeleteTasksIDRunsIDExecuteWithHttpInfo(r ApiDeleteTasksIDRunsIDRequest) (*_nethttp.Response, error) {
-	var (
-		localVarHTTPMethod   = _nethttp.MethodDelete
-		localVarPostBody     interface{}
-		localVarFormFileName string
-		localVarFileName     string
-		localVarFileBytes    []byte
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.DeleteTasksIDRunsID")
-	if err != nil {
-		return nil, GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs/{runID}"
-	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"runID"+"}", _neturl.PathEscape(parameterToString(r.runID, "")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := _neturl.Values{}
-	localVarFormParams := _neturl.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.zapTraceSpan != nil {
-		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
-	}
-
-	newErr := GenericOpenAPIError{
-		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		body, err := GunzipIfNeeded(localVarHTTPResponse)
-		if err != nil {
-			body.Close()
-			newErr.error = err.Error()
-			return localVarHTTPResponse, newErr
-		}
-		localVarBody, err := _io.ReadAll(body)
-		body.Close()
-		if err != nil {
-			newErr.error = err.Error()
-			return localVarHTTPResponse, newErr
-		}
-		newErr.body = localVarBody
-		newErr.error = localVarHTTPResponse.Status
-		if localVarHTTPResponse.StatusCode == 405 {
-			var v Error
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarHTTPResponse, newErr
-			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-			newErr.model = &v
-			return localVarHTTPResponse, newErr
-		}
-		var v Error
-		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarHTTPResponse, newErr
-		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-		newErr.model = &v
-		return localVarHTTPResponse, newErr
-	}
-
-	return localVarHTTPResponse, nil
-}
-
-type ApiGetTasksRequest struct {
-	ctx          _context.Context
-	ApiService   TasksApi
-	zapTraceSpan *string
-	name         *string
-	after        *string
-	user         *string
-	org          *string
-	orgID        *string
-	status       *string
-	limit        *int32
-	type_        *string
-}
-
-func (r ApiGetTasksRequest) ZapTraceSpan(zapTraceSpan string) ApiGetTasksRequest {
-	r.zapTraceSpan = &zapTraceSpan
-	return r
-}
-func (r ApiGetTasksRequest) GetZapTraceSpan() *string {
-	return r.zapTraceSpan
-}
-
-func (r ApiGetTasksRequest) Name(name string) ApiGetTasksRequest {
-	r.name = &name
-	return r
-}
-func (r ApiGetTasksRequest) GetName() *string {
-	return r.name
-}
-
-func (r ApiGetTasksRequest) After(after string) ApiGetTasksRequest {
-	r.after = &after
-	return r
-}
-func (r ApiGetTasksRequest) GetAfter() *string {
-	return r.after
-}
-
-func (r ApiGetTasksRequest) User(user string) ApiGetTasksRequest {
-	r.user = &user
-	return r
-}
-func (r ApiGetTasksRequest) GetUser() *string {
-	return r.user
-}
-
-func (r ApiGetTasksRequest) Org(org string) ApiGetTasksRequest {
-	r.org = &org
-	return r
-}
-func (r ApiGetTasksRequest) GetOrg() *string {
-	return r.org
-}
-
-func (r ApiGetTasksRequest) OrgID(orgID string) ApiGetTasksRequest {
-	r.orgID = &orgID
-	return r
-}
-func (r ApiGetTasksRequest) GetOrgID() *string {
+func (r ApiDeleteOrgsIDMembersIDRequest) GetOrgID() string {
 	return r.orgID
 }
 
-func (r ApiGetTasksRequest) Status(status string) ApiGetTasksRequest {
-	r.status = &status
+func (r ApiDeleteOrgsIDMembersIDRequest) ZapTraceSpan(zapTraceSpan string) ApiDeleteOrgsIDMembersIDRequest {
+	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiGetTasksRequest) GetStatus() *string {
-	return r.status
+func (r ApiDeleteOrgsIDMembersIDRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
 }
 
-func (r ApiGetTasksRequest) Limit(limit int32) ApiGetTasksRequest {
-	r.limit = &limit
-	return r
-}
-func (r ApiGetTasksRequest) GetLimit() *int32 {
-	return r.limit
+func (r ApiDeleteOrgsIDMembersIDRequest) Execute() error {
+	return r.ApiService.DeleteOrgsIDMembersIDExecute(r)
 }
 
-func (r ApiGetTasksRequest) Type_(type_ string) ApiGetTasksRequest {
-	r.type_ = &type_
-	return r
-}
-func (r ApiGetTasksRequest) GetType_() *string {
-	return r.type_
-}
-
-func (r ApiGetTasksRequest) Execute() (Tasks, error) {
-	return r.ApiService.GetTasksExecute(r)
-}
-
-func (r ApiGetTasksRequest) ExecuteWithHttpInfo() (Tasks, *_nethttp.Response, error) {
-	return r.ApiService.GetTasksExecuteWithHttpInfo(r)
+func (r ApiDeleteOrgsIDMembersIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteOrgsIDMembersIDExecuteWithHttpInfo(r)
 }
 
 /*
- * GetTasks List tasks
- * Retrieves a list of [tasks]({{% INFLUXDB_DOCS_URL %}}/process-data/).
-
-To limit which tasks are returned, pass query parameters in your request.
-If no query parameters are passed, InfluxDB returns all tasks up to the default `limit`.
-
+ * DeleteOrgsIDMembersID Remove a member from an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiGetTasksRequest
-*/
-func (a *TasksApiService) GetTasks(ctx _context.Context) ApiGetTasksRequest {
-	return ApiGetTasksRequest{
+ * @param userID The ID of the member to remove.
+ * @param orgID The organization ID.
+ * @return ApiDeleteOrgsIDMembersIDRequest
+ */
+func (a *SecurityAndAccessEndpointsApiService) DeleteOrgsIDMembersID(ctx _context.Context, userID string, orgID string) ApiDeleteOrgsIDMembersIDRequest {
+	return ApiDeleteOrgsIDMembersIDRequest{
+		ApiService: a,
+		ctx:        ctx,
+		userID:     userID,
+		orgID:      orgID,
+	}
+}
+
+/*
+ * Execute executes the request
+ */
+func (a *SecurityAndAccessEndpointsApiService) DeleteOrgsIDMembersIDExecute(r ApiDeleteOrgsIDMembersIDRequest) error {
+	_, err := a.DeleteOrgsIDMembersIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *SecurityAndAccessEndpointsApiService) DeleteOrgsIDMembersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDMembersIDRequest) (*_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodDelete
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.DeleteOrgsIDMembersID")
+	if err != nil {
+		return nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/members/{userID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
+
+type ApiDeleteOrgsIDOwnersIDRequest struct {
+	ctx          _context.Context
+	ApiService   SecurityAndAccessEndpointsApi
+	userID       string
+	orgID        string
+	zapTraceSpan *string
+}
+
+func (r ApiDeleteOrgsIDOwnersIDRequest) UserID(userID string) ApiDeleteOrgsIDOwnersIDRequest {
+	r.userID = userID
+	return r
+}
+func (r ApiDeleteOrgsIDOwnersIDRequest) GetUserID() string {
+	return r.userID
+}
+
+func (r ApiDeleteOrgsIDOwnersIDRequest) OrgID(orgID string) ApiDeleteOrgsIDOwnersIDRequest {
+	r.orgID = orgID
+	return r
+}
+func (r ApiDeleteOrgsIDOwnersIDRequest) GetOrgID() string {
+	return r.orgID
+}
+
+func (r ApiDeleteOrgsIDOwnersIDRequest) ZapTraceSpan(zapTraceSpan string) ApiDeleteOrgsIDOwnersIDRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiDeleteOrgsIDOwnersIDRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiDeleteOrgsIDOwnersIDRequest) Execute() error {
+	return r.ApiService.DeleteOrgsIDOwnersIDExecute(r)
+}
+
+func (r ApiDeleteOrgsIDOwnersIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteOrgsIDOwnersIDExecuteWithHttpInfo(r)
+}
+
+/*
+ * DeleteOrgsIDOwnersID Remove an owner from an organization
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param userID The ID of the owner to remove.
+ * @param orgID The organization ID.
+ * @return ApiDeleteOrgsIDOwnersIDRequest
+ */
+func (a *SecurityAndAccessEndpointsApiService) DeleteOrgsIDOwnersID(ctx _context.Context, userID string, orgID string) ApiDeleteOrgsIDOwnersIDRequest {
+	return ApiDeleteOrgsIDOwnersIDRequest{
+		ApiService: a,
+		ctx:        ctx,
+		userID:     userID,
+		orgID:      orgID,
+	}
+}
+
+/*
+ * Execute executes the request
+ */
+func (a *SecurityAndAccessEndpointsApiService) DeleteOrgsIDOwnersIDExecute(r ApiDeleteOrgsIDOwnersIDRequest) error {
+	_, err := a.DeleteOrgsIDOwnersIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *SecurityAndAccessEndpointsApiService) DeleteOrgsIDOwnersIDExecuteWithHttpInfo(r ApiDeleteOrgsIDOwnersIDRequest) (*_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodDelete
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.DeleteOrgsIDOwnersID")
+	if err != nil {
+		return nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/owners/{userID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
+
+type ApiGetAuthorizationsRequest struct {
+	ctx          _context.Context
+	ApiService   SecurityAndAccessEndpointsApi
+	zapTraceSpan *string
+	userID       *string
+	user         *string
+	orgID        *string
+	org          *string
+}
+
+func (r ApiGetAuthorizationsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetAuthorizationsRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiGetAuthorizationsRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiGetAuthorizationsRequest) UserID(userID string) ApiGetAuthorizationsRequest {
+	r.userID = &userID
+	return r
+}
+func (r ApiGetAuthorizationsRequest) GetUserID() *string {
+	return r.userID
+}
+
+func (r ApiGetAuthorizationsRequest) User(user string) ApiGetAuthorizationsRequest {
+	r.user = &user
+	return r
+}
+func (r ApiGetAuthorizationsRequest) GetUser() *string {
+	return r.user
+}
+
+func (r ApiGetAuthorizationsRequest) OrgID(orgID string) ApiGetAuthorizationsRequest {
+	r.orgID = &orgID
+	return r
+}
+func (r ApiGetAuthorizationsRequest) GetOrgID() *string {
+	return r.orgID
+}
+
+func (r ApiGetAuthorizationsRequest) Org(org string) ApiGetAuthorizationsRequest {
+	r.org = &org
+	return r
+}
+func (r ApiGetAuthorizationsRequest) GetOrg() *string {
+	return r.org
+}
+
+func (r ApiGetAuthorizationsRequest) Execute() (Authorizations, error) {
+	return r.ApiService.GetAuthorizationsExecute(r)
+}
+
+func (r ApiGetAuthorizationsRequest) ExecuteWithHttpInfo() (Authorizations, *_nethttp.Response, error) {
+	return r.ApiService.GetAuthorizationsExecuteWithHttpInfo(r)
+}
+
+/*
+ * GetAuthorizations List all authorizations
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiGetAuthorizationsRequest
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetAuthorizations(ctx _context.Context) ApiGetAuthorizationsRequest {
+	return ApiGetAuthorizationsRequest{
 		ApiService: a,
 		ctx:        ctx,
 	}
@@ -752,10 +692,10 @@ func (a *TasksApiService) GetTasks(ctx _context.Context) ApiGetTasksRequest {
 
 /*
  * Execute executes the request
- * @return Tasks
+ * @return Authorizations
  */
-func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
-	returnVal, _, err := a.GetTasksExecuteWithHttpInfo(r)
+func (a *SecurityAndAccessEndpointsApiService) GetAuthorizationsExecute(r ApiGetAuthorizationsRequest) (Authorizations, error) {
+	returnVal, _, err := a.GetAuthorizationsExecuteWithHttpInfo(r)
 	return returnVal, err
 }
 
@@ -763,37 +703,419 @@ func (a *TasksApiService) GetTasksExecute(r ApiGetTasksRequest) (Tasks, error) {
  * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
  * returned HTTP response as it will have already been read and closed; access to the response body content should be
  * achieved through the returned response model if applicable.
- * @return Tasks
+ * @return Authorizations
  */
-func (a *TasksApiService) GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tasks, *_nethttp.Response, error) {
+func (a *SecurityAndAccessEndpointsApiService) GetAuthorizationsExecuteWithHttpInfo(r ApiGetAuthorizationsRequest) (Authorizations, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  Tasks
+		localVarReturnValue  Authorizations
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasks")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.GetAuthorizations")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v2/tasks"
+	localVarPath := localBasePath + "/api/v2/authorizations"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 
-	if r.name != nil {
-		localVarQueryParams.Add("name", parameterToString(*r.name, ""))
-	}
-	if r.after != nil {
-		localVarQueryParams.Add("after", parameterToString(*r.after, ""))
+	if r.userID != nil {
+		localVarQueryParams.Add("userID", parameterToString(*r.userID, ""))
 	}
 	if r.user != nil {
 		localVarQueryParams.Add("user", parameterToString(*r.user, ""))
+	}
+	if r.orgID != nil {
+		localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
+	}
+	if r.org != nil {
+		localVarQueryParams.Add("org", parameterToString(*r.org, ""))
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	localVarBody, err := _io.ReadAll(body)
+	body.Close()
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	newErr.body = localVarBody
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiGetAuthorizationsIDRequest struct {
+	ctx          _context.Context
+	ApiService   SecurityAndAccessEndpointsApi
+	authID       string
+	zapTraceSpan *string
+}
+
+func (r ApiGetAuthorizationsIDRequest) AuthID(authID string) ApiGetAuthorizationsIDRequest {
+	r.authID = authID
+	return r
+}
+func (r ApiGetAuthorizationsIDRequest) GetAuthID() string {
+	return r.authID
+}
+
+func (r ApiGetAuthorizationsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiGetAuthorizationsIDRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiGetAuthorizationsIDRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiGetAuthorizationsIDRequest) Execute() (Authorization, error) {
+	return r.ApiService.GetAuthorizationsIDExecute(r)
+}
+
+func (r ApiGetAuthorizationsIDRequest) ExecuteWithHttpInfo() (Authorization, *_nethttp.Response, error) {
+	return r.ApiService.GetAuthorizationsIDExecuteWithHttpInfo(r)
+}
+
+/*
+ * GetAuthorizationsID Retrieve an authorization
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param authID The ID of the authorization to get.
+ * @return ApiGetAuthorizationsIDRequest
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetAuthorizationsID(ctx _context.Context, authID string) ApiGetAuthorizationsIDRequest {
+	return ApiGetAuthorizationsIDRequest{
+		ApiService: a,
+		ctx:        ctx,
+		authID:     authID,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return Authorization
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetAuthorizationsIDExecute(r ApiGetAuthorizationsIDRequest) (Authorization, error) {
+	returnVal, _, err := a.GetAuthorizationsIDExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Authorization
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetAuthorizationsIDExecuteWithHttpInfo(r ApiGetAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  Authorization
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.GetAuthorizationsID")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/authorizations/{authID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"authID"+"}", _neturl.PathEscape(parameterToString(r.authID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	localVarBody, err := _io.ReadAll(body)
+	body.Close()
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	newErr.body = localVarBody
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiGetOrgsRequest struct {
+	ctx          _context.Context
+	ApiService   SecurityAndAccessEndpointsApi
+	zapTraceSpan *string
+	offset       *int32
+	limit        *int32
+	descending   *bool
+	org          *string
+	orgID        *string
+	userID       *string
+}
+
+func (r ApiGetOrgsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetOrgsRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiGetOrgsRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiGetOrgsRequest) Offset(offset int32) ApiGetOrgsRequest {
+	r.offset = &offset
+	return r
+}
+func (r ApiGetOrgsRequest) GetOffset() *int32 {
+	return r.offset
+}
+
+func (r ApiGetOrgsRequest) Limit(limit int32) ApiGetOrgsRequest {
+	r.limit = &limit
+	return r
+}
+func (r ApiGetOrgsRequest) GetLimit() *int32 {
+	return r.limit
+}
+
+func (r ApiGetOrgsRequest) Descending(descending bool) ApiGetOrgsRequest {
+	r.descending = &descending
+	return r
+}
+func (r ApiGetOrgsRequest) GetDescending() *bool {
+	return r.descending
+}
+
+func (r ApiGetOrgsRequest) Org(org string) ApiGetOrgsRequest {
+	r.org = &org
+	return r
+}
+func (r ApiGetOrgsRequest) GetOrg() *string {
+	return r.org
+}
+
+func (r ApiGetOrgsRequest) OrgID(orgID string) ApiGetOrgsRequest {
+	r.orgID = &orgID
+	return r
+}
+func (r ApiGetOrgsRequest) GetOrgID() *string {
+	return r.orgID
+}
+
+func (r ApiGetOrgsRequest) UserID(userID string) ApiGetOrgsRequest {
+	r.userID = &userID
+	return r
+}
+func (r ApiGetOrgsRequest) GetUserID() *string {
+	return r.userID
+}
+
+func (r ApiGetOrgsRequest) Execute() (Organizations, error) {
+	return r.ApiService.GetOrgsExecute(r)
+}
+
+func (r ApiGetOrgsRequest) ExecuteWithHttpInfo() (Organizations, *_nethttp.Response, error) {
+	return r.ApiService.GetOrgsExecuteWithHttpInfo(r)
+}
+
+/*
+ * GetOrgs List all organizations
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiGetOrgsRequest
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetOrgs(ctx _context.Context) ApiGetOrgsRequest {
+	return ApiGetOrgsRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return Organizations
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsExecute(r ApiGetOrgsRequest) (Organizations, error) {
+	returnVal, _, err := a.GetOrgsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return Organizations
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsExecuteWithHttpInfo(r ApiGetOrgsRequest) (Organizations, *_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  Organizations
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.GetOrgs")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/orgs"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	if r.offset != nil {
+		localVarQueryParams.Add("offset", parameterToString(*r.offset, ""))
+	}
+	if r.limit != nil {
+		localVarQueryParams.Add("limit", parameterToString(*r.limit, ""))
+	}
+	if r.descending != nil {
+		localVarQueryParams.Add("descending", parameterToString(*r.descending, ""))
 	}
 	if r.org != nil {
 		localVarQueryParams.Add("org", parameterToString(*r.org, ""))
@@ -801,14 +1123,8 @@ func (a *TasksApiService) GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tas
 	if r.orgID != nil {
 		localVarQueryParams.Add("orgID", parameterToString(*r.orgID, ""))
 	}
-	if r.status != nil {
-		localVarQueryParams.Add("status", parameterToString(*r.status, ""))
-	}
-	if r.limit != nil {
-		localVarQueryParams.Add("limit", parameterToString(*r.limit, ""))
-	}
-	if r.type_ != nil {
-		localVarQueryParams.Add("type", parameterToString(*r.type_, ""))
+	if r.userID != nil {
+		localVarQueryParams.Add("userID", parameterToString(*r.userID, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -859,28 +1175,6 @@ func (a *TasksApiService) GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tas
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v Error
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-			newErr.model = &v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 500 {
-			var v Error
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-			newErr.model = &v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -914,60 +1208,57 @@ func (a *TasksApiService) GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tas
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetTasksIDRequest struct {
+type ApiGetOrgsIDRequest struct {
 	ctx          _context.Context
-	ApiService   TasksApi
-	taskID       string
+	ApiService   SecurityAndAccessEndpointsApi
+	orgID        string
 	zapTraceSpan *string
 }
 
-func (r ApiGetTasksIDRequest) TaskID(taskID string) ApiGetTasksIDRequest {
-	r.taskID = taskID
+func (r ApiGetOrgsIDRequest) OrgID(orgID string) ApiGetOrgsIDRequest {
+	r.orgID = orgID
 	return r
 }
-func (r ApiGetTasksIDRequest) GetTaskID() string {
-	return r.taskID
+func (r ApiGetOrgsIDRequest) GetOrgID() string {
+	return r.orgID
 }
 
-func (r ApiGetTasksIDRequest) ZapTraceSpan(zapTraceSpan string) ApiGetTasksIDRequest {
+func (r ApiGetOrgsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiGetOrgsIDRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiGetTasksIDRequest) GetZapTraceSpan() *string {
+func (r ApiGetOrgsIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetTasksIDRequest) Execute() (Task, error) {
-	return r.ApiService.GetTasksIDExecute(r)
+func (r ApiGetOrgsIDRequest) Execute() (Organization, error) {
+	return r.ApiService.GetOrgsIDExecute(r)
 }
 
-func (r ApiGetTasksIDRequest) ExecuteWithHttpInfo() (Task, *_nethttp.Response, error) {
-	return r.ApiService.GetTasksIDExecuteWithHttpInfo(r)
+func (r ApiGetOrgsIDRequest) ExecuteWithHttpInfo() (Organization, *_nethttp.Response, error) {
+	return r.ApiService.GetOrgsIDExecuteWithHttpInfo(r)
 }
 
 /*
- * GetTasksID Retrieve a task
- * Retrieves a [task]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#task)
-by task ID.
-
+ * GetOrgsID Retrieve an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID The task ID.
- * @return ApiGetTasksIDRequest
-*/
-func (a *TasksApiService) GetTasksID(ctx _context.Context, taskID string) ApiGetTasksIDRequest {
-	return ApiGetTasksIDRequest{
+ * @param orgID The ID of the organization to get.
+ * @return ApiGetOrgsIDRequest
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsID(ctx _context.Context, orgID string) ApiGetOrgsIDRequest {
+	return ApiGetOrgsIDRequest{
 		ApiService: a,
 		ctx:        ctx,
-		taskID:     taskID,
+		orgID:      orgID,
 	}
 }
 
 /*
  * Execute executes the request
- * @return Task
+ * @return Organization
  */
-func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error) {
-	returnVal, _, err := a.GetTasksIDExecuteWithHttpInfo(r)
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDExecute(r ApiGetOrgsIDRequest) (Organization, error) {
+	returnVal, _, err := a.GetOrgsIDExecuteWithHttpInfo(r)
 	return returnVal, err
 }
 
@@ -975,25 +1266,25 @@ func (a *TasksApiService) GetTasksIDExecute(r ApiGetTasksIDRequest) (Task, error
  * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
  * returned HTTP response as it will have already been read and closed; access to the response body content should be
  * achieved through the returned response model if applicable.
- * @return Task
+ * @return Organization
  */
-func (a *TasksApiService) GetTasksIDExecuteWithHttpInfo(r ApiGetTasksIDRequest) (Task, *_nethttp.Response, error) {
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDExecuteWithHttpInfo(r ApiGetOrgsIDRequest) (Organization, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  Task
+		localVarReturnValue  Organization
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasksID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.GetOrgsID")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v2/tasks/{taskID}"
-	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -1081,57 +1372,57 @@ func (a *TasksApiService) GetTasksIDExecuteWithHttpInfo(r ApiGetTasksIDRequest) 
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetTasksIDLogsRequest struct {
+type ApiGetOrgsIDMembersRequest struct {
 	ctx          _context.Context
-	ApiService   TasksApi
-	taskID       string
+	ApiService   SecurityAndAccessEndpointsApi
+	orgID        string
 	zapTraceSpan *string
 }
 
-func (r ApiGetTasksIDLogsRequest) TaskID(taskID string) ApiGetTasksIDLogsRequest {
-	r.taskID = taskID
+func (r ApiGetOrgsIDMembersRequest) OrgID(orgID string) ApiGetOrgsIDMembersRequest {
+	r.orgID = orgID
 	return r
 }
-func (r ApiGetTasksIDLogsRequest) GetTaskID() string {
-	return r.taskID
+func (r ApiGetOrgsIDMembersRequest) GetOrgID() string {
+	return r.orgID
 }
 
-func (r ApiGetTasksIDLogsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetTasksIDLogsRequest {
+func (r ApiGetOrgsIDMembersRequest) ZapTraceSpan(zapTraceSpan string) ApiGetOrgsIDMembersRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiGetTasksIDLogsRequest) GetZapTraceSpan() *string {
+func (r ApiGetOrgsIDMembersRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetTasksIDLogsRequest) Execute() (Logs, error) {
-	return r.ApiService.GetTasksIDLogsExecute(r)
+func (r ApiGetOrgsIDMembersRequest) Execute() (ResourceMembers, error) {
+	return r.ApiService.GetOrgsIDMembersExecute(r)
 }
 
-func (r ApiGetTasksIDLogsRequest) ExecuteWithHttpInfo() (Logs, *_nethttp.Response, error) {
-	return r.ApiService.GetTasksIDLogsExecuteWithHttpInfo(r)
+func (r ApiGetOrgsIDMembersRequest) ExecuteWithHttpInfo() (ResourceMembers, *_nethttp.Response, error) {
+	return r.ApiService.GetOrgsIDMembersExecuteWithHttpInfo(r)
 }
 
 /*
- * GetTasksIDLogs Retrieve all logs for a task
+ * GetOrgsIDMembers List all members of an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID The task ID.
- * @return ApiGetTasksIDLogsRequest
+ * @param orgID The organization ID.
+ * @return ApiGetOrgsIDMembersRequest
  */
-func (a *TasksApiService) GetTasksIDLogs(ctx _context.Context, taskID string) ApiGetTasksIDLogsRequest {
-	return ApiGetTasksIDLogsRequest{
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDMembers(ctx _context.Context, orgID string) ApiGetOrgsIDMembersRequest {
+	return ApiGetOrgsIDMembersRequest{
 		ApiService: a,
 		ctx:        ctx,
-		taskID:     taskID,
+		orgID:      orgID,
 	}
 }
 
 /*
  * Execute executes the request
- * @return Logs
+ * @return ResourceMembers
  */
-func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Logs, error) {
-	returnVal, _, err := a.GetTasksIDLogsExecuteWithHttpInfo(r)
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDMembersExecute(r ApiGetOrgsIDMembersRequest) (ResourceMembers, error) {
+	returnVal, _, err := a.GetOrgsIDMembersExecuteWithHttpInfo(r)
 	return returnVal, err
 }
 
@@ -1139,25 +1430,375 @@ func (a *TasksApiService) GetTasksIDLogsExecute(r ApiGetTasksIDLogsRequest) (Log
  * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
  * returned HTTP response as it will have already been read and closed; access to the response body content should be
  * achieved through the returned response model if applicable.
- * @return Logs
+ * @return ResourceMembers
  */
-func (a *TasksApiService) GetTasksIDLogsExecuteWithHttpInfo(r ApiGetTasksIDLogsRequest) (Logs, *_nethttp.Response, error) {
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDMembersExecuteWithHttpInfo(r ApiGetOrgsIDMembersRequest) (ResourceMembers, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  Logs
+		localVarReturnValue  ResourceMembers
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasksIDLogs")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.GetOrgsIDMembers")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/logs"
-	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/members"
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	localVarBody, err := _io.ReadAll(body)
+	body.Close()
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	newErr.body = localVarBody
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiGetOrgsIDOwnersRequest struct {
+	ctx          _context.Context
+	ApiService   SecurityAndAccessEndpointsApi
+	orgID        string
+	zapTraceSpan *string
+}
+
+func (r ApiGetOrgsIDOwnersRequest) OrgID(orgID string) ApiGetOrgsIDOwnersRequest {
+	r.orgID = orgID
+	return r
+}
+func (r ApiGetOrgsIDOwnersRequest) GetOrgID() string {
+	return r.orgID
+}
+
+func (r ApiGetOrgsIDOwnersRequest) ZapTraceSpan(zapTraceSpan string) ApiGetOrgsIDOwnersRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiGetOrgsIDOwnersRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiGetOrgsIDOwnersRequest) Execute() (ResourceOwners, error) {
+	return r.ApiService.GetOrgsIDOwnersExecute(r)
+}
+
+func (r ApiGetOrgsIDOwnersRequest) ExecuteWithHttpInfo() (ResourceOwners, *_nethttp.Response, error) {
+	return r.ApiService.GetOrgsIDOwnersExecuteWithHttpInfo(r)
+}
+
+/*
+ * GetOrgsIDOwners List all owners of an organization
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The organization ID.
+ * @return ApiGetOrgsIDOwnersRequest
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDOwners(ctx _context.Context, orgID string) ApiGetOrgsIDOwnersRequest {
+	return ApiGetOrgsIDOwnersRequest{
+		ApiService: a,
+		ctx:        ctx,
+		orgID:      orgID,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return ResourceOwners
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDOwnersExecute(r ApiGetOrgsIDOwnersRequest) (ResourceOwners, error) {
+	returnVal, _, err := a.GetOrgsIDOwnersExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return ResourceOwners
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDOwnersExecuteWithHttpInfo(r ApiGetOrgsIDOwnersRequest) (ResourceOwners, *_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  ResourceOwners
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.GetOrgsIDOwners")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/owners"
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	body, err := GunzipIfNeeded(localVarHTTPResponse)
+	if err != nil {
+		body.Close()
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	localVarBody, err := _io.ReadAll(body)
+	body.Close()
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+	newErr.body = localVarBody
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr.error = err.Error()
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiGetOrgsIDSecretsRequest struct {
+	ctx          _context.Context
+	ApiService   SecurityAndAccessEndpointsApi
+	orgID        string
+	zapTraceSpan *string
+}
+
+func (r ApiGetOrgsIDSecretsRequest) OrgID(orgID string) ApiGetOrgsIDSecretsRequest {
+	r.orgID = orgID
+	return r
+}
+func (r ApiGetOrgsIDSecretsRequest) GetOrgID() string {
+	return r.orgID
+}
+
+func (r ApiGetOrgsIDSecretsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetOrgsIDSecretsRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiGetOrgsIDSecretsRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiGetOrgsIDSecretsRequest) Execute() (SecretKeysResponse, error) {
+	return r.ApiService.GetOrgsIDSecretsExecute(r)
+}
+
+func (r ApiGetOrgsIDSecretsRequest) ExecuteWithHttpInfo() (SecretKeysResponse, *_nethttp.Response, error) {
+	return r.ApiService.GetOrgsIDSecretsExecuteWithHttpInfo(r)
+}
+
+/*
+ * GetOrgsIDSecrets List all secret keys for an organization
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The organization ID.
+ * @return ApiGetOrgsIDSecretsRequest
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDSecrets(ctx _context.Context, orgID string) ApiGetOrgsIDSecretsRequest {
+	return ApiGetOrgsIDSecretsRequest{
+		ApiService: a,
+		ctx:        ctx,
+		orgID:      orgID,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return SecretKeysResponse
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDSecretsExecute(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, error) {
+	returnVal, _, err := a.GetOrgsIDSecretsExecuteWithHttpInfo(r)
+	return returnVal, err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ * @return SecretKeysResponse
+ */
+func (a *SecurityAndAccessEndpointsApiService) GetOrgsIDSecretsExecuteWithHttpInfo(r ApiGetOrgsIDSecretsRequest) (SecretKeysResponse, *_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  SecretKeysResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.GetOrgsIDSecrets")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/secrets"
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -1245,93 +1886,91 @@ func (a *TasksApiService) GetTasksIDLogsExecuteWithHttpInfo(r ApiGetTasksIDLogsR
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetTasksIDRunsRequest struct {
+type ApiGetUsersRequest struct {
 	ctx          _context.Context
-	ApiService   TasksApi
-	taskID       string
+	ApiService   SecurityAndAccessEndpointsApi
 	zapTraceSpan *string
-	after        *string
+	offset       *int32
 	limit        *int32
-	afterTime    *time.Time
-	beforeTime   *time.Time
+	after        *string
+	name         *string
+	id           *string
 }
 
-func (r ApiGetTasksIDRunsRequest) TaskID(taskID string) ApiGetTasksIDRunsRequest {
-	r.taskID = taskID
-	return r
-}
-func (r ApiGetTasksIDRunsRequest) GetTaskID() string {
-	return r.taskID
-}
-
-func (r ApiGetTasksIDRunsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetTasksIDRunsRequest {
+func (r ApiGetUsersRequest) ZapTraceSpan(zapTraceSpan string) ApiGetUsersRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiGetTasksIDRunsRequest) GetZapTraceSpan() *string {
+func (r ApiGetUsersRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetTasksIDRunsRequest) After(after string) ApiGetTasksIDRunsRequest {
-	r.after = &after
+func (r ApiGetUsersRequest) Offset(offset int32) ApiGetUsersRequest {
+	r.offset = &offset
 	return r
 }
-func (r ApiGetTasksIDRunsRequest) GetAfter() *string {
-	return r.after
+func (r ApiGetUsersRequest) GetOffset() *int32 {
+	return r.offset
 }
 
-func (r ApiGetTasksIDRunsRequest) Limit(limit int32) ApiGetTasksIDRunsRequest {
+func (r ApiGetUsersRequest) Limit(limit int32) ApiGetUsersRequest {
 	r.limit = &limit
 	return r
 }
-func (r ApiGetTasksIDRunsRequest) GetLimit() *int32 {
+func (r ApiGetUsersRequest) GetLimit() *int32 {
 	return r.limit
 }
 
-func (r ApiGetTasksIDRunsRequest) AfterTime(afterTime time.Time) ApiGetTasksIDRunsRequest {
-	r.afterTime = &afterTime
+func (r ApiGetUsersRequest) After(after string) ApiGetUsersRequest {
+	r.after = &after
 	return r
 }
-func (r ApiGetTasksIDRunsRequest) GetAfterTime() *time.Time {
-	return r.afterTime
+func (r ApiGetUsersRequest) GetAfter() *string {
+	return r.after
 }
 
-func (r ApiGetTasksIDRunsRequest) BeforeTime(beforeTime time.Time) ApiGetTasksIDRunsRequest {
-	r.beforeTime = &beforeTime
+func (r ApiGetUsersRequest) Name(name string) ApiGetUsersRequest {
+	r.name = &name
 	return r
 }
-func (r ApiGetTasksIDRunsRequest) GetBeforeTime() *time.Time {
-	return r.beforeTime
+func (r ApiGetUsersRequest) GetName() *string {
+	return r.name
 }
 
-func (r ApiGetTasksIDRunsRequest) Execute() (Runs, error) {
-	return r.ApiService.GetTasksIDRunsExecute(r)
+func (r ApiGetUsersRequest) Id(id string) ApiGetUsersRequest {
+	r.id = &id
+	return r
+}
+func (r ApiGetUsersRequest) GetId() *string {
+	return r.id
 }
 
-func (r ApiGetTasksIDRunsRequest) ExecuteWithHttpInfo() (Runs, *_nethttp.Response, error) {
-	return r.ApiService.GetTasksIDRunsExecuteWithHttpInfo(r)
+func (r ApiGetUsersRequest) Execute() (Users, error) {
+	return r.ApiService.GetUsersExecute(r)
+}
+
+func (r ApiGetUsersRequest) ExecuteWithHttpInfo() (Users, *_nethttp.Response, error) {
+	return r.ApiService.GetUsersExecuteWithHttpInfo(r)
 }
 
 /*
- * GetTasksIDRuns List runs for a task
+ * GetUsers List all users
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID The ID of the task to get runs for.
- * @return ApiGetTasksIDRunsRequest
+ * @return ApiGetUsersRequest
  */
-func (a *TasksApiService) GetTasksIDRuns(ctx _context.Context, taskID string) ApiGetTasksIDRunsRequest {
-	return ApiGetTasksIDRunsRequest{
+func (a *SecurityAndAccessEndpointsApiService) GetUsers(ctx _context.Context) ApiGetUsersRequest {
+	return ApiGetUsersRequest{
 		ApiService: a,
 		ctx:        ctx,
-		taskID:     taskID,
 	}
 }
 
 /*
  * Execute executes the request
- * @return Runs
+ * @return Users
  */
-func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Runs, error) {
-	returnVal, _, err := a.GetTasksIDRunsExecuteWithHttpInfo(r)
+func (a *SecurityAndAccessEndpointsApiService) GetUsersExecute(r ApiGetUsersRequest) (Users, error) {
+	returnVal, _, err := a.GetUsersExecuteWithHttpInfo(r)
 	return returnVal, err
 }
 
@@ -1339,41 +1978,43 @@ func (a *TasksApiService) GetTasksIDRunsExecute(r ApiGetTasksIDRunsRequest) (Run
  * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
  * returned HTTP response as it will have already been read and closed; access to the response body content should be
  * achieved through the returned response model if applicable.
- * @return Runs
+ * @return Users
  */
-func (a *TasksApiService) GetTasksIDRunsExecuteWithHttpInfo(r ApiGetTasksIDRunsRequest) (Runs, *_nethttp.Response, error) {
+func (a *SecurityAndAccessEndpointsApiService) GetUsersExecuteWithHttpInfo(r ApiGetUsersRequest) (Users, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  Runs
+		localVarReturnValue  Users
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasksIDRuns")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.GetUsers")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs"
-	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
+	localVarPath := localBasePath + "/api/v2/users"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 
-	if r.after != nil {
-		localVarQueryParams.Add("after", parameterToString(*r.after, ""))
+	if r.offset != nil {
+		localVarQueryParams.Add("offset", parameterToString(*r.offset, ""))
 	}
 	if r.limit != nil {
 		localVarQueryParams.Add("limit", parameterToString(*r.limit, ""))
 	}
-	if r.afterTime != nil {
-		localVarQueryParams.Add("afterTime", parameterToString(*r.afterTime, ""))
+	if r.after != nil {
+		localVarQueryParams.Add("after", parameterToString(*r.after, ""))
 	}
-	if r.beforeTime != nil {
-		localVarQueryParams.Add("beforeTime", parameterToString(*r.beforeTime, ""))
+	if r.name != nil {
+		localVarQueryParams.Add("name", parameterToString(*r.name, ""))
+	}
+	if r.id != nil {
+		localVarQueryParams.Add("id", parameterToString(*r.id, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -1457,68 +2098,57 @@ func (a *TasksApiService) GetTasksIDRunsExecuteWithHttpInfo(r ApiGetTasksIDRunsR
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetTasksIDRunsIDRequest struct {
+type ApiGetUsersIDRequest struct {
 	ctx          _context.Context
-	ApiService   TasksApi
-	taskID       string
-	runID        string
+	ApiService   SecurityAndAccessEndpointsApi
+	userID       string
 	zapTraceSpan *string
 }
 
-func (r ApiGetTasksIDRunsIDRequest) TaskID(taskID string) ApiGetTasksIDRunsIDRequest {
-	r.taskID = taskID
+func (r ApiGetUsersIDRequest) UserID(userID string) ApiGetUsersIDRequest {
+	r.userID = userID
 	return r
 }
-func (r ApiGetTasksIDRunsIDRequest) GetTaskID() string {
-	return r.taskID
+func (r ApiGetUsersIDRequest) GetUserID() string {
+	return r.userID
 }
 
-func (r ApiGetTasksIDRunsIDRequest) RunID(runID string) ApiGetTasksIDRunsIDRequest {
-	r.runID = runID
-	return r
-}
-func (r ApiGetTasksIDRunsIDRequest) GetRunID() string {
-	return r.runID
-}
-
-func (r ApiGetTasksIDRunsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiGetTasksIDRunsIDRequest {
+func (r ApiGetUsersIDRequest) ZapTraceSpan(zapTraceSpan string) ApiGetUsersIDRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiGetTasksIDRunsIDRequest) GetZapTraceSpan() *string {
+func (r ApiGetUsersIDRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetTasksIDRunsIDRequest) Execute() (Run, error) {
-	return r.ApiService.GetTasksIDRunsIDExecute(r)
+func (r ApiGetUsersIDRequest) Execute() (UserResponse, error) {
+	return r.ApiService.GetUsersIDExecute(r)
 }
 
-func (r ApiGetTasksIDRunsIDRequest) ExecuteWithHttpInfo() (Run, *_nethttp.Response, error) {
-	return r.ApiService.GetTasksIDRunsIDExecuteWithHttpInfo(r)
+func (r ApiGetUsersIDRequest) ExecuteWithHttpInfo() (UserResponse, *_nethttp.Response, error) {
+	return r.ApiService.GetUsersIDExecuteWithHttpInfo(r)
 }
 
 /*
- * GetTasksIDRunsID Retrieve a single run for a task.
+ * GetUsersID Retrieve a user
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID The task ID.
- * @param runID The run ID.
- * @return ApiGetTasksIDRunsIDRequest
+ * @param userID The user ID.
+ * @return ApiGetUsersIDRequest
  */
-func (a *TasksApiService) GetTasksIDRunsID(ctx _context.Context, taskID string, runID string) ApiGetTasksIDRunsIDRequest {
-	return ApiGetTasksIDRunsIDRequest{
+func (a *SecurityAndAccessEndpointsApiService) GetUsersID(ctx _context.Context, userID string) ApiGetUsersIDRequest {
+	return ApiGetUsersIDRequest{
 		ApiService: a,
 		ctx:        ctx,
-		taskID:     taskID,
-		runID:      runID,
+		userID:     userID,
 	}
 }
 
 /*
  * Execute executes the request
- * @return Run
+ * @return UserResponse
  */
-func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) (Run, error) {
-	returnVal, _, err := a.GetTasksIDRunsIDExecuteWithHttpInfo(r)
+func (a *SecurityAndAccessEndpointsApiService) GetUsersIDExecute(r ApiGetUsersIDRequest) (UserResponse, error) {
+	returnVal, _, err := a.GetUsersIDExecuteWithHttpInfo(r)
 	return returnVal, err
 }
 
@@ -1526,26 +2156,25 @@ func (a *TasksApiService) GetTasksIDRunsIDExecute(r ApiGetTasksIDRunsIDRequest) 
  * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
  * returned HTTP response as it will have already been read and closed; access to the response body content should be
  * achieved through the returned response model if applicable.
- * @return Run
+ * @return UserResponse
  */
-func (a *TasksApiService) GetTasksIDRunsIDExecuteWithHttpInfo(r ApiGetTasksIDRunsIDRequest) (Run, *_nethttp.Response, error) {
+func (a *SecurityAndAccessEndpointsApiService) GetUsersIDExecuteWithHttpInfo(r ApiGetUsersIDRequest) (UserResponse, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  Run
+		localVarReturnValue  UserResponse
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasksIDRunsID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.GetUsersID")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs/{runID}"
-	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"runID"+"}", _neturl.PathEscape(parameterToString(r.runID, "")), -1)
+	localVarPath := localBasePath + "/api/v2/users/{userID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
@@ -1633,102 +2262,99 @@ func (a *TasksApiService) GetTasksIDRunsIDExecuteWithHttpInfo(r ApiGetTasksIDRun
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetTasksIDRunsIDLogsRequest struct {
+type ApiPostOrgsIDSecretsRequest struct {
 	ctx          _context.Context
-	ApiService   TasksApi
-	taskID       string
-	runID        string
+	ApiService   SecurityAndAccessEndpointsApi
+	orgID        string
+	secretKeys   *SecretKeys
 	zapTraceSpan *string
 }
 
-func (r ApiGetTasksIDRunsIDLogsRequest) TaskID(taskID string) ApiGetTasksIDRunsIDLogsRequest {
-	r.taskID = taskID
+func (r ApiPostOrgsIDSecretsRequest) OrgID(orgID string) ApiPostOrgsIDSecretsRequest {
+	r.orgID = orgID
 	return r
 }
-func (r ApiGetTasksIDRunsIDLogsRequest) GetTaskID() string {
-	return r.taskID
+func (r ApiPostOrgsIDSecretsRequest) GetOrgID() string {
+	return r.orgID
 }
 
-func (r ApiGetTasksIDRunsIDLogsRequest) RunID(runID string) ApiGetTasksIDRunsIDLogsRequest {
-	r.runID = runID
+func (r ApiPostOrgsIDSecretsRequest) SecretKeys(secretKeys SecretKeys) ApiPostOrgsIDSecretsRequest {
+	r.secretKeys = &secretKeys
 	return r
 }
-func (r ApiGetTasksIDRunsIDLogsRequest) GetRunID() string {
-	return r.runID
+func (r ApiPostOrgsIDSecretsRequest) GetSecretKeys() *SecretKeys {
+	return r.secretKeys
 }
 
-func (r ApiGetTasksIDRunsIDLogsRequest) ZapTraceSpan(zapTraceSpan string) ApiGetTasksIDRunsIDLogsRequest {
+func (r ApiPostOrgsIDSecretsRequest) ZapTraceSpan(zapTraceSpan string) ApiPostOrgsIDSecretsRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiGetTasksIDRunsIDLogsRequest) GetZapTraceSpan() *string {
+func (r ApiPostOrgsIDSecretsRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiGetTasksIDRunsIDLogsRequest) Execute() (Logs, error) {
-	return r.ApiService.GetTasksIDRunsIDLogsExecute(r)
+func (r ApiPostOrgsIDSecretsRequest) Execute() error {
+	return r.ApiService.PostOrgsIDSecretsExecute(r)
 }
 
-func (r ApiGetTasksIDRunsIDLogsRequest) ExecuteWithHttpInfo() (Logs, *_nethttp.Response, error) {
-	return r.ApiService.GetTasksIDRunsIDLogsExecuteWithHttpInfo(r)
+func (r ApiPostOrgsIDSecretsRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PostOrgsIDSecretsExecuteWithHttpInfo(r)
 }
 
 /*
- * GetTasksIDRunsIDLogs Retrieve all logs for a run
+ * PostOrgsIDSecrets Delete secrets from an organization
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID ID of task to get logs for.
- * @param runID ID of run to get logs for.
- * @return ApiGetTasksIDRunsIDLogsRequest
+ * @param orgID The organization ID.
+ * @return ApiPostOrgsIDSecretsRequest
  */
-func (a *TasksApiService) GetTasksIDRunsIDLogs(ctx _context.Context, taskID string, runID string) ApiGetTasksIDRunsIDLogsRequest {
-	return ApiGetTasksIDRunsIDLogsRequest{
+func (a *SecurityAndAccessEndpointsApiService) PostOrgsIDSecrets(ctx _context.Context, orgID string) ApiPostOrgsIDSecretsRequest {
+	return ApiPostOrgsIDSecretsRequest{
 		ApiService: a,
 		ctx:        ctx,
-		taskID:     taskID,
-		runID:      runID,
+		orgID:      orgID,
 	}
 }
 
 /*
  * Execute executes the request
- * @return Logs
  */
-func (a *TasksApiService) GetTasksIDRunsIDLogsExecute(r ApiGetTasksIDRunsIDLogsRequest) (Logs, error) {
-	returnVal, _, err := a.GetTasksIDRunsIDLogsExecuteWithHttpInfo(r)
-	return returnVal, err
+func (a *SecurityAndAccessEndpointsApiService) PostOrgsIDSecretsExecute(r ApiPostOrgsIDSecretsRequest) error {
+	_, err := a.PostOrgsIDSecretsExecuteWithHttpInfo(r)
+	return err
 }
 
 /*
  * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
  * returned HTTP response as it will have already been read and closed; access to the response body content should be
  * achieved through the returned response model if applicable.
- * @return Logs
  */
-func (a *TasksApiService) GetTasksIDRunsIDLogsExecuteWithHttpInfo(r ApiGetTasksIDRunsIDLogsRequest) (Logs, *_nethttp.Response, error) {
+func (a *SecurityAndAccessEndpointsApiService) PostOrgsIDSecretsExecuteWithHttpInfo(r ApiPostOrgsIDSecretsRequest) (*_nethttp.Response, error) {
 	var (
-		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  Logs
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.GetTasksIDRunsIDLogs")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.PostOrgsIDSecrets")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs/{runID}/logs"
-	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"runID"+"}", _neturl.PathEscape(parameterToString(r.runID, "")), -1)
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/secrets/{delete}"
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.secretKeys == nil {
+		return nil, reportError("secretKeys is required and must be specified")
+	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
+	localVarHTTPContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -1747,14 +2373,16 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecuteWithHttpInfo(r ApiGetTasksI
 	if r.zapTraceSpan != nil {
 		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
+	// body params
+	localVarPostBody = r.secretKeys
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarHTTPResponse, err
 	}
 
 	newErr := GenericOpenAPIError{
@@ -1766,13 +2394,13 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecuteWithHttpInfo(r ApiGetTasksI
 		if err != nil {
 			body.Close()
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarHTTPResponse, newErr
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarHTTPResponse, newErr
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
@@ -1780,136 +2408,110 @@ func (a *TasksApiService) GetTasksIDRunsIDLogsExecuteWithHttpInfo(r ApiGetTasksI
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	body, err := GunzipIfNeeded(localVarHTTPResponse)
-	if err != nil {
-		body.Close()
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-	localVarBody, err := _io.ReadAll(body)
-	body.Close()
-	if err != nil {
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-	newErr.body = localVarBody
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarHTTPResponse, nil
 }
 
-type ApiPatchTasksIDRequest struct {
+type ApiPostUsersIDPasswordRequest struct {
 	ctx               _context.Context
-	ApiService        TasksApi
-	taskID            string
-	taskUpdateRequest *TaskUpdateRequest
+	ApiService        SecurityAndAccessEndpointsApi
+	userID            string
+	passwordResetBody *PasswordResetBody
 	zapTraceSpan      *string
 }
 
-func (r ApiPatchTasksIDRequest) TaskID(taskID string) ApiPatchTasksIDRequest {
-	r.taskID = taskID
+func (r ApiPostUsersIDPasswordRequest) UserID(userID string) ApiPostUsersIDPasswordRequest {
+	r.userID = userID
 	return r
 }
-func (r ApiPatchTasksIDRequest) GetTaskID() string {
-	return r.taskID
+func (r ApiPostUsersIDPasswordRequest) GetUserID() string {
+	return r.userID
 }
 
-func (r ApiPatchTasksIDRequest) TaskUpdateRequest(taskUpdateRequest TaskUpdateRequest) ApiPatchTasksIDRequest {
-	r.taskUpdateRequest = &taskUpdateRequest
+func (r ApiPostUsersIDPasswordRequest) PasswordResetBody(passwordResetBody PasswordResetBody) ApiPostUsersIDPasswordRequest {
+	r.passwordResetBody = &passwordResetBody
 	return r
 }
-func (r ApiPatchTasksIDRequest) GetTaskUpdateRequest() *TaskUpdateRequest {
-	return r.taskUpdateRequest
+func (r ApiPostUsersIDPasswordRequest) GetPasswordResetBody() *PasswordResetBody {
+	return r.passwordResetBody
 }
 
-func (r ApiPatchTasksIDRequest) ZapTraceSpan(zapTraceSpan string) ApiPatchTasksIDRequest {
+func (r ApiPostUsersIDPasswordRequest) ZapTraceSpan(zapTraceSpan string) ApiPostUsersIDPasswordRequest {
 	r.zapTraceSpan = &zapTraceSpan
 	return r
 }
-func (r ApiPatchTasksIDRequest) GetZapTraceSpan() *string {
+func (r ApiPostUsersIDPasswordRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
 }
 
-func (r ApiPatchTasksIDRequest) Execute() (Task, error) {
-	return r.ApiService.PatchTasksIDExecute(r)
+func (r ApiPostUsersIDPasswordRequest) Execute() error {
+	return r.ApiService.PostUsersIDPasswordExecute(r)
 }
 
-func (r ApiPatchTasksIDRequest) ExecuteWithHttpInfo() (Task, *_nethttp.Response, error) {
-	return r.ApiService.PatchTasksIDExecuteWithHttpInfo(r)
+func (r ApiPostUsersIDPasswordRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PostUsersIDPasswordExecuteWithHttpInfo(r)
 }
 
 /*
- * PatchTasksID Update a task
- * Updates a task and then cancels all scheduled runs of the task.
+ * PostUsersIDPassword Update a password
+ * #### InfluxDB Cloud
 
-Use this endpoint to modify task properties (for example: `cron`, `name`, `flux`, `status`).
-Once InfluxDB applies the update, it cancels all scheduled runs of the task.
-
-To update a task, pass an object that contains the updated key-value pairs.
-To activate or inactivate a task, set the `status` property.
-_`"status": "inactive"`_ cancels scheduled runs and prevents manual runs of the task.
+InfluxDB Cloud does not support changing user passwords through the API.
+Use the InfluxDB Cloud user interface to update your password.
 
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID The task ID.
- * @return ApiPatchTasksIDRequest
+ * @param userID The user ID.
+ * @return ApiPostUsersIDPasswordRequest
 */
-func (a *TasksApiService) PatchTasksID(ctx _context.Context, taskID string) ApiPatchTasksIDRequest {
-	return ApiPatchTasksIDRequest{
+func (a *SecurityAndAccessEndpointsApiService) PostUsersIDPassword(ctx _context.Context, userID string) ApiPostUsersIDPasswordRequest {
+	return ApiPostUsersIDPasswordRequest{
 		ApiService: a,
 		ctx:        ctx,
-		taskID:     taskID,
+		userID:     userID,
 	}
 }
 
 /*
  * Execute executes the request
- * @return Task
  */
-func (a *TasksApiService) PatchTasksIDExecute(r ApiPatchTasksIDRequest) (Task, error) {
-	returnVal, _, err := a.PatchTasksIDExecuteWithHttpInfo(r)
-	return returnVal, err
+func (a *SecurityAndAccessEndpointsApiService) PostUsersIDPasswordExecute(r ApiPostUsersIDPasswordRequest) error {
+	_, err := a.PostUsersIDPasswordExecuteWithHttpInfo(r)
+	return err
 }
 
 /*
  * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
  * returned HTTP response as it will have already been read and closed; access to the response body content should be
  * achieved through the returned response model if applicable.
- * @return Task
  */
-func (a *TasksApiService) PatchTasksIDExecuteWithHttpInfo(r ApiPatchTasksIDRequest) (Task, *_nethttp.Response, error) {
+func (a *SecurityAndAccessEndpointsApiService) PostUsersIDPasswordExecuteWithHttpInfo(r ApiPostUsersIDPasswordRequest) (*_nethttp.Response, error) {
 	var (
-		localVarHTTPMethod   = _nethttp.MethodPatch
+		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  Task
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.PatchTasksID")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecurityAndAccessEndpointsApiService.PostUsersIDPassword")
 	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+		return nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v2/tasks/{taskID}"
-	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
+	localVarPath := localBasePath + "/api/v2/users/{userID}/password"
+	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
-	if r.taskUpdateRequest == nil {
-		return localVarReturnValue, nil, reportError("taskUpdateRequest is required and must be specified")
+	if r.passwordResetBody == nil {
+		return nil, reportError("passwordResetBody is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -1933,15 +2535,15 @@ func (a *TasksApiService) PatchTasksIDExecuteWithHttpInfo(r ApiPatchTasksIDReque
 		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
 	}
 	// body params
-	localVarPostBody = r.taskUpdateRequest
+	localVarPostBody = r.passwordResetBody
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
+		return localVarHTTPResponse, err
 	}
 
 	newErr := GenericOpenAPIError{
@@ -1953,13 +2555,13 @@ func (a *TasksApiService) PatchTasksIDExecuteWithHttpInfo(r ApiPatchTasksIDReque
 		if err != nil {
 			body.Close()
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarHTTPResponse, newErr
 		}
 		localVarBody, err := _io.ReadAll(body)
 		body.Close()
 		if err != nil {
 			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarHTTPResponse, newErr
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
@@ -1967,578 +2569,12 @@ func (a *TasksApiService) PatchTasksIDExecuteWithHttpInfo(r ApiPatchTasksIDReque
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, localVarHTTPResponse, newErr
+			return localVarHTTPResponse, newErr
 		}
 		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
+		return localVarHTTPResponse, newErr
 	}
 
-	body, err := GunzipIfNeeded(localVarHTTPResponse)
-	if err != nil {
-		body.Close()
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-	localVarBody, err := _io.ReadAll(body)
-	body.Close()
-	if err != nil {
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-	newErr.body = localVarBody
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiPostTasksRequest struct {
-	ctx               _context.Context
-	ApiService        TasksApi
-	taskCreateRequest *TaskCreateRequest
-	zapTraceSpan      *string
-}
-
-func (r ApiPostTasksRequest) TaskCreateRequest(taskCreateRequest TaskCreateRequest) ApiPostTasksRequest {
-	r.taskCreateRequest = &taskCreateRequest
-	return r
-}
-func (r ApiPostTasksRequest) GetTaskCreateRequest() *TaskCreateRequest {
-	return r.taskCreateRequest
-}
-
-func (r ApiPostTasksRequest) ZapTraceSpan(zapTraceSpan string) ApiPostTasksRequest {
-	r.zapTraceSpan = &zapTraceSpan
-	return r
-}
-func (r ApiPostTasksRequest) GetZapTraceSpan() *string {
-	return r.zapTraceSpan
-}
-
-func (r ApiPostTasksRequest) Execute() (Task, error) {
-	return r.ApiService.PostTasksExecute(r)
-}
-
-func (r ApiPostTasksRequest) ExecuteWithHttpInfo() (Task, *_nethttp.Response, error) {
-	return r.ApiService.PostTasksExecuteWithHttpInfo(r)
-}
-
-/*
- * PostTasks Create a task
- * Creates a [task]({{% INFLUXDB_DOCS_URL %}}/process-data/) and returns the created task.
-
-#### Related guides
-
-- [Create a task]({{% INFLUXDB_DOCS_URL %}}/process-data/manage-tasks/create-task/).
-- [Common tasks]({{% INFLUXDB_DOCS_URL %}}/process-data/common-tasks/)
-- [Task configuration options]({{% INFLUXDB_DOCS_URL %}}/process-data/task-options/)
-
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiPostTasksRequest
-*/
-func (a *TasksApiService) PostTasks(ctx _context.Context) ApiPostTasksRequest {
-	return ApiPostTasksRequest{
-		ApiService: a,
-		ctx:        ctx,
-	}
-}
-
-/*
- * Execute executes the request
- * @return Task
- */
-func (a *TasksApiService) PostTasksExecute(r ApiPostTasksRequest) (Task, error) {
-	returnVal, _, err := a.PostTasksExecuteWithHttpInfo(r)
-	return returnVal, err
-}
-
-/*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
- * returned HTTP response as it will have already been read and closed; access to the response body content should be
- * achieved through the returned response model if applicable.
- * @return Task
- */
-func (a *TasksApiService) PostTasksExecuteWithHttpInfo(r ApiPostTasksRequest) (Task, *_nethttp.Response, error) {
-	var (
-		localVarHTTPMethod   = _nethttp.MethodPost
-		localVarPostBody     interface{}
-		localVarFormFileName string
-		localVarFileName     string
-		localVarFileBytes    []byte
-		localVarReturnValue  Task
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.PostTasks")
-	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/api/v2/tasks"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := _neturl.Values{}
-	localVarFormParams := _neturl.Values{}
-	if r.taskCreateRequest == nil {
-		return localVarReturnValue, nil, reportError("taskCreateRequest is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.zapTraceSpan != nil {
-		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
-	}
-	// body params
-	localVarPostBody = r.taskCreateRequest
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	newErr := GenericOpenAPIError{
-		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		body, err := GunzipIfNeeded(localVarHTTPResponse)
-		if err != nil {
-			body.Close()
-			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		localVarBody, err := _io.ReadAll(body)
-		body.Close()
-		if err != nil {
-			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		newErr.body = localVarBody
-		newErr.error = localVarHTTPResponse.Status
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v Object
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-			newErr.model = &v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		var v Error
-		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	body, err := GunzipIfNeeded(localVarHTTPResponse)
-	if err != nil {
-		body.Close()
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-	localVarBody, err := _io.ReadAll(body)
-	body.Close()
-	if err != nil {
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-	newErr.body = localVarBody
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiPostTasksIDRunsRequest struct {
-	ctx          _context.Context
-	ApiService   TasksApi
-	taskID       string
-	zapTraceSpan *string
-	runManually  *RunManually
-}
-
-func (r ApiPostTasksIDRunsRequest) TaskID(taskID string) ApiPostTasksIDRunsRequest {
-	r.taskID = taskID
-	return r
-}
-func (r ApiPostTasksIDRunsRequest) GetTaskID() string {
-	return r.taskID
-}
-
-func (r ApiPostTasksIDRunsRequest) ZapTraceSpan(zapTraceSpan string) ApiPostTasksIDRunsRequest {
-	r.zapTraceSpan = &zapTraceSpan
-	return r
-}
-func (r ApiPostTasksIDRunsRequest) GetZapTraceSpan() *string {
-	return r.zapTraceSpan
-}
-
-func (r ApiPostTasksIDRunsRequest) RunManually(runManually RunManually) ApiPostTasksIDRunsRequest {
-	r.runManually = &runManually
-	return r
-}
-func (r ApiPostTasksIDRunsRequest) GetRunManually() *RunManually {
-	return r.runManually
-}
-
-func (r ApiPostTasksIDRunsRequest) Execute() (Run, error) {
-	return r.ApiService.PostTasksIDRunsExecute(r)
-}
-
-func (r ApiPostTasksIDRunsRequest) ExecuteWithHttpInfo() (Run, *_nethttp.Response, error) {
-	return r.ApiService.PostTasksIDRunsExecuteWithHttpInfo(r)
-}
-
-/*
- * PostTasksIDRuns Manually start a task run, overriding the current schedule
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID
- * @return ApiPostTasksIDRunsRequest
- */
-func (a *TasksApiService) PostTasksIDRuns(ctx _context.Context, taskID string) ApiPostTasksIDRunsRequest {
-	return ApiPostTasksIDRunsRequest{
-		ApiService: a,
-		ctx:        ctx,
-		taskID:     taskID,
-	}
-}
-
-/*
- * Execute executes the request
- * @return Run
- */
-func (a *TasksApiService) PostTasksIDRunsExecute(r ApiPostTasksIDRunsRequest) (Run, error) {
-	returnVal, _, err := a.PostTasksIDRunsExecuteWithHttpInfo(r)
-	return returnVal, err
-}
-
-/*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
- * returned HTTP response as it will have already been read and closed; access to the response body content should be
- * achieved through the returned response model if applicable.
- * @return Run
- */
-func (a *TasksApiService) PostTasksIDRunsExecuteWithHttpInfo(r ApiPostTasksIDRunsRequest) (Run, *_nethttp.Response, error) {
-	var (
-		localVarHTTPMethod   = _nethttp.MethodPost
-		localVarPostBody     interface{}
-		localVarFormFileName string
-		localVarFileName     string
-		localVarFileBytes    []byte
-		localVarReturnValue  Run
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.PostTasksIDRuns")
-	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs"
-	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := _neturl.Values{}
-	localVarFormParams := _neturl.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.zapTraceSpan != nil {
-		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
-	}
-	// body params
-	localVarPostBody = r.runManually
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	newErr := GenericOpenAPIError{
-		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		body, err := GunzipIfNeeded(localVarHTTPResponse)
-		if err != nil {
-			body.Close()
-			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		localVarBody, err := _io.ReadAll(body)
-		body.Close()
-		if err != nil {
-			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		newErr.body = localVarBody
-		newErr.error = localVarHTTPResponse.Status
-		var v Error
-		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	body, err := GunzipIfNeeded(localVarHTTPResponse)
-	if err != nil {
-		body.Close()
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-	localVarBody, err := _io.ReadAll(body)
-	body.Close()
-	if err != nil {
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-	newErr.body = localVarBody
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiPostTasksIDRunsIDRetryRequest struct {
-	ctx          _context.Context
-	ApiService   TasksApi
-	taskID       string
-	runID        string
-	zapTraceSpan *string
-	body         *map[string]interface{}
-}
-
-func (r ApiPostTasksIDRunsIDRetryRequest) TaskID(taskID string) ApiPostTasksIDRunsIDRetryRequest {
-	r.taskID = taskID
-	return r
-}
-func (r ApiPostTasksIDRunsIDRetryRequest) GetTaskID() string {
-	return r.taskID
-}
-
-func (r ApiPostTasksIDRunsIDRetryRequest) RunID(runID string) ApiPostTasksIDRunsIDRetryRequest {
-	r.runID = runID
-	return r
-}
-func (r ApiPostTasksIDRunsIDRetryRequest) GetRunID() string {
-	return r.runID
-}
-
-func (r ApiPostTasksIDRunsIDRetryRequest) ZapTraceSpan(zapTraceSpan string) ApiPostTasksIDRunsIDRetryRequest {
-	r.zapTraceSpan = &zapTraceSpan
-	return r
-}
-func (r ApiPostTasksIDRunsIDRetryRequest) GetZapTraceSpan() *string {
-	return r.zapTraceSpan
-}
-
-func (r ApiPostTasksIDRunsIDRetryRequest) Body(body map[string]interface{}) ApiPostTasksIDRunsIDRetryRequest {
-	r.body = &body
-	return r
-}
-func (r ApiPostTasksIDRunsIDRetryRequest) GetBody() *map[string]interface{} {
-	return r.body
-}
-
-func (r ApiPostTasksIDRunsIDRetryRequest) Execute() (Run, error) {
-	return r.ApiService.PostTasksIDRunsIDRetryExecute(r)
-}
-
-func (r ApiPostTasksIDRunsIDRetryRequest) ExecuteWithHttpInfo() (Run, *_nethttp.Response, error) {
-	return r.ApiService.PostTasksIDRunsIDRetryExecuteWithHttpInfo(r)
-}
-
-/*
- * PostTasksIDRunsIDRetry Retry a task run
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID The task ID.
- * @param runID The run ID.
- * @return ApiPostTasksIDRunsIDRetryRequest
- */
-func (a *TasksApiService) PostTasksIDRunsIDRetry(ctx _context.Context, taskID string, runID string) ApiPostTasksIDRunsIDRetryRequest {
-	return ApiPostTasksIDRunsIDRetryRequest{
-		ApiService: a,
-		ctx:        ctx,
-		taskID:     taskID,
-		runID:      runID,
-	}
-}
-
-/*
- * Execute executes the request
- * @return Run
- */
-func (a *TasksApiService) PostTasksIDRunsIDRetryExecute(r ApiPostTasksIDRunsIDRetryRequest) (Run, error) {
-	returnVal, _, err := a.PostTasksIDRunsIDRetryExecuteWithHttpInfo(r)
-	return returnVal, err
-}
-
-/*
- * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
- * returned HTTP response as it will have already been read and closed; access to the response body content should be
- * achieved through the returned response model if applicable.
- * @return Run
- */
-func (a *TasksApiService) PostTasksIDRunsIDRetryExecuteWithHttpInfo(r ApiPostTasksIDRunsIDRetryRequest) (Run, *_nethttp.Response, error) {
-	var (
-		localVarHTTPMethod   = _nethttp.MethodPost
-		localVarPostBody     interface{}
-		localVarFormFileName string
-		localVarFileName     string
-		localVarFileBytes    []byte
-		localVarReturnValue  Run
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TasksApiService.PostTasksIDRunsIDRetry")
-	if err != nil {
-		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/api/v2/tasks/{taskID}/runs/{runID}/retry"
-	localVarPath = strings.Replace(localVarPath, "{"+"taskID"+"}", _neturl.PathEscape(parameterToString(r.taskID, "")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"runID"+"}", _neturl.PathEscape(parameterToString(r.runID, "")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := _neturl.Values{}
-	localVarFormParams := _neturl.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json; charset=utf-8"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.zapTraceSpan != nil {
-		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
-	}
-	// body params
-	localVarPostBody = r.body
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	newErr := GenericOpenAPIError{
-		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		body, err := GunzipIfNeeded(localVarHTTPResponse)
-		if err != nil {
-			body.Close()
-			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		localVarBody, err := _io.ReadAll(body)
-		body.Close()
-		if err != nil {
-			newErr.error = err.Error()
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		newErr.body = localVarBody
-		newErr.error = localVarHTTPResponse.Status
-		var v Error
-		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-		if err != nil {
-			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
-		newErr.model = &v
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	body, err := GunzipIfNeeded(localVarHTTPResponse)
-	if err != nil {
-		body.Close()
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-	localVarBody, err := _io.ReadAll(body)
-	body.Close()
-	if err != nil {
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-	newErr.body = localVarBody
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr.error = err.Error()
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
+	return localVarHTTPResponse, nil
 }

@@ -18,15 +18,13 @@ import (
 // Task struct for Task
 type Task struct {
 	Id string `json:"id" yaml:"id"`
-	// The type of the task, useful for filtering a task list.
-	Type *string `json:"type,omitempty" yaml:"type,omitempty"`
 	// The ID of the organization that owns the task.
 	OrgID string `json:"orgID" yaml:"orgID"`
 	// The name of the organization that owns the task.
 	Org *string `json:"org,omitempty" yaml:"org,omitempty"`
 	// The name of the task.
 	Name string `json:"name" yaml:"name"`
-	// The ID of the user who owns this Task.
+	// The ID of the user who owns the Task.
 	OwnerID *string `json:"ownerID,omitempty" yaml:"ownerID,omitempty"`
 	// The description of the task.
 	Description *string         `json:"description,omitempty" yaml:"description,omitempty"`
@@ -34,7 +32,7 @@ type Task struct {
 	Labels      *[]Label        `json:"labels,omitempty" yaml:"labels,omitempty"`
 	// The ID of the authorization used when the task communicates with the query engine.
 	AuthorizationID *string `json:"authorizationID,omitempty" yaml:"authorizationID,omitempty"`
-	// The Flux script to run for this task.
+	// The Flux script that the task runs.
 	Flux string `json:"flux" yaml:"flux"`
 	// An interval ([duration literal](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals))) at which the task runs. `every` also determines when the task first runs, depending on the specified time.
 	Every *string `json:"every,omitempty" yaml:"every,omitempty"`
@@ -94,38 +92,6 @@ func (o *Task) GetIdOk() (*string, bool) {
 // SetId sets field value
 func (o *Task) SetId(v string) {
 	o.Id = v
-}
-
-// GetType returns the Type field value if set, zero value otherwise.
-func (o *Task) GetType() string {
-	if o == nil || o.Type == nil {
-		var ret string
-		return ret
-	}
-	return *o.Type
-}
-
-// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *Task) GetTypeOk() (*string, bool) {
-	if o == nil || o.Type == nil {
-		return nil, false
-	}
-	return o.Type, true
-}
-
-// HasType returns a boolean if a field has been set.
-func (o *Task) HasType() bool {
-	if o != nil && o.Type != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetType gets a reference to the given string and assigns it to the Type field.
-func (o *Task) SetType(v string) {
-	o.Type = &v
 }
 
 // GetOrgID returns the OrgID field value
@@ -684,9 +650,6 @@ func (o Task) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
 		toSerialize["id"] = o.Id
-	}
-	if o.Type != nil {
-		toSerialize["type"] = o.Type
 	}
 	if true {
 		toSerialize["orgID"] = o.OrgID
