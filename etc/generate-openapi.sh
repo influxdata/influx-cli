@@ -8,6 +8,7 @@ declare -r API_DIR="${ROOT_DIR}/api"
 declare -r GENERATED_PATTERN='^// Code generated .* DO NOT EDIT\.$'
 declare -r MERGE_DOCKER_IMG=quay.io/influxdb/swagger-cli
 declare -r GENERATOR_DOCKER_IMG=openapitools/openapi-generator-cli:v5.1.0
+declare -r TAG_STRIP_IMG=python:3.9-alpine3.15
 
 # Clean up all the generated files in the target directory.
 rm -f $(grep -Elr "${GENERATED_PATTERN}" "${API_DIR}")
@@ -29,7 +30,10 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   --type yaml
 
 # Strip certain tags to prevent duplicated and conflicting codegen.
-python3 ./etc/stripGroupTags.py ./api/cli.gen.yml > ./api/cli-stripped.gen.yml
+docker run --rm -it -u "$(id -u):$(id -g)" \
+  -v "${ROOT_DIR}":/api \
+  ${TAG_STRIP_IMG} \
+  sh -c "python3 /api/etc/stripGroupTags.py /api/api/cli.gen.yml > /api/api/cli-stripped.gen.yml"
 
 # Run the generator - This produces many more files than we want to track in git.
 docker run --rm -it -u "$(id -u):$(id -g)" \
@@ -41,8 +45,6 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   -o /api \
   -t /api/templates \
   --additional-properties packageName=api,enumClassPrefix=true,generateInterfaces=true
-
-rm ./api/cli-stripped.gen.yml
 
 # Run the generator for extras
 docker run --rm -it -u "$(id -u):$(id -g)" \
