@@ -28,6 +28,8 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   --outfile /api/cli-extras.gen.yml \
   --type yaml
 
+# Strip certain tags to prevent duplicated and conflicting codegen.
+python3 ./etc/stripGroupTags.py ./api/cli.gen.yml > ./api/cli-stripped.gen.yml
 
 # Run the generator - This produces many more files than we want to track in git.
 docker run --rm -it -u "$(id -u):$(id -g)" \
@@ -35,10 +37,12 @@ docker run --rm -it -u "$(id -u):$(id -g)" \
   ${GENERATOR_DOCKER_IMG} \
   generate \
   -g go \
-  -i /api/cli.gen.yml \
+  -i /api/cli-stripped.gen.yml \
   -o /api \
   -t /api/templates \
   --additional-properties packageName=api,enumClassPrefix=true,generateInterfaces=true
+
+rm ./api/cli-stripped.gen.yml
 
 # Run the generator for extras
 docker run --rm -it -u "$(id -u):$(id -g)" \
