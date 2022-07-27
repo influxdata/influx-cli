@@ -17,18 +17,22 @@ import (
 // TaskUpdateRequest struct for TaskUpdateRequest
 type TaskUpdateRequest struct {
 	Status *TaskStatusType `json:"status,omitempty" yaml:"status,omitempty"`
-	// The Flux script to run for this task.
+	// Update the Flux script that the task runs.
 	Flux *string `json:"flux,omitempty" yaml:"flux,omitempty"`
-	// Override the 'name' option in the flux script.
+	// Update the 'name' option in the flux script.
 	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
-	// Override the 'every' option in the flux script.
+	// Update the 'every' option in the flux script.
 	Every *string `json:"every,omitempty" yaml:"every,omitempty"`
-	// Override the 'cron' option in the flux script.
+	// Update the 'cron' option in the flux script.
 	Cron *string `json:"cron,omitempty" yaml:"cron,omitempty"`
-	// Override the 'offset' option in the flux script.
+	// Update the 'offset' option in the flux script.
 	Offset *string `json:"offset,omitempty" yaml:"offset,omitempty"`
-	// An optional description of the task.
+	// Update the description of the task.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
+	// Update the 'scriptID' of the task.
+	ScriptID *string `json:"scriptID,omitempty" yaml:"scriptID,omitempty"`
+	// Update the 'scriptParameters' of the task.
+	ScriptParameters *map[string]interface{} `json:"scriptParameters,omitempty" yaml:"scriptParameters,omitempty"`
 }
 
 // NewTaskUpdateRequest instantiates a new TaskUpdateRequest object
@@ -272,6 +276,70 @@ func (o *TaskUpdateRequest) SetDescription(v string) {
 	o.Description = &v
 }
 
+// GetScriptID returns the ScriptID field value if set, zero value otherwise.
+func (o *TaskUpdateRequest) GetScriptID() string {
+	if o == nil || o.ScriptID == nil {
+		var ret string
+		return ret
+	}
+	return *o.ScriptID
+}
+
+// GetScriptIDOk returns a tuple with the ScriptID field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskUpdateRequest) GetScriptIDOk() (*string, bool) {
+	if o == nil || o.ScriptID == nil {
+		return nil, false
+	}
+	return o.ScriptID, true
+}
+
+// HasScriptID returns a boolean if a field has been set.
+func (o *TaskUpdateRequest) HasScriptID() bool {
+	if o != nil && o.ScriptID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetScriptID gets a reference to the given string and assigns it to the ScriptID field.
+func (o *TaskUpdateRequest) SetScriptID(v string) {
+	o.ScriptID = &v
+}
+
+// GetScriptParameters returns the ScriptParameters field value if set, zero value otherwise.
+func (o *TaskUpdateRequest) GetScriptParameters() map[string]interface{} {
+	if o == nil || o.ScriptParameters == nil {
+		var ret map[string]interface{}
+		return ret
+	}
+	return *o.ScriptParameters
+}
+
+// GetScriptParametersOk returns a tuple with the ScriptParameters field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskUpdateRequest) GetScriptParametersOk() (*map[string]interface{}, bool) {
+	if o == nil || o.ScriptParameters == nil {
+		return nil, false
+	}
+	return o.ScriptParameters, true
+}
+
+// HasScriptParameters returns a boolean if a field has been set.
+func (o *TaskUpdateRequest) HasScriptParameters() bool {
+	if o != nil && o.ScriptParameters != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetScriptParameters gets a reference to the given map[string]interface{} and assigns it to the ScriptParameters field.
+func (o *TaskUpdateRequest) SetScriptParameters(v map[string]interface{}) {
+	o.ScriptParameters = &v
+}
+
 func (o TaskUpdateRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Status != nil {
@@ -294,6 +362,12 @@ func (o TaskUpdateRequest) MarshalJSON() ([]byte, error) {
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
+	}
+	if o.ScriptID != nil {
+		toSerialize["scriptID"] = o.ScriptID
+	}
+	if o.ScriptParameters != nil {
+		toSerialize["scriptParameters"] = o.ScriptParameters
 	}
 	return json.Marshal(toSerialize)
 }

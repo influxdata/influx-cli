@@ -19,7 +19,7 @@ type Label struct {
 	Id    *string `json:"id,omitempty" yaml:"id,omitempty"`
 	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
 	Name  *string `json:"name,omitempty" yaml:"name,omitempty"`
-	// Key/Value pairs associated with this label. Keys can be removed by sending an update with an empty value.
+	// Key-value pairs associated with this label. To remove a property, send an update with an empty value (`\"\"`) for the key.
 	Properties *map[string]string `json:"properties,omitempty" yaml:"properties,omitempty"`
 }
 

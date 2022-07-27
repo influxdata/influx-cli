@@ -58,9 +58,9 @@ paths:
   /api/v2/delete:
     $ref: "./openapi/src/common/paths/delete.yml"
   /api/v2/tasks:
-    $ref: "./openapi/src/common/paths/tasks.yml"
+    $ref: "./openapi/src/cloud/paths/tasks.yml"
   /api/v2/tasks/{taskID}:
-    $ref: "./openapi/src/common/paths/tasks_taskID.yml"
+    $ref: "./openapi/src/cloud/paths/tasks_taskID.yml"
   /api/v2/tasks/{taskID}/runs:
     $ref: "./openapi/src/common/paths/tasks_taskID_runs.yml"
   /api/v2/tasks/{taskID}/runs/{runID}:
@@ -252,15 +252,15 @@ components:
     DeletePredicateRequest:
       $ref: "./openapi/src/common/schemas/DeletePredicateRequest.yml"
     Tasks:
-      $ref: "./openapi/src/common/schemas/Tasks.yml"
+      $ref: "./openapi/src/cloud/schemas/Tasks.yml"
     Task:
-      $ref: "./openapi/src/common/schemas/Task.yml"
+      $ref: "./openapi/src/cloud/schemas/Task.yml"
     TaskCreateRequest:
-      $ref: "./openapi/src/common/schemas/TaskCreateRequest.yml"
+      $ref: "./openapi/src/cloud/schemas/TaskCreateRequest.yml"
     TaskStatusType:
       $ref: "./openapi/src/common/schemas/TaskStatusType.yml"
     TaskUpdateRequest:
-      $ref: "./openapi/src/common/schemas/TaskUpdateRequest.yml"
+      $ref: "./openapi/src/cloud/schemas/TaskUpdateRequest.yml"
     Runs:
       $ref: "./openapi/src/common/schemas/Runs.yml"
     Run:

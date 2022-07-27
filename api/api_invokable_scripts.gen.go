@@ -48,10 +48,30 @@ type InvokableScriptsApi interface {
 	DeleteScriptsIDExecuteWithHttpInfo(r ApiDeleteScriptsIDRequest) (*_nethttp.Response, error)
 
 	/*
-	 * GetScripts List scripts
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiGetScriptsRequest
-	 */
+			 * GetScripts List scripts
+			 * Retrieves a list of [scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
+
+		#### Limitations
+
+		- Paging with an `offset` greater than the number of records will result in
+		an empty response--for example:
+
+		  The following request is paging to the 50th record, but the user has only
+		  created two scripts.
+
+		    ```sh
+		    $ curl --request GET "INFLUX_URL/api/v2/scripts?limit=1&offset=50"
+
+		    $ {"scripts":[]}
+		    ```
+
+		#### Related Guides
+
+		- [Invoke custom scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiGetScriptsRequest
+	*/
 	GetScripts(ctx _context.Context) ApiGetScriptsRequest
 
 	/*
@@ -116,10 +136,18 @@ type InvokableScriptsApi interface {
 	PatchScriptsIDExecuteWithHttpInfo(r ApiPatchScriptsIDRequest) (Script, *_nethttp.Response, error)
 
 	/*
-	 * PostScripts Create a script
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostScriptsRequest
-	 */
+			 * PostScripts Create a script
+			 * Creates an [invokable script](https://docs.influxdata.com/resources/videos/api-invokable-scripts/)
+		and returns the created script.
+
+		#### Related Guides
+
+		- [Invokable scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
+		- [Creating custom InfluxDB endpoints](https://docs.influxdata.com/resources/videos/api-invokable-scripts/).
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiPostScriptsRequest
+	*/
 	PostScripts(ctx _context.Context) ApiPostScriptsRequest
 
 	/*
@@ -327,9 +355,29 @@ func (r ApiGetScriptsRequest) ExecuteWithHttpInfo() (Scripts, *_nethttp.Response
 
 /*
  * GetScripts List scripts
+ * Retrieves a list of [scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
+
+#### Limitations
+
+- Paging with an `offset` greater than the number of records will result in
+an empty response--for example:
+
+  The following request is paging to the 50th record, but the user has only
+  created two scripts.
+
+    ```sh
+    $ curl --request GET "INFLUX_URL/api/v2/scripts?limit=1&offset=50"
+
+    $ {"scripts":[]}
+    ```
+
+#### Related Guides
+
+- [Invoke custom scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetScriptsRequest
- */
+*/
 func (a *InvokableScriptsApiService) GetScripts(ctx _context.Context) ApiGetScriptsRequest {
 	return ApiGetScriptsRequest{
 		ApiService: a,
@@ -425,6 +473,17 @@ func (a *InvokableScriptsApiService) GetScriptsExecuteWithHttpInfo(r ApiGetScrip
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -803,9 +862,17 @@ func (r ApiPostScriptsRequest) ExecuteWithHttpInfo() (Script, *_nethttp.Response
 
 /*
  * PostScripts Create a script
+ * Creates an [invokable script](https://docs.influxdata.com/resources/videos/api-invokable-scripts/)
+and returns the created script.
+
+#### Related Guides
+
+- [Invokable scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
+- [Creating custom InfluxDB endpoints](https://docs.influxdata.com/resources/videos/api-invokable-scripts/).
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiPostScriptsRequest
- */
+*/
 func (a *InvokableScriptsApiService) PostScripts(ctx _context.Context) ApiPostScriptsRequest {
 	return ApiPostScriptsRequest{
 		ApiService: a,
@@ -900,6 +967,28 @@ func (a *InvokableScriptsApiService) PostScriptsExecuteWithHttpInfo(r ApiPostScr
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
