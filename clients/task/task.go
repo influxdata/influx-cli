@@ -283,11 +283,22 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 		}
 		status = &s
 	}
+
+	scriptID := &params.ScriptID
+	if len(params.ScriptID) == 0 {
+		scriptID = nil
+	}
+
+	scriptParams := &params.ScriptParams
+	if len(params.ScriptParams) == 0 {
+		scriptParams = nil
+	}
+
 	task, err := c.PatchTasksID(ctx, params.TaskID).TaskUpdateRequest(api.TaskUpdateRequest{
 		Status:           status,
 		Flux:             flux,
-		ScriptID:         &params.ScriptID,
-		ScriptParameters: &params.ScriptParams,
+		ScriptID:         scriptID,
+		ScriptParameters: scriptParams,
 	}).Execute()
 	if err != nil {
 		return err
