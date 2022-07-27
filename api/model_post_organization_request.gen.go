@@ -18,8 +18,6 @@ import (
 type PostOrganizationRequest struct {
 	Name        string  `json:"name" yaml:"name"`
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
-	// An optional list of email address's to be invited to the organization
-	Users *[]string `json:"users,omitempty" yaml:"users,omitempty"`
 }
 
 // NewPostOrganizationRequest instantiates a new PostOrganizationRequest object
@@ -96,38 +94,6 @@ func (o *PostOrganizationRequest) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetUsers returns the Users field value if set, zero value otherwise.
-func (o *PostOrganizationRequest) GetUsers() []string {
-	if o == nil || o.Users == nil {
-		var ret []string
-		return ret
-	}
-	return *o.Users
-}
-
-// GetUsersOk returns a tuple with the Users field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *PostOrganizationRequest) GetUsersOk() (*[]string, bool) {
-	if o == nil || o.Users == nil {
-		return nil, false
-	}
-	return o.Users, true
-}
-
-// HasUsers returns a boolean if a field has been set.
-func (o *PostOrganizationRequest) HasUsers() bool {
-	if o != nil && o.Users != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetUsers gets a reference to the given []string and assigns it to the Users field.
-func (o *PostOrganizationRequest) SetUsers(v []string) {
-	o.Users = &v
-}
-
 func (o PostOrganizationRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
@@ -135,9 +101,6 @@ func (o PostOrganizationRequest) MarshalJSON() ([]byte, error) {
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
-	}
-	if o.Users != nil {
-		toSerialize["users"] = o.Users
 	}
 	return json.Marshal(toSerialize)
 }

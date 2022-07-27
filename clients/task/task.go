@@ -19,7 +19,9 @@ type Client struct {
 
 type CreateParams struct {
 	clients.OrgParams
-	FluxQuery string
+	FluxQuery    string
+	ScriptID     string
+	ScriptParams map[string]interface{}
 }
 
 type NameOrID struct {
@@ -73,9 +75,11 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		return err
 	}
 	createRequest := api.TaskCreateRequest{
-		Flux:  params.FluxQuery,
-		OrgID: org.IDOrNil(),
-		Org:   org.NameOrNil(),
+		Flux:             &params.FluxQuery,
+		OrgID:            org.IDOrNil(),
+		Org:              org.NameOrNil(),
+		ScriptID:         &params.ScriptID,
+		ScriptParameters: &params.ScriptParams,
 	}
 	task, err := c.PostTasks(ctx).TaskCreateRequest(createRequest).Execute()
 	if err != nil {
@@ -258,9 +262,11 @@ Rerun without '--dry-run' to execute
 }
 
 type UpdateParams struct {
-	FluxQuery string
-	TaskID    string
-	Status    string
+	FluxQuery    string
+	TaskID       string
+	Status       string
+	ScriptID     string
+	ScriptParams map[string]interface{}
 }
 
 func (c Client) Update(ctx context.Context, params *UpdateParams) error {
@@ -278,8 +284,10 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 		status = &s
 	}
 	task, err := c.PatchTasksID(ctx, params.TaskID).TaskUpdateRequest(api.TaskUpdateRequest{
-		Status: status,
-		Flux:   flux,
+		Status:           status,
+		Flux:             flux,
+		ScriptID:         &params.ScriptID,
+		ScriptParameters: &params.ScriptParams,
 	}).Execute()
 	if err != nil {
 		return err
@@ -352,6 +360,7 @@ func (c Client) printTasks(printOpts taskPrintOpts) error {
 			"Status":          derefOrEmpty((*string)(t.Status)),
 			"Every":           derefOrEmpty(t.Every),
 			"Cron":            derefOrEmpty(t.Cron),
+			"ScriptID":        derefOrEmpty(t.ScriptID),
 		}
 		rows = append(rows, row)
 	}

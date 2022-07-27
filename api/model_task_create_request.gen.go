@@ -16,24 +16,35 @@ import (
 
 // TaskCreateRequest struct for TaskCreateRequest
 type TaskCreateRequest struct {
-	// The ID of the organization that owns this Task.
+	// The ID of the organization that owns the task.
 	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
-	// The name of the organization that owns this Task.
+	// The name of the organization that owns the task.
 	Org    *string         `json:"org,omitempty" yaml:"org,omitempty"`
 	Status *TaskStatusType `json:"status,omitempty" yaml:"status,omitempty"`
-	// The Flux script to run for this task.
-	Flux string `json:"flux" yaml:"flux"`
-	// An optional description of the task.
+	// The Flux script that the task runs.  #### Limitations  - If you use the `flux` property, you can't use the `scriptID` and `scriptParameters` properties.
+	Flux *string `json:"flux,omitempty" yaml:"flux,omitempty"`
+	// The description of the task.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
+	// The ID of the script that the task runs.  #### Limitations  - If you use the `scriptID` property, you can't use the `flux` property.
+	ScriptID *string `json:"scriptID,omitempty" yaml:"scriptID,omitempty"`
+	// The parameter key-value pairs passed to the script (referenced by `scriptID`) during the task run.  #### Limitations  - `scriptParameters` requires `scriptID`. - If you use the `scriptID` and `scriptParameters` properties, you can't use the `flux` property.
+	ScriptParameters *map[string]interface{} `json:"scriptParameters,omitempty" yaml:"scriptParameters,omitempty"`
+	// The name of the task
+	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
+	// The interval ([duration literal](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals))) at which the task runs. `every` also determines when the task first runs, depending on the specified time.
+	Every *string `json:"every,omitempty" yaml:"every,omitempty"`
+	// A [Cron expression](https://en.wikipedia.org/wiki/Cron#Overview) that defines the schedule on which the task runs. InfluxDB bases cron runs on the system time.
+	Cron *string `json:"cron,omitempty" yaml:"cron,omitempty"`
+	// A [duration](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals) to delay execution of the task after the scheduled time has elapsed. `0` removes the offset.
+	Offset *string `json:"offset,omitempty" yaml:"offset,omitempty"`
 }
 
 // NewTaskCreateRequest instantiates a new TaskCreateRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTaskCreateRequest(flux string) *TaskCreateRequest {
+func NewTaskCreateRequest() *TaskCreateRequest {
 	this := TaskCreateRequest{}
-	this.Flux = flux
 	return &this
 }
 
@@ -141,28 +152,36 @@ func (o *TaskCreateRequest) SetStatus(v TaskStatusType) {
 	o.Status = &v
 }
 
-// GetFlux returns the Flux field value
+// GetFlux returns the Flux field value if set, zero value otherwise.
 func (o *TaskCreateRequest) GetFlux() string {
-	if o == nil {
+	if o == nil || o.Flux == nil {
 		var ret string
 		return ret
 	}
-
-	return o.Flux
+	return *o.Flux
 }
 
-// GetFluxOk returns a tuple with the Flux field value
+// GetFluxOk returns a tuple with the Flux field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TaskCreateRequest) GetFluxOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Flux == nil {
 		return nil, false
 	}
-	return &o.Flux, true
+	return o.Flux, true
 }
 
-// SetFlux sets field value
+// HasFlux returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasFlux() bool {
+	if o != nil && o.Flux != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetFlux gets a reference to the given string and assigns it to the Flux field.
 func (o *TaskCreateRequest) SetFlux(v string) {
-	o.Flux = v
+	o.Flux = &v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -197,6 +216,198 @@ func (o *TaskCreateRequest) SetDescription(v string) {
 	o.Description = &v
 }
 
+// GetScriptID returns the ScriptID field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetScriptID() string {
+	if o == nil || o.ScriptID == nil {
+		var ret string
+		return ret
+	}
+	return *o.ScriptID
+}
+
+// GetScriptIDOk returns a tuple with the ScriptID field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetScriptIDOk() (*string, bool) {
+	if o == nil || o.ScriptID == nil {
+		return nil, false
+	}
+	return o.ScriptID, true
+}
+
+// HasScriptID returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasScriptID() bool {
+	if o != nil && o.ScriptID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetScriptID gets a reference to the given string and assigns it to the ScriptID field.
+func (o *TaskCreateRequest) SetScriptID(v string) {
+	o.ScriptID = &v
+}
+
+// GetScriptParameters returns the ScriptParameters field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetScriptParameters() map[string]interface{} {
+	if o == nil || o.ScriptParameters == nil {
+		var ret map[string]interface{}
+		return ret
+	}
+	return *o.ScriptParameters
+}
+
+// GetScriptParametersOk returns a tuple with the ScriptParameters field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetScriptParametersOk() (*map[string]interface{}, bool) {
+	if o == nil || o.ScriptParameters == nil {
+		return nil, false
+	}
+	return o.ScriptParameters, true
+}
+
+// HasScriptParameters returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasScriptParameters() bool {
+	if o != nil && o.ScriptParameters != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetScriptParameters gets a reference to the given map[string]interface{} and assigns it to the ScriptParameters field.
+func (o *TaskCreateRequest) SetScriptParameters(v map[string]interface{}) {
+	o.ScriptParameters = &v
+}
+
+// GetName returns the Name field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetName() string {
+	if o == nil || o.Name == nil {
+		var ret string
+		return ret
+	}
+	return *o.Name
+}
+
+// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetNameOk() (*string, bool) {
+	if o == nil || o.Name == nil {
+		return nil, false
+	}
+	return o.Name, true
+}
+
+// HasName returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasName() bool {
+	if o != nil && o.Name != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetName gets a reference to the given string and assigns it to the Name field.
+func (o *TaskCreateRequest) SetName(v string) {
+	o.Name = &v
+}
+
+// GetEvery returns the Every field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetEvery() string {
+	if o == nil || o.Every == nil {
+		var ret string
+		return ret
+	}
+	return *o.Every
+}
+
+// GetEveryOk returns a tuple with the Every field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetEveryOk() (*string, bool) {
+	if o == nil || o.Every == nil {
+		return nil, false
+	}
+	return o.Every, true
+}
+
+// HasEvery returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasEvery() bool {
+	if o != nil && o.Every != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetEvery gets a reference to the given string and assigns it to the Every field.
+func (o *TaskCreateRequest) SetEvery(v string) {
+	o.Every = &v
+}
+
+// GetCron returns the Cron field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetCron() string {
+	if o == nil || o.Cron == nil {
+		var ret string
+		return ret
+	}
+	return *o.Cron
+}
+
+// GetCronOk returns a tuple with the Cron field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetCronOk() (*string, bool) {
+	if o == nil || o.Cron == nil {
+		return nil, false
+	}
+	return o.Cron, true
+}
+
+// HasCron returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasCron() bool {
+	if o != nil && o.Cron != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetCron gets a reference to the given string and assigns it to the Cron field.
+func (o *TaskCreateRequest) SetCron(v string) {
+	o.Cron = &v
+}
+
+// GetOffset returns the Offset field value if set, zero value otherwise.
+func (o *TaskCreateRequest) GetOffset() string {
+	if o == nil || o.Offset == nil {
+		var ret string
+		return ret
+	}
+	return *o.Offset
+}
+
+// GetOffsetOk returns a tuple with the Offset field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *TaskCreateRequest) GetOffsetOk() (*string, bool) {
+	if o == nil || o.Offset == nil {
+		return nil, false
+	}
+	return o.Offset, true
+}
+
+// HasOffset returns a boolean if a field has been set.
+func (o *TaskCreateRequest) HasOffset() bool {
+	if o != nil && o.Offset != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetOffset gets a reference to the given string and assigns it to the Offset field.
+func (o *TaskCreateRequest) SetOffset(v string) {
+	o.Offset = &v
+}
+
 func (o TaskCreateRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.OrgID != nil {
@@ -208,11 +419,29 @@ func (o TaskCreateRequest) MarshalJSON() ([]byte, error) {
 	if o.Status != nil {
 		toSerialize["status"] = o.Status
 	}
-	if true {
+	if o.Flux != nil {
 		toSerialize["flux"] = o.Flux
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
+	}
+	if o.ScriptID != nil {
+		toSerialize["scriptID"] = o.ScriptID
+	}
+	if o.ScriptParameters != nil {
+		toSerialize["scriptParameters"] = o.ScriptParameters
+	}
+	if o.Name != nil {
+		toSerialize["name"] = o.Name
+	}
+	if o.Every != nil {
+		toSerialize["every"] = o.Every
+	}
+	if o.Cron != nil {
+		toSerialize["cron"] = o.Cron
+	}
+	if o.Offset != nil {
+		toSerialize["offset"] = o.Offset
 	}
 	return json.Marshal(toSerialize)
 }

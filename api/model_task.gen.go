@@ -18,15 +18,13 @@ import (
 // Task struct for Task
 type Task struct {
 	Id string `json:"id" yaml:"id"`
-	// The type of the task, useful for filtering a task list.
-	Type *string `json:"type,omitempty" yaml:"type,omitempty"`
 	// The ID of the organization that owns the task.
 	OrgID string `json:"orgID" yaml:"orgID"`
 	// The name of the organization that owns the task.
 	Org *string `json:"org,omitempty" yaml:"org,omitempty"`
 	// The name of the task.
 	Name string `json:"name" yaml:"name"`
-	// The ID of the user who owns this Task.
+	// The ID of the user who owns the task.
 	OwnerID *string `json:"ownerID,omitempty" yaml:"ownerID,omitempty"`
 	// The description of the task.
 	Description *string         `json:"description,omitempty" yaml:"description,omitempty"`
@@ -34,11 +32,11 @@ type Task struct {
 	Labels      *[]Label        `json:"labels,omitempty" yaml:"labels,omitempty"`
 	// The ID of the authorization used when the task communicates with the query engine.
 	AuthorizationID *string `json:"authorizationID,omitempty" yaml:"authorizationID,omitempty"`
-	// The Flux script to run for this task.
-	Flux string `json:"flux" yaml:"flux"`
-	// An interval ([duration literal](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals))) at which the task runs. `every` also determines when the task first runs, depending on the specified time.
+	// The Flux script that the task runs.  #### Limitations  - If you use the `flux` property, you can't use the `scriptID` and `scriptParameters` properties.
+	Flux *string `json:"flux,omitempty" yaml:"flux,omitempty"`
+	// The interval ([duration literal](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals))) at which the task runs. `every` also determines when the task first runs, depending on the specified time.
 	Every *string `json:"every,omitempty" yaml:"every,omitempty"`
-	// [Cron expression](https://en.wikipedia.org/wiki/Cron#Overview) that defines the schedule on which the task runs. InfluxDB bases cron runs on the system time.
+	// A [Cron expression](https://en.wikipedia.org/wiki/Cron#Overview) that defines the schedule on which the task runs. InfluxDB bases cron runs on the system time.
 	Cron *string `json:"cron,omitempty" yaml:"cron,omitempty"`
 	// A [duration](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals) to delay execution of the task after the scheduled time has elapsed. `0` removes the offset.
 	Offset *string `json:"offset,omitempty" yaml:"offset,omitempty"`
@@ -49,18 +47,21 @@ type Task struct {
 	CreatedAt       *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
 	UpdatedAt       *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
 	Links           *TaskLinks `json:"links,omitempty" yaml:"links,omitempty"`
+	// The ID of the script that the task runs.  #### Limitations  - If you use the `scriptID` property, you can't use the `flux` property.
+	ScriptID *string `json:"scriptID,omitempty" yaml:"scriptID,omitempty"`
+	// The parameter key-value pairs passed to the script (referenced by `scriptID`) during the task run.  #### Limitations  - `scriptParameters` requires `scriptID`. - If you use the `scriptID` and `scriptParameters` properties, you can't use the `flux` property.
+	ScriptParameters *map[string]interface{} `json:"scriptParameters,omitempty" yaml:"scriptParameters,omitempty"`
 }
 
 // NewTask instantiates a new Task object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTask(id string, orgID string, name string, flux string) *Task {
+func NewTask(id string, orgID string, name string) *Task {
 	this := Task{}
 	this.Id = id
 	this.OrgID = orgID
 	this.Name = name
-	this.Flux = flux
 	return &this
 }
 
@@ -94,38 +95,6 @@ func (o *Task) GetIdOk() (*string, bool) {
 // SetId sets field value
 func (o *Task) SetId(v string) {
 	o.Id = v
-}
-
-// GetType returns the Type field value if set, zero value otherwise.
-func (o *Task) GetType() string {
-	if o == nil || o.Type == nil {
-		var ret string
-		return ret
-	}
-	return *o.Type
-}
-
-// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *Task) GetTypeOk() (*string, bool) {
-	if o == nil || o.Type == nil {
-		return nil, false
-	}
-	return o.Type, true
-}
-
-// HasType returns a boolean if a field has been set.
-func (o *Task) HasType() bool {
-	if o != nil && o.Type != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetType gets a reference to the given string and assigns it to the Type field.
-func (o *Task) SetType(v string) {
-	o.Type = &v
 }
 
 // GetOrgID returns the OrgID field value
@@ -368,28 +337,36 @@ func (o *Task) SetAuthorizationID(v string) {
 	o.AuthorizationID = &v
 }
 
-// GetFlux returns the Flux field value
+// GetFlux returns the Flux field value if set, zero value otherwise.
 func (o *Task) GetFlux() string {
-	if o == nil {
+	if o == nil || o.Flux == nil {
 		var ret string
 		return ret
 	}
-
-	return o.Flux
+	return *o.Flux
 }
 
-// GetFluxOk returns a tuple with the Flux field value
+// GetFluxOk returns a tuple with the Flux field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *Task) GetFluxOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Flux == nil {
 		return nil, false
 	}
-	return &o.Flux, true
+	return o.Flux, true
 }
 
-// SetFlux sets field value
+// HasFlux returns a boolean if a field has been set.
+func (o *Task) HasFlux() bool {
+	if o != nil && o.Flux != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetFlux gets a reference to the given string and assigns it to the Flux field.
 func (o *Task) SetFlux(v string) {
-	o.Flux = v
+	o.Flux = &v
 }
 
 // GetEvery returns the Every field value if set, zero value otherwise.
@@ -680,13 +657,74 @@ func (o *Task) SetLinks(v TaskLinks) {
 	o.Links = &v
 }
 
+// GetScriptID returns the ScriptID field value if set, zero value otherwise.
+func (o *Task) GetScriptID() string {
+	if o == nil || o.ScriptID == nil {
+		var ret string
+		return ret
+	}
+	return *o.ScriptID
+}
+
+// GetScriptIDOk returns a tuple with the ScriptID field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Task) GetScriptIDOk() (*string, bool) {
+	if o == nil || o.ScriptID == nil {
+		return nil, false
+	}
+	return o.ScriptID, true
+}
+
+// HasScriptID returns a boolean if a field has been set.
+func (o *Task) HasScriptID() bool {
+	if o != nil && o.ScriptID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetScriptID gets a reference to the given string and assigns it to the ScriptID field.
+func (o *Task) SetScriptID(v string) {
+	o.ScriptID = &v
+}
+
+// GetScriptParameters returns the ScriptParameters field value if set, zero value otherwise.
+func (o *Task) GetScriptParameters() map[string]interface{} {
+	if o == nil || o.ScriptParameters == nil {
+		var ret map[string]interface{}
+		return ret
+	}
+	return *o.ScriptParameters
+}
+
+// GetScriptParametersOk returns a tuple with the ScriptParameters field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Task) GetScriptParametersOk() (*map[string]interface{}, bool) {
+	if o == nil || o.ScriptParameters == nil {
+		return nil, false
+	}
+	return o.ScriptParameters, true
+}
+
+// HasScriptParameters returns a boolean if a field has been set.
+func (o *Task) HasScriptParameters() bool {
+	if o != nil && o.ScriptParameters != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetScriptParameters gets a reference to the given map[string]interface{} and assigns it to the ScriptParameters field.
+func (o *Task) SetScriptParameters(v map[string]interface{}) {
+	o.ScriptParameters = &v
+}
+
 func (o Task) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
 		toSerialize["id"] = o.Id
-	}
-	if o.Type != nil {
-		toSerialize["type"] = o.Type
 	}
 	if true {
 		toSerialize["orgID"] = o.OrgID
@@ -712,7 +750,7 @@ func (o Task) MarshalJSON() ([]byte, error) {
 	if o.AuthorizationID != nil {
 		toSerialize["authorizationID"] = o.AuthorizationID
 	}
-	if true {
+	if o.Flux != nil {
 		toSerialize["flux"] = o.Flux
 	}
 	if o.Every != nil {
@@ -741,6 +779,12 @@ func (o Task) MarshalJSON() ([]byte, error) {
 	}
 	if o.Links != nil {
 		toSerialize["links"] = o.Links
+	}
+	if o.ScriptID != nil {
+		toSerialize["scriptID"] = o.ScriptID
+	}
+	if o.ScriptParameters != nil {
+		toSerialize["scriptParameters"] = o.ScriptParameters
 	}
 	return json.Marshal(toSerialize)
 }

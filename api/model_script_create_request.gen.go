@@ -16,8 +16,9 @@ import (
 
 // ScriptCreateRequest struct for ScriptCreateRequest
 type ScriptCreateRequest struct {
-	// The name of the script. The name must be unique within the organization.
-	Name        string `json:"name" yaml:"name"`
+	// Script name. The name must be unique within the organization.
+	Name string `json:"name" yaml:"name"`
+	// Script description. A description of the script.
 	Description string `json:"description" yaml:"description"`
 	// The script to execute.
 	Script   string         `json:"script" yaml:"script"`

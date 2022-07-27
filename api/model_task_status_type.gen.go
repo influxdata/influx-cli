@@ -15,7 +15,7 @@ import (
 	"fmt"
 )
 
-// TaskStatusType the model 'TaskStatusType'
+// TaskStatusType `inactive` cancels scheduled runs and prevents manual runs of the task.
 type TaskStatusType string
 
 // List of TaskStatusType
