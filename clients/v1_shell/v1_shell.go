@@ -690,6 +690,10 @@ outer:
 				break
 			}
 		}
+		if len(allSeries) == 0 {
+			color.HiBlack("No results")
+			resIdx++
+		}
 	}
 }
 

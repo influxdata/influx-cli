@@ -53,12 +53,13 @@ func NewModel(
 	serMax int,
 	scientific bool) Model {
 
-	cols := make([]table.Column, len(*res.Columns)+1)
-	colWidths := make([]int, len(*res.Columns)+1)
-	alignment := make([]lipgloss.Position, len(*res.Columns)+1)
-	rows := make([]table.Row, len(*res.Values))
-	colNames := *res.Columns
-	for rowI, row := range *res.Values {
+	oneColsLen := len(res.GetColumns()) + 1
+	cols := make([]table.Column, oneColsLen)
+	colWidths := make([]int, oneColsLen)
+	alignment := make([]lipgloss.Position, oneColsLen)
+	rows := make([]table.Row, len(res.GetValues()))
+	colNames := res.GetColumns()
+	for rowI, row := range res.GetValues() {
 		rd := table.RowData{}
 		rd["index"] = fmt.Sprintf("%d", rowI+1)
 		alignment[0] = lipgloss.Right
