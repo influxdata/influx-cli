@@ -66,12 +66,19 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/
 
 func newConfigCreateCmd() cli.Command {
 	var cfg config.Config
+	var userpass string
 	return cli.Command{
 		Name:  "create",
 		Usage: "Create config",
 		Description: `
 The influx config create command creates a new InfluxDB connection configuration
 and stores it in the configs file (by default, stored at ~/.influxdbv2/configs).
+
+Authentication:
+	Authentication can be provided by either an api token or username/password, but not both.
+	When setting the username and password, the password is saved unencrypted in your local config file.
+	Optionally, you can omit the password and only provide the username.
+	You will then be prompted for the password each time.
 
 Examples:
 	# create a config and set it active
@@ -103,8 +110,12 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/create/
 			&cli.StringFlag{
 				Name:        "token, t",
 				Usage:       "Auth token to use when communicating with the InfluxDB server",
-				Required:    true,
 				Destination: &cfg.Token,
+			},
+			&cli.StringFlag{
+				Name:        "username-password, p",
+				Usage:       "Username (and optionally password) to use for authentication. Only supported in OSS",
+				Destination: &userpass,
 			},
 			&cli.StringFlag{
 				Name:        "org, o",
@@ -118,7 +129,13 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/create/
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if cfg.Token != "" && userpass != "" {
+				return fmt.Errorf("cannot specify `--token` and `--username-password` together, please choose one")
+			}
 			client := cmd.Client{CLI: getCLI(ctx)}
+			if userpass != "" {
+				return client.CreateWithUserPass(cfg, userpass)
+			}
 			return client.Create(cfg)
 		},
 	}

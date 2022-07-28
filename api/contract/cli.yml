@@ -129,6 +129,8 @@ paths:
     $ref: "./openapi/src/svc/invocable-scripts/paths/scripts_scriptID.yml"
   /api/v2/scripts/{scriptID}/invoke:
     $ref: "./overrides/paths/scripts_scriptID_invoke.yml"
+  /api/v2/signin:
+    $ref: "./openapi/src/common/paths/signin.yml"
 components:
   parameters:
     TraceSpan:

@@ -18,6 +18,7 @@ type Config struct {
 	Org            string `toml:"org" json:"org"`
 	Active         bool   `toml:"active,omitempty" json:"active,omitempty"`
 	PreviousActive bool   `toml:"previous,omitempty" json:"previous,omitempty"`
+	Cookie         string `toml:"cookie,omitempty" json:"cookie,omitempty"`
 }
 
 // DefaultConfig is default config without token
