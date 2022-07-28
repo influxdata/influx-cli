@@ -1,6 +1,10 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
+	"strings"
+
 	"github.com/influxdata/influx-cli/v2/clients"
 	"github.com/influxdata/influx-cli/v2/clients/task"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
@@ -28,19 +32,52 @@ func newTaskCommand() cli.Command {
 
 func newTaskCreateCmd() cli.Command {
 	var params task.CreateParams
+	var scriptID string
+	var scriptParams string
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
-	flags = append(flags, &cli.StringFlag{
-		Name:      "file, f",
-		Usage:     "Path to Flux script file",
-		TakesFile: true,
-	})
+	flags = append(flags,
+		&cli.StringFlag{
+			Name:        "name, n",
+			Usage:       "[Cloud only] Name of the task",
+			Destination: &params.Name,
+		},
+		&cli.StringFlag{
+			Name:        "every, e",
+			Usage:       "[Cloud only] Interval at which the task runs",
+			Destination: &params.Every,
+		},
+		&cli.StringFlag{
+			Name:        "cron, r",
+			Usage:       "[Cloud only] Cron expression to define when the task should run",
+			Destination: &params.Cron,
+		},
+		&cli.StringFlag{
+			Name:      "file, f",
+			Usage:     "Path to Flux script file",
+			TakesFile: true,
+		},
+		&cli.StringFlag{
+			Name:        "script-id",
+			Usage:       "[Cloud only] Script ID that gets executed instead of Flux",
+			Destination: &scriptID,
+		},
+		&cli.StringFlag{
+			Name:        "script-params",
+			Usage:       "[Cloud only] JSON parameters for the script to be executed",
+			Destination: &scriptParams,
+		})
 	return cli.Command{
 		Name:      "create",
-		Usage:     "Create a task with a Flux script provided via the first argument or a file or stdin.",
+		Usage:     "Create a task with a Flux script provided via the first argument or a file or stdin or a script ID.",
 		ArgsUsage: "[flux script or '-' for stdin]",
 		Flags:     flags,
 		Before:    middleware.WithBeforeFns(withCli(), withApi(true)),
 		Action: func(ctx *cli.Context) error {
+			fluxFile := ctx.String("file")
+			if len(fluxFile) > 0 && len(scriptID) > 0 {
+				return errors.New("cannot specify both Flux from a file and a script ID")
+			}
+
 			if err := checkOrgFlags(&params.OrgParams); err != nil {
 				return err
 			}
@@ -49,10 +86,25 @@ func newTaskCreateCmd() cli.Command {
 				CLI:      getCLI(ctx),
 				TasksApi: api.TasksApi,
 			}
-			var err error
-			params.FluxQuery, err = clients.ReadQuery(ctx.String("file"), ctx.Args())
-			if err != nil {
-				return err
+
+			if len(fluxFile) > 0 {
+				if len(scriptParams) > 0 {
+					return errors.New("cannot specify script parameters when not using a script in the task")
+				}
+				var err error
+				params.FluxQuery, err = clients.ReadQuery(fluxFile, ctx.Args())
+				if err != nil {
+					return err
+				}
+			} else {
+				params.ScriptID = scriptID
+				params.ScriptParams = make(map[string]interface{})
+
+				if len(scriptParams) > 0 {
+					if err := json.NewDecoder(strings.NewReader(scriptParams)).Decode(&params.ScriptParams); err != nil {
+						return err
+					}
+				}
 			}
 			return client.Create(getContext(ctx), &params)
 		},
