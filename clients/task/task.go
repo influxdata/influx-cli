@@ -355,6 +355,7 @@ func (c Client) printTasks(printOpts taskPrintOpts) error {
 		"Status",
 		"Every",
 		"Cron",
+		"ScriptID",
 	}
 
 	if printOpts.task != nil {
