@@ -85,7 +85,7 @@ func newApp() cli.App {
 	return cli.App{
 		Name:                 "influx",
 		Usage:                "Influx Client",
-		UsageText:            "influx [command]",
+		UsageText:            "influx [command]\n\nHINT: If you are looking for the InfluxQL shell from 1.x, run \"influx v1 shell\"",
 		EnableBashCompletion: true,
 		BashComplete:         cli.DefaultAppComplete,
 		Commands:             allCommands(),
