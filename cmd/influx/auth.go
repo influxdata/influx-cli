@@ -48,9 +48,7 @@ func helpText(perm string) struct{ readHelp, writeHelp string } {
 
 func hidden(perm string) bool {
 	var hiddenTypes = map[string]struct{}{
-		"functions":    {},
-		"remotes":      {},
-		"replications": {},
+		"functions": {},
 	}
 	_, ok := hiddenTypes[perm]
 	return ok
