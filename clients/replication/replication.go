@@ -190,6 +190,30 @@ func (c Client) Delete(ctx context.Context, replicationID string) error {
 	return c.printReplication(printOpts)
 }
 
+func (c Client) DeleteWithRemoteID(ctx context.Context, conn api.RemoteConnection) error {
+	reps, err := c.GetReplications(ctx).OrgID(conn.OrgID).RemoteID(conn.Id).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to find replication streams with remote ID %q: %w", conn.Id, err)
+	}
+
+	if reps.Replications != nil {
+		for _, rep := range reps.GetReplications() {
+			if err := c.DeleteReplicationByID(ctx, rep.Id).Execute(); err != nil {
+				return fmt.Errorf("failed to delete replication with ID %q: %w", rep.Id, err)
+			}
+		}
+	} else {
+		return fmt.Errorf("no replications found for remote ID %q", conn.Id)
+	}
+
+	printOpts := printReplicationOpts{
+		replications: reps.GetReplications(),
+		deleted:      true,
+	}
+
+	return c.printReplication(printOpts)
+}
+
 type printReplicationOpts struct {
 	replication  *api.Replication
 	replications []api.Replication
