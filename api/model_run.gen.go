@@ -20,17 +20,17 @@ type Run struct {
 	Id     *string `json:"id,omitempty" yaml:"id,omitempty"`
 	TaskID *string `json:"taskID,omitempty" yaml:"taskID,omitempty"`
 	Status *string `json:"status,omitempty" yaml:"status,omitempty"`
-	// Time used for run's \"now\" option, RFC3339.
+	// The time [RFC3339 date/time format]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#rfc3339-timestamp) used for the run's `now` option.
 	ScheduledFor *time.Time `json:"scheduledFor,omitempty" yaml:"scheduledFor,omitempty"`
 	// An array of logs associated with the run.
 	Log *[]LogEvent `json:"log,omitempty" yaml:"log,omitempty"`
 	// Flux used for the task
 	Flux *string `json:"flux,omitempty" yaml:"flux,omitempty"`
-	// Time run started executing, RFC3339Nano.
+	// The time ([RFC3339Nano date/time format](https://go.dev/src/time/format.go)) the run started executing.
 	StartedAt *time.Time `json:"startedAt,omitempty" yaml:"startedAt,omitempty"`
-	// Time run finished executing, RFC3339Nano.
+	// The time ([RFC3339Nano date/time format](https://go.dev/src/time/format.go)) the run finished executing.
 	FinishedAt *time.Time `json:"finishedAt,omitempty" yaml:"finishedAt,omitempty"`
-	// Time run was manually requested, RFC3339Nano.
+	// The time ([RFC3339Nano date/time format]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#rfc3339nano-timestamp)) the run was manually requested.
 	RequestedAt *time.Time `json:"requestedAt,omitempty" yaml:"requestedAt,omitempty"`
 	Links       *RunLinks  `json:"links,omitempty" yaml:"links,omitempty"`
 }

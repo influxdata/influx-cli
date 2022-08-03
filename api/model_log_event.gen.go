@@ -17,11 +17,11 @@ import (
 
 // LogEvent struct for LogEvent
 type LogEvent struct {
-	// Time event occurred, RFC3339Nano.
+	// The time ([RFC3339Nano date/time format]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#rfc3339nano-timestamp)) that the event occurred.
 	Time *time.Time `json:"time,omitempty" yaml:"time,omitempty"`
 	// A description of the event that occurred.
 	Message *string `json:"message,omitempty" yaml:"message,omitempty"`
-	// the ID of the task that logged
+	// The ID of the task run that generated the event.
 	RunID *string `json:"runID,omitempty" yaml:"runID,omitempty"`
 }
 

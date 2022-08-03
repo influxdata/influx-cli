@@ -34,13 +34,13 @@ type Task struct {
 	AuthorizationID *string `json:"authorizationID,omitempty" yaml:"authorizationID,omitempty"`
 	// The Flux script that the task runs.  #### Limitations  - If you use the `flux` property, you can't use the `scriptID` and `scriptParameters` properties.
 	Flux *string `json:"flux,omitempty" yaml:"flux,omitempty"`
-	// The interval ([duration literal](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals))) at which the task runs. `every` also determines when the task first runs, depending on the specified time.
+	// The interval ([duration literal]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#rfc3339-timestamp)) at which the task runs. `every` also determines when the task first runs, depending on the specified time.
 	Every *string `json:"every,omitempty" yaml:"every,omitempty"`
-	// A [Cron expression](https://en.wikipedia.org/wiki/Cron#Overview) that defines the schedule on which the task runs. InfluxDB bases cron runs on the system time.
+	// A [Cron expression](https://en.wikipedia.org/wiki/Cron#Overview) that defines the schedule on which the task runs. InfluxDB uses the system time when evaluating Cron expressions.
 	Cron *string `json:"cron,omitempty" yaml:"cron,omitempty"`
 	// A [duration](https://docs.influxdata.com/flux/v0.x/spec/lexical-elements/#duration-literals) to delay execution of the task after the scheduled time has elapsed. `0` removes the offset.
 	Offset *string `json:"offset,omitempty" yaml:"offset,omitempty"`
-	// A timestamp ([RFC3339 date/time format](https://docs.influxdata.com/flux/v0.x/data-types/basic/time/#time-syntax)) of the latest scheduled and completed run.
+	// A timestamp ([RFC3339 date/time format]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#rfc3339-timestamp)) of the latest scheduled and completed run.
 	LatestCompleted *time.Time `json:"latestCompleted,omitempty" yaml:"latestCompleted,omitempty"`
 	LastRunStatus   *string    `json:"lastRunStatus,omitempty" yaml:"lastRunStatus,omitempty"`
 	LastRunError    *string    `json:"lastRunError,omitempty" yaml:"lastRunError,omitempty"`
