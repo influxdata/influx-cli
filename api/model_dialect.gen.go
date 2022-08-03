@@ -14,17 +14,17 @@ import (
 	"encoding/json"
 )
 
-// Dialect Dialect are options to change the default CSV output format; https://www.w3.org/TR/2015/REC-tabular-metadata-20151217/#dialect-descriptions
+// Dialect Options for tabular data output. Default output is [annotated CSV]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/annotated-csv/#csv-response-format) with headers.  For more information about tabular data **dialect**, see [W3 metadata vocabulary for tabular data](https://www.w3.org/TR/2015/REC-tabular-metadata-20151217/#dialect-descriptions).
 type Dialect struct {
-	// If true, the results will contain a header row
+	// If true, the results contain a header row.
 	Header *bool `json:"header,omitempty" yaml:"header,omitempty"`
-	// Separator between cells; the default is ,
+	// The separator used between cells. Default is a comma (`,`).
 	Delimiter *string `json:"delimiter,omitempty" yaml:"delimiter,omitempty"`
-	// https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/#columns
+	// Annotation rows to include in the results. An _annotation_ is metadata associated with an object (column) in the data model.  #### Related guides  - See [Annotated CSV annotations]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/annotated-csv/#annotations) for examples and more information.  For more information about **annotations** in tabular data, see [W3 metadata vocabulary for tabular data](https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/#columns).
 	Annotations *[]string `json:"annotations,omitempty" yaml:"annotations,omitempty"`
-	// Character prefixed to comment strings
+	// The character prefixed to comment strings. Default is a number sign (`#`).
 	CommentPrefix *string `json:"commentPrefix,omitempty" yaml:"commentPrefix,omitempty"`
-	// Format of timestamps
+	// The format for timestamps in results. Default is [`RFC3339` date/time format]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#rfc3339-timestamp). To include nanoseconds in timestamps, use `RFC3339Nano`.  #### Example formatted date/time values  | Format      | Value                       | |:------------|:----------------------------| | `RFC3339`    | `\"2006-01-02T15:04:05Z07:00\"` | | `RFC3339Nano` | `\"2006-01-02T15:04:05.999999999Z07:00\"` |
 	DateTimeFormat *string `json:"dateTimeFormat,omitempty" yaml:"dateTimeFormat,omitempty"`
 }
 

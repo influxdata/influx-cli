@@ -17,7 +17,7 @@ import (
 
 // RunManually struct for RunManually
 type RunManually struct {
-	// Time used for run's \"now\" option, RFC3339.  Default is the server's now time.
+	// The time [RFC3339 date/time format]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#rfc3339-timestamp) used for the run's `now` option. Default is the server _now_ time.
 	ScheduledFor NullableTime `json:"scheduledFor,omitempty" yaml:"scheduledFor,omitempty"`
 }
 

@@ -112,10 +112,10 @@ type TasksApi interface {
 	/*
 			 * GetTasksID Retrieve a task
 			 * Retrieves a [task]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#task)
-		by task ID.
+		by ID.
 
 			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-			 * @param taskID The task ID.
+			 * @param taskID The ID of the task to retrieve.
 			 * @return ApiGetTasksIDRequest
 	*/
 	GetTasksID(ctx _context.Context, taskID string) ApiGetTasksIDRequest
@@ -165,11 +165,16 @@ type TasksApi interface {
 	GetTasksIDLogsExecuteWithHttpInfo(r ApiGetTasksIDLogsRequest) (Logs, *_nethttp.Response, error)
 
 	/*
-	 * GetTasksIDRuns List runs for a task
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param taskID The ID of the task to get runs for.
-	 * @return ApiGetTasksIDRunsRequest
-	 */
+			 * GetTasksIDRuns List runs for a task
+			 * Retrieves a list of runs for a [task]({{% INFLUXDB_DOCS_URL %}}/process-data/).
+
+		To limit which task runs are returned, pass query parameters in your request.
+		If no query parameters are passed, InfluxDB returns all task runs up to the default `limit`.
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param taskID The ID of the task to get runs for. Only returns runs for this task.
+			 * @return ApiGetTasksIDRunsRequest
+	*/
 	GetTasksIDRuns(ctx _context.Context, taskID string) ApiGetTasksIDRunsRequest
 
 	/*
@@ -216,8 +221,8 @@ type TasksApi interface {
 	/*
 	 * GetTasksIDRunsIDLogs Retrieve all logs for a run
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param taskID ID of task to get logs for.
-	 * @param runID ID of run to get logs for.
+	 * @param taskID The ID of the task to get logs for.
+	 * @param runID The ID of the run to get logs for.
 	 * @return ApiGetTasksIDRunsIDLogsRequest
 	 */
 	GetTasksIDRunsIDLogs(ctx _context.Context, taskID string, runID string) ApiGetTasksIDRunsIDLogsRequest
@@ -241,7 +246,7 @@ type TasksApi interface {
 			 * Updates a task and then cancels all scheduled runs of the task.
 
 		Use this endpoint to modify task properties (for example: `cron`, `name`, `flux`, `status`).
-		Once InfluxDB applies the update, it cancels all scheduled runs of the task.
+		Once InfluxDB applies the update, it cancels all previously scheduled runs of the task.
 
 		To update a task, pass an object that contains the updated key-value pairs.
 		To activate or inactivate a task, set the `status` property.
@@ -283,7 +288,8 @@ type TasksApi interface {
 
 		#### Related guides
 
-		- [Create a task]({{% INFLUXDB_DOCS_URL %}}/process-data/manage-tasks/create-task/).
+		- [Get started with tasks]({{% INFLUXDB_DOCS_URL %}}/process-data/get-started/)
+		- [Create a task]({{% INFLUXDB_DOCS_URL %}}/process-data/manage-tasks/create-task/)
 		- [Common tasks]({{% INFLUXDB_DOCS_URL %}}/process-data/common-tasks/)
 		- [Task configuration options]({{% INFLUXDB_DOCS_URL %}}/process-data/task-options/)
 
@@ -307,11 +313,15 @@ type TasksApi interface {
 	PostTasksExecuteWithHttpInfo(r ApiPostTasksRequest) (Task, *_nethttp.Response, error)
 
 	/*
-	 * PostTasksIDRuns Manually start a task run, overriding the current schedule
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param taskID
-	 * @return ApiPostTasksIDRunsRequest
-	 */
+			 * PostTasksIDRuns Start a task run, overriding the schedule
+			 * Schedules a task run to start immediately, ignoring scheduled runs.
+
+		Use this endpoint to manually start a task run.
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param taskID
+			 * @return ApiPostTasksIDRunsRequest
+	*/
 	PostTasksIDRuns(ctx _context.Context, taskID string) ApiPostTasksIDRunsRequest
 
 	/*
@@ -1010,10 +1020,10 @@ func (r ApiGetTasksIDRequest) ExecuteWithHttpInfo() (Task, *_nethttp.Response, e
 /*
  * GetTasksID Retrieve a task
  * Retrieves a [task]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#task)
-by task ID.
+by ID.
 
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID The task ID.
+ * @param taskID The ID of the task to retrieve.
  * @return ApiGetTasksIDRequest
 */
 func (a *TasksApiService) GetTasksID(ctx _context.Context, taskID string) ApiGetTasksIDRequest {
@@ -1395,10 +1405,15 @@ func (r ApiGetTasksIDRunsRequest) ExecuteWithHttpInfo() (Runs, *_nethttp.Respons
 
 /*
  * GetTasksIDRuns List runs for a task
+ * Retrieves a list of runs for a [task]({{% INFLUXDB_DOCS_URL %}}/process-data/).
+
+To limit which task runs are returned, pass query parameters in your request.
+If no query parameters are passed, InfluxDB returns all task runs up to the default `limit`.
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID The ID of the task to get runs for.
+ * @param taskID The ID of the task to get runs for. Only returns runs for this task.
  * @return ApiGetTasksIDRunsRequest
- */
+*/
 func (a *TasksApiService) GetTasksIDRuns(ctx _context.Context, taskID string) ApiGetTasksIDRunsRequest {
 	return ApiGetTasksIDRunsRequest{
 		ApiService: a,
@@ -1761,8 +1776,8 @@ func (r ApiGetTasksIDRunsIDLogsRequest) ExecuteWithHttpInfo() (Logs, *_nethttp.R
 /*
  * GetTasksIDRunsIDLogs Retrieve all logs for a run
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param taskID ID of task to get logs for.
- * @param runID ID of run to get logs for.
+ * @param taskID The ID of the task to get logs for.
+ * @param runID The ID of the run to get logs for.
  * @return ApiGetTasksIDRunsIDLogsRequest
  */
 func (a *TasksApiService) GetTasksIDRunsIDLogs(ctx _context.Context, taskID string, runID string) ApiGetTasksIDRunsIDLogsRequest {
@@ -1939,7 +1954,7 @@ func (r ApiPatchTasksIDRequest) ExecuteWithHttpInfo() (Task, *_nethttp.Response,
  * Updates a task and then cancels all scheduled runs of the task.
 
 Use this endpoint to modify task properties (for example: `cron`, `name`, `flux`, `status`).
-Once InfluxDB applies the update, it cancels all scheduled runs of the task.
+Once InfluxDB applies the update, it cancels all previously scheduled runs of the task.
 
 To update a task, pass an object that contains the updated key-value pairs.
 To activate or inactivate a task, set the `status` property.
@@ -2128,7 +2143,8 @@ In your task, provide one of the following:
 
 #### Related guides
 
-- [Create a task]({{% INFLUXDB_DOCS_URL %}}/process-data/manage-tasks/create-task/).
+- [Get started with tasks]({{% INFLUXDB_DOCS_URL %}}/process-data/get-started/)
+- [Create a task]({{% INFLUXDB_DOCS_URL %}}/process-data/manage-tasks/create-task/)
 - [Common tasks]({{% INFLUXDB_DOCS_URL %}}/process-data/common-tasks/)
 - [Task configuration options]({{% INFLUXDB_DOCS_URL %}}/process-data/task-options/)
 
@@ -2232,6 +2248,17 @@ func (a *TasksApiService) PostTasksExecuteWithHttpInfo(r ApiPostTasksRequest) (T
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -2306,11 +2333,15 @@ func (r ApiPostTasksIDRunsRequest) ExecuteWithHttpInfo() (Run, *_nethttp.Respons
 }
 
 /*
- * PostTasksIDRuns Manually start a task run, overriding the current schedule
+ * PostTasksIDRuns Start a task run, overriding the schedule
+ * Schedules a task run to start immediately, ignoring scheduled runs.
+
+Use this endpoint to manually start a task run.
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param taskID
  * @return ApiPostTasksIDRunsRequest
- */
+*/
 func (a *TasksApiService) PostTasksIDRuns(ctx _context.Context, taskID string) ApiPostTasksIDRunsRequest {
 	return ApiPostTasksIDRunsRequest{
 		ApiService: a,
