@@ -211,6 +211,8 @@ func newTaskRetryFailedCmd() cli.Command {
 
 func newTaskUpdateCmd() cli.Command {
 	var params task.UpdateParams
+	var scriptID string
+	var scriptParams string
 	flags := commonFlags()
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
@@ -229,6 +231,16 @@ func newTaskUpdateCmd() cli.Command {
 			Usage:     "Path to Flux script file",
 			TakesFile: true,
 		},
+		&cli.StringFlag{
+			Name:        "script-id",
+			Usage:       "[Cloud only] Path to Flux script file",
+			Destination: &scriptID,
+		},
+		&cli.StringFlag{
+			Name:        "script-params",
+			Usage:       "[Cloud only] Path to Flux script file",
+			Destination: &scriptParams,
+		},
 	}...)
 	return cli.Command{
 		Name:      "update",
@@ -237,16 +249,32 @@ func newTaskUpdateCmd() cli.Command {
 		Flags:     flags,
 		Before:    middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Action: func(ctx *cli.Context) error {
+			fluxFile := ctx.String("file")
+			if len(fluxFile) > 0 && len(scriptID) > 0 {
+				return errors.New("cannot specify both Flux from a file and a script ID")
+			}
+
 			api := getAPI(ctx)
 			client := task.Client{
 				CLI:      getCLI(ctx),
 				TasksApi: api.TasksApi,
 			}
-			var err error
-			if ctx.String("file") != "" || ctx.NArg() != 0 {
-				params.FluxQuery, err = clients.ReadQuery(ctx.String("file"), ctx.Args())
-				if err != nil {
-					return err
+			if len(fluxFile) > 0 {
+				var err error
+				if ctx.String("file") != "" || ctx.NArg() != 0 {
+					params.FluxQuery, err = clients.ReadQuery(ctx.String("file"), ctx.Args())
+					if err != nil {
+						return err
+					}
+				}
+			} else {
+				params.ScriptID = scriptID
+				params.ScriptParams = make(map[string]interface{})
+
+				if len(scriptParams) > 0 {
+					if err := json.NewDecoder(strings.NewReader(scriptParams)).Decode(&params.ScriptParams); err != nil {
+						return err
+					}
 				}
 			}
 			return client.Update(getContext(ctx), &params)
