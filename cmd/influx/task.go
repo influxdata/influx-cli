@@ -125,6 +125,11 @@ func newTaskFindCmd() cli.Command {
 			Usage:       "task owner ID",
 			Destination: &params.UserID,
 		},
+		&cli.StringFlag{
+			Name:        "script-id",
+			Usage:       "script ID",
+			Destination: &params.ScriptID,
+		},
 		&cli.IntFlag{
 			Name:        "limit",
 			Usage:       "the number of tasks to find",
