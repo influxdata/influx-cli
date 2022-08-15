@@ -109,9 +109,10 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 
 type FindParams struct {
 	clients.OrgParams
-	TaskID string
-	UserID string
-	Limit  int
+	TaskID   string
+	UserID   string
+	ScriptID string
+	Limit    int
 }
 
 func (c Client) Find(ctx context.Context, params *FindParams) error {
@@ -140,6 +141,9 @@ func (c Client) Find(ctx context.Context, params *FindParams) error {
 		getTask = addOrg(org, getTask)
 		if params.UserID != "" {
 			getTask = getTask.User(params.UserID)
+		}
+		if params.ScriptID != "" {
+			getTask = getTask.ScriptID(params.ScriptID)
 		}
 		tasksResult, err := getTask.Execute()
 		if err != nil {

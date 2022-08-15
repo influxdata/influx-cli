@@ -701,6 +701,7 @@ type ApiGetTasksRequest struct {
 	offset       *int32
 	sortBy       *string
 	type_        *string
+	scriptID     *string
 }
 
 func (r ApiGetTasksRequest) ZapTraceSpan(zapTraceSpan string) ApiGetTasksRequest {
@@ -789,6 +790,14 @@ func (r ApiGetTasksRequest) Type_(type_ string) ApiGetTasksRequest {
 }
 func (r ApiGetTasksRequest) GetType_() *string {
 	return r.type_
+}
+
+func (r ApiGetTasksRequest) ScriptID(scriptID string) ApiGetTasksRequest {
+	r.scriptID = &scriptID
+	return r
+}
+func (r ApiGetTasksRequest) GetScriptID() *string {
+	return r.scriptID
 }
 
 func (r ApiGetTasksRequest) Execute() (Tasks, error) {
@@ -881,6 +890,9 @@ func (a *TasksApiService) GetTasksExecuteWithHttpInfo(r ApiGetTasksRequest) (Tas
 	}
 	if r.type_ != nil {
 		localVarQueryParams.Add("type", parameterToString(*r.type_, ""))
+	}
+	if r.scriptID != nil {
+		localVarQueryParams.Add("scriptID", parameterToString(*r.scriptID, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
