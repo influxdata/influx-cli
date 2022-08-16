@@ -219,7 +219,6 @@ func (c Client) printDBRPs(opts dbrpPrintOpts) error {
 		"Bucket ID",
 		"Retention Policy",
 		"Default",
-		"Virtual",
 		"Organization ID",
 	}
 
@@ -234,7 +233,6 @@ func (c Client) printDBRPs(opts dbrpPrintOpts) error {
 			"Database":         t.Database,
 			"Retention Policy": t.RetentionPolicy,
 			"Default":          t.Default,
-			"Virtual":          t.GetVirtual(),
 			"Organization ID":  t.OrgID,
 			"Bucket ID":        t.BucketID,
 		}
