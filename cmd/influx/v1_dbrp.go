@@ -25,8 +25,13 @@ func newV1DBRPListCmd() cli.Command {
 	flags := append(commonFlags(), getOrgFlags(&params.OrgParams)...)
 
 	return cli.Command{
-		Name:    "list",
-		Usage:   "List database and retention policy mappings",
+		Name:  "list",
+		Usage: "List database and retention policy mappings",
+		Description: `List database and retention policy mappings, both standard and virtual.
+
+   Virtual DBRP mappings (InfluxDB OSS only) are created automatically using the bucket name.
+   Virtual mappings are read-only. To modify a virtual DBRP mapping, create a new, explicit DBRP mapping.
+   For more information, see https://docs.influxdata.com/influxdb/latest/query-data/influxql/dbrp/`,
 		Aliases: []string{"find", "ls"},
 		Flags: append(
 			flags,
