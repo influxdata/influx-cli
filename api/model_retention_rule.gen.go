@@ -16,10 +16,10 @@ import (
 
 // RetentionRule struct for RetentionRule
 type RetentionRule struct {
-	Type string `json:"type" yaml:"type"`
-	// Duration in seconds for how long data will be kept in the database. 0 means infinite.
+	Type *string `json:"type,omitempty" yaml:"type,omitempty"`
+	// The duration in seconds for how long data will be kept in the database. The default duration is 2592000 (30 days). 0 represents infinite retention.
 	EverySeconds int64 `json:"everySeconds" yaml:"everySeconds"`
-	// Shard duration measured in seconds.
+	// The shard group duration. The duration or interval (in seconds) that each shard group covers.  #### InfluxDB Cloud  - Does not use `shardGroupDurationsSeconds`.  #### InfluxDB OSS  - Default value depends on the [bucket retention period]({{% INFLUXDB_DOCS_URL %}}/v2.3/reference/internals/shards/#shard-group-duration).
 	ShardGroupDurationSeconds *int64 `json:"shardGroupDurationSeconds,omitempty" yaml:"shardGroupDurationSeconds,omitempty"`
 }
 
@@ -27,9 +27,10 @@ type RetentionRule struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewRetentionRule(type_ string, everySeconds int64) *RetentionRule {
+func NewRetentionRule(everySeconds int64) *RetentionRule {
 	this := RetentionRule{}
-	this.Type = type_
+	var type_ string = "expire"
+	this.Type = &type_
 	this.EverySeconds = everySeconds
 	return &this
 }
@@ -40,32 +41,42 @@ func NewRetentionRule(type_ string, everySeconds int64) *RetentionRule {
 func NewRetentionRuleWithDefaults() *RetentionRule {
 	this := RetentionRule{}
 	var type_ string = "expire"
-	this.Type = type_
+	this.Type = &type_
+	var everySeconds int64 = 2592000
+	this.EverySeconds = everySeconds
 	return &this
 }
 
-// GetType returns the Type field value
+// GetType returns the Type field value if set, zero value otherwise.
 func (o *RetentionRule) GetType() string {
-	if o == nil {
+	if o == nil || o.Type == nil {
 		var ret string
 		return ret
 	}
-
-	return o.Type
+	return *o.Type
 }
 
-// GetTypeOk returns a tuple with the Type field value
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *RetentionRule) GetTypeOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Type == nil {
 		return nil, false
 	}
-	return &o.Type, true
+	return o.Type, true
 }
 
-// SetType sets field value
+// HasType returns a boolean if a field has been set.
+func (o *RetentionRule) HasType() bool {
+	if o != nil && o.Type != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given string and assigns it to the Type field.
 func (o *RetentionRule) SetType(v string) {
-	o.Type = v
+	o.Type = &v
 }
 
 // GetEverySeconds returns the EverySeconds field value
@@ -126,7 +137,7 @@ func (o *RetentionRule) SetShardGroupDurationSeconds(v int64) {
 
 func (o RetentionRule) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if true {
+	if o.Type != nil {
 		toSerialize["type"] = o.Type
 	}
 	if true {

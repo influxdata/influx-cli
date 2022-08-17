@@ -34,10 +34,11 @@ func (c Client) Create(ctx context.Context, params *BucketsCreateParams) error {
 		return err
 	}
 
+	var rr []api.RetentionRule
 	reqBody := api.PostBucketRequest{
 		OrgID:          orgId,
 		Name:           params.Name,
-		RetentionRules: []api.RetentionRule{},
+		RetentionRules: &rr,
 		SchemaType:     &params.SchemaType,
 	}
 	if params.Description != "" {
@@ -57,7 +58,7 @@ func (c Client) Create(ctx context.Context, params *BucketsCreateParams) error {
 		if sgd > 0 {
 			rule.SetShardGroupDurationSeconds(int64(sgd.Round(time.Second) / time.Second))
 		}
-		reqBody.RetentionRules = append(reqBody.RetentionRules, *rule)
+		*reqBody.RetentionRules = append(*reqBody.RetentionRules, *rule)
 	}
 
 	bucket, err := c.PostBuckets(ctx).PostBucketRequest(reqBody).Execute()

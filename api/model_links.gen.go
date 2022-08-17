@@ -14,7 +14,7 @@ import (
 	"encoding/json"
 )
 
-// Links struct for Links
+// Links URI pointers for additional paged results.
 type Links struct {
 	// URI of resource.
 	Next *string `json:"next,omitempty" yaml:"next,omitempty"`

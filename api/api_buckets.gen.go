@@ -47,10 +47,40 @@ type BucketsApi interface {
 	DeleteBucketsIDExecuteWithHttpInfo(r ApiDeleteBucketsIDRequest) (*_nethttp.Response, error)
 
 	/*
-	 * GetBuckets List all buckets
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiGetBucketsRequest
-	 */
+			 * GetBuckets List buckets
+			 * Retrieves a list of [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
+
+		To limit which buckets are returned, pass query parameters in your request.
+		If no query parameters are passed, InfluxDB returns all buckets up to the
+		default `limit`.
+
+		#### Limitations
+
+		- Paging with an `offset` greater than the number of records will result in
+		an empty list of buckets--for example:
+
+		  The following request is paging to the 50th record, but the user only has
+		  10 buckets.
+
+		  ```sh
+		  $ curl --request GET "INFLUX_URL/api/v2/scripts?limit=1&offset=50"
+
+		  $ {
+		      "links": {
+		          "prev": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=49\u0026orgID=ORG_ID",
+		          "self": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=50\u0026orgID=ORG_ID"
+		      },
+		      "buckets": []
+		    }
+		  ```
+
+		#### Related Guides
+
+		- [Manage buckets]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiGetBucketsRequest
+	*/
 	GetBuckets(ctx _context.Context) ApiGetBucketsRequest
 
 	/*
@@ -112,10 +142,34 @@ type BucketsApi interface {
 	PatchBucketsIDExecuteWithHttpInfo(r ApiPatchBucketsIDRequest) (Bucket, *_nethttp.Response, error)
 
 	/*
-	 * PostBuckets Create a bucket
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostBucketsRequest
-	 */
+			 * PostBuckets Create a bucket
+			 * Creates a [bucket]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket)
+		and returns the created bucket along with metadata. The default data
+		[retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period)
+		is 30 days.
+
+		#### InfluxDB OSS
+
+		- A single InfluxDB OSS instance supports active writes or queries for
+		approximately 20 buckets across all organizations at a given time. Reading
+		or writing to more than 20 buckets at a time can adversely affect
+		performance.
+
+		#### Limitations
+
+		- InfluxDB Cloud Free Plan allows users to create up to two buckets.
+		Exceeding the bucket quota will result in an HTTP `403` status code.
+		For additional information regarding InfluxDB Cloud offerings, see
+		[InfluxDB Cloud Pricing](https://www.influxdata.com/influxdb-cloud-pricing/).
+
+		#### Related Guides
+
+		- [Create bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/)
+		- [Create bucket CLI reference]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/bucket/create)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiPostBucketsRequest
+	*/
 	PostBuckets(ctx _context.Context) ApiPostBucketsRequest
 
 	/*
@@ -375,10 +429,40 @@ func (r ApiGetBucketsRequest) ExecuteWithHttpInfo() (Buckets, *_nethttp.Response
 }
 
 /*
- * GetBuckets List all buckets
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiGetBucketsRequest
- */
+  - GetBuckets List buckets
+  - Retrieves a list of [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
+
+To limit which buckets are returned, pass query parameters in your request.
+If no query parameters are passed, InfluxDB returns all buckets up to the
+default `limit`.
+
+#### Limitations
+
+- Paging with an `offset` greater than the number of records will result in
+an empty list of buckets--for example:
+
+	The following request is paging to the 50th record, but the user only has
+	10 buckets.
+
+	```sh
+	$ curl --request GET "INFLUX_URL/api/v2/scripts?limit=1&offset=50"
+
+	$ {
+	    "links": {
+	        "prev": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=49\u0026orgID=ORG_ID",
+	        "self": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=50\u0026orgID=ORG_ID"
+	    },
+	    "buckets": []
+	  }
+	```
+
+#### Related Guides
+
+- [Manage buckets]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/)
+
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiGetBucketsRequest
+*/
 func (a *BucketsApiService) GetBuckets(ctx _context.Context) ApiGetBucketsRequest {
 	return ApiGetBucketsRequest{
 		ApiService: a,
@@ -899,10 +983,35 @@ func (r ApiPostBucketsRequest) ExecuteWithHttpInfo() (Bucket, *_nethttp.Response
 }
 
 /*
- * PostBuckets Create a bucket
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiPostBucketsRequest
- */
+  - PostBuckets Create a bucket
+  - Creates a [bucket]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket)
+
+and returns the created bucket along with metadata. The default data
+[retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period)
+is 30 days.
+
+#### InfluxDB OSS
+
+- A single InfluxDB OSS instance supports active writes or queries for
+approximately 20 buckets across all organizations at a given time. Reading
+or writing to more than 20 buckets at a time can adversely affect
+performance.
+
+#### Limitations
+
+- InfluxDB Cloud Free Plan allows users to create up to two buckets.
+Exceeding the bucket quota will result in an HTTP `403` status code.
+For additional information regarding InfluxDB Cloud offerings, see
+[InfluxDB Cloud Pricing](https://www.influxdata.com/influxdb-cloud-pricing/).
+
+#### Related Guides
+
+- [Create bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/)
+- [Create bucket CLI reference]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/bucket/create)
+
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiPostBucketsRequest
+*/
 func (a *BucketsApiService) PostBuckets(ctx _context.Context) ApiPostBucketsRequest {
 	return ApiPostBucketsRequest{
 		ApiService: a,
@@ -1000,6 +1109,28 @@ func (a *BucketsApiService) PostBucketsExecuteWithHttpInfo(r ApiPostBucketsReque
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 422 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))

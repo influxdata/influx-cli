@@ -22,7 +22,8 @@ type Replication struct {
 	OrgID                 string  `json:"orgID" yaml:"orgID"`
 	RemoteID              string  `json:"remoteID" yaml:"remoteID"`
 	LocalBucketID         string  `json:"localBucketID" yaml:"localBucketID"`
-	RemoteBucketID        string  `json:"remoteBucketID" yaml:"remoteBucketID"`
+	RemoteBucketID        *string `json:"remoteBucketID,omitempty" yaml:"remoteBucketID,omitempty"`
+	RemoteBucketName      *string `json:"remoteBucketName,omitempty" yaml:"remoteBucketName,omitempty"`
 	MaxQueueSizeBytes     int64   `json:"maxQueueSizeBytes" yaml:"maxQueueSizeBytes"`
 	CurrentQueueSizeBytes int64   `json:"currentQueueSizeBytes" yaml:"currentQueueSizeBytes"`
 	LatestResponseCode    *int32  `json:"latestResponseCode,omitempty" yaml:"latestResponseCode,omitempty"`
@@ -34,14 +35,13 @@ type Replication struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewReplication(id string, name string, orgID string, remoteID string, localBucketID string, remoteBucketID string, maxQueueSizeBytes int64, currentQueueSizeBytes int64) *Replication {
+func NewReplication(id string, name string, orgID string, remoteID string, localBucketID string, maxQueueSizeBytes int64, currentQueueSizeBytes int64) *Replication {
 	this := Replication{}
 	this.Id = id
 	this.Name = name
 	this.OrgID = orgID
 	this.RemoteID = remoteID
 	this.LocalBucketID = localBucketID
-	this.RemoteBucketID = remoteBucketID
 	this.MaxQueueSizeBytes = maxQueueSizeBytes
 	this.CurrentQueueSizeBytes = currentQueueSizeBytes
 	return &this
@@ -207,28 +207,68 @@ func (o *Replication) SetLocalBucketID(v string) {
 	o.LocalBucketID = v
 }
 
-// GetRemoteBucketID returns the RemoteBucketID field value
+// GetRemoteBucketID returns the RemoteBucketID field value if set, zero value otherwise.
 func (o *Replication) GetRemoteBucketID() string {
-	if o == nil {
+	if o == nil || o.RemoteBucketID == nil {
 		var ret string
 		return ret
 	}
-
-	return o.RemoteBucketID
+	return *o.RemoteBucketID
 }
 
-// GetRemoteBucketIDOk returns a tuple with the RemoteBucketID field value
+// GetRemoteBucketIDOk returns a tuple with the RemoteBucketID field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *Replication) GetRemoteBucketIDOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.RemoteBucketID == nil {
 		return nil, false
 	}
-	return &o.RemoteBucketID, true
+	return o.RemoteBucketID, true
 }
 
-// SetRemoteBucketID sets field value
+// HasRemoteBucketID returns a boolean if a field has been set.
+func (o *Replication) HasRemoteBucketID() bool {
+	if o != nil && o.RemoteBucketID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetRemoteBucketID gets a reference to the given string and assigns it to the RemoteBucketID field.
 func (o *Replication) SetRemoteBucketID(v string) {
-	o.RemoteBucketID = v
+	o.RemoteBucketID = &v
+}
+
+// GetRemoteBucketName returns the RemoteBucketName field value if set, zero value otherwise.
+func (o *Replication) GetRemoteBucketName() string {
+	if o == nil || o.RemoteBucketName == nil {
+		var ret string
+		return ret
+	}
+	return *o.RemoteBucketName
+}
+
+// GetRemoteBucketNameOk returns a tuple with the RemoteBucketName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Replication) GetRemoteBucketNameOk() (*string, bool) {
+	if o == nil || o.RemoteBucketName == nil {
+		return nil, false
+	}
+	return o.RemoteBucketName, true
+}
+
+// HasRemoteBucketName returns a boolean if a field has been set.
+func (o *Replication) HasRemoteBucketName() bool {
+	if o != nil && o.RemoteBucketName != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetRemoteBucketName gets a reference to the given string and assigns it to the RemoteBucketName field.
+func (o *Replication) SetRemoteBucketName(v string) {
+	o.RemoteBucketName = &v
 }
 
 // GetMaxQueueSizeBytes returns the MaxQueueSizeBytes field value
@@ -395,8 +435,11 @@ func (o Replication) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["localBucketID"] = o.LocalBucketID
 	}
-	if true {
+	if o.RemoteBucketID != nil {
 		toSerialize["remoteBucketID"] = o.RemoteBucketID
+	}
+	if o.RemoteBucketName != nil {
+		toSerialize["remoteBucketName"] = o.RemoteBucketName
 	}
 	if true {
 		toSerialize["maxQueueSizeBytes"] = o.MaxQueueSizeBytes

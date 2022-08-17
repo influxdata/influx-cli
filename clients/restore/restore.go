@@ -318,7 +318,8 @@ func (c Client) restoreBucketLegacy(ctx context.Context, bkt br.ManifestBucketEn
 		rps[i].ShardGroupDurationSeconds = &sgd
 	}
 
-	bucketReq := *api.NewPostBucketRequest(bkt.OrganizationID, bkt.BucketName, rps)
+	bucketReq := *api.NewPostBucketRequest(bkt.OrganizationID, bkt.BucketName)
+	bucketReq.RetentionRules = &rps
 	bucketReq.Description = bkt.Description
 
 	newBkt, err := c.PostBuckets(ctx).PostBucketRequest(bucketReq).Execute()
