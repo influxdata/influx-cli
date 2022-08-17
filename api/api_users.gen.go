@@ -1064,15 +1064,15 @@ func (r ApiPostUsersIDPasswordRequest) ExecuteWithHttpInfo() (*_nethttp.Response
 }
 
 /*
-  - PostUsersIDPassword Update a password
-  - #### InfluxDB Cloud
+ * PostUsersIDPassword Update a password
+ * #### InfluxDB Cloud
 
 InfluxDB Cloud does not support changing user passwords through the API.
 Use the InfluxDB Cloud user interface to update your password.
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param userID The user ID.
-  - @return ApiPostUsersIDPasswordRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param userID The user ID.
+ * @return ApiPostUsersIDPasswordRequest
 */
 func (a *UsersApiService) PostUsersIDPassword(ctx _context.Context, userID string) ApiPostUsersIDPasswordRequest {
 	return ApiPostUsersIDPasswordRequest{

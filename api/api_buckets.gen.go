@@ -429,8 +429,8 @@ func (r ApiGetBucketsRequest) ExecuteWithHttpInfo() (Buckets, *_nethttp.Response
 }
 
 /*
-  - GetBuckets List buckets
-  - Retrieves a list of [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
+ * GetBuckets List buckets
+ * Retrieves a list of [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
 
 To limit which buckets are returned, pass query parameters in your request.
 If no query parameters are passed, InfluxDB returns all buckets up to the
@@ -441,27 +441,27 @@ default `limit`.
 - Paging with an `offset` greater than the number of records will result in
 an empty list of buckets--for example:
 
-	The following request is paging to the 50th record, but the user only has
-	10 buckets.
+  The following request is paging to the 50th record, but the user only has
+  10 buckets.
 
-	```sh
-	$ curl --request GET "INFLUX_URL/api/v2/scripts?limit=1&offset=50"
+  ```sh
+  $ curl --request GET "INFLUX_URL/api/v2/scripts?limit=1&offset=50"
 
-	$ {
-	    "links": {
-	        "prev": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=49\u0026orgID=ORG_ID",
-	        "self": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=50\u0026orgID=ORG_ID"
-	    },
-	    "buckets": []
-	  }
-	```
+  $ {
+      "links": {
+          "prev": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=49\u0026orgID=ORG_ID",
+          "self": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=50\u0026orgID=ORG_ID"
+      },
+      "buckets": []
+    }
+  ```
 
 #### Related Guides
 
 - [Manage buckets]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @return ApiGetBucketsRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiGetBucketsRequest
 */
 func (a *BucketsApiService) GetBuckets(ctx _context.Context) ApiGetBucketsRequest {
 	return ApiGetBucketsRequest{
@@ -983,9 +983,8 @@ func (r ApiPostBucketsRequest) ExecuteWithHttpInfo() (Bucket, *_nethttp.Response
 }
 
 /*
-  - PostBuckets Create a bucket
-  - Creates a [bucket]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket)
-
+ * PostBuckets Create a bucket
+ * Creates a [bucket]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket)
 and returns the created bucket along with metadata. The default data
 [retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period)
 is 30 days.
@@ -1009,8 +1008,8 @@ For additional information regarding InfluxDB Cloud offerings, see
 - [Create bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/)
 - [Create bucket CLI reference]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/bucket/create)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @return ApiPostBucketsRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiPostBucketsRequest
 */
 func (a *BucketsApiService) PostBuckets(ctx _context.Context) ApiPostBucketsRequest {
 	return ApiPostBucketsRequest{

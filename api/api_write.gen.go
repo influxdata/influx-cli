@@ -195,8 +195,8 @@ func (r ApiPostWriteRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
 }
 
 /*
-  - PostWrite Write data
-  - Writes data to a bucket.
+ * PostWrite Write data
+ * Writes data to a bucket.
 
 Use this endpoint to send data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/line-protocol/) format to InfluxDB.
 
@@ -204,31 +204,29 @@ Use this endpoint to send data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/refe
 
 - Takes the following steps when you send a write request:
 
- 1. Validates the request and queues the write.
+  1. Validates the request and queues the write.
+  2. If the write is queued, responds with an HTTP `204` status code.
+  3. Handles the write asynchronously and reaches eventual consistency.
 
- 2. If the write is queued, responds with an HTTP `204` status code.
+  An HTTP `2xx` status code acknowledges that the write or delete is queued.
+  To ensure that InfluxDB Cloud handles writes and deletes in the order you request them,
+  wait for a response before you send the next request.
 
- 3. Handles the write asynchronously and reaches eventual consistency.
-
-    An HTTP `2xx` status code acknowledges that the write or delete is queued.
-    To ensure that InfluxDB Cloud handles writes and deletes in the order you request them,
-    wait for a response before you send the next request.
-
-    Because writes are asynchronous, data might not yet be written
-    when you receive the response.
+  Because writes are asynchronous, data might not yet be written
+  when you receive the response.
 
 #### InfluxDB OSS
 
-  - Validates the request, handles the write synchronously,
-    and then responds with success or failure.
-  - If all points were written successfully, returns `204`,
-    otherwise returns the first line that failed.
+- Validates the request, handles the write synchronously,
+  and then responds with success or failure.
+- If all points were written successfully, returns `204`,
+  otherwise returns the first line that failed.
 
 #### Required permissions
 
 - `write-buckets` or `write-bucket BUCKET_ID`.
 
-	`BUCKET_ID` is the ID of the destination bucket.
+  `BUCKET_ID` is the ID of the destination bucket.
 
 #### Rate limits (with InfluxDB Cloud)
 
@@ -241,8 +239,8 @@ For more information, see [limits and adjustable quotas](https://docs.influxdata
 - [Optimize writes to InfluxDB]({{% INFLUXDB_DOCS_URL %}}/write-data/best-practices/optimize-writes/).
 - [Troubleshoot issues writing data]({{% INFLUXDB_DOCS_URL %}}/write-data/troubleshoot/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @return ApiPostWriteRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiPostWriteRequest
 */
 func (a *WriteApiService) PostWrite(ctx _context.Context) ApiPostWriteRequest {
 	return ApiPostWriteRequest{
