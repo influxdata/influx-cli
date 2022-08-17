@@ -69,7 +69,7 @@ func newReplicationCreateCmd() cli.Command {
 				Destination: &params.RemoteBucketID,
 			},
 			&cli.StringFlag{
-				Name:        "remote-bucket-name",
+				Name:        "remote-bucket",
 				Usage:       "Name of remote bucket data should be replicated to",
 				Destination: &params.RemoteBucketName,
 			},
