@@ -77,7 +77,7 @@ func TestBucketsCreate(t *testing.T) {
 							assert.Equal(t, "my cool bucket", *body.Description) &&
 							assert.Len(t, retentionRules, 1) &&
 							assert.Equal(t, int64(86400), retentionRules[0].EverySeconds) &&
-							assert.Equal(t, int64(3600), retentionRules[0].ShardGroupDurationSeconds)
+							assert.Equal(t, int64(3600), *retentionRules[0].ShardGroupDurationSeconds)
 					})).
 					Return(api.Bucket{
 						Id:    api.PtrString("456"),
@@ -107,7 +107,7 @@ func TestBucketsCreate(t *testing.T) {
 							assert.Equal(t, "123", body.OrgID) &&
 							assert.Equal(t, "my-bucket", body.Name) &&
 							assert.Nil(t, body.Description) &&
-							assert.Len(t, body.RetentionRules, 1) &&
+							assert.Len(t, *body.RetentionRules, 1) &&
 							assert.Equal(t, int64(86400), retentionRules[0].EverySeconds) &&
 							assert.Nil(t, retentionRules[0].ShardGroupDurationSeconds)
 					})).
@@ -175,9 +175,9 @@ func TestBucketsCreate(t *testing.T) {
 							assert.Equal(t, "123", body.OrgID) &&
 							assert.Equal(t, "my-bucket", body.Name) &&
 							assert.Equal(t, "my cool bucket", *body.Description) &&
-							assert.Len(t, body.RetentionRules, 1) &&
+							assert.Len(t, *body.RetentionRules, 1) &&
 							assert.Equal(t, int64(86400), retentionRules[0].EverySeconds) &&
-							assert.Equal(t, int64(3600), retentionRules[0].ShardGroupDurationSeconds)
+							assert.Equal(t, int64(3600), *retentionRules[0].ShardGroupDurationSeconds)
 					})).
 					Return(api.Bucket{
 						Id:    api.PtrString("456"),
@@ -218,9 +218,9 @@ func TestBucketsCreate(t *testing.T) {
 							assert.Equal(t, "123", body.OrgID) &&
 							assert.Equal(t, "my-bucket", body.Name) &&
 							assert.Equal(t, "my cool bucket", *body.Description) &&
-							assert.Len(t, body.RetentionRules, 1) &&
+							assert.Len(t, *body.RetentionRules, 1) &&
 							assert.Equal(t, int64(86400), retentionRules[0].EverySeconds) &&
-							assert.Equal(t, int64(3600), retentionRules[0].ShardGroupDurationSeconds)
+							assert.Equal(t, int64(3600), *retentionRules[0].ShardGroupDurationSeconds)
 					})).
 					Return(api.Bucket{
 						Id:    api.PtrString("456"),
