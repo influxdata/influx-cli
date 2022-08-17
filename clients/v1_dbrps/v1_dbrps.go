@@ -68,8 +68,20 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	if err != nil {
 		return fmt.Errorf("failed to list dbrps: %w", err)
 	}
+	var virtDbrps []api.DBRP
+	var physDbrps []api.DBRP
+	for _, dbrp := range dbrps.GetContent() {
+		if dbrp.GetVirtual() {
+			virtDbrps = append(virtDbrps, dbrp)
+		} else {
+			physDbrps = append(physDbrps, dbrp)
+		}
+	}
 
-	c.printDBRPs(dbrpPrintOpts{dbrps: dbrps.GetContent()})
+	c.printDBRPs(dbrpPrintOpts{dbrps: physDbrps})
+	fmt.Fprintln(c.StdIO, "\nVIRTUAL DBRP MAPPINGS (READ-ONLY)")
+	fmt.Fprintln(c.StdIO, "----------------------------------")
+	c.printDBRPs(dbrpPrintOpts{dbrps: virtDbrps})
 
 	return nil
 }
@@ -207,7 +219,6 @@ func (c Client) printDBRPs(opts dbrpPrintOpts) error {
 		"Bucket ID",
 		"Retention Policy",
 		"Default",
-		"Virtual",
 		"Organization ID",
 	}
 
@@ -222,7 +233,6 @@ func (c Client) printDBRPs(opts dbrpPrintOpts) error {
 			"Database":         t.Database,
 			"Retention Policy": t.RetentionPolicy,
 			"Default":          t.Default,
-			"Virtual":          t.GetVirtual(),
 			"Organization ID":  t.OrgID,
 			"Bucket ID":        t.BucketID,
 		}
