@@ -31,6 +31,7 @@ func TestClient_List(t *testing.T) {
 		registerExpectations func(*testing.T, *mock.MockDBRPsApi)
 		expectedError        error
 		outLines             []string
+		virtLines            []string
 	}{
 		{
 			name:          "no org id or org name",
@@ -74,6 +75,16 @@ func TestClient_List(t *testing.T) {
 							BucketID:        "456",
 							RetentionPolicy: "someRP",
 							Default:         true,
+							Virtual:         api.PtrBool(false),
+							OrgID:           "1234123412341234",
+						},
+						{
+							Id:              "567",
+							Database:        "someDB",
+							BucketID:        "456",
+							RetentionPolicy: "someRP",
+							Default:         true,
+							Virtual:         api.PtrBool(true),
 							OrgID:           "1234123412341234",
 						},
 					},
@@ -82,6 +93,9 @@ func TestClient_List(t *testing.T) {
 			outLines: []string{
 				`123\s+someDB\s+456\s+someRP\s+false\s+1234123412341234`,
 				`234\s+someDB\s+456\s+someRP\s+true\s+1234123412341234`,
+			},
+			virtLines: []string{
+				`567\s+someDB\s+456\s+someRP\s+true\s+1234123412341234`,
 			},
 		},
 		{
@@ -124,10 +138,10 @@ func TestClient_List(t *testing.T) {
 				testutils.MatchLines(t,
 					append([]string{header},
 						append(tc.outLines,
-							[]string{
+							append([]string{
 								`VIRTUAL DBRP MAPPINGS \(READ-ONLY\)`,
 								"----------------------------------",
-								header}...)...),
+								header}, tc.virtLines...)...)...),
 					strings.Split(stdout.String(), "\n"))
 			}
 		})
