@@ -110,7 +110,7 @@ func Test_CsvTable_FluxQueryResult(t *testing.T) {
 	}
 }
 
-//Test_IgnoreLeadingComment tests ignoreLeadingComment fn
+// Test_IgnoreLeadingComment tests ignoreLeadingComment fn
 func Test_IgnoreLeadingComment(t *testing.T) {
 	var tests = []struct {
 		value  string
