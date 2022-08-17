@@ -66,8 +66,12 @@ func newReplicationCreateCmd() cli.Command {
 			&cli.StringFlag{
 				Name:        "remote-bucket-id",
 				Usage:       "ID of remote bucket data should be replicated to",
-				Required:    true,
 				Destination: &params.RemoteBucketID,
+			},
+			&cli.StringFlag{
+				Name:        "remote-bucket-name",
+				Usage:       "Name of remote bucket data should be replicated to",
+				Destination: &params.RemoteBucketName,
 			},
 			&cli.Int64Flag{
 				Name:        "max-queue-bytes",

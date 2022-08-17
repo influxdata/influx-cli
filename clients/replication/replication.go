@@ -22,6 +22,7 @@ type CreateParams struct {
 	RemoteID               string
 	LocalBucketID          string
 	RemoteBucketID         string
+	RemoteBucketName       string
 	MaxQueueSize           int64
 	DropNonRetryableData   bool
 	NoDropNonRetryableData bool
@@ -29,6 +30,9 @@ type CreateParams struct {
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
+	if params.RemoteBucketID == "" && params.RemoteBucketName == "" {
+		return fmt.Errorf("please supply one of: remote-bucket-id, remote-bucket-name")
+	}
 	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
@@ -40,9 +44,14 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		OrgID:             orgID,
 		RemoteID:          params.RemoteID,
 		LocalBucketID:     params.LocalBucketID,
-		RemoteBucketID:    params.RemoteBucketID,
 		MaxQueueSizeBytes: params.MaxQueueSize,
 		MaxAgeSeconds:     params.MaxAge,
+	}
+
+	if params.RemoteBucketID != "" {
+		body.RemoteBucketID = &params.RemoteBucketID
+	} else {
+		body.RemoteBucketName = &params.RemoteBucketName
 	}
 
 	// set optional params if specified
