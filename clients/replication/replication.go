@@ -240,7 +240,7 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 		return c.PrintJSON(v)
 	}
 
-	headers := []string{"ID", "Name", "Org ID", "Remote ID", "Local Bucket ID", "Remote Bucket ID",
+	headers := []string{"ID", "Name", "Org ID", "Remote ID", "Local Bucket ID", "Remote Bucket ID", "Remote Bucket Name",
 		"Current Queue Bytes", "Max Queue Bytes", "Latest Status Code", "Drop Non-Retryable Data"}
 	if opts.deleted {
 		headers = append(headers, "Deleted")
@@ -252,13 +252,19 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 
 	var rows []map[string]interface{}
 	for _, r := range opts.replications {
+		bucketID := r.GetRemoteBucketID()
+		if r.GetRemoteBucketName() != "" {
+			// This hides the default id that is required due to platform.ID implementation details
+			bucketID = ""
+		}
 		row := map[string]interface{}{
 			"ID":                      r.GetId(),
 			"Name":                    r.GetName(),
 			"Org ID":                  r.GetOrgID(),
 			"Remote ID":               r.GetRemoteID(),
 			"Local Bucket ID":         r.GetLocalBucketID(),
-			"Remote Bucket ID":        r.GetRemoteBucketID(),
+			"Remote Bucket ID":        bucketID,
+			"Remote Bucket Name":      r.GetRemoteBucketName(),
 			"Current Queue Bytes":     r.GetCurrentQueueSizeBytes(),
 			"Max Queue Bytes":         r.GetMaxQueueSizeBytes(),
 			"Latest Status Code":      r.GetLatestResponseCode(),
