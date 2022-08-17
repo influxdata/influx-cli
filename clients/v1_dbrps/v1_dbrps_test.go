@@ -80,8 +80,8 @@ func TestClient_List(t *testing.T) {
 				}, nil)
 			},
 			outLines: []string{
-				`123\s+someDB\s+456\s+someRP\s+false\s+false\s+1234123412341234`,
-				`234\s+someDB\s+456\s+someRP\s+true\s+false\s+1234123412341234`,
+				`123\s+someDB\s+456\s+someRP\s+false\s+1234123412341234`,
+				`234\s+someDB\s+456\s+someRP\s+true\s+1234123412341234`,
 			},
 		},
 		{
@@ -120,7 +120,15 @@ func TestClient_List(t *testing.T) {
 			require.Equal(t, tc.expectedError, err)
 
 			if tc.expectedError == nil {
-				testutils.MatchLines(t, append([]string{`ID\s+Database\s+Bucket\s+ID\s+Retention Policy\s+Default\s+Virtual\s+Organization ID`}, tc.outLines...), strings.Split(stdout.String(), "\n"))
+				header := `ID\s+Database\s+Bucket\s+ID\s+Retention Policy\s+Default\s+Organization ID`
+				testutils.MatchLines(t,
+					append([]string{header},
+						append(tc.outLines,
+							[]string{
+								`VIRTUAL DBRP MAPPINGS \(READ-ONLY\)`,
+								"----------------------------------",
+								header}...)...),
+					strings.Split(stdout.String(), "\n"))
 			}
 		})
 	}
@@ -160,7 +168,7 @@ func TestClient_Create(t *testing.T) {
 				}, nil)
 			},
 			outLines: []string{
-				`123\s+someDB\s+456\s+someRP\s+false\s+false\s+1234123412341234`,
+				`123\s+someDB\s+456\s+someRP\s+false\s+1234123412341234`,
 			},
 		},
 		{
@@ -200,7 +208,7 @@ func TestClient_Create(t *testing.T) {
 			require.Equal(t, tc.expectedError, err)
 
 			if tc.expectedError == nil {
-				testutils.MatchLines(t, append([]string{`ID\s+Database\s+Bucket\s+ID\s+Retention Policy\s+Default\s+Virtual\s+Organization ID`}, tc.outLines...), strings.Split(stdout.String(), "\n"))
+				testutils.MatchLines(t, append([]string{`ID\s+Database\s+Bucket\s+ID\s+Retention Policy\s+Default\s+Organization ID`}, tc.outLines...), strings.Split(stdout.String(), "\n"))
 			}
 		})
 	}
@@ -243,7 +251,7 @@ func TestClient_Update(t *testing.T) {
 				}, nil)
 			},
 			outLines: []string{
-				`123\s+someDB\s+456\s+someRP\s+false\s+false\s+1234123412341234`,
+				`123\s+someDB\s+456\s+someRP\s+false\s+1234123412341234`,
 			},
 		},
 		{
@@ -268,7 +276,7 @@ func TestClient_Update(t *testing.T) {
 				}, nil)
 			},
 			outLines: []string{
-				`123\s+someDB\s+456\s+someRP\s+false\s+false\s+1234123412341234`,
+				`123\s+someDB\s+456\s+someRP\s+false\s+1234123412341234`,
 			},
 		},
 		{
@@ -308,7 +316,7 @@ func TestClient_Update(t *testing.T) {
 			require.Equal(t, tc.expectedError, err)
 
 			if tc.expectedError == nil {
-				testutils.MatchLines(t, append([]string{`ID\s+Database\s+Bucket\s+ID\s+Retention Policy\s+Default\s+Virtual\s+Organization ID`}, tc.outLines...), strings.Split(stdout.String(), "\n"))
+				testutils.MatchLines(t, append([]string{`ID\s+Database\s+Bucket\s+ID\s+Retention Policy\s+Default\s+Organization ID`}, tc.outLines...), strings.Split(stdout.String(), "\n"))
 			}
 		})
 	}
@@ -355,7 +363,7 @@ func TestClient_Delete(t *testing.T) {
 				DBRPsApi.EXPECT().DeleteDBRPIDExecute(gomock.Any()).Return(nil)
 			},
 			outLines: []string{
-				`123\s+someDB\s+456\s+someRP\s+false\s+false\s+1234123412341234`,
+				`123\s+someDB\s+456\s+someRP\s+false\s+1234123412341234`,
 			},
 		},
 		{
@@ -384,7 +392,7 @@ func TestClient_Delete(t *testing.T) {
 				DBRPsApi.EXPECT().DeleteDBRPIDExecute(gomock.Any()).Return(nil)
 			},
 			outLines: []string{
-				`123\s+someDB\s+456\s+someRP\s+false\s+false\s+1234123412341234`,
+				`123\s+someDB\s+456\s+someRP\s+false\s+1234123412341234`,
 			},
 		},
 		{
@@ -453,7 +461,7 @@ func TestClient_Delete(t *testing.T) {
 			require.Equal(t, tc.expectedError, err)
 
 			if tc.expectedError == nil {
-				testutils.MatchLines(t, append([]string{`ID\s+Database\s+Bucket\s+ID\s+Retention Policy\s+Default\s+Virtual\s+Organization ID`}, tc.outLines...), strings.Split(stdout.String(), "\n"))
+				testutils.MatchLines(t, append([]string{`ID\s+Database\s+Bucket\s+ID\s+Retention Policy\s+Default\s+Organization ID`}, tc.outLines...), strings.Split(stdout.String(), "\n"))
 			}
 		})
 	}
