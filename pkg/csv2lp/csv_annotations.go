@@ -198,11 +198,11 @@ func ignoreLeadingComment(value string) string {
 
 // parseTimeZone parses the supplied timezone from a string into a time.Location
 //
-//  parseTimeZone("")      // time.UTC
-//  parseTimeZone("local") // time.Local
-//  parseTimeZone("-0500") // time.FixedZone(-5*3600 + 0*60)
-//  parseTimeZone("+0200") // time.FixedZone(2*3600 + 0*60)
-//  parseTimeZone("EST")   // time.LoadLocation("EST")
+//	parseTimeZone("")      // time.UTC
+//	parseTimeZone("local") // time.Local
+//	parseTimeZone("-0500") // time.FixedZone(-5*3600 + 0*60)
+//	parseTimeZone("+0200") // time.FixedZone(2*3600 + 0*60)
+//	parseTimeZone("EST")   // time.LoadLocation("EST")
 func parseTimeZone(val string) (*time.Location, error) {
 	switch {
 	case val == "":

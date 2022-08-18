@@ -96,7 +96,7 @@ func newApp() cli.App {
 
 // This creates a new slice and replaces `-t "-FOO-TOKEN"` with `-t=-FOO-TOKEN`
 // This is necessary to do because the command line arg:
-//  `-t "-FOO-TOKEN"`` will be parsed as two separate flags instead of a flag and token value.
+// `-t "-FOO-TOKEN"“ will be parsed as two separate flags instead of a flag and token value.
 func ReplaceTokenArg(args []string) []string {
 	if len(args) == 0 {
 		return []string{}

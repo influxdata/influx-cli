@@ -20,6 +20,7 @@ type ReplicationUpdateRequest struct {
 	Description          *string `json:"description,omitempty" yaml:"description,omitempty"`
 	RemoteID             *string `json:"remoteID,omitempty" yaml:"remoteID,omitempty"`
 	RemoteBucketID       *string `json:"remoteBucketID,omitempty" yaml:"remoteBucketID,omitempty"`
+	RemoteBucketName     *string `json:"remoteBucketName,omitempty" yaml:"remoteBucketName,omitempty"`
 	MaxQueueSizeBytes    *int64  `json:"maxQueueSizeBytes,omitempty" yaml:"maxQueueSizeBytes,omitempty"`
 	DropNonRetryableData *bool   `json:"dropNonRetryableData,omitempty" yaml:"dropNonRetryableData,omitempty"`
 	MaxAgeSeconds        *int64  `json:"maxAgeSeconds,omitempty" yaml:"maxAgeSeconds,omitempty"`
@@ -170,6 +171,38 @@ func (o *ReplicationUpdateRequest) SetRemoteBucketID(v string) {
 	o.RemoteBucketID = &v
 }
 
+// GetRemoteBucketName returns the RemoteBucketName field value if set, zero value otherwise.
+func (o *ReplicationUpdateRequest) GetRemoteBucketName() string {
+	if o == nil || o.RemoteBucketName == nil {
+		var ret string
+		return ret
+	}
+	return *o.RemoteBucketName
+}
+
+// GetRemoteBucketNameOk returns a tuple with the RemoteBucketName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ReplicationUpdateRequest) GetRemoteBucketNameOk() (*string, bool) {
+	if o == nil || o.RemoteBucketName == nil {
+		return nil, false
+	}
+	return o.RemoteBucketName, true
+}
+
+// HasRemoteBucketName returns a boolean if a field has been set.
+func (o *ReplicationUpdateRequest) HasRemoteBucketName() bool {
+	if o != nil && o.RemoteBucketName != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetRemoteBucketName gets a reference to the given string and assigns it to the RemoteBucketName field.
+func (o *ReplicationUpdateRequest) SetRemoteBucketName(v string) {
+	o.RemoteBucketName = &v
+}
+
 // GetMaxQueueSizeBytes returns the MaxQueueSizeBytes field value if set, zero value otherwise.
 func (o *ReplicationUpdateRequest) GetMaxQueueSizeBytes() int64 {
 	if o == nil || o.MaxQueueSizeBytes == nil {
@@ -279,6 +312,9 @@ func (o ReplicationUpdateRequest) MarshalJSON() ([]byte, error) {
 	}
 	if o.RemoteBucketID != nil {
 		toSerialize["remoteBucketID"] = o.RemoteBucketID
+	}
+	if o.RemoteBucketName != nil {
+		toSerialize["remoteBucketName"] = o.RemoteBucketName
 	}
 	if o.MaxQueueSizeBytes != nil {
 		toSerialize["maxQueueSizeBytes"] = o.MaxQueueSizeBytes

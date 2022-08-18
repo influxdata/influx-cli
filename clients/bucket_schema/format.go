@@ -11,7 +11,6 @@ import (
 )
 
 // ColumnsFormat is a type which defines the supported formats
-//
 type ColumnsFormat int
 
 const (

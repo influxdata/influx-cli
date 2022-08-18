@@ -16,10 +16,11 @@ import (
 
 // UserResponse struct for UserResponse
 type UserResponse struct {
-	Id      *string `json:"id,omitempty" yaml:"id,omitempty"`
-	OauthID *string `json:"oauthID,omitempty" yaml:"oauthID,omitempty"`
-	Name    string  `json:"name" yaml:"name"`
-	// If inactive the user is inactive.
+	// The ID of the user.
+	Id *string `json:"id,omitempty" yaml:"id,omitempty"`
+	// The name of the user.
+	Name string `json:"name" yaml:"name"`
+	// The status of a user. An inactive user won't have access to resources.
 	Status *string            `json:"status,omitempty" yaml:"status,omitempty"`
 	Links  *UserResponseLinks `json:"links,omitempty" yaml:"links,omitempty"`
 }
@@ -76,38 +77,6 @@ func (o *UserResponse) HasId() bool {
 // SetId gets a reference to the given string and assigns it to the Id field.
 func (o *UserResponse) SetId(v string) {
 	o.Id = &v
-}
-
-// GetOauthID returns the OauthID field value if set, zero value otherwise.
-func (o *UserResponse) GetOauthID() string {
-	if o == nil || o.OauthID == nil {
-		var ret string
-		return ret
-	}
-	return *o.OauthID
-}
-
-// GetOauthIDOk returns a tuple with the OauthID field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *UserResponse) GetOauthIDOk() (*string, bool) {
-	if o == nil || o.OauthID == nil {
-		return nil, false
-	}
-	return o.OauthID, true
-}
-
-// HasOauthID returns a boolean if a field has been set.
-func (o *UserResponse) HasOauthID() bool {
-	if o != nil && o.OauthID != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetOauthID gets a reference to the given string and assigns it to the OauthID field.
-func (o *UserResponse) SetOauthID(v string) {
-	o.OauthID = &v
 }
 
 // GetName returns the Name field value
@@ -202,9 +171,6 @@ func (o UserResponse) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Id != nil {
 		toSerialize["id"] = o.Id
-	}
-	if o.OauthID != nil {
-		toSerialize["oauthID"] = o.OauthID
 	}
 	if true {
 		toSerialize["name"] = o.Name

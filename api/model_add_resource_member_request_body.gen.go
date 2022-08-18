@@ -16,7 +16,9 @@ import (
 
 // AddResourceMemberRequestBody struct for AddResourceMemberRequestBody
 type AddResourceMemberRequestBody struct {
-	Id   string  `json:"id" yaml:"id"`
+	// The ID of the user to add to the resource.
+	Id string `json:"id" yaml:"id"`
+	// The name of the user to add to the resource.
 	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
 }
 

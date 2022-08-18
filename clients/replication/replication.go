@@ -22,6 +22,7 @@ type CreateParams struct {
 	RemoteID               string
 	LocalBucketID          string
 	RemoteBucketID         string
+	RemoteBucketName       string
 	MaxQueueSize           int64
 	DropNonRetryableData   bool
 	NoDropNonRetryableData bool
@@ -29,6 +30,9 @@ type CreateParams struct {
 }
 
 func (c Client) Create(ctx context.Context, params *CreateParams) error {
+	if params.RemoteBucketID == "" && params.RemoteBucketName == "" {
+		return fmt.Errorf("please supply one of: remote-bucket-id, remote-bucket-name")
+	}
 	orgID, err := params.GetOrgID(ctx, c.ActiveConfig, c.OrganizationsApi)
 	if err != nil {
 		return err
@@ -40,9 +44,14 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		OrgID:             orgID,
 		RemoteID:          params.RemoteID,
 		LocalBucketID:     params.LocalBucketID,
-		RemoteBucketID:    params.RemoteBucketID,
 		MaxQueueSizeBytes: params.MaxQueueSize,
 		MaxAgeSeconds:     params.MaxAge,
+	}
+
+	if params.RemoteBucketID != "" {
+		body.RemoteBucketID = &params.RemoteBucketID
+	} else {
+		body.RemoteBucketName = &params.RemoteBucketName
 	}
 
 	// set optional params if specified
@@ -231,7 +240,7 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 		return c.PrintJSON(v)
 	}
 
-	headers := []string{"ID", "Name", "Org ID", "Remote ID", "Local Bucket ID", "Remote Bucket ID",
+	headers := []string{"ID", "Name", "Org ID", "Remote ID", "Local Bucket ID", "Remote Bucket ID", "Remote Bucket Name",
 		"Current Queue Bytes", "Max Queue Bytes", "Latest Status Code", "Drop Non-Retryable Data"}
 	if opts.deleted {
 		headers = append(headers, "Deleted")
@@ -243,13 +252,19 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 
 	var rows []map[string]interface{}
 	for _, r := range opts.replications {
+		bucketID := r.GetRemoteBucketID()
+		if r.GetRemoteBucketName() != "" {
+			// This hides the default id that is required due to platform.ID implementation details
+			bucketID = ""
+		}
 		row := map[string]interface{}{
 			"ID":                      r.GetId(),
 			"Name":                    r.GetName(),
 			"Org ID":                  r.GetOrgID(),
 			"Remote ID":               r.GetRemoteID(),
 			"Local Bucket ID":         r.GetLocalBucketID(),
-			"Remote Bucket ID":        r.GetRemoteBucketID(),
+			"Remote Bucket ID":        bucketID,
+			"Remote Bucket Name":      r.GetRemoteBucketName(),
 			"Current Queue Bytes":     r.GetCurrentQueueSizeBytes(),
 			"Max Queue Bytes":         r.GetMaxQueueSizeBytes(),
 			"Latest Status Code":      r.GetLatestResponseCode(),

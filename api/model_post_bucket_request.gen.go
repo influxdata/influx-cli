@@ -16,24 +16,29 @@ import (
 
 // PostBucketRequest struct for PostBucketRequest
 type PostBucketRequest struct {
-	OrgID       string  `json:"orgID" yaml:"orgID"`
-	Name        string  `json:"name" yaml:"name"`
+	// Organization ID. The ID of the organization.
+	OrgID string `json:"orgID" yaml:"orgID"`
+	// The name of the bucket.
+	Name string `json:"name" yaml:"name"`
+	// A description of the bucket.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
-	Rp          *string `json:"rp,omitempty" yaml:"rp,omitempty"`
+	// Retention policy is an InfluxDB 1.x concept that represents the duration of time that each data point in the retention policy persists. Use `rp` for compatibility with InfluxDB 1.x. The InfluxDB 2.x and Cloud equivalent is [retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period).
+	Rp *string `json:"rp,omitempty" yaml:"rp,omitempty"`
 	// Rules to expire or retain data.  No rules means data never expires.
-	RetentionRules []RetentionRule `json:"retentionRules" yaml:"retentionRules"`
-	SchemaType     *SchemaType     `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
+	RetentionRules *[]RetentionRule `json:"retentionRules,omitempty" yaml:"retentionRules,omitempty"`
+	SchemaType     *SchemaType      `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
 }
 
 // NewPostBucketRequest instantiates a new PostBucketRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPostBucketRequest(orgID string, name string, retentionRules []RetentionRule) *PostBucketRequest {
+func NewPostBucketRequest(orgID string, name string) *PostBucketRequest {
 	this := PostBucketRequest{}
 	this.OrgID = orgID
 	this.Name = name
-	this.RetentionRules = retentionRules
+	var rp string = "0"
+	this.Rp = &rp
 	return &this
 }
 
@@ -42,6 +47,8 @@ func NewPostBucketRequest(orgID string, name string, retentionRules []RetentionR
 // but it doesn't guarantee that properties required by API are set
 func NewPostBucketRequestWithDefaults() *PostBucketRequest {
 	this := PostBucketRequest{}
+	var rp string = "0"
+	this.Rp = &rp
 	return &this
 }
 
@@ -157,28 +164,36 @@ func (o *PostBucketRequest) SetRp(v string) {
 	o.Rp = &v
 }
 
-// GetRetentionRules returns the RetentionRules field value
+// GetRetentionRules returns the RetentionRules field value if set, zero value otherwise.
 func (o *PostBucketRequest) GetRetentionRules() []RetentionRule {
-	if o == nil {
+	if o == nil || o.RetentionRules == nil {
 		var ret []RetentionRule
 		return ret
 	}
-
-	return o.RetentionRules
+	return *o.RetentionRules
 }
 
-// GetRetentionRulesOk returns a tuple with the RetentionRules field value
+// GetRetentionRulesOk returns a tuple with the RetentionRules field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *PostBucketRequest) GetRetentionRulesOk() (*[]RetentionRule, bool) {
-	if o == nil {
+	if o == nil || o.RetentionRules == nil {
 		return nil, false
 	}
-	return &o.RetentionRules, true
+	return o.RetentionRules, true
 }
 
-// SetRetentionRules sets field value
+// HasRetentionRules returns a boolean if a field has been set.
+func (o *PostBucketRequest) HasRetentionRules() bool {
+	if o != nil && o.RetentionRules != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetRetentionRules gets a reference to the given []RetentionRule and assigns it to the RetentionRules field.
 func (o *PostBucketRequest) SetRetentionRules(v []RetentionRule) {
-	o.RetentionRules = v
+	o.RetentionRules = &v
 }
 
 // GetSchemaType returns the SchemaType field value if set, zero value otherwise.
@@ -227,7 +242,7 @@ func (o PostBucketRequest) MarshalJSON() ([]byte, error) {
 	if o.Rp != nil {
 		toSerialize["rp"] = o.Rp
 	}
-	if true {
+	if o.RetentionRules != nil {
 		toSerialize["retentionRules"] = o.RetentionRules
 	}
 	if o.SchemaType != nil {
