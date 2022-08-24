@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/influxdata/influx-cli/v2/api/extras"
 	"github.com/influxdata/influx-cli/v2/clients/auth"
 	"github.com/influxdata/influx-cli/v2/pkg/cli/middleware"
 	"github.com/urfave/cli"
@@ -91,6 +92,10 @@ func newCreateCommand() cli.Command {
 
 	params.ResourcePermissions = auth.BuildResourcePermissions()
 	for _, perm := range params.ResourcePermissions {
+		if perm.Name == string(extras.RESOURCEENUMOSS_INSTANCE) {
+			// Instance permissions are only set during setup
+			continue
+		}
 		help := helpText(perm.Name)
 		ossVsCloud := ""
 		if perm.IsCloud && !perm.IsOss {
