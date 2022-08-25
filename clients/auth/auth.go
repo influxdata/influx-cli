@@ -169,6 +169,11 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 			return err
 		}
 		for _, r := range resources {
+
+			if r == string(extras.RESOURCEENUMOSS_INSTANCE) {
+				// We skip the instance type since it is only set on setup
+				continue
+			}
 			for _, action := range []string{ReadAction, WriteAction} {
 				permissions = append(permissions, api.Permission{
 					Action:   action,
