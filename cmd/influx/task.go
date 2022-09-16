@@ -87,16 +87,7 @@ func newTaskCreateCmd() cli.Command {
 				TasksApi: api.TasksApi,
 			}
 
-			if len(fluxFile) > 0 {
-				if len(scriptParams) > 0 {
-					return errors.New("cannot specify script parameters when not using a script in the task")
-				}
-				var err error
-				params.FluxQuery, err = clients.ReadQuery(fluxFile, ctx.Args())
-				if err != nil {
-					return err
-				}
-			} else {
+			if len(scriptID) > 0 {
 				params.ScriptID = scriptID
 				params.ScriptParams = make(map[string]interface{})
 
@@ -105,7 +96,17 @@ func newTaskCreateCmd() cli.Command {
 						return err
 					}
 				}
+			} else {
+				if len(scriptParams) > 0 {
+					return errors.New("cannot specify script parameters when not using a script in the task")
+				}
+				var err error
+				params.FluxQuery, err = clients.ReadQuery(fluxFile, ctx.Args())
+				if err != nil {
+					return err
+				}
 			}
+
 			return client.Create(getContext(ctx), &params)
 		},
 	}
