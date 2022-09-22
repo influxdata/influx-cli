@@ -134,7 +134,7 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 
 	stack, err := c.UpdateStack(ctx, params.Id).StackPatchRequest(req).Execute()
 	if err != nil {
-		return fmt.Errorf("failed to udpate stack %q: %w", params.Id, err)
+		return fmt.Errorf("failed to update stack %q: %w", params.Id, err)
 	}
 	if err := c.printStacks(stackPrintOptions{stack: &stack}); err != nil {
 		return err
