@@ -174,6 +174,7 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/rm/
 
 func newConfigUpdateCmd() cli.Command {
 	var cfg config.Config
+	var userpass string
 	return cli.Command{
 		Name:    "set",
 		Aliases: []string{"update"},
@@ -214,6 +215,11 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/set/
 				Destination: &cfg.Token,
 			},
 			&cli.StringFlag{
+				Name:        "username-password, p",
+				Usage:       "Username (and optionally password) to use for authentication. Only supported in OSS",
+				Destination: &userpass,
+			},
+			&cli.StringFlag{
 				Name:        "org, o",
 				Usage:       "New default organization to set on the config",
 				Destination: &cfg.Org,
@@ -225,7 +231,13 @@ https://docs.influxdata.com/influxdb/latest/reference/cli/influx/config/set/
 			},
 		),
 		Action: func(ctx *cli.Context) error {
+			if cfg.Token != "" && userpass != "" {
+				return fmt.Errorf("cannot specify `--token` and `--username-password` together, please choose one")
+			}
 			client := cmd.Client{CLI: getCLI(ctx)}
+			if userpass != "" {
+				return client.UpdateWithUserPass(cfg, userpass)
+			}
 			return client.Update(cfg)
 		},
 	}

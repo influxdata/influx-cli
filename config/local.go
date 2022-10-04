@@ -124,6 +124,11 @@ func (svc localConfigsSVC) UpdateConfig(up Config) (Config, error) {
 	}
 	if up.Token != "" {
 		p0.Token = up.Token
+		p0.Cookie = ""
+	}
+	if up.Cookie != "" {
+		p0.Token = ""
+		p0.Cookie = up.Cookie
 	}
 	if up.Host != "" {
 		p0.Host = up.Host
