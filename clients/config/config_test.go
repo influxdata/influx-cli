@@ -2,6 +2,7 @@ package config_test
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"strings"
 	"testing"
@@ -72,27 +73,58 @@ func TestClient_PrintActive(t *testing.T) {
 func TestClient_Create(t *testing.T) {
 	t.Parallel()
 
-	ctrl := gomock.NewController(t)
-	stdio := mock.NewMockStdIO(ctrl)
-	writtenBytes := bytes.Buffer{}
-	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
-
-	cfg := config.Config{
-		Name:   "foo",
-		Active: true,
-		Host:   "http://localhost:8086",
-		Token:  "supersecret",
-		Org:    "me",
+	testCases := []struct {
+		name string
+		cfg  config.Config
+		err  error
+	}{
+		{
+			name: "token",
+			cfg: config.Config{
+				Name:   "foo",
+				Active: true,
+				Host:   "http://localhost:8086",
+				Token:  "supersecret",
+				Org:    "me",
+			},
+			err: nil,
+		},
+		{
+			name: "userpass",
+			cfg: config.Config{
+				Name:   "foo",
+				Active: true,
+				Host:   "http://localhost:8086",
+				Cookie: base64.StdEncoding.EncodeToString([]byte("user:pass")),
+				Org:    "me",
+			},
+			err: nil,
+		},
 	}
-	svc := mock.NewMockConfigService(ctrl)
-	svc.EXPECT().CreateConfig(cfg).Return(cfg, nil)
 
-	cli := cmd.Client{CLI: clients.CLI{ConfigService: svc, StdIO: stdio}}
-	require.NoError(t, cli.Create(cfg))
-	testutils.MatchLines(t, []string{
-		`Active\s+Name\s+URL\s+Org`,
-		fmt.Sprintf(`\*\s+%s\s+%s\s+%s`, cfg.Name, cfg.Host, cfg.Org),
-	}, strings.Split(writtenBytes.String(), "\n"))
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			ctrl := gomock.NewController(t)
+			stdio := mock.NewMockStdIO(ctrl)
+			writtenBytes := bytes.Buffer{}
+			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
+
+			cfg := tc.cfg
+			svc := mock.NewMockConfigService(ctrl)
+			svc.EXPECT().CreateConfig(cfg).Return(cfg, nil)
+
+			cli := cmd.Client{CLI: clients.CLI{ConfigService: svc, StdIO: stdio}}
+			err := cli.Create(cfg)
+			require.NoError(t, err)
+			testutils.MatchLines(t, []string{
+				`Active\s+Name\s+URL\s+Org`,
+				fmt.Sprintf(`\*\s+%s\s+%s\s+%s`, cfg.Name, cfg.Host, cfg.Org),
+			}, strings.Split(writtenBytes.String(), "\n"))
+		})
+	}
+
 }
 
 func TestClient_Delete(t *testing.T) {
@@ -165,32 +197,67 @@ func TestClient_Delete(t *testing.T) {
 func TestClient_Update(t *testing.T) {
 	t.Parallel()
 
-	ctrl := gomock.NewController(t)
-	stdio := mock.NewMockStdIO(ctrl)
-	writtenBytes := bytes.Buffer{}
-	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
-
-	updates := config.Config{
-		Name:   "foo",
-		Active: true,
-		Token:  "doublesecret",
+	testCases := []struct {
+		name    string
+		updates config.Config
+		cfg     config.Config
+		err     error
+	}{
+		{
+			name: "token",
+			updates: config.Config{
+				Name:   "foo",
+				Active: true,
+				Token:  "doublesecret",
+			},
+			cfg: config.Config{
+				Name:   "foo",
+				Active: true,
+				Host:   "http://localhost:8086",
+				Token:  "doublesecret",
+				Org:    "me",
+			},
+			err: nil,
+		},
+		{
+			name: "userpass",
+			updates: config.Config{
+				Name:   "foo",
+				Active: true,
+				Cookie: base64.StdEncoding.EncodeToString([]byte("user:pass")),
+			},
+			cfg: config.Config{
+				Name:   "foo",
+				Active: true,
+				Host:   "http://localhost:8086",
+				Cookie: base64.StdEncoding.EncodeToString([]byte("user:pass")),
+				Org:    "me",
+			},
+			err: nil,
+		},
 	}
-	cfg := config.Config{
-		Name:   updates.Name,
-		Active: updates.Active,
-		Host:   "http://localhost:8086",
-		Token:  updates.Token,
-		Org:    "me",
-	}
-	svc := mock.NewMockConfigService(ctrl)
-	svc.EXPECT().UpdateConfig(updates).Return(cfg, nil)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 
-	cli := cmd.Client{CLI: clients.CLI{ConfigService: svc, StdIO: stdio}}
-	require.NoError(t, cli.Update(updates))
-	testutils.MatchLines(t, []string{
-		`Active\s+Name\s+URL\s+Org`,
-		fmt.Sprintf(`\*\s+%s\s+%s\s+%s`, cfg.Name, cfg.Host, cfg.Org),
-	}, strings.Split(writtenBytes.String(), "\n"))
+			ctrl := gomock.NewController(t)
+			stdio := mock.NewMockStdIO(ctrl)
+			writtenBytes := bytes.Buffer{}
+			stdio.EXPECT().Write(gomock.Any()).DoAndReturn(writtenBytes.Write).AnyTimes()
+
+			svc := mock.NewMockConfigService(ctrl)
+			svc.EXPECT().UpdateConfig(tc.updates).Return(tc.cfg, nil)
+
+			cli := cmd.Client{CLI: clients.CLI{ConfigService: svc, StdIO: stdio}}
+			require.NoError(t, cli.Update(tc.updates))
+			testutils.MatchLines(t, []string{
+				`Active\s+Name\s+URL\s+Org`,
+				fmt.Sprintf(`\*\s+%s\s+%s\s+%s`, tc.cfg.Name, tc.cfg.Host, tc.cfg.Org),
+			}, strings.Split(writtenBytes.String(), "\n"))
+		})
+	}
+
 }
 
 func TestClient_List(t *testing.T) {

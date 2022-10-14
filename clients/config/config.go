@@ -94,6 +94,18 @@ func (c Client) Update(cfg config.Config) error {
 	return c.printConfigs(configPrintOpts{config: &cfg})
 }
 
+func (c Client) UpdateWithUserPass(cfg config.Config, userPass string) error {
+	if userPass != "" && cfg.Token != "" {
+		return fmt.Errorf("token and username-password cannot be specified together, please choose just one")
+	}
+
+	if cfg.Token == "" && userPass != "" {
+		cfg.Cookie = base64.StdEncoding.EncodeToString([]byte(userPass))
+	}
+
+	return c.Update(cfg)
+}
+
 func (c Client) List() error {
 	cfgs, err := c.ConfigService.ListConfigs()
 	if err != nil {
