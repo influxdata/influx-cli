@@ -20,7 +20,7 @@ func TestDecodeCSV(t *testing.T) {
 		{
 			name: "valid",
 			data: heredoc.Doc(`
-				name,type,data_type
+				name,type,dataType
 				time,timestamp,
 				host,tag,
 				usage_user,field,float
@@ -30,7 +30,7 @@ func TestDecodeCSV(t *testing.T) {
 		{
 			name: "valid with alternate order",
 			data: heredoc.Doc(`
-				type,data_type,name
+				type,dataType,name
 				timestamp,,time
 				tag,,host
 				field,float,usage_user
@@ -40,7 +40,7 @@ func TestDecodeCSV(t *testing.T) {
 		{
 			name: "invalid column type",
 			data: heredoc.Doc(`
-				name,type,data_type
+				name,type,dataType
 				time,foo,
 			`),
 			expErr: `failed to decode CSV: record on line 0; parse error on line 2, column 2: "foo" is not a valid column type. Valid values are [timestamp, tag, field]`,
@@ -48,23 +48,32 @@ func TestDecodeCSV(t *testing.T) {
 		{
 			name: "invalid column data type",
 			data: heredoc.Doc(`
-				name,type,data_type
+				name,type,dataType
 				time,field,floaty
 			`),
 			expErr: `failed to decode CSV: record on line 0; parse error on line 2, column 3: "floaty" is not a valid column data type. Valid values are [integer, float, boolean, string, unsigned]`,
 		},
 		{
+			name: "invalid dataType header",
+			data: heredoc.Doc(`
+				name,type,data_type
+				time,field,float
+				time2,field,
+			`),
+			expErr: `failed to decode CSV: found unmatched struct field with tags [dataType]`,
+		},
+		{
 			name: "invalid headers",
 			data: heredoc.Doc(`
-				name,foo
+				name,foo,
 				time,field
 			`),
-			expErr: `failed to decode CSV: found unmatched struct field with tags [type data_type]`,
+			expErr: `failed to decode CSV: record on line 2: wrong number of fields`,
 		},
 		{
 			name: "invalid CSV",
 			data: heredoc.Doc(`
-				type,type,data_type
+				type,type,dataType
 				time,timestamp
 			`),
 			expErr: `failed to decode CSV: record on line 2: wrong number of fields`,
