@@ -11,7 +11,7 @@ import (
 type csvColumn struct {
 	Name     string                 `csv:"name"`
 	Type     api.ColumnSemanticType `csv:"type"`
-	DataType *api.ColumnDataType    `csv:"data_type,omitempty"`
+	DataType *api.ColumnDataType    `csv:"dataType,omitempty"`
 }
 
 func init() {
