@@ -16,7 +16,7 @@ import (
 
 // ShardOwner struct for ShardOwner
 type ShardOwner struct {
-	// ID of the node that owns a shard.
+	// The ID of the node that owns the shard.
 	NodeID int64 `json:"nodeID" yaml:"nodeID"`
 }
 

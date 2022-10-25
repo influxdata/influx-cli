@@ -16,11 +16,11 @@ import (
 
 // DBRP struct for DBRP
 type DBRP struct {
-	// ID of the DBRP mapping.
+	// The ID of the DBRP mapping.
 	Id string `json:"id" yaml:"id"`
-	// ID of the organization that owns this mapping.
+	// The ID of the organization.
 	OrgID string `json:"orgID" yaml:"orgID"`
-	// ID of the bucket used as the target for the translation.
+	// The ID of the bucket used as the target for the translation.
 	BucketID string `json:"bucketID" yaml:"bucketID"`
 	// InfluxDB v1 database
 	Database string `json:"database" yaml:"database"`

@@ -25,11 +25,23 @@ var (
 type PingApi interface {
 
 	/*
-	 * GetPing Get the status and version of the instance
-	 * Returns the status and InfluxDB version of the instance.
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiGetPingRequest
-	 */
+			 * GetPing Get the status of the instance
+			 * Retrieves the status and InfluxDB version of the instance.
+
+		Use this endpoint to monitor uptime for the InfluxDB instance. The response
+		returns a HTTP `204` status code to inform you the instance is available.
+
+		#### InfluxDB Cloud
+
+		- Isn't versioned and doesn't return `X-Influxdb-Version` in the headers.
+
+		#### Related guides
+
+		- [Influx ping]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/ping/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiGetPingRequest
+	*/
 	GetPing(ctx _context.Context) ApiGetPingRequest
 
 	/*
@@ -45,11 +57,23 @@ type PingApi interface {
 	GetPingExecuteWithHttpInfo(r ApiGetPingRequest) (*_nethttp.Response, error)
 
 	/*
-	 * HeadPing Get the status and version of the instance
-	 * Returns the status and InfluxDB version of the instance.
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiHeadPingRequest
-	 */
+			 * HeadPing Get the status of the instance
+			 * Returns the status and InfluxDB version of the instance.
+
+		Use this endpoint to monitor uptime for the InfluxDB instance. The response
+		returns a HTTP `204` status code to inform you the instance is available.
+
+		#### InfluxDB Cloud
+
+		- Isn't versioned and doesn't return `X-Influxdb-Version` in the headers.
+
+		#### Related guides
+
+		- [Influx ping]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/ping/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiHeadPingRequest
+	*/
 	HeadPing(ctx _context.Context) ApiHeadPingRequest
 
 	/*
@@ -82,11 +106,23 @@ func (r ApiGetPingRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
 }
 
 /*
- * GetPing Get the status and version of the instance
- * Returns the status and InfluxDB version of the instance.
+ * GetPing Get the status of the instance
+ * Retrieves the status and InfluxDB version of the instance.
+
+Use this endpoint to monitor uptime for the InfluxDB instance. The response
+returns a HTTP `204` status code to inform you the instance is available.
+
+#### InfluxDB Cloud
+
+- Isn't versioned and doesn't return `X-Influxdb-Version` in the headers.
+
+#### Related guides
+
+- [Influx ping]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/ping/)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetPingRequest
- */
+*/
 func (a *PingApiService) GetPing(ctx _context.Context) ApiGetPingRequest {
 	return ApiGetPingRequest{
 		ApiService: a,
@@ -193,11 +229,23 @@ func (r ApiHeadPingRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
 }
 
 /*
- * HeadPing Get the status and version of the instance
+ * HeadPing Get the status of the instance
  * Returns the status and InfluxDB version of the instance.
+
+Use this endpoint to monitor uptime for the InfluxDB instance. The response
+returns a HTTP `204` status code to inform you the instance is available.
+
+#### InfluxDB Cloud
+
+- Isn't versioned and doesn't return `X-Influxdb-Version` in the headers.
+
+#### Related guides
+
+- [Influx ping]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/ping/)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiHeadPingRequest
- */
+*/
 func (a *PingApiService) HeadPing(ctx _context.Context) ApiHeadPingRequest {
 	return ApiHeadPingRequest{
 		ApiService: a,

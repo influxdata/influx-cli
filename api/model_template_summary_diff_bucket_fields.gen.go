@@ -18,7 +18,7 @@ import (
 type TemplateSummaryDiffBucketFields struct {
 	Name        string  `json:"name" yaml:"name"`
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
-	// Rules to expire or retain data.  No rules means data never expires.
+	// Retention rules to expire or retain data. The InfluxDB `/api/v2` API uses `RetentionRules` to configure the [retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period).  #### InfluxDB Cloud  - `retentionRules` is required.  #### InfluxDB OSS  - `retentionRules` isn't required.
 	RetentionRules     []RetentionRule          `json:"retentionRules" yaml:"retentionRules"`
 	SchemaType         *SchemaType              `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
 	MeasurementSchemas []map[string]interface{} `json:"measurementSchemas" yaml:"measurementSchemas"`

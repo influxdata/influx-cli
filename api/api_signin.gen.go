@@ -26,11 +26,36 @@ var (
 type SigninApi interface {
 
 	/*
-	 * PostSignin Create a user session.
-	 * Authenticates ***Basic Auth*** credentials for a user. If successful, creates a new UI session for the user.
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostSigninRequest
-	 */
+			 * PostSignin Create a user session.
+			 * Authenticates [Basic authentication credentials](#section/Authentication/BasicAuthentication)
+		for a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user),
+		and then, if successful, generates a user session.
+
+		To authenticate a user, pass the HTTP `Authorization` header with the
+		`Basic` scheme and the base64-encoded username and password.
+		For syntax and more information, see [Basic Authentication](#section/Authentication/BasicAuthentication) for
+		syntax and more information.
+
+		If authentication is successful, InfluxDB creates a new session for the user
+		and then returns the session cookie in the `Set-Cookie` response header.
+
+		User sessions exist only in memory.
+		They expire within ten minutes and during restarts of the InfluxDB instance.
+
+		#### User sessions with authorizations
+
+		- In InfluxDB Cloud, a user session inherits all the user's permissions for
+		  the organization.
+		- In InfluxDB OSS, a user session inherits all the user's permissions for all
+		  the organizations that the user belongs to.
+
+		#### Related endpoints
+
+		- [Signout](#tag/Signout)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiPostSigninRequest
+	*/
 	PostSignin(ctx _context.Context) ApiPostSigninRequest
 
 	/*
@@ -73,10 +98,35 @@ func (r ApiPostSigninRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) 
 
 /*
  * PostSignin Create a user session.
- * Authenticates ***Basic Auth*** credentials for a user. If successful, creates a new UI session for the user.
+ * Authenticates [Basic authentication credentials](#section/Authentication/BasicAuthentication)
+for a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user),
+and then, if successful, generates a user session.
+
+To authenticate a user, pass the HTTP `Authorization` header with the
+`Basic` scheme and the base64-encoded username and password.
+For syntax and more information, see [Basic Authentication](#section/Authentication/BasicAuthentication) for
+syntax and more information.
+
+If authentication is successful, InfluxDB creates a new session for the user
+and then returns the session cookie in the `Set-Cookie` response header.
+
+User sessions exist only in memory.
+They expire within ten minutes and during restarts of the InfluxDB instance.
+
+#### User sessions with authorizations
+
+- In InfluxDB Cloud, a user session inherits all the user's permissions for
+  the organization.
+- In InfluxDB OSS, a user session inherits all the user's permissions for all
+  the organizations that the user belongs to.
+
+#### Related endpoints
+
+- [Signout](#tag/Signout)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiPostSigninRequest
- */
+*/
 func (a *SigninApiService) PostSignin(ctx _context.Context) ApiPostSigninRequest {
 	return ApiPostSigninRequest{
 		ApiService: a,

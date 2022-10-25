@@ -14,9 +14,11 @@ import (
 	"encoding/json"
 )
 
-// PatchBucketRequest Updates to an existing bucket resource.
+// PatchBucketRequest An object that contains updated bucket properties to apply.
 type PatchBucketRequest struct {
-	Name        *string `json:"name,omitempty" yaml:"name,omitempty"`
+	// The name of the bucket.
+	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
+	// A description of the bucket.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 	// Updates to rules to expire or retain data. No rules means no updates.
 	RetentionRules *[]PatchRetentionRule `json:"retentionRules,omitempty" yaml:"retentionRules,omitempty"`

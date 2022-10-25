@@ -18,9 +18,9 @@ import (
 // MeasurementSchema Definition of a measurement schema.
 type MeasurementSchema struct {
 	Id string `json:"id" yaml:"id"`
-	// ID of the organization that the measurement schema is associated with.
+	// The ID of the organization.
 	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
-	// ID of the bucket that the measurement schema is associated with.
+	// The ID of the bucket that the measurement schema is associated with.
 	BucketID *string `json:"bucketID,omitempty" yaml:"bucketID,omitempty"`
 	Name     string  `json:"name" yaml:"name"`
 	// Ordered collection of column definitions.

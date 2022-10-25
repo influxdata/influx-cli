@@ -27,11 +27,32 @@ var (
 type BucketSchemasApi interface {
 
 	/*
-	 * CreateMeasurementSchema Create a measurement schema for a bucket
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The identifier of the bucket.
-	 * @return ApiCreateMeasurementSchemaRequest
-	 */
+			 * CreateMeasurementSchema Create a measurement schema for a bucket
+			 * Creates an _explict_ measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema)
+		for a bucket.
+
+		_Explicit_ schemas are used to enforce column names, tags, fields, and data
+		types for your data.
+
+		By default, buckets have an _implicit_ schema-type (`"schemaType": "implicit"`)
+		that conforms to your data.
+
+		Use this endpoint to create schemas that prevent non-conforming write requests.
+
+		#### Limitations
+
+		- Buckets must be created with the "explict" `schemaType` in order to use
+		schemas.
+
+		#### Related guides
+
+		- [Manage bucket schemas]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/bucket-schema/).
+		- [Create a bucket with an explicit schema]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/#create-a-bucket-with-an-explicit-schema)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param bucketID A bucket ID. Adds a schema for the specified bucket.
+			 * @return ApiCreateMeasurementSchemaRequest
+	*/
 	CreateMeasurementSchema(ctx _context.Context, bucketID string) ApiCreateMeasurementSchemaRequest
 
 	/*
@@ -49,10 +70,12 @@ type BucketSchemasApi interface {
 	CreateMeasurementSchemaExecuteWithHttpInfo(r ApiCreateMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
 
 	/*
-	 * GetMeasurementSchema Retrieve measurement schema information
+	 * GetMeasurementSchema Retrieve a measurement schema
+	 * Retrieves an explicit measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema).
+
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The identifier of the bucket.
-	 * @param measurementID The identifier of the measurement.
+	 * @param bucketID A bucket ID. Retrieves schemas for the specified bucket.
+	 * @param measurementID The measurement schema ID. Specifies the measurement schema to retrieve.
 	 * @return ApiGetMeasurementSchemaRequest
 	 */
 	GetMeasurementSchema(ctx _context.Context, bucketID string, measurementID string) ApiGetMeasurementSchemaRequest
@@ -72,11 +95,25 @@ type BucketSchemasApi interface {
 	GetMeasurementSchemaExecuteWithHttpInfo(r ApiGetMeasurementSchemaRequest) (MeasurementSchema, *_nethttp.Response, error)
 
 	/*
-	 * GetMeasurementSchemas List all measurement schemas of a bucket
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The identifier of the bucket.
-	 * @return ApiGetMeasurementSchemasRequest
-	 */
+			 * GetMeasurementSchemas List measurement schemas of a bucket
+			 * Retrieves a list of _explicit_
+		[schemas]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema)
+		(`"schemaType": "explicit"`) for a bucket.
+
+		_Explicit_ schemas are used to enforce column names, tags, fields, and data
+		types for your data.
+
+		By default, buckets have an _implicit_ schema-type (`"schemaType": "implicit"`)
+		that conforms to your data.
+
+		#### Related guides
+
+		- [Using bucket schemas](https://www.influxdata.com/blog/new-bucket-schema-option-protect-from-unwanted-schema-changes/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param bucketID A bucket ID. Lists measurement schemas for the specified bucket.
+			 * @return ApiGetMeasurementSchemasRequest
+	*/
 	GetMeasurementSchemas(ctx _context.Context, bucketID string) ApiGetMeasurementSchemasRequest
 
 	/*
@@ -94,12 +131,26 @@ type BucketSchemasApi interface {
 	GetMeasurementSchemasExecuteWithHttpInfo(r ApiGetMeasurementSchemasRequest) (MeasurementSchemaList, *_nethttp.Response, error)
 
 	/*
-	 * UpdateMeasurementSchema Update a measurement schema
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The identifier of the bucket.
-	 * @param measurementID The identifier of the measurement.
-	 * @return ApiUpdateMeasurementSchemaRequest
-	 */
+			 * UpdateMeasurementSchema Update a measurement schema
+			 * Updates a measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema).
+
+		Use this endpoint to update the fields (`name`, `type`, and `dataType`) of a
+		measurement schema.
+
+		#### Limitations
+
+		- You can't update the `name` of a measurement.
+
+		#### Related guides
+
+		- [Manage bucket schemas]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/bucket-schema/).
+		- [Using bucket schemas](https://www.influxdata.com/blog/new-bucket-schema-option-protect-from-unwanted-schema-changes/).
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param bucketID A bucket ID. Specifies the bucket to retrieve schemas for.
+			 * @param measurementID A measurement schema ID. Retrieves the specified measurement schema.
+			 * @return ApiUpdateMeasurementSchemaRequest
+	*/
 	UpdateMeasurementSchema(ctx _context.Context, bucketID string, measurementID string) ApiUpdateMeasurementSchemaRequest
 
 	/*
@@ -171,10 +222,31 @@ func (r ApiCreateMeasurementSchemaRequest) ExecuteWithHttpInfo() (MeasurementSch
 
 /*
  * CreateMeasurementSchema Create a measurement schema for a bucket
+ * Creates an _explict_ measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema)
+for a bucket.
+
+_Explicit_ schemas are used to enforce column names, tags, fields, and data
+types for your data.
+
+By default, buckets have an _implicit_ schema-type (`"schemaType": "implicit"`)
+that conforms to your data.
+
+Use this endpoint to create schemas that prevent non-conforming write requests.
+
+#### Limitations
+
+- Buckets must be created with the "explict" `schemaType` in order to use
+schemas.
+
+#### Related guides
+
+- [Manage bucket schemas]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/bucket-schema/).
+- [Create a bucket with an explicit schema]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/#create-a-bucket-with-an-explicit-schema)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The identifier of the bucket.
+ * @param bucketID A bucket ID. Adds a schema for the specified bucket.
  * @return ApiCreateMeasurementSchemaRequest
- */
+*/
 func (a *BucketSchemasApiService) CreateMeasurementSchema(ctx _context.Context, bucketID string) ApiCreateMeasurementSchemaRequest {
 	return ApiCreateMeasurementSchemaRequest{
 		ApiService: a,
@@ -283,6 +355,18 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecuteWithHttpInfo(r A
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
@@ -359,10 +443,12 @@ func (r ApiGetMeasurementSchemaRequest) ExecuteWithHttpInfo() (MeasurementSchema
 }
 
 /*
- * GetMeasurementSchema Retrieve measurement schema information
+ * GetMeasurementSchema Retrieve a measurement schema
+ * Retrieves an explicit measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema).
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The identifier of the bucket.
- * @param measurementID The identifier of the measurement.
+ * @param bucketID A bucket ID. Retrieves schemas for the specified bucket.
+ * @param measurementID The measurement schema ID. Specifies the measurement schema to retrieve.
  * @return ApiGetMeasurementSchemaRequest
  */
 func (a *BucketSchemasApiService) GetMeasurementSchema(ctx _context.Context, bucketID string, measurementID string) ApiGetMeasurementSchemaRequest {
@@ -464,6 +550,17 @@ func (a *BucketSchemasApiService) GetMeasurementSchemaExecuteWithHttpInfo(r ApiG
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
@@ -539,11 +636,25 @@ func (r ApiGetMeasurementSchemasRequest) ExecuteWithHttpInfo() (MeasurementSchem
 }
 
 /*
- * GetMeasurementSchemas List all measurement schemas of a bucket
+ * GetMeasurementSchemas List measurement schemas of a bucket
+ * Retrieves a list of _explicit_
+[schemas]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema)
+(`"schemaType": "explicit"`) for a bucket.
+
+_Explicit_ schemas are used to enforce column names, tags, fields, and data
+types for your data.
+
+By default, buckets have an _implicit_ schema-type (`"schemaType": "implicit"`)
+that conforms to your data.
+
+#### Related guides
+
+- [Using bucket schemas](https://www.influxdata.com/blog/new-bucket-schema-option-protect-from-unwanted-schema-changes/)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The identifier of the bucket.
+ * @param bucketID A bucket ID. Lists measurement schemas for the specified bucket.
  * @return ApiGetMeasurementSchemasRequest
- */
+*/
 func (a *BucketSchemasApiService) GetMeasurementSchemas(ctx _context.Context, bucketID string) ApiGetMeasurementSchemasRequest {
 	return ApiGetMeasurementSchemasRequest{
 		ApiService: a,
@@ -644,7 +755,7 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecuteWithHttpInfo(r Api
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
-		if localVarHTTPResponse.StatusCode == 404 {
+		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -653,6 +764,18 @@ func (a *BucketSchemasApiService) GetMeasurementSchemasExecuteWithHttpInfo(r Api
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
@@ -739,11 +862,25 @@ func (r ApiUpdateMeasurementSchemaRequest) ExecuteWithHttpInfo() (MeasurementSch
 
 /*
  * UpdateMeasurementSchema Update a measurement schema
+ * Updates a measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema).
+
+Use this endpoint to update the fields (`name`, `type`, and `dataType`) of a
+measurement schema.
+
+#### Limitations
+
+- You can't update the `name` of a measurement.
+
+#### Related guides
+
+- [Manage bucket schemas]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/bucket-schema/).
+- [Using bucket schemas](https://www.influxdata.com/blog/new-bucket-schema-option-protect-from-unwanted-schema-changes/).
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The identifier of the bucket.
- * @param measurementID The identifier of the measurement.
+ * @param bucketID A bucket ID. Specifies the bucket to retrieve schemas for.
+ * @param measurementID A measurement schema ID. Retrieves the specified measurement schema.
  * @return ApiUpdateMeasurementSchemaRequest
- */
+*/
 func (a *BucketSchemasApiService) UpdateMeasurementSchema(ctx _context.Context, bucketID string, measurementID string) ApiUpdateMeasurementSchemaRequest {
 	return ApiUpdateMeasurementSchemaRequest{
 		ApiService:    a,
@@ -854,6 +991,18 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecuteWithHttpInfo(r A
 			}
 			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
 			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}

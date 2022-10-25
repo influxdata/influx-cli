@@ -33,31 +33,29 @@ type WriteApi interface {
 
 		#### InfluxDB Cloud
 
-		- Takes the following steps when you send a write request:
+		- Does the following when you send a write request:
 
 		  1. Validates the request and queues the write.
-		  2. If the write is queued, responds with an HTTP `204` status code.
-		  3. Handles the write asynchronously and reaches eventual consistency.
+		  2. If queued, responds with _success_ (HTTP `2xx` status code); _error_ otherwise.
+		  3. Handles the delete asynchronously and reaches eventual consistency.
 
-		  An HTTP `2xx` status code acknowledges that the write or delete is queued.
 		  To ensure that InfluxDB Cloud handles writes and deletes in the order you request them,
-		  wait for a response before you send the next request.
+		  wait for a success response (HTTP `2xx` status code) before you send the next request.
 
-		  Because writes are asynchronous, data might not yet be written
+		  Because writes and deletes are asynchronous, your change might not yet be readable
 		  when you receive the response.
 
 		#### InfluxDB OSS
 
-		- Validates the request, handles the write synchronously,
-		  and then responds with success or failure.
-		- If all points were written successfully, returns `204`,
-		  otherwise returns the first line that failed.
+		- Validates the request and handles the write synchronously.
+		- If all points were written successfully, responds with HTTP `2xx` status code;
+		  otherwise, returns the first line that failed.
 
 		#### Required permissions
 
 		- `write-buckets` or `write-bucket BUCKET_ID`.
 
-		  `BUCKET_ID` is the ID of the destination bucket.
+		 *`BUCKET_ID`* is the ID of the destination bucket.
 
 		#### Rate limits (with InfluxDB Cloud)
 
@@ -66,8 +64,8 @@ type WriteApi interface {
 
 		#### Related guides
 
-		- [Write data with the InfluxDB API]({{% INFLUXDB_DOCS_URL %}}/write-data/developer-tools/api).
-		- [Optimize writes to InfluxDB]({{% INFLUXDB_DOCS_URL %}}/write-data/best-practices/optimize-writes/).
+		- [Write data with the InfluxDB API]({{% INFLUXDB_DOCS_URL %}}/write-data/developer-tools/api)
+		- [Optimize writes to InfluxDB]({{% INFLUXDB_DOCS_URL %}}/write-data/best-practices/optimize-writes/)
 		- [Troubleshoot issues writing data]({{% INFLUXDB_DOCS_URL %}}/write-data/troubleshoot/)
 
 			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -202,31 +200,29 @@ Use this endpoint to send data in [line protocol]({{% INFLUXDB_DOCS_URL %}}/refe
 
 #### InfluxDB Cloud
 
-- Takes the following steps when you send a write request:
+- Does the following when you send a write request:
 
   1. Validates the request and queues the write.
-  2. If the write is queued, responds with an HTTP `204` status code.
-  3. Handles the write asynchronously and reaches eventual consistency.
+  2. If queued, responds with _success_ (HTTP `2xx` status code); _error_ otherwise.
+  3. Handles the delete asynchronously and reaches eventual consistency.
 
-  An HTTP `2xx` status code acknowledges that the write or delete is queued.
   To ensure that InfluxDB Cloud handles writes and deletes in the order you request them,
-  wait for a response before you send the next request.
+  wait for a success response (HTTP `2xx` status code) before you send the next request.
 
-  Because writes are asynchronous, data might not yet be written
+  Because writes and deletes are asynchronous, your change might not yet be readable
   when you receive the response.
 
 #### InfluxDB OSS
 
-- Validates the request, handles the write synchronously,
-  and then responds with success or failure.
-- If all points were written successfully, returns `204`,
-  otherwise returns the first line that failed.
+- Validates the request and handles the write synchronously.
+- If all points were written successfully, responds with HTTP `2xx` status code;
+  otherwise, returns the first line that failed.
 
 #### Required permissions
 
 - `write-buckets` or `write-bucket BUCKET_ID`.
 
-  `BUCKET_ID` is the ID of the destination bucket.
+ *`BUCKET_ID`* is the ID of the destination bucket.
 
 #### Rate limits (with InfluxDB Cloud)
 
@@ -235,8 +231,8 @@ For more information, see [limits and adjustable quotas](https://docs.influxdata
 
 #### Related guides
 
-- [Write data with the InfluxDB API]({{% INFLUXDB_DOCS_URL %}}/write-data/developer-tools/api).
-- [Optimize writes to InfluxDB]({{% INFLUXDB_DOCS_URL %}}/write-data/best-practices/optimize-writes/).
+- [Write data with the InfluxDB API]({{% INFLUXDB_DOCS_URL %}}/write-data/developer-tools/api)
+- [Optimize writes to InfluxDB]({{% INFLUXDB_DOCS_URL %}}/write-data/best-practices/optimize-writes/)
 - [Troubleshoot issues writing data]({{% INFLUXDB_DOCS_URL %}}/write-data/troubleshoot/)
 
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -373,8 +369,8 @@ func (a *WriteApiService) PostWriteExecuteWithHttpInfo(r ApiPostWriteRequest) (*
 			newErr.model = &v
 			return localVarHTTPResponse, newErr
 		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v Error
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())

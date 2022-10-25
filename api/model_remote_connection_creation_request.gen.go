@@ -21,7 +21,7 @@ type RemoteConnectionCreationRequest struct {
 	OrgID            string  `json:"orgID" yaml:"orgID"`
 	RemoteURL        string  `json:"remoteURL" yaml:"remoteURL"`
 	RemoteAPIToken   string  `json:"remoteAPIToken" yaml:"remoteAPIToken"`
-	RemoteOrgID      string  `json:"remoteOrgID" yaml:"remoteOrgID"`
+	RemoteOrgID      *string `json:"remoteOrgID,omitempty" yaml:"remoteOrgID,omitempty"`
 	AllowInsecureTLS bool    `json:"allowInsecureTLS" yaml:"allowInsecureTLS"`
 }
 
@@ -29,13 +29,12 @@ type RemoteConnectionCreationRequest struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewRemoteConnectionCreationRequest(name string, orgID string, remoteURL string, remoteAPIToken string, remoteOrgID string, allowInsecureTLS bool) *RemoteConnectionCreationRequest {
+func NewRemoteConnectionCreationRequest(name string, orgID string, remoteURL string, remoteAPIToken string, allowInsecureTLS bool) *RemoteConnectionCreationRequest {
 	this := RemoteConnectionCreationRequest{}
 	this.Name = name
 	this.OrgID = orgID
 	this.RemoteURL = remoteURL
 	this.RemoteAPIToken = remoteAPIToken
-	this.RemoteOrgID = remoteOrgID
 	this.AllowInsecureTLS = allowInsecureTLS
 	return &this
 }
@@ -178,28 +177,36 @@ func (o *RemoteConnectionCreationRequest) SetRemoteAPIToken(v string) {
 	o.RemoteAPIToken = v
 }
 
-// GetRemoteOrgID returns the RemoteOrgID field value
+// GetRemoteOrgID returns the RemoteOrgID field value if set, zero value otherwise.
 func (o *RemoteConnectionCreationRequest) GetRemoteOrgID() string {
-	if o == nil {
+	if o == nil || o.RemoteOrgID == nil {
 		var ret string
 		return ret
 	}
-
-	return o.RemoteOrgID
+	return *o.RemoteOrgID
 }
 
-// GetRemoteOrgIDOk returns a tuple with the RemoteOrgID field value
+// GetRemoteOrgIDOk returns a tuple with the RemoteOrgID field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *RemoteConnectionCreationRequest) GetRemoteOrgIDOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.RemoteOrgID == nil {
 		return nil, false
 	}
-	return &o.RemoteOrgID, true
+	return o.RemoteOrgID, true
 }
 
-// SetRemoteOrgID sets field value
+// HasRemoteOrgID returns a boolean if a field has been set.
+func (o *RemoteConnectionCreationRequest) HasRemoteOrgID() bool {
+	if o != nil && o.RemoteOrgID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetRemoteOrgID gets a reference to the given string and assigns it to the RemoteOrgID field.
 func (o *RemoteConnectionCreationRequest) SetRemoteOrgID(v string) {
-	o.RemoteOrgID = v
+	o.RemoteOrgID = &v
 }
 
 // GetAllowInsecureTLS returns the AllowInsecureTLS field value
@@ -243,7 +250,7 @@ func (o RemoteConnectionCreationRequest) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["remoteAPIToken"] = o.RemoteAPIToken
 	}
-	if true {
+	if o.RemoteOrgID != nil {
 		toSerialize["remoteOrgID"] = o.RemoteOrgID
 	}
 	if true {

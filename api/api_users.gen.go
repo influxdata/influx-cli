@@ -27,11 +27,25 @@ var (
 type UsersApi interface {
 
 	/*
-	 * DeleteUsersID Delete a user
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param userID The ID of the user to delete.
-	 * @return ApiDeleteUsersIDRequest
-	 */
+			 * DeleteUsersID Delete a user
+			 * Deletes a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+
+		#### Required permissions
+
+		| Action      | Permission required |
+		|:------------|:-----------------------------------------------|
+		| Delete a user | `write-users` or `write-user USER_ID` |
+
+		*`USER_ID`* is the ID of the user that you want to delete.
+
+		#### Related guides
+
+		- [Manage users]({{% INFLUXDB_DOCS_URL %}}/organizations/users/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param userID A user ID. Specifies the [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) to delete.
+			 * @return ApiDeleteUsersIDRequest
+	*/
 	DeleteUsersID(ctx _context.Context, userID string) ApiDeleteUsersIDRequest
 
 	/*
@@ -47,10 +61,24 @@ type UsersApi interface {
 	DeleteUsersIDExecuteWithHttpInfo(r ApiDeleteUsersIDRequest) (*_nethttp.Response, error)
 
 	/*
-	 * GetUsers List all users
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiGetUsersRequest
-	 */
+			 * GetUsers List users
+			 * Retrieves a list of [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+		Default limit is `20`.
+
+		To limit which users are returned, pass query parameters in your request.
+
+		#### Required permissions for InfluxDB OSS
+
+		| Action | Permission required | Restriction |
+		|:-------|:--------------------|:------------|
+		| List all users | _[Operator token](https://docs.influxdata.com/influxdb/latest/security/tokens/#operator-token)_  | |
+		| List a specific user | `read-users` or `read-user USER_ID` | |
+
+		*`USER_ID`* is the ID of the user that you want to retrieve.
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiGetUsersRequest
+	*/
 	GetUsers(ctx _context.Context) ApiGetUsersRequest
 
 	/*
@@ -68,11 +96,17 @@ type UsersApi interface {
 	GetUsersExecuteWithHttpInfo(r ApiGetUsersRequest) (Users, *_nethttp.Response, error)
 
 	/*
-	 * GetUsersID Retrieve a user
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param userID The user ID.
-	 * @return ApiGetUsersIDRequest
-	 */
+			 * GetUsersID Retrieve a user
+			 * Retrieves a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+
+		#### Related guides
+
+		- [Manage users]({{% INFLUXDB_DOCS_URL %}}/organizations/users/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param userID A user ID. Retrieves the specified [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+			 * @return ApiGetUsersIDRequest
+	*/
 	GetUsersID(ctx _context.Context, userID string) ApiGetUsersIDRequest
 
 	/*
@@ -90,11 +124,25 @@ type UsersApi interface {
 	GetUsersIDExecuteWithHttpInfo(r ApiGetUsersIDRequest) (UserResponse, *_nethttp.Response, error)
 
 	/*
-	 * PatchUsersID Update a user
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param userID The ID of the user to update.
-	 * @return ApiPatchUsersIDRequest
-	 */
+			 * PatchUsersID Update a user
+			 * Updates a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) and returns the user.
+
+		#### Required permissions
+
+		| Action      | Permission required |
+		|:------------|:-----------------------------------------------|
+		| Update a user | `write-users` or `write-user USER_ID` |
+
+		*`USER_ID`* is the ID of the user that you want to update.
+
+		#### Related guides
+
+		- [Manage users]({{% INFLUXDB_DOCS_URL %}}/organizations/users/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param userID A user ID. Specifies the [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) to update.
+			 * @return ApiPatchUsersIDRequest
+	*/
 	PatchUsersID(ctx _context.Context, userID string) ApiPatchUsersIDRequest
 
 	/*
@@ -112,10 +160,39 @@ type UsersApi interface {
 	PatchUsersIDExecuteWithHttpInfo(r ApiPatchUsersIDRequest) (UserResponse, *_nethttp.Response, error)
 
 	/*
-	 * PostUsers Create a user
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostUsersRequest
-	 */
+			 * PostUsers Create a user
+			 * Creates a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) that can access InfluxDB.
+		Returns the user.
+
+		Use this endpoint to create a user that can sign in to start a user session
+		through one of the following interfaces:
+
+		  - InfluxDB UI
+		  - `/api/v2/signin` InfluxDB API endpoint
+		  - InfluxDB CLI
+
+		This endpoint represents the first two steps in a four-step process to allow a user
+		to authenticate with a username and password, and then access data in an organization:
+
+		  1. Create a user: send a `POST` request to `POST /api/v2/users`. `name` is required.
+		  2. Extract the user ID (`id`) value from the API response for _step 1_.
+		  3. Create an authorization (and API token) for the user: send a `POST` request to [`POST /api/v2/authorizations`](#operation/PostAuthorizations), passing the user ID (`id`) from _step 2_.
+		  4. Create a password for the user: send a `POST` request to [`POST /api/v2/users/USER_ID/password`](#operation/PostUsersIDPassword), passing the user ID from _step 2_.
+
+		#### Required permissions
+
+		| Action | Permission required | Restriction |
+		|:-------|:--------------------|:------------|
+		| Create a user | _[Operator token](https://docs.influxdata.com/influxdb/latest/security/tokens/#operator-token)_  | |
+
+		#### Related guides
+
+		- [Create a user](https://docs.influxdata.com/influxdb/latest/users/create-user/)
+		- [Create an API token scoped to a user](https://docs.influxdata.com/influxdb/latest/security/tokens/create-token/#create-a-token-scoped-to-a-user)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiPostUsersRequest
+	*/
 	PostUsers(ctx _context.Context) ApiPostUsersRequest
 
 	/*
@@ -134,13 +211,20 @@ type UsersApi interface {
 
 	/*
 			 * PostUsersIDPassword Update a password
-			 * #### InfluxDB Cloud
+			 * Updates a user password.
 
-		InfluxDB Cloud does not support changing user passwords through the API.
-		Use the InfluxDB Cloud user interface to update your password.
+		#### InfluxDB Cloud
+
+		- Doesn't allow you to manage user passwords through the API.
+		  Use the InfluxDB Cloud user interface (UI) to update a password.
+
+		#### Related guides
+
+		- [InfluxDB Cloud - Change your password](https://docs.influxdata.com/influxdb/cloud/account-management/change-password/)
+		- [InfluxDB OSS - Change your password](https://docs.influxdata.com/influxdb/latest/users/change-password/)
 
 			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-			 * @param userID The user ID.
+			 * @param userID The ID of the user to set the password for.
 			 * @return ApiPostUsersIDPasswordRequest
 	*/
 	PostUsersIDPassword(ctx _context.Context, userID string) ApiPostUsersIDPasswordRequest
@@ -156,6 +240,42 @@ type UsersApi interface {
 	 * content should be achieved through the returned response model if applicable.
 	 */
 	PostUsersIDPasswordExecuteWithHttpInfo(r ApiPostUsersIDPasswordRequest) (*_nethttp.Response, error)
+
+	/*
+			 * PutUsersIDPassword Update a password
+			 * Updates a user password.
+
+		Use this endpoint to let a user authenticate with
+		[Basic authentication credentials](#section/Authentication/BasicAuthentication)
+		and set a new password.
+
+		#### InfluxDB Cloud
+
+		- Doesn't allow you to manage user passwords through the API.
+		  Use the InfluxDB Cloud user interface (UI) to update a password.
+
+		#### Related guides
+
+		- [InfluxDB Cloud - Change your password](https://docs.influxdata.com/influxdb/cloud/account-management/change-password/)
+		- [InfluxDB OSS - Change your password](https://docs.influxdata.com/influxdb/latest/users/change-password/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param userID The ID of the user to set the password for.
+			 * @return ApiPutUsersIDPasswordRequest
+	*/
+	PutUsersIDPassword(ctx _context.Context, userID string) ApiPutUsersIDPasswordRequest
+
+	/*
+	 * PutUsersIDPasswordExecute executes the request
+	 */
+	PutUsersIDPasswordExecute(r ApiPutUsersIDPasswordRequest) error
+
+	/*
+	 * PutUsersIDPasswordExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	PutUsersIDPasswordExecuteWithHttpInfo(r ApiPutUsersIDPasswordRequest) (*_nethttp.Response, error)
 }
 
 // UsersApiService UsersApi service
@@ -194,10 +314,24 @@ func (r ApiDeleteUsersIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, erro
 
 /*
  * DeleteUsersID Delete a user
+ * Deletes a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+
+#### Required permissions
+
+| Action      | Permission required |
+|:------------|:-----------------------------------------------|
+| Delete a user | `write-users` or `write-user USER_ID` |
+
+*`USER_ID`* is the ID of the user that you want to delete.
+
+#### Related guides
+
+- [Manage users]({{% INFLUXDB_DOCS_URL %}}/organizations/users/)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userID The ID of the user to delete.
+ * @param userID A user ID. Specifies the [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) to delete.
  * @return ApiDeleteUsersIDRequest
- */
+*/
 func (a *UsersApiService) DeleteUsersID(ctx _context.Context, userID string) ApiDeleteUsersIDRequest {
 	return ApiDeleteUsersIDRequest{
 		ApiService: a,
@@ -289,6 +423,28 @@ func (a *UsersApiService) DeleteUsersIDExecuteWithHttpInfo(r ApiDeleteUsersIDReq
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -371,10 +527,24 @@ func (r ApiGetUsersRequest) ExecuteWithHttpInfo() (Users, *_nethttp.Response, er
 }
 
 /*
- * GetUsers List all users
+ * GetUsers List users
+ * Retrieves a list of [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+Default limit is `20`.
+
+To limit which users are returned, pass query parameters in your request.
+
+#### Required permissions for InfluxDB OSS
+
+| Action | Permission required | Restriction |
+|:-------|:--------------------|:------------|
+| List all users | _[Operator token](https://docs.influxdata.com/influxdb/latest/security/tokens/#operator-token)_  | |
+| List a specific user | `read-users` or `read-user USER_ID` | |
+
+*`USER_ID`* is the ID of the user that you want to retrieve.
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetUsersRequest
- */
+*/
 func (a *UsersApiService) GetUsers(ctx _context.Context) ApiGetUsersRequest {
 	return ApiGetUsersRequest{
 		ApiService: a,
@@ -482,6 +652,28 @@ func (a *UsersApiService) GetUsersExecuteWithHttpInfo(r ApiGetUsersRequest) (Use
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -548,10 +740,16 @@ func (r ApiGetUsersIDRequest) ExecuteWithHttpInfo() (UserResponse, *_nethttp.Res
 
 /*
  * GetUsersID Retrieve a user
+ * Retrieves a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+
+#### Related guides
+
+- [Manage users]({{% INFLUXDB_DOCS_URL %}}/organizations/users/)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userID The user ID.
+ * @param userID A user ID. Retrieves the specified [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
  * @return ApiGetUsersIDRequest
- */
+*/
 func (a *UsersApiService) GetUsersID(ctx _context.Context, userID string) ApiGetUsersIDRequest {
 	return ApiGetUsersIDRequest{
 		ApiService: a,
@@ -721,10 +919,24 @@ func (r ApiPatchUsersIDRequest) ExecuteWithHttpInfo() (UserResponse, *_nethttp.R
 
 /*
  * PatchUsersID Update a user
+ * Updates a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) and returns the user.
+
+#### Required permissions
+
+| Action      | Permission required |
+|:------------|:-----------------------------------------------|
+| Update a user | `write-users` or `write-user USER_ID` |
+
+*`USER_ID`* is the ID of the user that you want to update.
+
+#### Related guides
+
+- [Manage users]({{% INFLUXDB_DOCS_URL %}}/organizations/users/)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userID The ID of the user to update.
+ * @param userID A user ID. Specifies the [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) to update.
  * @return ApiPatchUsersIDRequest
- */
+*/
 func (a *UsersApiService) PatchUsersID(ctx _context.Context, userID string) ApiPatchUsersIDRequest {
 	return ApiPatchUsersIDRequest{
 		ApiService: a,
@@ -824,6 +1036,17 @@ func (a *UsersApiService) PatchUsersIDExecuteWithHttpInfo(r ApiPatchUsersIDReque
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -890,9 +1113,38 @@ func (r ApiPostUsersRequest) ExecuteWithHttpInfo() (UserResponse, *_nethttp.Resp
 
 /*
  * PostUsers Create a user
+ * Creates a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) that can access InfluxDB.
+Returns the user.
+
+Use this endpoint to create a user that can sign in to start a user session
+through one of the following interfaces:
+
+  - InfluxDB UI
+  - `/api/v2/signin` InfluxDB API endpoint
+  - InfluxDB CLI
+
+This endpoint represents the first two steps in a four-step process to allow a user
+to authenticate with a username and password, and then access data in an organization:
+
+  1. Create a user: send a `POST` request to `POST /api/v2/users`. `name` is required.
+  2. Extract the user ID (`id`) value from the API response for _step 1_.
+  3. Create an authorization (and API token) for the user: send a `POST` request to [`POST /api/v2/authorizations`](#operation/PostAuthorizations), passing the user ID (`id`) from _step 2_.
+  4. Create a password for the user: send a `POST` request to [`POST /api/v2/users/USER_ID/password`](#operation/PostUsersIDPassword), passing the user ID from _step 2_.
+
+#### Required permissions
+
+| Action | Permission required | Restriction |
+|:-------|:--------------------|:------------|
+| Create a user | _[Operator token](https://docs.influxdata.com/influxdb/latest/security/tokens/#operator-token)_  | |
+
+#### Related guides
+
+- [Create a user](https://docs.influxdata.com/influxdb/latest/users/create-user/)
+- [Create an API token scoped to a user](https://docs.influxdata.com/influxdb/latest/security/tokens/create-token/#create-a-token-scoped-to-a-user)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiPostUsersRequest
- */
+*/
 func (a *UsersApiService) PostUsers(ctx _context.Context) ApiPostUsersRequest {
 	return ApiPostUsersRequest{
 		ApiService: a,
@@ -990,6 +1242,28 @@ func (a *UsersApiService) PostUsersExecuteWithHttpInfo(r ApiPostUsersRequest) (U
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -1065,13 +1339,20 @@ func (r ApiPostUsersIDPasswordRequest) ExecuteWithHttpInfo() (*_nethttp.Response
 
 /*
  * PostUsersIDPassword Update a password
- * #### InfluxDB Cloud
+ * Updates a user password.
 
-InfluxDB Cloud does not support changing user passwords through the API.
-Use the InfluxDB Cloud user interface to update your password.
+#### InfluxDB Cloud
+
+- Doesn't allow you to manage user passwords through the API.
+  Use the InfluxDB Cloud user interface (UI) to update a password.
+
+#### Related guides
+
+- [InfluxDB Cloud - Change your password](https://docs.influxdata.com/influxdb/cloud/account-management/change-password/)
+- [InfluxDB OSS - Change your password](https://docs.influxdata.com/influxdb/latest/users/change-password/)
 
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userID The user ID.
+ * @param userID The ID of the user to set the password for.
  * @return ApiPostUsersIDPasswordRequest
 */
 func (a *UsersApiService) PostUsersIDPassword(ctx _context.Context, userID string) ApiPostUsersIDPasswordRequest {
@@ -1170,6 +1451,200 @@ func (a *UsersApiService) PostUsersIDPasswordExecuteWithHttpInfo(r ApiPostUsersI
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarHTTPResponse, newErr
+		}
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
+
+type ApiPutUsersIDPasswordRequest struct {
+	ctx               _context.Context
+	ApiService        UsersApi
+	userID            string
+	passwordResetBody *PasswordResetBody
+	zapTraceSpan      *string
+}
+
+func (r ApiPutUsersIDPasswordRequest) UserID(userID string) ApiPutUsersIDPasswordRequest {
+	r.userID = userID
+	return r
+}
+func (r ApiPutUsersIDPasswordRequest) GetUserID() string {
+	return r.userID
+}
+
+func (r ApiPutUsersIDPasswordRequest) PasswordResetBody(passwordResetBody PasswordResetBody) ApiPutUsersIDPasswordRequest {
+	r.passwordResetBody = &passwordResetBody
+	return r
+}
+func (r ApiPutUsersIDPasswordRequest) GetPasswordResetBody() *PasswordResetBody {
+	return r.passwordResetBody
+}
+
+func (r ApiPutUsersIDPasswordRequest) ZapTraceSpan(zapTraceSpan string) ApiPutUsersIDPasswordRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiPutUsersIDPasswordRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiPutUsersIDPasswordRequest) Execute() error {
+	return r.ApiService.PutUsersIDPasswordExecute(r)
+}
+
+func (r ApiPutUsersIDPasswordRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.PutUsersIDPasswordExecuteWithHttpInfo(r)
+}
+
+/*
+ * PutUsersIDPassword Update a password
+ * Updates a user password.
+
+Use this endpoint to let a user authenticate with
+[Basic authentication credentials](#section/Authentication/BasicAuthentication)
+and set a new password.
+
+#### InfluxDB Cloud
+
+- Doesn't allow you to manage user passwords through the API.
+  Use the InfluxDB Cloud user interface (UI) to update a password.
+
+#### Related guides
+
+- [InfluxDB Cloud - Change your password](https://docs.influxdata.com/influxdb/cloud/account-management/change-password/)
+- [InfluxDB OSS - Change your password](https://docs.influxdata.com/influxdb/latest/users/change-password/)
+
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param userID The ID of the user to set the password for.
+ * @return ApiPutUsersIDPasswordRequest
+*/
+func (a *UsersApiService) PutUsersIDPassword(ctx _context.Context, userID string) ApiPutUsersIDPasswordRequest {
+	return ApiPutUsersIDPasswordRequest{
+		ApiService: a,
+		ctx:        ctx,
+		userID:     userID,
+	}
+}
+
+/*
+ * Execute executes the request
+ */
+func (a *UsersApiService) PutUsersIDPasswordExecute(r ApiPutUsersIDPasswordRequest) error {
+	_, err := a.PutUsersIDPasswordExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *UsersApiService) PutUsersIDPasswordExecuteWithHttpInfo(r ApiPutUsersIDPasswordRequest) (*_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodPut
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UsersApiService.PutUsersIDPassword")
+	if err != nil {
+		return nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/users/{userID}/password"
+	localVarPath = strings.Replace(localVarPath, "{"+"userID"+"}", _neturl.PathEscape(parameterToString(r.userID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+	if r.passwordResetBody == nil {
+		return nil, reportError("passwordResetBody is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	// body params
+	localVarPostBody = r.passwordResetBody
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {

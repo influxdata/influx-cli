@@ -7,7 +7,7 @@ paths: {}
 components:
   schemas:
     ResourceEnumOSS:
-      $ref: "./openapi/src/common/schemas/Resource.yml#/properties/type"
+      $ref: "./openapi/src/oss/schemas/Resource.yml#/properties/type"
     ResourceEnumCloud:
       $ref: "./openapi/src/cloud/schemas/Resource.yml#/properties/type"
 

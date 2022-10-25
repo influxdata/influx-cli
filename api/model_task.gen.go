@@ -18,21 +18,21 @@ import (
 // Task struct for Task
 type Task struct {
 	Id string `json:"id" yaml:"id"`
-	// The ID of the organization that owns the task.
+	// An [organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization) ID. Specifies the organization that owns the task.
 	OrgID string `json:"orgID" yaml:"orgID"`
-	// The name of the organization that owns the task.
+	// An [organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization) name. Specifies the organization that owns the task.
 	Org *string `json:"org,omitempty" yaml:"org,omitempty"`
 	// The name of the task.
 	Name string `json:"name" yaml:"name"`
-	// The ID of the user who owns the task.
+	// A [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) ID. Specifies the owner of the task.  To find a user ID, you can use the [`GET /api/v2/users` endpoint](#operation/GetUsers) to list users.
 	OwnerID *string `json:"ownerID,omitempty" yaml:"ownerID,omitempty"`
-	// The description of the task.
+	// A description of the task.
 	Description *string         `json:"description,omitempty" yaml:"description,omitempty"`
 	Status      *TaskStatusType `json:"status,omitempty" yaml:"status,omitempty"`
 	Labels      *[]Label        `json:"labels,omitempty" yaml:"labels,omitempty"`
-	// The ID of the authorization used when the task communicates with the query engine.
+	// An authorization ID. Specifies the authorization used when the task communicates with the query engine.  To find an authorization ID, use the [`GET /api/v2/authorizations` endpoint](#operation/GetAuthorizations) to list authorizations.
 	AuthorizationID *string `json:"authorizationID,omitempty" yaml:"authorizationID,omitempty"`
-	// The Flux script that the task runs.  #### Limitations  - If you use the `flux` property, you can't use the `scriptID` and `scriptParameters` properties.
+	// The Flux script that the task executes.  #### Limitations   - If you use the `flux` property, you can't use the `scriptID` and `scriptParameters` properties.
 	Flux *string `json:"flux,omitempty" yaml:"flux,omitempty"`
 	// The interval ([duration literal]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#rfc3339-timestamp)) at which the task runs. `every` also determines when the task first runs, depending on the specified time.
 	Every *string `json:"every,omitempty" yaml:"every,omitempty"`
@@ -47,9 +47,9 @@ type Task struct {
 	CreatedAt       *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
 	UpdatedAt       *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
 	Links           *TaskLinks `json:"links,omitempty" yaml:"links,omitempty"`
-	// The ID of the script that the task runs.  #### Limitations  - If you use the `scriptID` property, you can't use the `flux` property.
+	// A script ID. Specifies the [invokable script](#tag/Invokable-Scripts) that the task executes.  #### Limitations  - If you use the `scriptID` property, you can't use the `flux` property.  #### Related guides  - [Create a task that references a script]({{% INFLUXDB_DOCS_URL %}}/process-data/manage-tasks/create-task/#create-a-task-that-references-a-script)
 	ScriptID *string `json:"scriptID,omitempty" yaml:"scriptID,omitempty"`
-	// The parameter key-value pairs passed to the script (referenced by `scriptID`) during the task run.  #### Limitations  - `scriptParameters` requires `scriptID`. - If you use the `scriptID` and `scriptParameters` properties, you can't use the `flux` property.
+	// Key-value pairs for `params` in the script. Defines the invocation parameter values passed to the script specified by `scriptID`. When running the task, InfluxDB executes the script with the parameters you provide.  #### Limitations  - To use `scriptParameters`, you must provide a `scriptID`. - If you use the `scriptID` and `scriptParameters` properties, you can't use the `flux` property.
 	ScriptParameters *map[string]interface{} `json:"scriptParameters,omitempty" yaml:"scriptParameters,omitempty"`
 }
 
