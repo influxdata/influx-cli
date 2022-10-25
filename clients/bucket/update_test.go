@@ -94,7 +94,7 @@ func TestBucketsUpdate(t *testing.T) {
 						assert.Nil(t, body.Description) &&
 						assert.Len(t, body.GetRetentionRules(), 1) &&
 						assert.Nil(t, body.GetRetentionRules()[0].ShardGroupDurationSeconds) &&
-						assert.Equal(t, int64(3*7*24*3600), *body.GetRetentionRules()[0].EverySeconds)
+						assert.Equal(t, int64(3*7*24*3600), body.GetRetentionRules()[0].EverySeconds)
 				})).Return(api.Bucket{
 					Id:    api.PtrString("123"),
 					Name:  "my-bucket",

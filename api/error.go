@@ -126,3 +126,11 @@ func (o *TemplateSummaryError) Error() string {
 func (o *TemplateSummaryError) ErrorCode() ErrorCode {
 	return ErrorCode(o.Code)
 }
+
+func (o *UnauthorizedRequestError) Error() string {
+	return o.GetMessage()
+}
+
+func (o *UnauthorizedRequestError) ErrorCode() ErrorCode {
+	return ErrorCode(o.GetCode())
+}
