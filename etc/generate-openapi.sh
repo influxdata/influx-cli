@@ -7,7 +7,7 @@ declare -r API_DIR="${ROOT_DIR}/api"
 
 declare -r GENERATED_PATTERN='^// Code generated .* DO NOT EDIT\.$'
 declare -r MERGE_DOCKER_IMG=quay.io/influxdb/swagger-cli
-declare -r GENERATOR_DOCKER_IMG=openapitools/openapi-generator-cli:v5.1.0
+declare -r GENERATOR_DOCKER_IMG=openapitools/openapi-generator-cli:v5.1.1
 declare -r TAG_STRIP_IMG=python:3.9-alpine3.15
 
 # Clean up all the generated files in the target directory.
