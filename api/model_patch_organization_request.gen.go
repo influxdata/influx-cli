@@ -14,11 +14,11 @@ import (
 	"encoding/json"
 )
 
-// PatchOrganizationRequest struct for PatchOrganizationRequest
+// PatchOrganizationRequest An object that contains updated organization properties to apply.
 type PatchOrganizationRequest struct {
-	// New name to set on the organization
+	// The name of the organization.
 	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
-	// New description to set on the organization
+	// The description of the organization.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 

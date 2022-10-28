@@ -57,7 +57,6 @@ func newRemoteCreateCmd() cli.Command {
 			&cli.StringFlag{
 				Name:        "remote-org-id",
 				Usage:       "The ID of the remote organization",
-				Required:    true,
 				Destination: &params.RemoteOrgID,
 			},
 			&cli.BoolFlag{

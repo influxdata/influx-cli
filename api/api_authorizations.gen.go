@@ -47,10 +47,30 @@ type AuthorizationsApi interface {
 	DeleteAuthorizationsIDExecuteWithHttpInfo(r ApiDeleteAuthorizationsIDRequest) (*_nethttp.Response, error)
 
 	/*
-	 * GetAuthorizations List all authorizations
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiGetAuthorizationsRequest
-	 */
+			 * GetAuthorizations List authorizations
+			 * Retrieves a list of authorizations.
+
+		To limit which authorizations are returned, pass query parameters in your request.
+		If no query parameters are passed, InfluxDB returns all authorizations.
+
+		#### InfluxDB OSS
+
+		- Returns
+		  [API token]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#token) values in authorizations.
+		- If the request uses an  _[operator token](https://docs.influxdata.com/influxdb/latest/security/tokens/#operator-token)_,
+		  InfluxDB OSS returns authorizations for all organizations in the instance.
+
+		#### Required permissions
+
+		- InfluxDB OSS requires an _[operator token](https://docs.influxdata.com/influxdb/latest/security/tokens/#operator-token)_.
+
+		#### Related guides
+
+		- [View tokens]({{% INFLUXDB_DOCS_URL %}}/security/tokens/view-tokens/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiGetAuthorizationsRequest
+	*/
 	GetAuthorizations(ctx _context.Context) ApiGetAuthorizationsRequest
 
 	/*
@@ -112,10 +132,36 @@ type AuthorizationsApi interface {
 	PatchAuthorizationsIDExecuteWithHttpInfo(r ApiPatchAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
 
 	/*
-	 * PostAuthorizations Create an authorization
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostAuthorizationsRequest
-	 */
+			 * PostAuthorizations Create an authorization
+			 * Creates an authorization.
+
+		Use this endpoint to create an authorization, which generates an API token
+		with permissions to `read` or `write` to a specific resource or `type` of resource.
+		The response contains the new authorization with the generated API token.
+
+		Keep the following in mind when creating and updating authorizations:
+
+		- To apply a permission to a specific resource, specify the resource `id` field.
+		- To apply a permission to all resources with the type, omit the resource `id`.
+		- To scope an authorization to a specific user, provide the `userID` property.
+
+		#### Limitations
+
+		- In InfluxDB OSS, API tokens are visible to the user who created the authorization and to any
+		  user with an _[operator token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/#operator-token)_.
+		- Even if an API token has `read-authorizations` permission, the
+		  token can't be used to view its authorization details.
+		- Tokens stop working when the user who created the token is deleted.
+
+		We recommend creating a generic user to create and manage tokens for writing data.
+
+		#### Related guides
+
+		- [Create a token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/create-token/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiPostAuthorizationsRequest
+	*/
 	PostAuthorizations(ctx _context.Context) ApiPostAuthorizationsRequest
 
 	/*
@@ -337,10 +383,30 @@ func (r ApiGetAuthorizationsRequest) ExecuteWithHttpInfo() (Authorizations, *_ne
 }
 
 /*
- * GetAuthorizations List all authorizations
+ * GetAuthorizations List authorizations
+ * Retrieves a list of authorizations.
+
+To limit which authorizations are returned, pass query parameters in your request.
+If no query parameters are passed, InfluxDB returns all authorizations.
+
+#### InfluxDB OSS
+
+- Returns
+  [API token]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#token) values in authorizations.
+- If the request uses an  _[operator token](https://docs.influxdata.com/influxdb/latest/security/tokens/#operator-token)_,
+  InfluxDB OSS returns authorizations for all organizations in the instance.
+
+#### Required permissions
+
+- InfluxDB OSS requires an _[operator token](https://docs.influxdata.com/influxdb/latest/security/tokens/#operator-token)_.
+
+#### Related guides
+
+- [View tokens]({{% INFLUXDB_DOCS_URL %}}/security/tokens/view-tokens/)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiGetAuthorizationsRequest
- */
+*/
 func (a *AuthorizationsApiService) GetAuthorizations(ctx _context.Context) ApiGetAuthorizationsRequest {
 	return ApiGetAuthorizationsRequest{
 		ApiService: a,
@@ -445,6 +511,28 @@ func (a *AuthorizationsApiService) GetAuthorizationsExecuteWithHttpInfo(r ApiGet
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -853,9 +941,35 @@ func (r ApiPostAuthorizationsRequest) ExecuteWithHttpInfo() (Authorization, *_ne
 
 /*
  * PostAuthorizations Create an authorization
+ * Creates an authorization.
+
+Use this endpoint to create an authorization, which generates an API token
+with permissions to `read` or `write` to a specific resource or `type` of resource.
+The response contains the new authorization with the generated API token.
+
+Keep the following in mind when creating and updating authorizations:
+
+- To apply a permission to a specific resource, specify the resource `id` field.
+- To apply a permission to all resources with the type, omit the resource `id`.
+- To scope an authorization to a specific user, provide the `userID` property.
+
+#### Limitations
+
+- In InfluxDB OSS, API tokens are visible to the user who created the authorization and to any
+  user with an _[operator token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/#operator-token)_.
+- Even if an API token has `read-authorizations` permission, the
+  token can't be used to view its authorization details.
+- Tokens stop working when the user who created the token is deleted.
+
+We recommend creating a generic user to create and manage tokens for writing data.
+
+#### Related guides
+
+- [Create a token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/create-token/)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiPostAuthorizationsRequest
- */
+*/
 func (a *AuthorizationsApiService) PostAuthorizations(ctx _context.Context) ApiPostAuthorizationsRequest {
 	return ApiPostAuthorizationsRequest{
 		ApiService: a,
@@ -955,6 +1069,17 @@ func (a *AuthorizationsApiService) PostAuthorizationsExecuteWithHttpInfo(r ApiPo
 		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())

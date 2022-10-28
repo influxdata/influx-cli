@@ -16,7 +16,7 @@ import (
 
 // InlineResponse200 struct for InlineResponse200
 type InlineResponse200 struct {
-	// True means that the influxdb instance has NOT had initial setup; false means that the database has been setup.
+	// If `true`, the InfluxDB instance hasn't had initial setup; `false` otherwise.
 	Allowed *bool `json:"allowed,omitempty" yaml:"allowed,omitempty"`
 }
 

@@ -36,8 +36,14 @@ type DeleteApi interface {
 		- Does the following when you send a delete request:
 
 		  1. Validates the request and queues the delete.
-		  2. Returns _success_ if queued; _error_ otherwise.
-		  3. Handles the delete asynchronously.
+		  2. If queued, responds with _success_ (HTTP `2xx` status code); _error_ otherwise.
+		  3. Handles the delete asynchronously and reaches eventual consistency.
+
+		To ensure that InfluxDB Cloud handles writes and deletes in the order you request them,
+		wait for a success response (HTTP `2xx` status code) before you send the next request.
+
+		Because writes and deletes are asynchronous, your change might not yet be readable
+		when you receive the response.
 
 		#### InfluxDB OSS
 
@@ -48,7 +54,7 @@ type DeleteApi interface {
 
 		- `write-buckets` or `write-bucket BUCKET_ID`.
 
-		  `BUCKET_ID` is the ID of the destination bucket.
+		*`BUCKET_ID`* is the ID of the destination bucket.
 
 		#### Rate limits (with InfluxDB Cloud)
 
@@ -57,7 +63,7 @@ type DeleteApi interface {
 
 		#### Related guides
 
-		- [Delete data]({{% INFLUXDB_DOCS_URL %}}/write-data/delete-data/).
+		- [Delete data]({{% INFLUXDB_DOCS_URL %}}/write-data/delete-data/)
 		- Learn how to use [delete predicate syntax]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/delete-predicate/).
 		- Learn how InfluxDB handles [deleted tags](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementtagkeys/)
 		  and [deleted fields](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementfieldkeys/).
@@ -161,8 +167,14 @@ Use this endpoint to delete points from a bucket in a specified time range.
 - Does the following when you send a delete request:
 
   1. Validates the request and queues the delete.
-  2. Returns _success_ if queued; _error_ otherwise.
-  3. Handles the delete asynchronously.
+  2. If queued, responds with _success_ (HTTP `2xx` status code); _error_ otherwise.
+  3. Handles the delete asynchronously and reaches eventual consistency.
+
+To ensure that InfluxDB Cloud handles writes and deletes in the order you request them,
+wait for a success response (HTTP `2xx` status code) before you send the next request.
+
+Because writes and deletes are asynchronous, your change might not yet be readable
+when you receive the response.
 
 #### InfluxDB OSS
 
@@ -173,7 +185,7 @@ Use this endpoint to delete points from a bucket in a specified time range.
 
 - `write-buckets` or `write-bucket BUCKET_ID`.
 
-  `BUCKET_ID` is the ID of the destination bucket.
+*`BUCKET_ID`* is the ID of the destination bucket.
 
 #### Rate limits (with InfluxDB Cloud)
 
@@ -182,7 +194,7 @@ For more information, see [limits and adjustable quotas](https://docs.influxdata
 
 #### Related guides
 
-- [Delete data]({{% INFLUXDB_DOCS_URL %}}/write-data/delete-data/).
+- [Delete data]({{% INFLUXDB_DOCS_URL %}}/write-data/delete-data/)
 - Learn how to use [delete predicate syntax]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/delete-predicate/).
 - Learn how InfluxDB handles [deleted tags](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementtagkeys/)
   and [deleted fields](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementfieldkeys/).
@@ -298,6 +310,17 @@ func (a *DeleteApiService) PostDeleteExecuteWithHttpInfo(r ApiPostDeleteRequest)
 		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())

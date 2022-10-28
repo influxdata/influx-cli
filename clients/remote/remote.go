@@ -44,12 +44,17 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		OrgID:            orgID,
 		RemoteURL:        params.RemoteURL,
 		RemoteAPIToken:   params.RemoteAPIToken,
-		RemoteOrgID:      params.RemoteOrgID,
 		AllowInsecureTLS: params.AllowInsecureTLS,
 	}
 
 	if params.Description != "" {
 		body.Description = &params.Description
+	}
+	if params.RemoteOrgID != "" {
+		body.RemoteOrgID = &params.RemoteOrgID
+	} else {
+		fmt.Fprintln(c.StdIO, "RemoteOrgID is required for remote connections to Cloud or OSS 2.x!")
+		fmt.Fprintln(c.StdIO, "Ignore this message if this remote connection is to a 1.x instance")
 	}
 
 	// send post request
@@ -215,7 +220,7 @@ func (c Client) printRemote(opts printRemoteOpts) error {
 			"Name":               r.GetName(),
 			"Org ID":             r.OrgID,
 			"Remote URL":         r.RemoteURL,
-			"Remote Org ID":      r.RemoteOrgID,
+			"Remote Org ID":      r.GetRemoteOrgID(),
 			"Allow Insecure TLS": r.AllowInsecureTLS,
 		}
 		if opts.deleted {

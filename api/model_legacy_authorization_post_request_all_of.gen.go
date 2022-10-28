@@ -16,13 +16,13 @@ import (
 
 // LegacyAuthorizationPostRequestAllOf struct for LegacyAuthorizationPostRequestAllOf
 type LegacyAuthorizationPostRequestAllOf struct {
-	// ID of org that authorization is scoped to.
+	// The ID of the organization that the authorization is scoped to.
 	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
-	// ID of user that authorization is scoped to.
+	// The ID of the user that the authorization is scoped to.
 	UserID *string `json:"userID,omitempty" yaml:"userID,omitempty"`
-	// Token (name) of the authorization
+	// A name that you provide for the authorization.
 	Token *string `json:"token,omitempty" yaml:"token,omitempty"`
-	// List of permissions for an auth.  An auth must have at least one Permission.
+	// A list of permissions that provide `read` and `write` access to organization resources. An authorization must contain at least one permission.
 	Permissions *[]Permission `json:"permissions,omitempty" yaml:"permissions,omitempty"`
 }
 

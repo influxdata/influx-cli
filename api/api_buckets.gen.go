@@ -27,11 +27,34 @@ var (
 type BucketsApi interface {
 
 	/*
-	 * DeleteBucketsID Delete a bucket
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The ID of the bucket to delete.
-	 * @return ApiDeleteBucketsIDRequest
-	 */
+			 * DeleteBucketsID Delete a bucket
+			 * Deletes a bucket and all associated records.
+
+		#### InfluxDB Cloud
+
+		- Does the following when you send a delete request:
+
+		  1. Validates the request and queues the delete.
+		  2. Returns an HTTP `204` status code if queued; _error_ otherwise.
+		  3. Handles the delete asynchronously.
+
+		#### InfluxDB OSS
+
+		- Validates the request, handles the delete synchronously,
+		and then responds with success or failure.
+
+		#### Limitations
+
+		- Only one bucket can be deleted per request.
+
+		#### Related Guides
+
+		- [Delete a bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/delete-bucket/#delete-a-bucket-in-the-influxdb-ui)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param bucketID Bucket ID. The ID of the bucket to delete.
+			 * @return ApiDeleteBucketsIDRequest
+	*/
 	DeleteBucketsID(ctx _context.Context, bucketID string) ApiDeleteBucketsIDRequest
 
 	/*
@@ -50,29 +73,32 @@ type BucketsApi interface {
 			 * GetBuckets List buckets
 			 * Retrieves a list of [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
 
+		InfluxDB retrieves buckets owned by the
+		[organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization)
+		associated with the authorization
+		([API token]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#token)).
 		To limit which buckets are returned, pass query parameters in your request.
 		If no query parameters are passed, InfluxDB returns all buckets up to the
 		default `limit`.
 
-		#### Limitations
+		#### InfluxDB Cloud
 
-		- Paging with an `offset` greater than the number of records will result in
-		an empty list of buckets--for example:
+		- Doesn't use `org` or `orgID` parameters.
 
-		  The following request is paging to the 50th record, but the user only has
-		  10 buckets.
+		#### InfluxDB OSS
 
-		  ```sh
-		  $ curl --request GET "INFLUX_URL/api/v2/scripts?limit=1&offset=50"
+		- If you use an _[operator token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/#operator-token)_
+		  to authenticate your request, InfluxDB retrieves resources for _all
+		  organizations_ in the instance.
+		  To retrieve resources for only a specific organization, use the
+		  `org` parameter or the `orgID` parameter to specify the organization.
 
-		  $ {
-		      "links": {
-		          "prev": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=49\u0026orgID=ORG_ID",
-		          "self": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=50\u0026orgID=ORG_ID"
-		      },
-		      "buckets": []
-		    }
-		  ```
+		#### Required permissions
+
+		| Action                    | Permission required |
+		|:--------------------------|:--------------------|
+		| Retrieve _user buckets_   | `read-buckets`      |
+		| Retrieve [_system buckets_]({{% INFLUXDB_DOCS_URL %}}/reference/internals/system-buckets/) | `read-orgs`         |
 
 		#### Related Guides
 
@@ -98,11 +124,15 @@ type BucketsApi interface {
 	GetBucketsExecuteWithHttpInfo(r ApiGetBucketsRequest) (Buckets, *_nethttp.Response, error)
 
 	/*
-	 * GetBucketsID Retrieve a bucket
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The bucket ID.
-	 * @return ApiGetBucketsIDRequest
-	 */
+			 * GetBucketsID Retrieve a bucket
+			 * Retrieves a bucket.
+
+		Use this endpoint to retrieve information for a specific bucket.
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param bucketID The ID of the bucket to retrieve.
+			 * @return ApiGetBucketsIDRequest
+	*/
 	GetBucketsID(ctx _context.Context, bucketID string) ApiGetBucketsIDRequest
 
 	/*
@@ -120,11 +150,29 @@ type BucketsApi interface {
 	GetBucketsIDExecuteWithHttpInfo(r ApiGetBucketsIDRequest) (Bucket, *_nethttp.Response, error)
 
 	/*
-	 * PatchBucketsID Update a bucket
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param bucketID The bucket ID.
-	 * @return ApiPatchBucketsIDRequest
-	 */
+			 * PatchBucketsID Update a bucket
+			 * Updates a bucket.
+
+		Use this endpoint to update properties
+		(`name`, `description`, and `retentionRules`) of a bucket.
+
+		#### InfluxDB Cloud
+
+		- Requires the `retentionRules` property in the request body. If you don't
+		provide `retentionRules`, InfluxDB responds with an HTTP `403` status code.
+
+		#### InfluxDB OSS
+
+		- Doesn't require `retentionRules`.
+
+		#### Related Guides
+
+		- [Update a bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/update-bucket/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param bucketID The bucket ID.
+			 * @return ApiPatchBucketsIDRequest
+	*/
 	PatchBucketsID(ctx _context.Context, bucketID string) ApiPatchBucketsIDRequest
 
 	/*
@@ -144,15 +192,16 @@ type BucketsApi interface {
 	/*
 			 * PostBuckets Create a bucket
 			 * Creates a [bucket]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket)
-		and returns the created bucket along with metadata. The default data
+		and returns the bucket resource.
+		The default data
 		[retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period)
 		is 30 days.
 
 		#### InfluxDB OSS
 
 		- A single InfluxDB OSS instance supports active writes or queries for
-		approximately 20 buckets across all organizations at a given time. Reading
-		or writing to more than 20 buckets at a time can adversely affect
+		approximately 20 buckets across all organizations at a given time.
+		Reading or writing to more than 20 buckets at a time can adversely affect
 		performance.
 
 		#### Limitations
@@ -164,7 +213,7 @@ type BucketsApi interface {
 
 		#### Related Guides
 
-		- [Create bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/)
+		- [Create a bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/)
 		- [Create bucket CLI reference]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/bucket/create)
 
 			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -223,10 +272,33 @@ func (r ApiDeleteBucketsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, er
 
 /*
  * DeleteBucketsID Delete a bucket
+ * Deletes a bucket and all associated records.
+
+#### InfluxDB Cloud
+
+- Does the following when you send a delete request:
+
+  1. Validates the request and queues the delete.
+  2. Returns an HTTP `204` status code if queued; _error_ otherwise.
+  3. Handles the delete asynchronously.
+
+#### InfluxDB OSS
+
+- Validates the request, handles the delete synchronously,
+and then responds with success or failure.
+
+#### Limitations
+
+- Only one bucket can be deleted per request.
+
+#### Related Guides
+
+- [Delete a bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/delete-bucket/#delete-a-bucket-in-the-influxdb-ui)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The ID of the bucket to delete.
+ * @param bucketID Bucket ID. The ID of the bucket to delete.
  * @return ApiDeleteBucketsIDRequest
- */
+*/
 func (a *BucketsApiService) DeleteBucketsID(ctx _context.Context, bucketID string) ApiDeleteBucketsIDRequest {
 	return ApiDeleteBucketsIDRequest{
 		ApiService: a,
@@ -318,6 +390,28 @@ func (a *BucketsApiService) DeleteBucketsIDExecuteWithHttpInfo(r ApiDeleteBucket
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 404 {
 			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -432,29 +526,32 @@ func (r ApiGetBucketsRequest) ExecuteWithHttpInfo() (Buckets, *_nethttp.Response
  * GetBuckets List buckets
  * Retrieves a list of [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
 
+InfluxDB retrieves buckets owned by the
+[organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization)
+associated with the authorization
+([API token]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#token)).
 To limit which buckets are returned, pass query parameters in your request.
 If no query parameters are passed, InfluxDB returns all buckets up to the
 default `limit`.
 
-#### Limitations
+#### InfluxDB Cloud
 
-- Paging with an `offset` greater than the number of records will result in
-an empty list of buckets--for example:
+- Doesn't use `org` or `orgID` parameters.
 
-  The following request is paging to the 50th record, but the user only has
-  10 buckets.
+#### InfluxDB OSS
 
-  ```sh
-  $ curl --request GET "INFLUX_URL/api/v2/scripts?limit=1&offset=50"
+- If you use an _[operator token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/#operator-token)_
+  to authenticate your request, InfluxDB retrieves resources for _all
+  organizations_ in the instance.
+  To retrieve resources for only a specific organization, use the
+  `org` parameter or the `orgID` parameter to specify the organization.
 
-  $ {
-      "links": {
-          "prev": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=49\u0026orgID=ORG_ID",
-          "self": "/api/v2/buckets?descending=false\u0026limit=1\u0026offset=50\u0026orgID=ORG_ID"
-      },
-      "buckets": []
-    }
-  ```
+#### Required permissions
+
+| Action                    | Permission required |
+|:--------------------------|:--------------------|
+| Retrieve _user buckets_   | `read-buckets`      |
+| Retrieve [_system buckets_]({{% INFLUXDB_DOCS_URL %}}/reference/internals/system-buckets/) | `read-orgs`         |
 
 #### Related Guides
 
@@ -576,6 +673,17 @@ func (a *BucketsApiService) GetBucketsExecuteWithHttpInfo(r ApiGetBucketsRequest
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -642,10 +750,14 @@ func (r ApiGetBucketsIDRequest) ExecuteWithHttpInfo() (Bucket, *_nethttp.Respons
 
 /*
  * GetBucketsID Retrieve a bucket
+ * Retrieves a bucket.
+
+Use this endpoint to retrieve information for a specific bucket.
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID The bucket ID.
+ * @param bucketID The ID of the bucket to retrieve.
  * @return ApiGetBucketsIDRequest
- */
+*/
 func (a *BucketsApiService) GetBucketsID(ctx _context.Context, bucketID string) ApiGetBucketsIDRequest {
 	return ApiGetBucketsIDRequest{
 		ApiService: a,
@@ -740,6 +852,28 @@ func (a *BucketsApiService) GetBucketsIDExecuteWithHttpInfo(r ApiGetBucketsIDReq
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -815,10 +949,28 @@ func (r ApiPatchBucketsIDRequest) ExecuteWithHttpInfo() (Bucket, *_nethttp.Respo
 
 /*
  * PatchBucketsID Update a bucket
+ * Updates a bucket.
+
+Use this endpoint to update properties
+(`name`, `description`, and `retentionRules`) of a bucket.
+
+#### InfluxDB Cloud
+
+- Requires the `retentionRules` property in the request body. If you don't
+provide `retentionRules`, InfluxDB responds with an HTTP `403` status code.
+
+#### InfluxDB OSS
+
+- Doesn't require `retentionRules`.
+
+#### Related Guides
+
+- [Update a bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/update-bucket/)
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param bucketID The bucket ID.
  * @return ApiPatchBucketsIDRequest
- */
+*/
 func (a *BucketsApiService) PatchBucketsID(ctx _context.Context, bucketID string) ApiPatchBucketsIDRequest {
 	return ApiPatchBucketsIDRequest{
 		ApiService: a,
@@ -918,6 +1070,50 @@ func (a *BucketsApiService) PatchBucketsIDExecuteWithHttpInfo(r ApiPatchBucketsI
 		}
 		newErr.body = localVarBody
 		newErr.error = localVarHTTPResponse.Status
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -985,15 +1181,16 @@ func (r ApiPostBucketsRequest) ExecuteWithHttpInfo() (Bucket, *_nethttp.Response
 /*
  * PostBuckets Create a bucket
  * Creates a [bucket]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket)
-and returns the created bucket along with metadata. The default data
+and returns the bucket resource.
+The default data
 [retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period)
 is 30 days.
 
 #### InfluxDB OSS
 
 - A single InfluxDB OSS instance supports active writes or queries for
-approximately 20 buckets across all organizations at a given time. Reading
-or writing to more than 20 buckets at a time can adversely affect
+approximately 20 buckets across all organizations at a given time.
+Reading or writing to more than 20 buckets at a time can adversely affect
 performance.
 
 #### Limitations
@@ -1005,7 +1202,7 @@ For additional information regarding InfluxDB Cloud offerings, see
 
 #### Related Guides
 
-- [Create bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/)
+- [Create a bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/)
 - [Create bucket CLI reference]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/bucket/create)
 
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -1110,6 +1307,17 @@ func (a *BucketsApiService) PostBucketsExecuteWithHttpInfo(r ApiPostBucketsReque
 		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())

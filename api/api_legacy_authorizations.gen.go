@@ -112,10 +112,18 @@ type LegacyAuthorizationsApi interface {
 	PatchLegacyAuthorizationsIDExecuteWithHttpInfo(r ApiPatchLegacyAuthorizationsIDRequest) (Authorization, *_nethttp.Response, error)
 
 	/*
-	 * PostLegacyAuthorizations Create a legacy authorization
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostLegacyAuthorizationsRequest
-	 */
+			 * PostLegacyAuthorizations Create a legacy authorization
+			 * Creates a legacy authorization and returns the legacy authorization.
+
+		#### Required permissions
+
+		- `write-users USER_ID` if you pass the `userID` property in the request body.
+
+		*`USER_ID`* is the ID of the user that you want to scope the authorization to.
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiPostLegacyAuthorizationsRequest
+	*/
 	PostLegacyAuthorizations(ctx _context.Context) ApiPostLegacyAuthorizationsRequest
 
 	/*
@@ -897,9 +905,17 @@ func (r ApiPostLegacyAuthorizationsRequest) ExecuteWithHttpInfo() (Authorization
 
 /*
  * PostLegacyAuthorizations Create a legacy authorization
+ * Creates a legacy authorization and returns the legacy authorization.
+
+#### Required permissions
+
+- `write-users USER_ID` if you pass the `userID` property in the request body.
+
+*`USER_ID`* is the ID of the user that you want to scope the authorization to.
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ApiPostLegacyAuthorizationsRequest
- */
+*/
 func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizations(ctx _context.Context) ApiPostLegacyAuthorizationsRequest {
 	return ApiPostLegacyAuthorizationsRequest{
 		ApiService: a,
@@ -999,6 +1015,17 @@ func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizationsExecuteWithHttp
 		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())

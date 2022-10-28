@@ -146,6 +146,8 @@ components:
   responses:
     ServerError:
       $ref: "./openapi/src/common/responses/ServerError.yml"
+    AuthorizationError:
+      $ref: "./openapi/src/common/responses/AuthorizationError.yml"
   schemas:
     Error:
       $ref: "./openapi/src/common/schemas/Error.yml"
@@ -487,3 +489,5 @@ components:
       $ref: "./openapi/src/svc/invocable-scripts/schemas/ScriptHTTPResponseData.yml"
     ScriptLanguage:
       $ref: "./openapi/src/svc/invocable-scripts/schemas/ScriptLanguage.yml"
+    UnauthorizedRequestError:
+      $ref: "./openapi/src/common/schemas/UnauthorizedRequestError.yml"

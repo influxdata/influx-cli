@@ -16,15 +16,15 @@ import (
 
 // PostBucketRequest struct for PostBucketRequest
 type PostBucketRequest struct {
-	// Organization ID. The ID of the organization.
+	// The organization ID. Specifies the organization that owns the bucket.
 	OrgID string `json:"orgID" yaml:"orgID"`
-	// The name of the bucket.
+	// The bucket name.
 	Name string `json:"name" yaml:"name"`
 	// A description of the bucket.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
-	// Retention policy is an InfluxDB 1.x concept that represents the duration of time that each data point in the retention policy persists. Use `rp` for compatibility with InfluxDB 1.x. The InfluxDB 2.x and Cloud equivalent is [retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period).
+	// The retention policy for the bucket. For InfluxDB 1.x, specifies the duration of time that each data point in the retention policy persists.  If you need compatibility with InfluxDB 1.x, specify a value for the `rp` property; otherwise, see the `retentionRules` property.  [Retention policy](https://docs.influxdata.com/influxdb/v1.8/concepts/glossary/#retention-policy-rp) is an InfluxDB 1.x concept. The InfluxDB 2.x and Cloud equivalent is [retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period). The InfluxDB `/api/v2` API uses `RetentionRules` to configure the retention period.
 	Rp *string `json:"rp,omitempty" yaml:"rp,omitempty"`
-	// Rules to expire or retain data.  No rules means data never expires.
+	// Retention rules to expire or retain data. The InfluxDB `/api/v2` API uses `RetentionRules` to configure the [retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period).  #### InfluxDB Cloud  - `retentionRules` is required.  #### InfluxDB OSS  - `retentionRules` isn't required.
 	RetentionRules *[]RetentionRule `json:"retentionRules,omitempty" yaml:"retentionRules,omitempty"`
 	SchemaType     *SchemaType      `json:"schemaType,omitempty" yaml:"schemaType,omitempty"`
 }

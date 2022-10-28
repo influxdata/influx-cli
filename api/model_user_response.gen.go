@@ -16,11 +16,11 @@ import (
 
 // UserResponse struct for UserResponse
 type UserResponse struct {
-	// The ID of the user.
+	// The user ID.
 	Id *string `json:"id,omitempty" yaml:"id,omitempty"`
-	// The name of the user.
+	// The user name.
 	Name string `json:"name" yaml:"name"`
-	// The status of a user. An inactive user won't have access to resources.
+	// The status of a user. An inactive user can't read or write resources.
 	Status *string            `json:"status,omitempty" yaml:"status,omitempty"`
 	Links  *UserResponseLinks `json:"links,omitempty" yaml:"links,omitempty"`
 }

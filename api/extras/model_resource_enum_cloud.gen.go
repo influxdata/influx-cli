@@ -15,7 +15,7 @@ import (
 	"fmt"
 )
 
-// ResourceEnumCloud the model 'ResourceEnumCloud'
+// ResourceEnumCloud The type of resource. In a `permission`, applies the permission to all resources of this type.
 type ResourceEnumCloud string
 
 // List of ResourceEnumCloud
@@ -36,13 +36,14 @@ const (
 	RESOURCEENUMCLOUD_NOTIFICATION_ENDPOINTS ResourceEnumCloud = "notificationEndpoints"
 	RESOURCEENUMCLOUD_CHECKS                 ResourceEnumCloud = "checks"
 	RESOURCEENUMCLOUD_DBRP                   ResourceEnumCloud = "dbrp"
-	RESOURCEENUMCLOUD_FLOWS                  ResourceEnumCloud = "flows"
 	RESOURCEENUMCLOUD_ANNOTATIONS            ResourceEnumCloud = "annotations"
+	RESOURCEENUMCLOUD_FLOWS                  ResourceEnumCloud = "flows"
 	RESOURCEENUMCLOUD_FUNCTIONS              ResourceEnumCloud = "functions"
+	RESOURCEENUMCLOUD_SUBSCRIPTIONS          ResourceEnumCloud = "subscriptions"
 )
 
 func ResourceEnumCloudValues() []ResourceEnumCloud {
-	return []ResourceEnumCloud{"authorizations", "buckets", "dashboards", "orgs", "tasks", "telegrafs", "users", "variables", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "flows", "annotations", "functions"}
+	return []ResourceEnumCloud{"authorizations", "buckets", "dashboards", "orgs", "tasks", "telegrafs", "users", "variables", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "annotations", "flows", "functions", "subscriptions"}
 }
 
 func (v *ResourceEnumCloud) UnmarshalJSON(src []byte) error {
@@ -52,7 +53,7 @@ func (v *ResourceEnumCloud) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := ResourceEnumCloud(value)
-	for _, existing := range []ResourceEnumCloud{"authorizations", "buckets", "dashboards", "orgs", "tasks", "telegrafs", "users", "variables", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "flows", "annotations", "functions"} {
+	for _, existing := range []ResourceEnumCloud{"authorizations", "buckets", "dashboards", "orgs", "tasks", "telegrafs", "users", "variables", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "annotations", "flows", "functions", "subscriptions"} {
 		if existing == enumTypeValue {
 			*v = enumTypeValue
 			return nil

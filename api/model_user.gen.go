@@ -16,10 +16,13 @@ import (
 
 // User struct for User
 type User struct {
-	Id      *string `json:"id,omitempty" yaml:"id,omitempty"`
+	// The user ID.
+	Id *string `json:"id,omitempty" yaml:"id,omitempty"`
+	// The OAuth ID.
 	OauthID *string `json:"oauthID,omitempty" yaml:"oauthID,omitempty"`
-	Name    string  `json:"name" yaml:"name"`
-	// If inactive the user is inactive.
+	// The user name.
+	Name string `json:"name" yaml:"name"`
+	// If `inactive`, the user is inactive. Default is `active`.
 	Status *string `json:"status,omitempty" yaml:"status,omitempty"`
 }
 

@@ -19,18 +19,19 @@ import (
 type AuthorizationAllOf struct {
 	CreatedAt *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
-	// ID of the organization that the authorization is scoped to.
+	// The organization ID. Specifies the [organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization) that the authorization is scoped to.
 	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
-	// List of permissions for an authorization.  An authorization must have at least one permission.
+	// The list of permissions. An authorization must have at least one permission.
 	Permissions *[]Permission `json:"permissions,omitempty" yaml:"permissions,omitempty"`
-	Id          *string       `json:"id,omitempty" yaml:"id,omitempty"`
-	// Token used to authenticate API requests.
+	// The authorization ID.
+	Id *string `json:"id,omitempty" yaml:"id,omitempty"`
+	// The API token. The token value is unique to the authorization. [API tokens]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#token) are used to authenticate and authorize InfluxDB API requests and `influx` CLI commands--after receiving the request, InfluxDB checks that the token is valid and that the `permissions` allow the requested action(s).
 	Token *string `json:"token,omitempty" yaml:"token,omitempty"`
-	// ID of the user that created and owns the token.
+	// The user ID. Specifies the [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) that owns the authorization. If _scoped_, the user that the authorization is scoped to; otherwise, the creator of the authorization.
 	UserID *string `json:"userID,omitempty" yaml:"userID,omitempty"`
-	// Name of the user that created and owns the token.
+	// The user name. Specifies the [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) that owns the authorization. If the authorization is _scoped_ to a user, the user; otherwise, the creator of the authorization.
 	User *string `json:"user,omitempty" yaml:"user,omitempty"`
-	// Name of the organization that the token is scoped to.
+	// The organization name. Specifies the [organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization) that the token is scoped to.
 	Org   *string                  `json:"org,omitempty" yaml:"org,omitempty"`
 	Links *AuthorizationAllOfLinks `json:"links,omitempty" yaml:"links,omitempty"`
 }

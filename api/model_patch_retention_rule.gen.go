@@ -14,12 +14,12 @@ import (
 	"encoding/json"
 )
 
-// PatchRetentionRule Updates to a rule to expire or retain data.
+// PatchRetentionRule struct for PatchRetentionRule
 type PatchRetentionRule struct {
-	Type string `json:"type" yaml:"type"`
-	// Duration in seconds for how long data will be kept in the database. 0 means infinite.
-	EverySeconds *int64 `json:"everySeconds,omitempty" yaml:"everySeconds,omitempty"`
-	// Shard duration measured in seconds.
+	Type *string `json:"type,omitempty" yaml:"type,omitempty"`
+	// The number of seconds to keep data. Default duration is `2592000` (30 days). `0` represents infinite retention.
+	EverySeconds int64 `json:"everySeconds" yaml:"everySeconds"`
+	// The [shard group duration]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#shard). The number of seconds that each shard group covers.  #### InfluxDB Cloud  - Doesn't use `shardGroupDurationsSeconds`.  #### InfluxDB OSS  - Default value depends on the [bucket retention period]({{% INFLUXDB_DOCS_URL %}}/reference/internals/shards/#shard-group-duration).  #### Related guides  - InfluxDB [shards and shard groups]({{% INFLUXDB_DOCS_URL %}}/reference/internals/shards/)
 	ShardGroupDurationSeconds *int64 `json:"shardGroupDurationSeconds,omitempty" yaml:"shardGroupDurationSeconds,omitempty"`
 }
 
@@ -27,9 +27,11 @@ type PatchRetentionRule struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPatchRetentionRule(type_ string) *PatchRetentionRule {
+func NewPatchRetentionRule(everySeconds int64) *PatchRetentionRule {
 	this := PatchRetentionRule{}
-	this.Type = type_
+	var type_ string = "expire"
+	this.Type = &type_
+	this.EverySeconds = everySeconds
 	return &this
 }
 
@@ -39,64 +41,66 @@ func NewPatchRetentionRule(type_ string) *PatchRetentionRule {
 func NewPatchRetentionRuleWithDefaults() *PatchRetentionRule {
 	this := PatchRetentionRule{}
 	var type_ string = "expire"
-	this.Type = type_
+	this.Type = &type_
+	var everySeconds int64 = 2592000
+	this.EverySeconds = everySeconds
 	return &this
 }
 
-// GetType returns the Type field value
+// GetType returns the Type field value if set, zero value otherwise.
 func (o *PatchRetentionRule) GetType() string {
-	if o == nil {
+	if o == nil || o.Type == nil {
 		var ret string
 		return ret
 	}
-
-	return o.Type
+	return *o.Type
 }
 
-// GetTypeOk returns a tuple with the Type field value
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *PatchRetentionRule) GetTypeOk() (*string, bool) {
-	if o == nil {
+	if o == nil || o.Type == nil {
 		return nil, false
 	}
-	return &o.Type, true
+	return o.Type, true
 }
 
-// SetType sets field value
-func (o *PatchRetentionRule) SetType(v string) {
-	o.Type = v
-}
-
-// GetEverySeconds returns the EverySeconds field value if set, zero value otherwise.
-func (o *PatchRetentionRule) GetEverySeconds() int64 {
-	if o == nil || o.EverySeconds == nil {
-		var ret int64
-		return ret
-	}
-	return *o.EverySeconds
-}
-
-// GetEverySecondsOk returns a tuple with the EverySeconds field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *PatchRetentionRule) GetEverySecondsOk() (*int64, bool) {
-	if o == nil || o.EverySeconds == nil {
-		return nil, false
-	}
-	return o.EverySeconds, true
-}
-
-// HasEverySeconds returns a boolean if a field has been set.
-func (o *PatchRetentionRule) HasEverySeconds() bool {
-	if o != nil && o.EverySeconds != nil {
+// HasType returns a boolean if a field has been set.
+func (o *PatchRetentionRule) HasType() bool {
+	if o != nil && o.Type != nil {
 		return true
 	}
 
 	return false
 }
 
-// SetEverySeconds gets a reference to the given int64 and assigns it to the EverySeconds field.
+// SetType gets a reference to the given string and assigns it to the Type field.
+func (o *PatchRetentionRule) SetType(v string) {
+	o.Type = &v
+}
+
+// GetEverySeconds returns the EverySeconds field value
+func (o *PatchRetentionRule) GetEverySeconds() int64 {
+	if o == nil {
+		var ret int64
+		return ret
+	}
+
+	return o.EverySeconds
+}
+
+// GetEverySecondsOk returns a tuple with the EverySeconds field value
+// and a boolean to check if the value has been set.
+func (o *PatchRetentionRule) GetEverySecondsOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.EverySeconds, true
+}
+
+// SetEverySeconds sets field value
 func (o *PatchRetentionRule) SetEverySeconds(v int64) {
-	o.EverySeconds = &v
+	o.EverySeconds = v
 }
 
 // GetShardGroupDurationSeconds returns the ShardGroupDurationSeconds field value if set, zero value otherwise.
@@ -133,10 +137,10 @@ func (o *PatchRetentionRule) SetShardGroupDurationSeconds(v int64) {
 
 func (o PatchRetentionRule) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if true {
+	if o.Type != nil {
 		toSerialize["type"] = o.Type
 	}
-	if o.EverySeconds != nil {
+	if true {
 		toSerialize["everySeconds"] = o.EverySeconds
 	}
 	if o.ShardGroupDurationSeconds != nil {

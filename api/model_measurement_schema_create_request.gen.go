@@ -16,6 +16,7 @@ import (
 
 // MeasurementSchemaCreateRequest Create a new measurement schema.
 type MeasurementSchemaCreateRequest struct {
+	// The [measurement]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#measurement) name.
 	Name string `json:"name" yaml:"name"`
 	// Ordered collection of column definitions.
 	Columns []MeasurementSchemaColumn `json:"columns" yaml:"columns"`

@@ -15,7 +15,7 @@ import (
 	"fmt"
 )
 
-// ResourceEnumOSS the model 'ResourceEnumOSS'
+// ResourceEnumOSS The type of resource. In a `permission`, applies the permission to all resources of this type.
 type ResourceEnumOSS string
 
 // List of ResourceEnumOSS
@@ -24,12 +24,10 @@ const (
 	RESOURCEENUMOSS_BUCKETS                ResourceEnumOSS = "buckets"
 	RESOURCEENUMOSS_DASHBOARDS             ResourceEnumOSS = "dashboards"
 	RESOURCEENUMOSS_ORGS                   ResourceEnumOSS = "orgs"
-	RESOURCEENUMOSS_SOURCES                ResourceEnumOSS = "sources"
 	RESOURCEENUMOSS_TASKS                  ResourceEnumOSS = "tasks"
 	RESOURCEENUMOSS_TELEGRAFS              ResourceEnumOSS = "telegrafs"
 	RESOURCEENUMOSS_USERS                  ResourceEnumOSS = "users"
 	RESOURCEENUMOSS_VARIABLES              ResourceEnumOSS = "variables"
-	RESOURCEENUMOSS_SCRAPERS               ResourceEnumOSS = "scrapers"
 	RESOURCEENUMOSS_SECRETS                ResourceEnumOSS = "secrets"
 	RESOURCEENUMOSS_LABELS                 ResourceEnumOSS = "labels"
 	RESOURCEENUMOSS_VIEWS                  ResourceEnumOSS = "views"
@@ -38,15 +36,17 @@ const (
 	RESOURCEENUMOSS_NOTIFICATION_ENDPOINTS ResourceEnumOSS = "notificationEndpoints"
 	RESOURCEENUMOSS_CHECKS                 ResourceEnumOSS = "checks"
 	RESOURCEENUMOSS_DBRP                   ResourceEnumOSS = "dbrp"
-	RESOURCEENUMOSS_NOTEBOOKS              ResourceEnumOSS = "notebooks"
 	RESOURCEENUMOSS_ANNOTATIONS            ResourceEnumOSS = "annotations"
+	RESOURCEENUMOSS_SOURCES                ResourceEnumOSS = "sources"
+	RESOURCEENUMOSS_SCRAPERS               ResourceEnumOSS = "scrapers"
+	RESOURCEENUMOSS_NOTEBOOKS              ResourceEnumOSS = "notebooks"
 	RESOURCEENUMOSS_REMOTES                ResourceEnumOSS = "remotes"
 	RESOURCEENUMOSS_REPLICATIONS           ResourceEnumOSS = "replications"
 	RESOURCEENUMOSS_INSTANCE               ResourceEnumOSS = "instance"
 )
 
 func ResourceEnumOSSValues() []ResourceEnumOSS {
-	return []ResourceEnumOSS{"authorizations", "buckets", "dashboards", "orgs", "sources", "tasks", "telegrafs", "users", "variables", "scrapers", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "notebooks", "annotations", "remotes", "replications", "instance"}
+	return []ResourceEnumOSS{"authorizations", "buckets", "dashboards", "orgs", "tasks", "telegrafs", "users", "variables", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "annotations", "sources", "scrapers", "notebooks", "remotes", "replications", "instance"}
 }
 
 func (v *ResourceEnumOSS) UnmarshalJSON(src []byte) error {
@@ -56,7 +56,7 @@ func (v *ResourceEnumOSS) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := ResourceEnumOSS(value)
-	for _, existing := range []ResourceEnumOSS{"authorizations", "buckets", "dashboards", "orgs", "sources", "tasks", "telegrafs", "users", "variables", "scrapers", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "notebooks", "annotations", "remotes", "replications", "instance"} {
+	for _, existing := range []ResourceEnumOSS{"authorizations", "buckets", "dashboards", "orgs", "tasks", "telegrafs", "users", "variables", "secrets", "labels", "views", "documents", "notificationRules", "notificationEndpoints", "checks", "dbrp", "annotations", "sources", "scrapers", "notebooks", "remotes", "replications", "instance"} {
 		if existing == enumTypeValue {
 			*v = enumTypeValue
 			return nil
