@@ -1,3 +1,119 @@
+## v2.5.0 [2022-10-28]
+----------------------
+
+### Bug Fixes
+
+1. [3a593e7](https://github.com/influxdata/influx-cli/commit/3a593e7): Don't allow creating an auth with instance resources
+1. [e2aa4d2](https://github.com/influxdata/influx-cli/commit/e2aa4d2): Fix stack error typo
+1. [77cca94](https://github.com/influxdata/influx-cli/commit/77cca94): Fixes an error where stdin could not be used to create tasks
+1. [121864a](https://github.com/influxdata/influx-cli/commit/121864a): Cloud expects dataType in csv files
+1. [3285a03](https://github.com/influxdata/influx-cli/commit/3285a03): Do not require remoteOrgID for remote connection creation
+
+### Features
+
+1. [6142b7a](https://github.com/influxdata/influx-cli/commit/6142b7a): Support username-password in config update
+
+### Other
+
+1. [e39e365](https://github.com/influxdata/influx-cli/commit/e39e365): Chore: go1.19
+1. [188c393](https://github.com/influxdata/influx-cli/commit/188c393): Chore: fix go version in `go.mod`
+
+
+## v2.4.0 [2022-08-18]
+----------------------
+
+### Bug Fixes
+
+1. [50de408](https://github.com/influxdata/influx-cli/commit/50de408): Add mutual exclusion for OrgId and OrgName params
+1. [0c17ebd](https://github.com/influxdata/influx-cli/commit/0c17ebd): Users and orgs permissions should not be scoped under an org
+1. [d3e0efb](https://github.com/influxdata/influx-cli/commit/d3e0efb):
+1. [b9ffcb4](https://github.com/influxdata/influx-cli/commit/b9ffcb4): Improve display for strings and numbers in v1 shell tables
+1. [182303e](https://github.com/influxdata/influx-cli/commit/182303e): Prevent v1 shell hang on empty query result
+1. [75e3606](https://github.com/influxdata/influx-cli/commit/75e3606): Show `remotes` and `replications` flags in `auth create`
+1. [fbbe974](https://github.com/influxdata/influx-cli/commit/fbbe974): Update unsupported xcode version
+
+### Features
+
+1. [30e64c5](https://github.com/influxdata/influx-cli/commit/30e64c5): Add --extra-http-header flag
+1. [fc52974](https://github.com/influxdata/influx-cli/commit/fc52974): Add back the InfluxQL REPL
+1. [760f07e](https://github.com/influxdata/influx-cli/commit/760f07e): Invokable scripts
+1. [9dc1b8e](https://github.com/influxdata/influx-cli/commit/9dc1b8e): Add pretty table format to REPL
+1. [e5707cd](https://github.com/influxdata/influx-cli/commit/e5707cd): Allow setting membership type in influx org members add
+1. [da2899d](https://github.com/influxdata/influx-cli/commit/da2899d): Add skipRowOnError handling for raw line protocol files
+1. [d470527](https://github.com/influxdata/influx-cli/commit/d470527): Added tag stripping step to openapi generation to fix codegen
+1. [0de05ed](https://github.com/influxdata/influx-cli/commit/0de05ed): Updated openapi to support tasks containing scripts
+1. [f34e6a8](https://github.com/influxdata/influx-cli/commit/f34e6a8): Add username and password login
+1. [0b6ce21](https://github.com/influxdata/influx-cli/commit/0b6ce21): Allow deleting replications with remotes
+1. [1453e20](https://github.com/influxdata/influx-cli/commit/1453e20): Added script support when creating tasks for the cloud
+1. [826e03f](https://github.com/influxdata/influx-cli/commit/826e03f): Added script support when updating tasks for the cloud
+1. [7bdad28](https://github.com/influxdata/influx-cli/commit/7bdad28): Add virtual column to DBRP printing
+1. [5c7c34f](https://github.com/influxdata/influx-cli/commit/5c7c34f): Replication bucket name
+
+### Other
+
+1. [3527951](https://github.com/influxdata/influx-cli/commit/3527951): Build: upgrade to Go 1.18.1
+1. [51ca97e](https://github.com/influxdata/influx-cli/commit/51ca97e): Build: upgrade to Go 1.18.3
+1. [c695e60](https://github.com/influxdata/influx-cli/commit/c695e60): Add REPL autocompletion & go-prompt
+1. [a68106e](https://github.com/influxdata/influx-cli/commit/a68106e): Replace token flags with = to prevent bad parsing of leading dash in token
+1. [09881c0](https://github.com/influxdata/influx-cli/commit/09881c0): Chore: fix typo in mockgen
+1. [85c690f](https://github.com/influxdata/influx-cli/commit/85c690f): Chore: add checkgenerate test to `lint`
+1. [56a8276](https://github.com/influxdata/influx-cli/commit/56a8276): Chore: fix issues with Go 1.18 in CI
+1. [c44d2f2](https://github.com/influxdata/influx-cli/commit/c44d2f2): Build: upload "latest" artifacts
+1. [78ef3c1](https://github.com/influxdata/influx-cli/commit/78ef3c1): Chore: add influx command shell hint
+1. [65ff49f](https://github.com/influxdata/influx-cli/commit/65ff49f): Chore(tasks): support looking up tasks by script id
+1. [051a6aa](https://github.com/influxdata/influx-cli/commit/051a6aa): Clarify difference in virtual vs physical dbrps when listing
+
+
+## v2.3.0 [2022-03-18]
+----------------------
+
+### Bug Fixes
+
+1. [6a7c4f6](https://github.com/influxdata/influx-cli/commit/6a7c4f6): `v1 auth create` supports multiple buckets
+1. [becbe8f](https://github.com/influxdata/influx-cli/commit/becbe8f): Use influx-debug-id header
+1. [13d0827](https://github.com/influxdata/influx-cli/commit/13d0827): Duration parser shows duration missing units on error
+1. [9ddf110](https://github.com/influxdata/influx-cli/commit/9ddf110): Template apply uses better diff checking
+1. [37ec38a](https://github.com/influxdata/influx-cli/commit/37ec38a): Rename bucket id parameters to be explicit
+1. [c8c7c1c](https://github.com/influxdata/influx-cli/commit/c8c7c1c): Json suffix for json template from CLI
+
+### Features
+
+1. [81de7e6](https://github.com/influxdata/influx-cli/commit/81de7e6): Return error if API token required but not found
+1. [99791ba](https://github.com/influxdata/influx-cli/commit/99791ba): Add flags for remotes, replications, and functions to `auth create`
+1. [f32a55f](https://github.com/influxdata/influx-cli/commit/f32a55f): Add `drop-non-retryable-data` to replications commands
+1. [4c0fae3](https://github.com/influxdata/influx-cli/commit/4c0fae3): Add ExecuteWithHttpInfo methods for generated API
+1. [327f239](https://github.com/influxdata/influx-cli/commit/327f239): Enable remotes and replication streams feature
+1. [178c754](https://github.com/influxdata/influx-cli/commit/178c754): Add server-config command
+1. [7af0b2a](https://github.com/influxdata/influx-cli/commit/7af0b2a): Enhanced error messages for cloud and oss specific commands
+1. [88ba346](https://github.com/influxdata/influx-cli/commit/88ba346): Add max age to replications create and update
+
+### Other
+
+1. [a3af8ca](https://github.com/influxdata/influx-cli/commit/a3af8ca): Revert: "feat: return error if API token required but not found
+1. [566dcaf](https://github.com/influxdata/influx-cli/commit/566dcaf): Chore: update CHANGELOG
+1. [1eadcf1](https://github.com/influxdata/influx-cli/commit/1eadcf1): Chore: update CHANGELOG
+1. [adc58b8](https://github.com/influxdata/influx-cli/commit/adc58b8): Chore: refactor `influxid.ID`, cleanup organization checking
+1. [a408c02](https://github.com/influxdata/influx-cli/commit/a408c02): Chore: remove remote validation
+1. [68ac116](https://github.com/influxdata/influx-cli/commit/68ac116): Chore: update openapi ref to latest
+1. [cb3bade](https://github.com/influxdata/influx-cli/commit/cb3bade): Update: instructions to update openapi
+1. [5cd1c9d](https://github.com/influxdata/influx-cli/commit/5cd1c9d): Build: automatically generate changelog
+1. [981be78](https://github.com/influxdata/influx-cli/commit/981be78): Chore: upgrade to latest OpenAPI
+1. [041ebf6](https://github.com/influxdata/influx-cli/commit/041ebf6): Chore: improve logging for creating a new remote
+1. [85a33ad](https://github.com/influxdata/influx-cli/commit/85a33ad): Chore: update to API spec for new template endpoint response
+
+
+## v2.2.1 [2021-11-09]
+----------------------
+
+### Bug Fixes
+
+1. [0364b18](https://github.com/influxdata/influx-cli/commit/0364b18): Return "unknown command" instead of "no help topic" error when unknown (sub)command is passed
+1. [74a1b8e](https://github.com/influxdata/influx-cli/commit/74a1b8e): Wrong position of orgID and userID in `org members remove`
+
+### Other
+
+1. [31ac783](https://github.com/influxdata/influx-cli/commit/31ac783): Chore: pin date for 2.2.1 release
+
 ## v2.2.0 [2021-10-21]
 ----------------------
 
