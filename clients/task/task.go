@@ -93,11 +93,16 @@ func (c Client) Create(ctx context.Context, params *CreateParams) error {
 		OrgID:            org.IDOrNil(),
 		Org:              org.NameOrNil(),
 		Name:             &params.Name,
-		Every:            &params.Every,
 		Cron:             &params.Cron,
 		ScriptID:         scriptID,
 		ScriptParameters: scriptParams,
 	}
+
+	// The FluxQuery can also contain the "every" field, so we only want to override if it is actually defined.
+	if params.Every != "" {
+		createRequest.Every = &params.Every
+	}
+
 	task, err := c.PostTasks(ctx).TaskCreateRequest(createRequest).Execute()
 	if err != nil {
 		return err
