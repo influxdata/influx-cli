@@ -46,8 +46,8 @@ github.com/google/go-jsonnet v0.17.0 h1:/9NIEfhK1NQRKl3sP2536b2+x5HnZMdql7x3yK/l
 github.com/google/go-jsonnet v0.17.0/go.mod h1:sOcuej3UW1vpPTZOr8L7RQimqai1a57bt5j22LzGZCw=
 github.com/hinshun/vt10x v0.0.0-20220119200601-820417d04eec h1:qv2VnGeEQHchGaZ/u7lxST/RaJw+cv273q79D81Xbog=
 github.com/hinshun/vt10x v0.0.0-20220119200601-820417d04eec/go.mod h1:Q48J4R4DvxnHolD5P8pOtXigYlRuPLGl6moFx3ulM68=
-github.com/influxdata/go-prompt v0.2.7 h1:LoJCo+imRHw4Md1Y6SWFtLRpuukAHXkQ6pWS+DVTiMM=
-github.com/influxdata/go-prompt v0.2.7/go.mod h1:sK0TeJSbAWCKVby14Tx85GJE4BZpIZpguBBmFqAqruE=
+github.com/influxdata/go-prompt v0.2.8 h1:qCIdpww8c6NWZLGGNVqwIj/m6MG6IJDKfc8GyPZs5ho=
+github.com/influxdata/go-prompt v0.2.8/go.mod h1:sK0TeJSbAWCKVby14Tx85GJE4BZpIZpguBBmFqAqruE=
 github.com/influxdata/influxdb/v2 v2.3.0 h1:vA558griYta4uQx/GLe0AQ8RsxIhNmb8q8aXV/JrBFo=
 github.com/influxdata/influxdb/v2 v2.3.0/go.mod h1:rg13oLyRzxzV4Saz1aMYXx3gRCeBD+lSaPnZxMqR5Os=
 github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 h1:Z9n2FFNUXsshfwJMBgNA0RU6/i7WVaAegv3PtuIHPMs=

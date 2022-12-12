@@ -15,7 +15,7 @@ require (
 	github.com/gocarina/gocsv v0.0.0-20210408192840-02d7211d929d
 	github.com/golang/mock v1.5.0
 	github.com/google/go-jsonnet v0.17.0
-	github.com/influxdata/go-prompt v0.2.7
+	github.com/influxdata/go-prompt v0.2.8
 	github.com/influxdata/influxdb/v2 v2.3.0
 	github.com/mattn/go-isatty v0.0.14
 	github.com/muesli/termenv v0.12.0
