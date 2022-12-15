@@ -1,3 +1,19 @@
+## v2.6.0 [2022-12-12]
+----------------------
+
+### Bug Fixes
+
+1. [ac1eb0b](https://github.com/influxdata/influx-cli/commit/ac1eb0b): Handle "every" when defined inside of flux
+
+### Other
+
+1. [e16398c](https://github.com/influxdata/influx-cli/commit/e16398c): Chore: upgrade Go to 1.19.3
+1. [41059f5](https://github.com/influxdata/influx-cli/commit/41059f5): Chore: update to openapi 5.1.1 to enable arm builds
+1. [11859bd](https://github.com/influxdata/influx-cli/commit/11859bd): Chore: update 2.5 changelog (and add missing entries)
+1. [429cc0e](https://github.com/influxdata/influx-cli/commit/429cc0e): Chore: upgrade Go to 1.19.4
+1. [90e825c](https://github.com/influxdata/influx-cli/commit/90e825c): Chore: update go-prompt to fix terminal clear issue
+
+
 ## v2.5.0 [2022-10-28]
 ----------------------
 
