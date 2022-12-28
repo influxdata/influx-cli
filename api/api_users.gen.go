@@ -313,8 +313,8 @@ func (r ApiDeleteUsersIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, erro
 }
 
 /*
- * DeleteUsersID Delete a user
- * Deletes a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+  - DeleteUsersID Delete a user
+  - Deletes a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
 
 #### Required permissions
 
@@ -328,9 +328,9 @@ func (r ApiDeleteUsersIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, erro
 
 - [Manage users]({{% INFLUXDB_DOCS_URL %}}/organizations/users/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userID A user ID. Specifies the [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) to delete.
- * @return ApiDeleteUsersIDRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param userID A user ID. Specifies the [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) to delete.
+  - @return ApiDeleteUsersIDRequest
 */
 func (a *UsersApiService) DeleteUsersID(ctx _context.Context, userID string) ApiDeleteUsersIDRequest {
 	return ApiDeleteUsersIDRequest{
@@ -527,8 +527,9 @@ func (r ApiGetUsersRequest) ExecuteWithHttpInfo() (Users, *_nethttp.Response, er
 }
 
 /*
- * GetUsers List users
- * Retrieves a list of [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+  - GetUsers List users
+  - Retrieves a list of [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+
 Default limit is `20`.
 
 To limit which users are returned, pass query parameters in your request.
@@ -542,8 +543,8 @@ To limit which users are returned, pass query parameters in your request.
 
 *`USER_ID`* is the ID of the user that you want to retrieve.
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiGetUsersRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiGetUsersRequest
 */
 func (a *UsersApiService) GetUsers(ctx _context.Context) ApiGetUsersRequest {
 	return ApiGetUsersRequest{
@@ -739,16 +740,16 @@ func (r ApiGetUsersIDRequest) ExecuteWithHttpInfo() (UserResponse, *_nethttp.Res
 }
 
 /*
- * GetUsersID Retrieve a user
- * Retrieves a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+  - GetUsersID Retrieve a user
+  - Retrieves a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
 
 #### Related guides
 
 - [Manage users]({{% INFLUXDB_DOCS_URL %}}/organizations/users/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userID A user ID. Retrieves the specified [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
- * @return ApiGetUsersIDRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param userID A user ID. Retrieves the specified [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+  - @return ApiGetUsersIDRequest
 */
 func (a *UsersApiService) GetUsersID(ctx _context.Context, userID string) ApiGetUsersIDRequest {
 	return ApiGetUsersIDRequest{
@@ -918,8 +919,8 @@ func (r ApiPatchUsersIDRequest) ExecuteWithHttpInfo() (UserResponse, *_nethttp.R
 }
 
 /*
- * PatchUsersID Update a user
- * Updates a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) and returns the user.
+  - PatchUsersID Update a user
+  - Updates a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) and returns the user.
 
 #### Required permissions
 
@@ -933,9 +934,9 @@ func (r ApiPatchUsersIDRequest) ExecuteWithHttpInfo() (UserResponse, *_nethttp.R
 
 - [Manage users]({{% INFLUXDB_DOCS_URL %}}/organizations/users/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userID A user ID. Specifies the [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) to update.
- * @return ApiPatchUsersIDRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param userID A user ID. Specifies the [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) to update.
+  - @return ApiPatchUsersIDRequest
 */
 func (a *UsersApiService) PatchUsersID(ctx _context.Context, userID string) ApiPatchUsersIDRequest {
 	return ApiPatchUsersIDRequest{
@@ -1112,8 +1113,9 @@ func (r ApiPostUsersRequest) ExecuteWithHttpInfo() (UserResponse, *_nethttp.Resp
 }
 
 /*
- * PostUsers Create a user
- * Creates a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) that can access InfluxDB.
+  - PostUsers Create a user
+  - Creates a [user]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) that can access InfluxDB.
+
 Returns the user.
 
 Use this endpoint to create a user that can sign in to start a user session
@@ -1126,10 +1128,10 @@ through one of the following interfaces:
 This endpoint represents the first two steps in a four-step process to allow a user
 to authenticate with a username and password, and then access data in an organization:
 
-  1. Create a user: send a `POST` request to `POST /api/v2/users`. `name` is required.
-  2. Extract the user ID (`id`) value from the API response for _step 1_.
-  3. Create an authorization (and API token) for the user: send a `POST` request to [`POST /api/v2/authorizations`](#operation/PostAuthorizations), passing the user ID (`id`) from _step 2_.
-  4. Create a password for the user: send a `POST` request to [`POST /api/v2/users/USER_ID/password`](#operation/PostUsersIDPassword), passing the user ID from _step 2_.
+ 1. Create a user: send a `POST` request to `POST /api/v2/users`. `name` is required.
+ 2. Extract the user ID (`id`) value from the API response for _step 1_.
+ 3. Create an authorization (and API token) for the user: send a `POST` request to [`POST /api/v2/authorizations`](#operation/PostAuthorizations), passing the user ID (`id`) from _step 2_.
+ 4. Create a password for the user: send a `POST` request to [`POST /api/v2/users/USER_ID/password`](#operation/PostUsersIDPassword), passing the user ID from _step 2_.
 
 #### Required permissions
 
@@ -1142,8 +1144,8 @@ to authenticate with a username and password, and then access data in an organiz
 - [Create a user](https://docs.influxdata.com/influxdb/latest/users/create-user/)
 - [Create an API token scoped to a user](https://docs.influxdata.com/influxdb/latest/security/tokens/create-token/#create-a-token-scoped-to-a-user)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiPostUsersRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiPostUsersRequest
 */
 func (a *UsersApiService) PostUsers(ctx _context.Context) ApiPostUsersRequest {
 	return ApiPostUsersRequest{
@@ -1338,22 +1340,22 @@ func (r ApiPostUsersIDPasswordRequest) ExecuteWithHttpInfo() (*_nethttp.Response
 }
 
 /*
- * PostUsersIDPassword Update a password
- * Updates a user password.
+  - PostUsersIDPassword Update a password
+  - Updates a user password.
 
 #### InfluxDB Cloud
 
-- Doesn't allow you to manage user passwords through the API.
-  Use the InfluxDB Cloud user interface (UI) to update a password.
+  - Doesn't allow you to manage user passwords through the API.
+    Use the InfluxDB Cloud user interface (UI) to update a password.
 
 #### Related guides
 
 - [InfluxDB Cloud - Change your password](https://docs.influxdata.com/influxdb/cloud/account-management/change-password/)
 - [InfluxDB OSS - Change your password](https://docs.influxdata.com/influxdb/latest/users/change-password/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userID The ID of the user to set the password for.
- * @return ApiPostUsersIDPasswordRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param userID The ID of the user to set the password for.
+  - @return ApiPostUsersIDPasswordRequest
 */
 func (a *UsersApiService) PostUsersIDPassword(ctx _context.Context, userID string) ApiPostUsersIDPasswordRequest {
 	return ApiPostUsersIDPasswordRequest{
@@ -1517,8 +1519,8 @@ func (r ApiPutUsersIDPasswordRequest) ExecuteWithHttpInfo() (*_nethttp.Response,
 }
 
 /*
- * PutUsersIDPassword Update a password
- * Updates a user password.
+  - PutUsersIDPassword Update a password
+  - Updates a user password.
 
 Use this endpoint to let a user authenticate with
 [Basic authentication credentials](#section/Authentication/BasicAuthentication)
@@ -1526,17 +1528,17 @@ and set a new password.
 
 #### InfluxDB Cloud
 
-- Doesn't allow you to manage user passwords through the API.
-  Use the InfluxDB Cloud user interface (UI) to update a password.
+  - Doesn't allow you to manage user passwords through the API.
+    Use the InfluxDB Cloud user interface (UI) to update a password.
 
 #### Related guides
 
 - [InfluxDB Cloud - Change your password](https://docs.influxdata.com/influxdb/cloud/account-management/change-password/)
 - [InfluxDB OSS - Change your password](https://docs.influxdata.com/influxdb/latest/users/change-password/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userID The ID of the user to set the password for.
- * @return ApiPutUsersIDPasswordRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param userID The ID of the user to set the password for.
+  - @return ApiPutUsersIDPasswordRequest
 */
 func (a *UsersApiService) PutUsersIDPassword(ctx _context.Context, userID string) ApiPutUsersIDPasswordRequest {
 	return ApiPutUsersIDPasswordRequest{

@@ -383,18 +383,18 @@ func (r ApiGetAuthorizationsRequest) ExecuteWithHttpInfo() (Authorizations, *_ne
 }
 
 /*
- * GetAuthorizations List authorizations
- * Retrieves a list of authorizations.
+  - GetAuthorizations List authorizations
+  - Retrieves a list of authorizations.
 
 To limit which authorizations are returned, pass query parameters in your request.
 If no query parameters are passed, InfluxDB returns all authorizations.
 
 #### InfluxDB OSS
 
-- Returns
-  [API token]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#token) values in authorizations.
-- If the request uses an  _[operator token](https://docs.influxdata.com/influxdb/latest/security/tokens/#operator-token)_,
-  InfluxDB OSS returns authorizations for all organizations in the instance.
+  - Returns
+    [API token]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#token) values in authorizations.
+  - If the request uses an  _[operator token](https://docs.influxdata.com/influxdb/latest/security/tokens/#operator-token)_,
+    InfluxDB OSS returns authorizations for all organizations in the instance.
 
 #### Required permissions
 
@@ -404,8 +404,8 @@ If no query parameters are passed, InfluxDB returns all authorizations.
 
 - [View tokens]({{% INFLUXDB_DOCS_URL %}}/security/tokens/view-tokens/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiGetAuthorizationsRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiGetAuthorizationsRequest
 */
 func (a *AuthorizationsApiService) GetAuthorizations(ctx _context.Context) ApiGetAuthorizationsRequest {
 	return ApiGetAuthorizationsRequest{
@@ -940,8 +940,8 @@ func (r ApiPostAuthorizationsRequest) ExecuteWithHttpInfo() (Authorization, *_ne
 }
 
 /*
- * PostAuthorizations Create an authorization
- * Creates an authorization.
+  - PostAuthorizations Create an authorization
+  - Creates an authorization.
 
 Use this endpoint to create an authorization, which generates an API token
 with permissions to `read` or `write` to a specific resource or `type` of resource.
@@ -955,11 +955,11 @@ Keep the following in mind when creating and updating authorizations:
 
 #### Limitations
 
-- In InfluxDB OSS, API tokens are visible to the user who created the authorization and to any
-  user with an _[operator token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/#operator-token)_.
-- Even if an API token has `read-authorizations` permission, the
-  token can't be used to view its authorization details.
-- Tokens stop working when the user who created the token is deleted.
+  - In InfluxDB OSS, API tokens are visible to the user who created the authorization and to any
+    user with an _[operator token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/#operator-token)_.
+  - Even if an API token has `read-authorizations` permission, the
+    token can't be used to view its authorization details.
+  - Tokens stop working when the user who created the token is deleted.
 
 We recommend creating a generic user to create and manage tokens for writing data.
 
@@ -967,8 +967,8 @@ We recommend creating a generic user to create and manage tokens for writing dat
 
 - [Create a token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/create-token/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiPostAuthorizationsRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiPostAuthorizationsRequest
 */
 func (a *AuthorizationsApiService) PostAuthorizations(ctx _context.Context) ApiPostAuthorizationsRequest {
 	return ApiPostAuthorizationsRequest{
