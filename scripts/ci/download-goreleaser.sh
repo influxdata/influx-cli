@@ -4,6 +4,9 @@ set -o nounset \
     -o pipefail
 
 case ${1} in
+v1.14.0)
+  CHECKSUM=5f832026b88340318caaec5bd985951e7d363bd248bf49f25239ebb802304bcb
+  ;;
 v1.13.1)
   CHECKSUM=136fecfb2e2f3a7965274ad5e2571985d8b2fa724b6536874f082e4b0bb9f344
   ;;

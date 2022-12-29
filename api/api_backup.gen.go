@@ -122,13 +122,14 @@ func (r ApiGetBackupKVRequest) ExecuteWithHttpInfo() (*_nethttp.Response, *_neth
 }
 
 /*
- * GetBackupKV Download snapshot of metadata stored in the server's embedded KV store. Don't use with InfluxDB versions greater than InfluxDB 2.1.x.
- * Retrieves a snapshot of metadata stored in the server's embedded KV store.
+  - GetBackupKV Download snapshot of metadata stored in the server's embedded KV store. Don't use with InfluxDB versions greater than InfluxDB 2.1.x.
+  - Retrieves a snapshot of metadata stored in the server's embedded KV store.
+
 InfluxDB versions greater than 2.1.x don't include metadata stored in embedded SQL;
 avoid using this endpoint with versions greater than 2.1.x.
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiGetBackupKVRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiGetBackupKVRequest
 */
 func (a *BackupApiService) GetBackupKV(ctx _context.Context) ApiGetBackupKVRequest {
 	return ApiGetBackupKVRequest{
