@@ -251,7 +251,7 @@ commands:
     steps:
       - run:
           name: Install goreleaser
-          command: ./scripts/ci/download-goreleaser.sh v1.13.1
+          command: ./scripts/ci/download-goreleaser.sh v1.14.0
 
 jobs:
   lint:
