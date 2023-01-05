@@ -1,0 +1,151 @@
+#!/bin/bash
+set -o errexit \
+    -o nounset \
+    -o pipefail
+
+PKG_BIN_PATH="${1}"
+PKG_OUT_PATH="${2}"
+
+# Determine if "${CIRCLE_TAG}" matches the semantic version regex. Otherwise,
+# assume that "${CIRCLE_TAG}" is not intended to tag a release. The regex is
+# permissive of what occurs after the semantic version. This allows for
+# alphas, betas, and release candidates.
+if [[ "${CIRCLE_TAG:-}" =~ ^v[0-9]+.[0-9]+.[0-9]+ ]]
+then
+  VERSION="${CIRCLE_TAG/#v/}"
+  RELEASE=1
+else
+  # When "${CIRCLE_TAG}" cannot be used to construct the package version,
+  # use "${CIRCLE_SHA1}". Since "${CIRCLE_SHA1}" can start with an alpha
+  # (non-numeric) character, prefix it with "2.x-".
+  VERSION="2.x-${CIRCLE_SHA1:0:8}"
+fi
+
+build_archive()
+{
+  local workspace="$(mktemp -d)"
+
+  cp LICENSE README.md "${PKG_BIN_PATH}" "${workspace}"
+
+  pushd "${workspace}"
+
+  local target="${PKG_OUT_PATH}/influxdb2-client-${VERSION}_${OS}_${ARCH}.tar.gz"
+
+  tar -czf "${target}" .
+
+  # generate signature and checksums
+  generate_signature "${target}"
+  generate_checksums "${target}"
+
+  popd
+}
+
+build_package_linux()
+{
+  local workspace="$(mktemp -d)"
+
+  pushd "${workspace}"
+
+  mkdir -p fs/usr/bin
+
+  # copies binaries into package file system
+  cp "${PKG_BIN_PATH}" fs/usr/bin
+
+  fpm_wrapper deb
+  fpm_wrapper rpm
+
+  popd
+}
+
+fpm_wrapper()
+{
+  # "${ARCH}" matches Debian architecture names. Therefore, when building an
+  # RPM, it needs to be converted into a Redhat architecture name. Currently,
+  # influxdb-cli only supports "x86_64" and "aarch64".
+  if [[ "${1}" == rpm ]]
+  then
+    case ${ARCH} in
+      amd64)
+        ARCH=x86_64
+        ;;
+      arm64)
+        ARCH=aarch64
+    esac
+  fi
+
+  case ${1} in
+    rpm)
+      REPLACES='influxdb < 2.1.0'
+      ;;
+    deb)
+      REPLACES='influxdb (<< 2.1.0)'
+      ;;
+  esac
+
+  fpm                                                            \
+    --log error                                                  \
+    `# package description`                                      \
+    --name           influxdb2-client                            \
+    --vendor         InfluxData                                  \
+    --description    'CLI for managing resources in InfluxDB v2' \
+    --url            https://influxdata.com                      \
+    --maintainer     support@influxdb.com                        \
+    --license        MIT                                         \
+    --replaces       "${REPLACES}"                               \
+    `# package configuration`                                    \
+    --input-type     dir                                         \
+    --output-type    "${1}"                                      \
+    --architecture   "${ARCH}"                                   \
+    --version        "${VERSION}"                                \
+    --iteration      1                                           \
+    `# package options`                                          \
+    --chdir          fs/                                         \
+    --package        "${PKG_OUT_PATH}/"
+
+    # `goreleaser` removed the "package revision" from the package filename.
+    # Since the automation is based on the packages created by `goreleaser`,
+    # this will also remove the "package revision" to
+    # maintain compatibility.
+    case ${1} in
+      deb)
+        mv "${PKG_OUT_PATH}/influxdb2-client_${VERSION}-1_${ARCH}.deb" \
+           "${PKG_OUT_PATH}/influxdb2-client-${VERSION}-${ARCH}.deb"
+
+        # generate signature and checksums
+        generate_signature "${PKG_OUT_PATH}/influxdb2-client-${VERSION}-${ARCH}.deb"
+        generate_checksums "${PKG_OUT_PATH}/influxdb2-client-${VERSION}-${ARCH}.deb"
+        ;;
+      rpm)
+        mv "${PKG_OUT_PATH}/influxdb2-client-${VERSION//-/_}-1.${ARCH}.rpm" \
+           "${PKG_OUT_PATH}/influxdb2-client-${VERSION//-/_}.${ARCH}.rpm"
+
+        # generate signature and checksums
+        generate_checksums "${PKG_OUT_PATH}/influxdb2-client-${VERSION//-/_}.${ARCH}.rpm"
+        generate_signature "${PKG_OUT_PATH}/influxdb2-client-${VERSION//-/_}.${ARCH}.rpm"
+        ;;
+    esac
+}
+
+generate_signature()
+{
+  if [[ ( "${SIGN_PACKAGES:-}" ) ]]
+  then
+    gpg --passphrase "${PASSPHRASE}" --pinentry-mode=loopback --batch --armor --detach-sign "${1}"
+  fi
+}
+
+generate_checksums()
+{
+  md5sum    "${1}" >"${1}.md5"
+  sha256sum "${1}" >"${1}.sha256"
+}
+
+case ${OS} in
+  linux)
+    build_archive
+    build_package_linux
+    ;;
+  darwin)
+    build_archive
+    ;;
+esac
