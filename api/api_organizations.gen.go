@@ -519,8 +519,8 @@ func (r ApiDeleteOrgsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error
 }
 
 /*
-  - DeleteOrgsID Delete an organization
-  - Deletes an organization.
+ * DeleteOrgsID Delete an organization
+ * Deletes an organization.
 
 Deleting an organization from InfluxDB Cloud can't be undone.
 Once deleted, all data associated with the organization is removed.
@@ -529,9 +529,9 @@ Once deleted, all data associated with the organization is removed.
 
 - Does the following when you send a delete request:
 
- 1. Validates the request and queues the delete.
- 2. Returns an HTTP `204` status code if queued; _error_ otherwise.
- 3. Handles the delete asynchronously.
+  1. Validates the request and queues the delete.
+  2. Returns an HTTP `204` status code if queued; _error_ otherwise.
+  3. Handles the delete asynchronously.
 
 #### InfluxDB OSS
 
@@ -546,9 +546,9 @@ and then responds with success or failure.
 
 - [Delete organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/delete-orgs/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param orgID The ID of the organization to delete.
-  - @return ApiDeleteOrgsIDRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The ID of the organization to delete.
+ * @return ApiDeleteOrgsIDRequest
 */
 func (a *OrganizationsApiService) DeleteOrgsID(ctx _context.Context, orgID string) ApiDeleteOrgsIDRequest {
 	return ApiDeleteOrgsIDRequest{
@@ -718,16 +718,16 @@ func (r ApiDeleteOrgsIDMembersIDRequest) ExecuteWithHttpInfo() (*_nethttp.Respon
 }
 
 /*
-  - DeleteOrgsIDMembersID Remove a member from an organization
-  - Removes a member from an organization.
+ * DeleteOrgsIDMembersID Remove a member from an organization
+ * Removes a member from an organization.
 
 Use this endpoint to remove a user's member privileges from a bucket. This
 removes the user's `read` and `write` permissions from the organization.
 
 #### InfluxDB Cloud
 
-  - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+- Doesn't use `owner` and `member` roles.
+  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
 
 #### Limitations
 
@@ -745,10 +745,10 @@ owner from.
 
 - [Manage members]({{% INFLUXDB_DOCS_URL %}}/organizations/members/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param userID The ID of the user to remove.
-  - @param orgID The ID of the organization to remove a user from.
-  - @return ApiDeleteOrgsIDMembersIDRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param userID The ID of the user to remove.
+ * @param orgID The ID of the organization to remove a user from.
+ * @return ApiDeleteOrgsIDMembersIDRequest
 */
 func (a *OrganizationsApiService) DeleteOrgsIDMembersID(ctx _context.Context, userID string, orgID string) ApiDeleteOrgsIDMembersIDRequest {
 	return ApiDeleteOrgsIDMembersIDRequest{
@@ -909,17 +909,16 @@ func (r ApiDeleteOrgsIDOwnersIDRequest) ExecuteWithHttpInfo() (*_nethttp.Respons
 }
 
 /*
-  - DeleteOrgsIDOwnersID Remove an owner from an organization
-  - Removes an [owner]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#owner) from
-
+ * DeleteOrgsIDOwnersID Remove an owner from an organization
+ * Removes an [owner]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#owner) from
 the organization.
 
 Organization owners have permission to delete organizations and remove user and member
 permissions from the organization.
 
 #### InfluxDB Cloud
-  - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+- Doesn't use `owner` and `member` roles.
+  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
 
 #### Limitations
 
@@ -936,10 +935,10 @@ remove an owner from.
 #### Related endpoints
 - [Authorizations](#tag/Authorizations)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param userID The ID of the user to remove.
-  - @param orgID The ID of the organization to remove an owner from.
-  - @return ApiDeleteOrgsIDOwnersIDRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param userID The ID of the user to remove.
+ * @param orgID The ID of the organization to remove an owner from.
+ * @return ApiDeleteOrgsIDOwnersIDRequest
 */
 func (a *OrganizationsApiService) DeleteOrgsIDOwnersID(ctx _context.Context, userID string, orgID string) ApiDeleteOrgsIDOwnersIDRequest {
 	return ApiDeleteOrgsIDOwnersIDRequest{
@@ -1136,8 +1135,8 @@ func (r ApiGetOrgsRequest) ExecuteWithHttpInfo() (Organizations, *_nethttp.Respo
 }
 
 /*
-  - GetOrgs List organizations
-  - Retrieves a list of [organizations]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization/).
+ * GetOrgs List organizations
+ * Retrieves a list of [organizations]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization/).
 
 To limit which organizations are returned, pass query parameters in your request.
 If no query parameters are passed, InfluxDB returns all organizations up to the default `limit`.
@@ -1150,8 +1149,8 @@ If no query parameters are passed, InfluxDB returns all organizations up to the 
 
 - [View organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/view-orgs/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @return ApiGetOrgsRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiGetOrgsRequest
 */
 func (a *OrganizationsApiService) GetOrgs(ctx _context.Context) ApiGetOrgsRequest {
 	return ApiGetOrgsRequest{
@@ -1372,8 +1371,8 @@ func (r ApiGetOrgsIDRequest) ExecuteWithHttpInfo() (Organization, *_nethttp.Resp
 }
 
 /*
-  - GetOrgsID Retrieve an organization
-  - Retrieves an organization.
+ * GetOrgsID Retrieve an organization
+ * Retrieves an organization.
 
 Use this endpoint to retrieve information for a specific organization.
 
@@ -1381,9 +1380,9 @@ Use this endpoint to retrieve information for a specific organization.
 
 - [View organizations]({{% INFLUXDB_DOCS_URL %}}/organizations/view-orgs/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param orgID The ID of the organization to retrieve.
-  - @return ApiGetOrgsIDRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The ID of the organization to retrieve.
+ * @return ApiGetOrgsIDRequest
 */
 func (a *OrganizationsApiService) GetOrgsID(ctx _context.Context, orgID string) ApiGetOrgsIDRequest {
 	return ApiGetOrgsIDRequest{
@@ -1566,8 +1565,8 @@ func (r ApiGetOrgsIDMembersRequest) ExecuteWithHttpInfo() (ResourceMembers, *_ne
 }
 
 /*
-  - GetOrgsIDMembers List all members of an organization
-  - Retrieves a list of all users that belong to an organization.
+ * GetOrgsIDMembers List all members of an organization
+ * Retrieves a list of all users that belong to an organization.
 
 InfluxDB [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) have
 permission to access InfluxDB.
@@ -1577,8 +1576,8 @@ within the organization.
 
 #### InfluxDB Cloud
 
-  - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+- Doesn't use `owner` and `member` roles.
+  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
 
 #### Limitations
 
@@ -1597,9 +1596,9 @@ members for.
 - [Manage users]({{% INFLUXDB_DOCS_URL %}}/users/)
 - [Manage members]({{% INFLUXDB_DOCS_URL %}}/organizations/members/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param orgID The ID of the organization to retrieve users for.
-  - @return ApiGetOrgsIDMembersRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The ID of the organization to retrieve users for.
+ * @return ApiGetOrgsIDMembersRequest
 */
 func (a *OrganizationsApiService) GetOrgsIDMembers(ctx _context.Context, orgID string) ApiGetOrgsIDMembersRequest {
 	return ApiGetOrgsIDMembersRequest{
@@ -1782,13 +1781,13 @@ func (r ApiGetOrgsIDOwnersRequest) ExecuteWithHttpInfo() (ResourceOwners, *_neth
 }
 
 /*
-  - GetOrgsIDOwners List all owners of an organization
-  - Retrieves a list of all owners of an organization.
+ * GetOrgsIDOwners List all owners of an organization
+ * Retrieves a list of all owners of an organization.
 
 #### InfluxDB Cloud
 
-  - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+- Doesn't use `owner` and `member` roles.
+  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
 
 #### Required permissions
 
@@ -1797,9 +1796,9 @@ func (r ApiGetOrgsIDOwnersRequest) ExecuteWithHttpInfo() (ResourceOwners, *_neth
 *`INFLUX_ORG_ID`* is the ID of the organization that you want to retrieve a
 list of owners from.
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param orgID The ID of the organization to list owners for.
-  - @return ApiGetOrgsIDOwnersRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The ID of the organization to list owners for.
+ * @return ApiGetOrgsIDOwnersRequest
 */
 func (a *OrganizationsApiService) GetOrgsIDOwners(ctx _context.Context, orgID string) ApiGetOrgsIDOwnersRequest {
 	return ApiGetOrgsIDOwnersRequest{
@@ -1980,8 +1979,8 @@ func (r ApiPatchOrgsIDRequest) ExecuteWithHttpInfo() (Organization, *_nethttp.Re
 }
 
 /*
-  - PatchOrgsID Update an organization
-  - Updates an organization.
+ * PatchOrgsID Update an organization
+ * Updates an organization.
 
 Use this endpoint to update properties
 (`name`, `description`) of an organization.
@@ -2002,9 +2001,9 @@ in these resources as well.
 
 - [Update an organization]({{% INFLUXDB_DOCS_URL %}}/organizations/update-org/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param orgID The ID of the organization to update.
-  - @return ApiPatchOrgsIDRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The ID of the organization to update.
+ * @return ApiPatchOrgsIDRequest
 */
 func (a *OrganizationsApiService) PatchOrgsID(ctx _context.Context, orgID string) ApiPatchOrgsIDRequest {
 	return ApiPatchOrgsIDRequest{
@@ -2181,9 +2180,8 @@ func (r ApiPostOrgsRequest) ExecuteWithHttpInfo() (Organization, *_nethttp.Respo
 }
 
 /*
-  - PostOrgs Create an organization
-  - Creates an [organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization)
-
+ * PostOrgs Create an organization
+ * Creates an [organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization)
 and returns the newly created organization.
 
 #### InfluxDB Cloud
@@ -2194,8 +2192,8 @@ and returns the newly created organization.
 
 - [Manage organizations]({{% INFLUXDB_DOCS_URL %}}/organizations)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @return ApiPostOrgsRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiPostOrgsRequest
 */
 func (a *OrganizationsApiService) PostOrgs(ctx _context.Context) ApiPostOrgsRequest {
 	return ApiPostOrgsRequest{
@@ -2379,8 +2377,8 @@ func (r ApiPostOrgsIDMembersRequest) ExecuteWithHttpInfo() (ResourceMember, *_ne
 }
 
 /*
-  - PostOrgsIDMembers Add a member to an organization
-  - Add a user to an organization.
+ * PostOrgsIDMembers Add a member to an organization
+ * Add a user to an organization.
 
 InfluxDB [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) have
 permission to access InfluxDB.
@@ -2389,8 +2387,8 @@ permission to access InfluxDB.
 within the organization.
 
 #### InfluxDB Cloud
-  - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+- Doesn't use `owner` and `member` roles.
+  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
 
 #### Limitations
 
@@ -2408,9 +2406,9 @@ within the organization.
 - [Manage users]({{% INFLUXDB_DOCS_URL %}}/users/)
 - [Manage members]({{% INFLUXDB_DOCS_URL %}}/organizations/members/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param orgID The ID of the organization.
-  - @return ApiPostOrgsIDMembersRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The ID of the organization.
+ * @return ApiPostOrgsIDMembersRequest
 */
 func (a *OrganizationsApiService) PostOrgsIDMembers(ctx _context.Context, orgID string) ApiPostOrgsIDMembersRequest {
 	return ApiPostOrgsIDMembersRequest{
@@ -2596,15 +2594,15 @@ func (r ApiPostOrgsIDOwnersRequest) ExecuteWithHttpInfo() (ResourceOwner, *_neth
 }
 
 /*
-  - PostOrgsIDOwners Add an owner to an organization
-  - Adds an owner to an organization.
+ * PostOrgsIDOwners Add an owner to an organization
+ * Adds an owner to an organization.
 
 Use this endpoint to assign the organization `owner` role to a user.
 
 #### InfluxDB Cloud
 
-  - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+- Doesn't use `owner` and `member` roles.
+  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
 
 #### Required permissions
 
@@ -2616,9 +2614,9 @@ Use this endpoint to assign the organization `owner` role to a user.
 
 - [Authorizations](#tag/Authorizations)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param orgID The ID of the organization that you want to add an owner for.
-  - @return ApiPostOrgsIDOwnersRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The ID of the organization that you want to add an owner for.
+ * @return ApiPostOrgsIDOwnersRequest
 */
 func (a *OrganizationsApiService) PostOrgsIDOwners(ctx _context.Context, orgID string) ApiPostOrgsIDOwnersRequest {
 	return ApiPostOrgsIDOwnersRequest{

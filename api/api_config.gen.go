@@ -82,8 +82,8 @@ func (r ApiGetConfigRequest) ExecuteWithHttpInfo() (Config, *_nethttp.Response, 
 }
 
 /*
-  - GetConfig Retrieve runtime configuration
-  - Returns the active runtime configuration of the InfluxDB instance.
+ * GetConfig Retrieve runtime configuration
+ * Returns the active runtime configuration of the InfluxDB instance.
 
 In InfluxDB v2.2+, use this endpoint to view your active runtime configuration,
 including flags and environment variables.
@@ -92,8 +92,8 @@ including flags and environment variables.
 
 - [View your runtime server configuration]({{% INFLUXDB_DOCS_URL %}}/reference/config-options/#view-your-runtime-server-configuration)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @return ApiGetConfigRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiGetConfigRequest
 */
 func (a *ConfigApiService) GetConfig(ctx _context.Context) ApiGetConfigRequest {
 	return ApiGetConfigRequest{

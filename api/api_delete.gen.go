@@ -157,8 +157,8 @@ func (r ApiPostDeleteRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) 
 }
 
 /*
-  - PostDelete Delete data
-  - Deletes data from a bucket.
+ * PostDelete Delete data
+ * Deletes data from a bucket.
 
 Use this endpoint to delete points from a bucket in a specified time range.
 
@@ -166,9 +166,9 @@ Use this endpoint to delete points from a bucket in a specified time range.
 
 - Does the following when you send a delete request:
 
- 1. Validates the request and queues the delete.
- 2. If queued, responds with _success_ (HTTP `2xx` status code); _error_ otherwise.
- 3. Handles the delete asynchronously and reaches eventual consistency.
+  1. Validates the request and queues the delete.
+  2. If queued, responds with _success_ (HTTP `2xx` status code); _error_ otherwise.
+  3. Handles the delete asynchronously and reaches eventual consistency.
 
 To ensure that InfluxDB Cloud handles writes and deletes in the order you request them,
 wait for a success response (HTTP `2xx` status code) before you send the next request.
@@ -178,8 +178,8 @@ when you receive the response.
 
 #### InfluxDB OSS
 
-  - Validates the request, handles the delete synchronously,
-    and then responds with success or failure.
+- Validates the request, handles the delete synchronously,
+  and then responds with success or failure.
 
 #### Required permissions
 
@@ -194,16 +194,13 @@ For more information, see [limits and adjustable quotas](https://docs.influxdata
 
 #### Related guides
 
-  - [Delete data]({{% INFLUXDB_DOCS_URL %}}/write-data/delete-data/)
+- [Delete data]({{% INFLUXDB_DOCS_URL %}}/write-data/delete-data/)
+- Learn how to use [delete predicate syntax]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/delete-predicate/).
+- Learn how InfluxDB handles [deleted tags](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementtagkeys/)
+  and [deleted fields](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementfieldkeys/).
 
-  - Learn how to use [delete predicate syntax]({{% INFLUXDB_DOCS_URL %}}/reference/syntax/delete-predicate/).
-
-  - Learn how InfluxDB handles [deleted tags](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementtagkeys/)
-    and [deleted fields](https://docs.influxdata.com/flux/v0.x/stdlib/influxdata/influxdb/schema/measurementfieldkeys/).
-
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-
-  - @return ApiPostDeleteRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiPostDeleteRequest
 */
 func (a *DeleteApiService) PostDelete(ctx _context.Context) ApiPostDeleteRequest {
 	return ApiPostDeleteRequest{

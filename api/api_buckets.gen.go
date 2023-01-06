@@ -271,16 +271,16 @@ func (r ApiDeleteBucketsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, er
 }
 
 /*
-  - DeleteBucketsID Delete a bucket
-  - Deletes a bucket and all associated records.
+ * DeleteBucketsID Delete a bucket
+ * Deletes a bucket and all associated records.
 
 #### InfluxDB Cloud
 
 - Does the following when you send a delete request:
 
- 1. Validates the request and queues the delete.
- 2. Returns an HTTP `204` status code if queued; _error_ otherwise.
- 3. Handles the delete asynchronously.
+  1. Validates the request and queues the delete.
+  2. Returns an HTTP `204` status code if queued; _error_ otherwise.
+  3. Handles the delete asynchronously.
 
 #### InfluxDB OSS
 
@@ -295,9 +295,9 @@ and then responds with success or failure.
 
 - [Delete a bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/delete-bucket/#delete-a-bucket-in-the-influxdb-ui)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param bucketID Bucket ID. The ID of the bucket to delete.
-  - @return ApiDeleteBucketsIDRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param bucketID Bucket ID. The ID of the bucket to delete.
+ * @return ApiDeleteBucketsIDRequest
 */
 func (a *BucketsApiService) DeleteBucketsID(ctx _context.Context, bucketID string) ApiDeleteBucketsIDRequest {
 	return ApiDeleteBucketsIDRequest{
@@ -523,8 +523,8 @@ func (r ApiGetBucketsRequest) ExecuteWithHttpInfo() (Buckets, *_nethttp.Response
 }
 
 /*
-  - GetBuckets List buckets
-  - Retrieves a list of [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
+ * GetBuckets List buckets
+ * Retrieves a list of [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
 
 InfluxDB retrieves buckets owned by the
 [organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization)
@@ -540,11 +540,11 @@ default `limit`.
 
 #### InfluxDB OSS
 
-  - If you use an _[operator token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/#operator-token)_
-    to authenticate your request, InfluxDB retrieves resources for _all
-    organizations_ in the instance.
-    To retrieve resources for only a specific organization, use the
-    `org` parameter or the `orgID` parameter to specify the organization.
+- If you use an _[operator token]({{% INFLUXDB_DOCS_URL %}}/security/tokens/#operator-token)_
+  to authenticate your request, InfluxDB retrieves resources for _all
+  organizations_ in the instance.
+  To retrieve resources for only a specific organization, use the
+  `org` parameter or the `orgID` parameter to specify the organization.
 
 #### Required permissions
 
@@ -557,8 +557,8 @@ default `limit`.
 
 - [Manage buckets]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @return ApiGetBucketsRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiGetBucketsRequest
 */
 func (a *BucketsApiService) GetBuckets(ctx _context.Context) ApiGetBucketsRequest {
 	return ApiGetBucketsRequest{
@@ -749,14 +749,14 @@ func (r ApiGetBucketsIDRequest) ExecuteWithHttpInfo() (Bucket, *_nethttp.Respons
 }
 
 /*
-  - GetBucketsID Retrieve a bucket
-  - Retrieves a bucket.
+ * GetBucketsID Retrieve a bucket
+ * Retrieves a bucket.
 
 Use this endpoint to retrieve information for a specific bucket.
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param bucketID The ID of the bucket to retrieve.
-  - @return ApiGetBucketsIDRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param bucketID The ID of the bucket to retrieve.
+ * @return ApiGetBucketsIDRequest
 */
 func (a *BucketsApiService) GetBucketsID(ctx _context.Context, bucketID string) ApiGetBucketsIDRequest {
 	return ApiGetBucketsIDRequest{
@@ -948,8 +948,8 @@ func (r ApiPatchBucketsIDRequest) ExecuteWithHttpInfo() (Bucket, *_nethttp.Respo
 }
 
 /*
-  - PatchBucketsID Update a bucket
-  - Updates a bucket.
+ * PatchBucketsID Update a bucket
+ * Updates a bucket.
 
 Use this endpoint to update properties
 (`name`, `description`, and `retentionRules`) of a bucket.
@@ -967,9 +967,9 @@ provide `retentionRules`, InfluxDB responds with an HTTP `403` status code.
 
 - [Update a bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/update-bucket/)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param bucketID The bucket ID.
-  - @return ApiPatchBucketsIDRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param bucketID The bucket ID.
+ * @return ApiPatchBucketsIDRequest
 */
 func (a *BucketsApiService) PatchBucketsID(ctx _context.Context, bucketID string) ApiPatchBucketsIDRequest {
 	return ApiPatchBucketsIDRequest{
@@ -1179,9 +1179,8 @@ func (r ApiPostBucketsRequest) ExecuteWithHttpInfo() (Bucket, *_nethttp.Response
 }
 
 /*
-  - PostBuckets Create a bucket
-  - Creates a [bucket]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket)
-
+ * PostBuckets Create a bucket
+ * Creates a [bucket]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket)
 and returns the bucket resource.
 The default data
 [retention period]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#retention-period)
@@ -1206,8 +1205,8 @@ For additional information regarding InfluxDB Cloud offerings, see
 - [Create a bucket]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/)
 - [Create bucket CLI reference]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/bucket/create)
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @return ApiPostBucketsRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiPostBucketsRequest
 */
 func (a *BucketsApiService) PostBuckets(ctx _context.Context) ApiPostBucketsRequest {
 	return ApiPostBucketsRequest{

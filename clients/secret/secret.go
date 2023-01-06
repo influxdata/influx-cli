@@ -36,11 +36,10 @@ func (c Client) Delete(ctx context.Context, params *DeleteParams) error {
 		return err
 	}
 
-	// PostOrgsIDSecrets is used to remove secrets from an organization.
+	// DeleteOrgsIDSecretsID is used to remove a secret from an organization.
 	// The name is generated from the operationId in the
-	// orgs_orgsID_secrets_delete.yml path.
-	err = c.PostOrgsIDSecrets(ctx, orgID).
-		SecretKeys(api.SecretKeys{Secrets: &[]string{params.Key}}).
+	// orgs_orgsID_secrets_secretID.yml path.
+	err = c.DeleteOrgsIDSecretsID(ctx, orgID, params.Key).
 		Execute()
 	if err != nil {
 		return fmt.Errorf("failed to delete secret with key %q: %w", params.Key, err)

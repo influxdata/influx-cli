@@ -904,8 +904,8 @@ func (r ApiPostLegacyAuthorizationsRequest) ExecuteWithHttpInfo() (Authorization
 }
 
 /*
-  - PostLegacyAuthorizations Create a legacy authorization
-  - Creates a legacy authorization and returns the legacy authorization.
+ * PostLegacyAuthorizations Create a legacy authorization
+ * Creates a legacy authorization and returns the legacy authorization.
 
 #### Required permissions
 
@@ -913,8 +913,8 @@ func (r ApiPostLegacyAuthorizationsRequest) ExecuteWithHttpInfo() (Authorization
 
 *`USER_ID`* is the ID of the user that you want to scope the authorization to.
 
-  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @return ApiPostLegacyAuthorizationsRequest
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @return ApiPostLegacyAuthorizationsRequest
 */
 func (a *LegacyAuthorizationsApiService) PostLegacyAuthorizations(ctx _context.Context) ApiPostLegacyAuthorizationsRequest {
 	return ApiPostLegacyAuthorizationsRequest{

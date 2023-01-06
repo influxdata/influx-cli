@@ -27,6 +27,27 @@ var (
 type SecretsApi interface {
 
 	/*
+	 * DeleteOrgsIDSecretsID Delete a secret from an organization
+	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param orgID The organization ID.
+	 * @param secretID The secret ID.
+	 * @return ApiDeleteOrgsIDSecretsIDRequest
+	 */
+	DeleteOrgsIDSecretsID(ctx _context.Context, orgID string, secretID string) ApiDeleteOrgsIDSecretsIDRequest
+
+	/*
+	 * DeleteOrgsIDSecretsIDExecute executes the request
+	 */
+	DeleteOrgsIDSecretsIDExecute(r ApiDeleteOrgsIDSecretsIDRequest) error
+
+	/*
+	 * DeleteOrgsIDSecretsIDExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not
+	 * available on the returned HTTP response as it will have already been read and closed; access to the response body
+	 * content should be achieved through the returned response model if applicable.
+	 */
+	DeleteOrgsIDSecretsIDExecuteWithHttpInfo(r ApiDeleteOrgsIDSecretsIDRequest) (*_nethttp.Response, error)
+
+	/*
 	 * GetOrgsIDSecrets List all secret keys for an organization
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @param orgID The organization ID.
@@ -91,6 +112,160 @@ type SecretsApi interface {
 
 // SecretsApiService SecretsApi service
 type SecretsApiService service
+
+type ApiDeleteOrgsIDSecretsIDRequest struct {
+	ctx          _context.Context
+	ApiService   SecretsApi
+	orgID        string
+	secretID     string
+	zapTraceSpan *string
+}
+
+func (r ApiDeleteOrgsIDSecretsIDRequest) OrgID(orgID string) ApiDeleteOrgsIDSecretsIDRequest {
+	r.orgID = orgID
+	return r
+}
+func (r ApiDeleteOrgsIDSecretsIDRequest) GetOrgID() string {
+	return r.orgID
+}
+
+func (r ApiDeleteOrgsIDSecretsIDRequest) SecretID(secretID string) ApiDeleteOrgsIDSecretsIDRequest {
+	r.secretID = secretID
+	return r
+}
+func (r ApiDeleteOrgsIDSecretsIDRequest) GetSecretID() string {
+	return r.secretID
+}
+
+func (r ApiDeleteOrgsIDSecretsIDRequest) ZapTraceSpan(zapTraceSpan string) ApiDeleteOrgsIDSecretsIDRequest {
+	r.zapTraceSpan = &zapTraceSpan
+	return r
+}
+func (r ApiDeleteOrgsIDSecretsIDRequest) GetZapTraceSpan() *string {
+	return r.zapTraceSpan
+}
+
+func (r ApiDeleteOrgsIDSecretsIDRequest) Execute() error {
+	return r.ApiService.DeleteOrgsIDSecretsIDExecute(r)
+}
+
+func (r ApiDeleteOrgsIDSecretsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
+	return r.ApiService.DeleteOrgsIDSecretsIDExecuteWithHttpInfo(r)
+}
+
+/*
+ * DeleteOrgsIDSecretsID Delete a secret from an organization
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param orgID The organization ID.
+ * @param secretID The secret ID.
+ * @return ApiDeleteOrgsIDSecretsIDRequest
+ */
+func (a *SecretsApiService) DeleteOrgsIDSecretsID(ctx _context.Context, orgID string, secretID string) ApiDeleteOrgsIDSecretsIDRequest {
+	return ApiDeleteOrgsIDSecretsIDRequest{
+		ApiService: a,
+		ctx:        ctx,
+		orgID:      orgID,
+		secretID:   secretID,
+	}
+}
+
+/*
+ * Execute executes the request
+ */
+func (a *SecretsApiService) DeleteOrgsIDSecretsIDExecute(r ApiDeleteOrgsIDSecretsIDRequest) error {
+	_, err := a.DeleteOrgsIDSecretsIDExecuteWithHttpInfo(r)
+	return err
+}
+
+/*
+ * ExecuteWithHttpInfo executes the request with HTTP response info returned. The response body is not available on the
+ * returned HTTP response as it will have already been read and closed; access to the response body content should be
+ * achieved through the returned response model if applicable.
+ */
+func (a *SecretsApiService) DeleteOrgsIDSecretsIDExecuteWithHttpInfo(r ApiDeleteOrgsIDSecretsIDRequest) (*_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodDelete
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecretsApiService.DeleteOrgsIDSecretsID")
+	if err != nil {
+		return nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v2/orgs/{orgID}/secrets/{secretID}"
+	localVarPath = strings.Replace(localVarPath, "{"+"orgID"+"}", _neturl.PathEscape(parameterToString(r.orgID, "")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"secretID"+"}", _neturl.PathEscape(parameterToString(r.secretID, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.zapTraceSpan != nil {
+		localVarHeaderParams["Zap-Trace-Span"] = parameterToString(*r.zapTraceSpan, "")
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	newErr := GenericOpenAPIError{
+		buildHeader: localVarHTTPResponse.Header.Get("X-Influxdb-Build"),
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		body, err := GunzipIfNeeded(localVarHTTPResponse)
+		if err != nil {
+			body.Close()
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
+		}
+		localVarBody, err := _io.ReadAll(body)
+		body.Close()
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarHTTPResponse, newErr
+		}
+		newErr.body = localVarBody
+		newErr.error = localVarHTTPResponse.Status
+		var v Error
+		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+			return localVarHTTPResponse, newErr
+		}
+		v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+		newErr.model = &v
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
 
 type ApiGetOrgsIDSecretsRequest struct {
 	ctx          _context.Context
