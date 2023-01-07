@@ -106,8 +106,8 @@ func (r ApiGetPingRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
 }
 
 /*
- * GetPing Get the status of the instance
- * Retrieves the status and InfluxDB version of the instance.
+  - GetPing Get the status of the instance
+  - Retrieves the status and InfluxDB version of the instance.
 
 Use this endpoint to monitor uptime for the InfluxDB instance. The response
 returns a HTTP `204` status code to inform you the instance is available.
@@ -120,8 +120,8 @@ returns a HTTP `204` status code to inform you the instance is available.
 
 - [Influx ping]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/ping/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiGetPingRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiGetPingRequest
 */
 func (a *PingApiService) GetPing(ctx _context.Context) ApiGetPingRequest {
 	return ApiGetPingRequest{
@@ -229,8 +229,8 @@ func (r ApiHeadPingRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error) {
 }
 
 /*
- * HeadPing Get the status of the instance
- * Returns the status and InfluxDB version of the instance.
+  - HeadPing Get the status of the instance
+  - Returns the status and InfluxDB version of the instance.
 
 Use this endpoint to monitor uptime for the InfluxDB instance. The response
 returns a HTTP `204` status code to inform you the instance is available.
@@ -243,8 +243,8 @@ returns a HTTP `204` status code to inform you the instance is available.
 
 - [Influx ping]({{% INFLUXDB_DOCS_URL %}}/reference/cli/influx/ping/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiHeadPingRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiHeadPingRequest
 */
 func (a *PingApiService) HeadPing(ctx _context.Context) ApiHeadPingRequest {
 	return ApiHeadPingRequest{

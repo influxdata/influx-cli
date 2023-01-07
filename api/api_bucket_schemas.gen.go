@@ -221,8 +221,9 @@ func (r ApiCreateMeasurementSchemaRequest) ExecuteWithHttpInfo() (MeasurementSch
 }
 
 /*
- * CreateMeasurementSchema Create a measurement schema for a bucket
- * Creates an _explict_ measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema)
+  - CreateMeasurementSchema Create a measurement schema for a bucket
+  - Creates an _explict_ measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema)
+
 for a bucket.
 
 _Explicit_ schemas are used to enforce column names, tags, fields, and data
@@ -243,9 +244,9 @@ schemas.
 - [Manage bucket schemas]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/bucket-schema/).
 - [Create a bucket with an explicit schema]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/create-bucket/#create-a-bucket-with-an-explicit-schema)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID A bucket ID. Adds a schema for the specified bucket.
- * @return ApiCreateMeasurementSchemaRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param bucketID A bucket ID. Adds a schema for the specified bucket.
+  - @return ApiCreateMeasurementSchemaRequest
 */
 func (a *BucketSchemasApiService) CreateMeasurementSchema(ctx _context.Context, bucketID string) ApiCreateMeasurementSchemaRequest {
 	return ApiCreateMeasurementSchemaRequest{
@@ -443,13 +444,13 @@ func (r ApiGetMeasurementSchemaRequest) ExecuteWithHttpInfo() (MeasurementSchema
 }
 
 /*
- * GetMeasurementSchema Retrieve a measurement schema
- * Retrieves an explicit measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema).
+* GetMeasurementSchema Retrieve a measurement schema
+* Retrieves an explicit measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema).
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID A bucket ID. Retrieves schemas for the specified bucket.
- * @param measurementID The measurement schema ID. Specifies the measurement schema to retrieve.
- * @return ApiGetMeasurementSchemaRequest
+* @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+* @param bucketID A bucket ID. Retrieves schemas for the specified bucket.
+* @param measurementID The measurement schema ID. Specifies the measurement schema to retrieve.
+* @return ApiGetMeasurementSchemaRequest
  */
 func (a *BucketSchemasApiService) GetMeasurementSchema(ctx _context.Context, bucketID string, measurementID string) ApiGetMeasurementSchemaRequest {
 	return ApiGetMeasurementSchemaRequest{
@@ -636,8 +637,9 @@ func (r ApiGetMeasurementSchemasRequest) ExecuteWithHttpInfo() (MeasurementSchem
 }
 
 /*
- * GetMeasurementSchemas List measurement schemas of a bucket
- * Retrieves a list of _explicit_
+  - GetMeasurementSchemas List measurement schemas of a bucket
+  - Retrieves a list of _explicit_
+
 [schemas]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema)
 (`"schemaType": "explicit"`) for a bucket.
 
@@ -651,9 +653,9 @@ that conforms to your data.
 
 - [Using bucket schemas](https://www.influxdata.com/blog/new-bucket-schema-option-protect-from-unwanted-schema-changes/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID A bucket ID. Lists measurement schemas for the specified bucket.
- * @return ApiGetMeasurementSchemasRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param bucketID A bucket ID. Lists measurement schemas for the specified bucket.
+  - @return ApiGetMeasurementSchemasRequest
 */
 func (a *BucketSchemasApiService) GetMeasurementSchemas(ctx _context.Context, bucketID string) ApiGetMeasurementSchemasRequest {
 	return ApiGetMeasurementSchemasRequest{
@@ -861,8 +863,8 @@ func (r ApiUpdateMeasurementSchemaRequest) ExecuteWithHttpInfo() (MeasurementSch
 }
 
 /*
- * UpdateMeasurementSchema Update a measurement schema
- * Updates a measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema).
+  - UpdateMeasurementSchema Update a measurement schema
+  - Updates a measurement [schema]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema).
 
 Use this endpoint to update the fields (`name`, `type`, and `dataType`) of a
 measurement schema.
@@ -876,10 +878,10 @@ measurement schema.
 - [Manage bucket schemas]({{% INFLUXDB_DOCS_URL %}}/organizations/buckets/bucket-schema/).
 - [Using bucket schemas](https://www.influxdata.com/blog/new-bucket-schema-option-protect-from-unwanted-schema-changes/).
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param bucketID A bucket ID. Specifies the bucket to retrieve schemas for.
- * @param measurementID A measurement schema ID. Retrieves the specified measurement schema.
- * @return ApiUpdateMeasurementSchemaRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param bucketID A bucket ID. Specifies the bucket to retrieve schemas for.
+  - @param measurementID A measurement schema ID. Retrieves the specified measurement schema.
+  - @return ApiUpdateMeasurementSchemaRequest
 */
 func (a *BucketSchemasApiService) UpdateMeasurementSchema(ctx _context.Context, bucketID string, measurementID string) ApiUpdateMeasurementSchemaRequest {
 	return ApiUpdateMeasurementSchemaRequest{

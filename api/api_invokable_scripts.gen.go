@@ -382,15 +382,15 @@ func (r ApiGetScriptsRequest) ExecuteWithHttpInfo() (Scripts, *_nethttp.Response
 }
 
 /*
- * GetScripts List scripts
- * Retrieves a list of [scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
+  - GetScripts List scripts
+  - Retrieves a list of [scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
 
 #### Related guides
 
 - [Invoke custom scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiGetScriptsRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiGetScriptsRequest
 */
 func (a *InvokableScriptsApiService) GetScripts(ctx _context.Context) ApiGetScriptsRequest {
 	return ApiGetScriptsRequest{
@@ -582,12 +582,12 @@ func (r ApiGetScriptsIDRequest) ExecuteWithHttpInfo() (Script, *_nethttp.Respons
 }
 
 /*
- * GetScriptsID Retrieve a script
- * Retrieves a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
+* GetScriptsID Retrieve a script
+* Retrieves a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param scriptID A script ID. Retrieves the specified script.
- * @return ApiGetScriptsIDRequest
+* @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+* @param scriptID A script ID. Retrieves the specified script.
+* @return ApiGetScriptsIDRequest
  */
 func (a *InvokableScriptsApiService) GetScriptsID(ctx _context.Context, scriptID string) ApiGetScriptsIDRequest {
 	return ApiGetScriptsIDRequest{
@@ -756,14 +756,14 @@ func (r ApiPatchScriptsIDRequest) ExecuteWithHttpInfo() (Script, *_nethttp.Respo
 }
 
 /*
- * PatchScriptsID Update a script
- * Updates a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/) and returns the script.
+  - PatchScriptsID Update a script
+  - Updates a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/) and returns the script.
 
 Use this endpoint to update the properties (`name`, `description`, and `script`) of an invokable script.
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param scriptID A script ID. Updates the specified script.
- * @return ApiPatchScriptsIDRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param scriptID A script ID. Updates the specified script.
+  - @return ApiPatchScriptsIDRequest
 */
 func (a *InvokableScriptsApiService) PatchScriptsID(ctx _context.Context, scriptID string) ApiPatchScriptsIDRequest {
 	return ApiPatchScriptsIDRequest{
@@ -928,8 +928,9 @@ func (r ApiPostScriptsRequest) ExecuteWithHttpInfo() (Script, *_nethttp.Response
 }
 
 /*
- * PostScripts Create a script
- * Creates an [invokable script](https://docs.influxdata.com/resources/videos/api-invokable-scripts/)
+  - PostScripts Create a script
+  - Creates an [invokable script](https://docs.influxdata.com/resources/videos/api-invokable-scripts/)
+
 and returns the script.
 
 #### Related guides
@@ -937,8 +938,8 @@ and returns the script.
 - [Invokable scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/)
 - [Creating custom InfluxDB endpoints](https://docs.influxdata.com/resources/videos/api-invokable-scripts/)
 
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiPostScriptsRequest
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiPostScriptsRequest
 */
 func (a *InvokableScriptsApiService) PostScripts(ctx _context.Context) ApiPostScriptsRequest {
 	return ApiPostScriptsRequest{
