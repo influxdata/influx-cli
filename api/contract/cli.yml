@@ -43,6 +43,8 @@ paths:
     $ref: "./openapi/src/common/paths/orgs_orgID_secrets.yml"
   /api/v2/orgs/{orgID}/secrets/{delete}:
     $ref: "./openapi/src/common/paths/orgs_orgID_secrets_delete.yml"
+  /api/v2/orgs/{orgID}/secrets/{secretID}:
+    $ref: "./openapi/src/common/paths/orgs_orgID_secrets_secretID.yml"
   /api/v2/buckets/{bucketID}/schema/measurements:
     $ref: "./openapi/src/cloud/paths/measurements.yml"
   /api/v2/buckets/{bucketID}/schema/measurements/{measurementID}:

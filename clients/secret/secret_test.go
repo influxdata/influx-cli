@@ -140,11 +140,11 @@ func TestSecret_Delete(t *testing.T) {
 			},
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi) {
-				req := api.ApiPostOrgsIDSecretsRequest{ApiService: secretApi}.
+				req := api.ApiDeleteOrgsIDSecretsIDRequest{ApiService: secretApi}.
 					OrgID(id).
-					SecretKeys(api.SecretKeys{Secrets: &[]string{"key1"}})
-				secretApi.EXPECT().PostOrgsIDSecrets(gomock.Any(), gomock.Eq(id)).Return(req)
-				secretApi.EXPECT().PostOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
+					SecretID("key1")
+				secretApi.EXPECT().DeleteOrgsIDSecretsID(gomock.Any(), gomock.Eq(id), gomock.Eq("key1")).Return(req)
+				secretApi.EXPECT().DeleteOrgsIDSecretsIDExecute(gomock.Eq(req)).Return(nil)
 			},
 			expectMatcher: printHeader + fakeKey + "\t" + id + "\ttrue\n",
 		},
@@ -159,11 +159,11 @@ func TestSecret_Delete(t *testing.T) {
 			},
 			defaultOrgName: defaultOrgName,
 			registerExpectations: func(t *testing.T, secretApi *mock.MockSecretsApi) {
-				req := api.ApiPostOrgsIDSecretsRequest{ApiService: secretApi}.
+				req := api.ApiDeleteOrgsIDSecretsIDRequest{ApiService: secretApi}.
 					OrgID(id).
-					SecretKeys(api.SecretKeys{Secrets: &[]string{""}})
-				secretApi.EXPECT().PostOrgsIDSecrets(gomock.Any(), gomock.Eq(id)).Return(req)
-				secretApi.EXPECT().PostOrgsIDSecretsExecute(gomock.Eq(req)).Return(nil)
+					SecretID("")
+				secretApi.EXPECT().DeleteOrgsIDSecretsID(gomock.Any(), gomock.Eq(id), gomock.Eq("")).Return(req)
+				secretApi.EXPECT().DeleteOrgsIDSecretsIDExecute(gomock.Eq(req)).Return(nil)
 			},
 			expectMatcher: printHeader + "\t" + id + "\ttrue\n",
 		},

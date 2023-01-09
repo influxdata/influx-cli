@@ -36,6 +36,49 @@ func (m *MockSecretsApi) EXPECT() *MockSecretsApiMockRecorder {
 	return m.recorder
 }
 
+// DeleteOrgsIDSecretsID mocks base method.
+func (m *MockSecretsApi) DeleteOrgsIDSecretsID(arg0 context.Context, arg1, arg2 string) api.ApiDeleteOrgsIDSecretsIDRequest {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOrgsIDSecretsID", arg0, arg1, arg2)
+	ret0, _ := ret[0].(api.ApiDeleteOrgsIDSecretsIDRequest)
+	return ret0
+}
+
+// DeleteOrgsIDSecretsID indicates an expected call of DeleteOrgsIDSecretsID.
+func (mr *MockSecretsApiMockRecorder) DeleteOrgsIDSecretsID(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDSecretsID", reflect.TypeOf((*MockSecretsApi)(nil).DeleteOrgsIDSecretsID), arg0, arg1, arg2)
+}
+
+// DeleteOrgsIDSecretsIDExecute mocks base method.
+func (m *MockSecretsApi) DeleteOrgsIDSecretsIDExecute(arg0 api.ApiDeleteOrgsIDSecretsIDRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOrgsIDSecretsIDExecute", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteOrgsIDSecretsIDExecute indicates an expected call of DeleteOrgsIDSecretsIDExecute.
+func (mr *MockSecretsApiMockRecorder) DeleteOrgsIDSecretsIDExecute(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDSecretsIDExecute", reflect.TypeOf((*MockSecretsApi)(nil).DeleteOrgsIDSecretsIDExecute), arg0)
+}
+
+// DeleteOrgsIDSecretsIDExecuteWithHttpInfo mocks base method.
+func (m *MockSecretsApi) DeleteOrgsIDSecretsIDExecuteWithHttpInfo(arg0 api.ApiDeleteOrgsIDSecretsIDRequest) (*http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOrgsIDSecretsIDExecuteWithHttpInfo", arg0)
+	ret0, _ := ret[0].(*http.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteOrgsIDSecretsIDExecuteWithHttpInfo indicates an expected call of DeleteOrgsIDSecretsIDExecuteWithHttpInfo.
+func (mr *MockSecretsApiMockRecorder) DeleteOrgsIDSecretsIDExecuteWithHttpInfo(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrgsIDSecretsIDExecuteWithHttpInfo", reflect.TypeOf((*MockSecretsApi)(nil).DeleteOrgsIDSecretsIDExecuteWithHttpInfo), arg0)
+}
+
 // GetOrgsIDSecrets mocks base method.
 func (m *MockSecretsApi) GetOrgsIDSecrets(arg0 context.Context, arg1 string) api.ApiGetOrgsIDSecretsRequest {
 	m.ctrl.T.Helper()
