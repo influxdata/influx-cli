@@ -241,7 +241,7 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 	}
 
 	headers := []string{"ID", "Name", "Org ID", "Remote ID", "Local Bucket ID", "Remote Bucket ID", "Remote Bucket Name",
-		"Current Queue Bytes", "Max Queue Bytes", "Latest Status Code", "Drop Non-Retryable Data"}
+		"Remaining Bytes to be Synced", "Total Bytes On Disk", "Max Queue Bytes", "Latest Status Code", "Drop Non-Retryable Data"}
 	if opts.deleted {
 		headers = append(headers, "Deleted")
 	}
@@ -258,17 +258,18 @@ func (c Client) printReplication(opts printReplicationOpts) error {
 			bucketID = ""
 		}
 		row := map[string]interface{}{
-			"ID":                      r.GetId(),
-			"Name":                    r.GetName(),
-			"Org ID":                  r.GetOrgID(),
-			"Remote ID":               r.GetRemoteID(),
-			"Local Bucket ID":         r.GetLocalBucketID(),
-			"Remote Bucket ID":        bucketID,
-			"Remote Bucket Name":      r.GetRemoteBucketName(),
-			"Current Queue Bytes":     r.GetCurrentQueueSizeBytes(),
-			"Max Queue Bytes":         r.GetMaxQueueSizeBytes(),
-			"Latest Status Code":      r.GetLatestResponseCode(),
-			"Drop Non-Retryable Data": r.GetDropNonRetryableData(),
+			"ID":                           r.GetId(),
+			"Name":                         r.GetName(),
+			"Org ID":                       r.GetOrgID(),
+			"Remote ID":                    r.GetRemoteID(),
+			"Local Bucket ID":              r.GetLocalBucketID(),
+			"Remote Bucket ID":             bucketID,
+			"Remote Bucket Name":           r.GetRemoteBucketName(),
+			"Remaining Bytes to be Synced": r.GetRemainingBytesToBeSynced(),
+			"Total Bytes On Disk":          r.GetTotalSizeOnDiskBytes(),
+			"Max Queue Bytes":              r.GetMaxQueueSizeBytes(),
+			"Latest Status Code":           r.GetLatestResponseCode(),
+			"Drop Non-Retryable Data":      r.GetDropNonRetryableData(),
 		}
 		if opts.deleted {
 			row["Deleted"] = true
