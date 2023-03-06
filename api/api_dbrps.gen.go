@@ -27,11 +27,17 @@ var (
 type DBRPsApi interface {
 
 	/*
-	 * DeleteDBRPID Delete a database retention policy
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param dbrpID The database retention policy mapping
-	 * @return ApiDeleteDBRPIDRequest
-	 */
+			 * DeleteDBRPID Delete a database retention policy
+			 * Deletes the specified database retention policy (DBRP) mapping.
+
+		#### Related guide
+
+		- [Database and retention policy mapping]({{% INFLUXDB_DOCS_URL %}}/reference/api/influxdb-1x/dbrp/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param dbrpID A DBRP mapping ID. Only returns the specified DBRP mapping.
+			 * @return ApiDeleteDBRPIDRequest
+	*/
 	DeleteDBRPID(ctx _context.Context, dbrpID string) ApiDeleteDBRPIDRequest
 
 	/*
@@ -47,10 +53,16 @@ type DBRPsApi interface {
 	DeleteDBRPIDExecuteWithHttpInfo(r ApiDeleteDBRPIDRequest) (*_nethttp.Response, error)
 
 	/*
-	 * GetDBRPs List database retention policy mappings
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiGetDBRPsRequest
-	 */
+			 * GetDBRPs List database retention policy mappings
+			 * Lists database retention policy (DBRP) mappings.
+
+		#### Related guide
+
+		- [Database and retention policy mapping]({{% INFLUXDB_DOCS_URL %}}/reference/api/influxdb-1x/dbrp/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiGetDBRPsRequest
+	*/
 	GetDBRPs(ctx _context.Context) ApiGetDBRPsRequest
 
 	/*
@@ -68,11 +80,17 @@ type DBRPsApi interface {
 	GetDBRPsExecuteWithHttpInfo(r ApiGetDBRPsRequest) (DBRPs, *_nethttp.Response, error)
 
 	/*
-	 * GetDBRPsID Retrieve a database retention policy mapping
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param dbrpID The database retention policy mapping ID
-	 * @return ApiGetDBRPsIDRequest
-	 */
+			 * GetDBRPsID Retrieve a database retention policy mapping
+			 * Retrieves the specified retention policy (DBRP) mapping.
+
+		#### Related guide
+
+		- [Database and retention policy mapping]({{% INFLUXDB_DOCS_URL %}}/reference/api/influxdb-1x/dbrp/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param dbrpID A DBRP mapping ID. Specifies the DBRP mapping.
+			 * @return ApiGetDBRPsIDRequest
+	*/
 	GetDBRPsID(ctx _context.Context, dbrpID string) ApiGetDBRPsIDRequest
 
 	/*
@@ -92,7 +110,7 @@ type DBRPsApi interface {
 	/*
 	 * PatchDBRPID Update a database retention policy mapping
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param dbrpID The database retention policy mapping.
+	 * @param dbrpID A DBRP mapping ID. Specifies the DBRP mapping.
 	 * @return ApiPatchDBRPIDRequest
 	 */
 	PatchDBRPID(ctx _context.Context, dbrpID string) ApiPatchDBRPIDRequest
@@ -112,10 +130,21 @@ type DBRPsApi interface {
 	PatchDBRPIDExecuteWithHttpInfo(r ApiPatchDBRPIDRequest) (DBRPGet, *_nethttp.Response, error)
 
 	/*
-	 * PostDBRP Add a database retention policy mapping
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @return ApiPostDBRPRequest
-	 */
+			 * PostDBRP Add a database retention policy mapping
+			 * Creates a database retention policy (DBRP) mapping and returns the mapping.
+
+		Use this endpoint to add InfluxDB 1.x API compatibility to your
+		InfluxDB Cloud or InfluxDB OSS 2.x buckets. Your buckets must contain a
+		DBRP mapping in order to query and write using the InfluxDB 1.x API.
+		object.
+
+		#### Related guide
+
+		- [Database and retention policy mapping]({{% INFLUXDB_DOCS_URL %}}/reference/api/influxdb-1x/dbrp/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @return ApiPostDBRPRequest
+	*/
 	PostDBRP(ctx _context.Context) ApiPostDBRPRequest
 
 	/*
@@ -186,11 +215,17 @@ func (r ApiDeleteDBRPIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, error
 }
 
 /*
- * DeleteDBRPID Delete a database retention policy
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param dbrpID The database retention policy mapping
- * @return ApiDeleteDBRPIDRequest
- */
+  - DeleteDBRPID Delete a database retention policy
+  - Deletes the specified database retention policy (DBRP) mapping.
+
+#### Related guide
+
+- [Database and retention policy mapping]({{% INFLUXDB_DOCS_URL %}}/reference/api/influxdb-1x/dbrp/)
+
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param dbrpID A DBRP mapping ID. Only returns the specified DBRP mapping.
+  - @return ApiDeleteDBRPIDRequest
+*/
 func (a *DBRPsApiService) DeleteDBRPID(ctx _context.Context, dbrpID string) ApiDeleteDBRPIDRequest {
 	return ApiDeleteDBRPIDRequest{
 		ApiService: a,
@@ -290,6 +325,17 @@ func (a *DBRPsApiService) DeleteDBRPIDExecuteWithHttpInfo(r ApiDeleteDBRPIDReque
 		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
@@ -399,10 +445,16 @@ func (r ApiGetDBRPsRequest) ExecuteWithHttpInfo() (DBRPs, *_nethttp.Response, er
 }
 
 /*
- * GetDBRPs List database retention policy mappings
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiGetDBRPsRequest
- */
+  - GetDBRPs List database retention policy mappings
+  - Lists database retention policy (DBRP) mappings.
+
+#### Related guide
+
+- [Database and retention policy mapping]({{% INFLUXDB_DOCS_URL %}}/reference/api/influxdb-1x/dbrp/)
+
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiGetDBRPsRequest
+*/
 func (a *DBRPsApiService) GetDBRPs(ctx _context.Context) ApiGetDBRPsRequest {
 	return ApiGetDBRPsRequest{
 		ApiService: a,
@@ -527,6 +579,17 @@ func (a *DBRPsApiService) GetDBRPsExecuteWithHttpInfo(r ApiGetDBRPsRequest) (DBR
 			newErr.model = &v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -610,11 +673,17 @@ func (r ApiGetDBRPsIDRequest) ExecuteWithHttpInfo() (DBRPGet, *_nethttp.Response
 }
 
 /*
- * GetDBRPsID Retrieve a database retention policy mapping
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param dbrpID The database retention policy mapping ID
- * @return ApiGetDBRPsIDRequest
- */
+  - GetDBRPsID Retrieve a database retention policy mapping
+  - Retrieves the specified retention policy (DBRP) mapping.
+
+#### Related guide
+
+- [Database and retention policy mapping]({{% INFLUXDB_DOCS_URL %}}/reference/api/influxdb-1x/dbrp/)
+
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param dbrpID A DBRP mapping ID. Specifies the DBRP mapping.
+  - @return ApiGetDBRPsIDRequest
+*/
 func (a *DBRPsApiService) GetDBRPsID(ctx _context.Context, dbrpID string) ApiGetDBRPsIDRequest {
 	return ApiGetDBRPsIDRequest{
 		ApiService: a,
@@ -726,6 +795,17 @@ func (a *DBRPsApiService) GetDBRPsIDExecuteWithHttpInfo(r ApiGetDBRPsIDRequest) 
 			newErr.model = &v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -820,7 +900,7 @@ func (r ApiPatchDBRPIDRequest) ExecuteWithHttpInfo() (DBRPGet, *_nethttp.Respons
 /*
  * PatchDBRPID Update a database retention policy mapping
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param dbrpID The database retention policy mapping.
+ * @param dbrpID A DBRP mapping ID. Specifies the DBRP mapping.
  * @return ApiPatchDBRPIDRequest
  */
 func (a *DBRPsApiService) PatchDBRPID(ctx _context.Context, dbrpID string) ApiPatchDBRPIDRequest {
@@ -939,8 +1019,8 @@ func (a *DBRPsApiService) PatchDBRPIDExecuteWithHttpInfo(r ApiPatchDBRPIDRequest
 			newErr.model = &v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v Error
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
@@ -1015,10 +1095,21 @@ func (r ApiPostDBRPRequest) ExecuteWithHttpInfo() (DBRP, *_nethttp.Response, err
 }
 
 /*
- * PostDBRP Add a database retention policy mapping
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @return ApiPostDBRPRequest
- */
+  - PostDBRP Add a database retention policy mapping
+  - Creates a database retention policy (DBRP) mapping and returns the mapping.
+
+Use this endpoint to add InfluxDB 1.x API compatibility to your
+InfluxDB Cloud or InfluxDB OSS 2.x buckets. Your buckets must contain a
+DBRP mapping in order to query and write using the InfluxDB 1.x API.
+object.
+
+#### Related guide
+
+- [Database and retention policy mapping]({{% INFLUXDB_DOCS_URL %}}/reference/api/influxdb-1x/dbrp/)
+
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @return ApiPostDBRPRequest
+*/
 func (a *DBRPsApiService) PostDBRP(ctx _context.Context) ApiPostDBRPRequest {
 	return ApiPostDBRPRequest{
 		ApiService: a,
@@ -1118,6 +1209,17 @@ func (a *DBRPsApiService) PostDBRPExecuteWithHttpInfo(r ApiPostDBRPRequest) (DBR
 		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 400 {
 			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v UnauthorizedRequestError
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())

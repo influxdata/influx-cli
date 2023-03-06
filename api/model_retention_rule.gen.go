@@ -19,7 +19,7 @@ type RetentionRule struct {
 	Type *string `json:"type,omitempty" yaml:"type,omitempty"`
 	// The duration in seconds for how long data will be kept in the database. The default duration is 2592000 (30 days). 0 represents infinite retention.
 	EverySeconds int64 `json:"everySeconds" yaml:"everySeconds"`
-	// The shard group duration. The duration or interval (in seconds) that each shard group covers.  #### InfluxDB Cloud  - Does not use `shardGroupDurationsSeconds`.  #### InfluxDB OSS  - Default value depends on the [bucket retention period]({{% INFLUXDB_DOCS_URL %}}/v2.3/reference/internals/shards/#shard-group-duration).
+	// The shard group duration. The duration or interval (in seconds) that each shard group covers.  #### InfluxDB Cloud  - Does not use `shardGroupDurationsSeconds`.  #### InfluxDB OSS  - Default value depends on the [bucket retention period]({{% INFLUXDB_DOCS_URL %}}/reference/internals/shards/#shard-group-duration).
 	ShardGroupDurationSeconds *int64 `json:"shardGroupDurationSeconds,omitempty" yaml:"shardGroupDurationSeconds,omitempty"`
 }
 

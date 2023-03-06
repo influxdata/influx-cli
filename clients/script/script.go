@@ -139,7 +139,6 @@ func (c Client) Update(ctx context.Context, params *UpdateParams) error {
 	}
 
 	req := api.ScriptUpdateRequest{
-		Name:        &params.Name,
 		Description: &params.Description,
 		Script:      &params.Script,
 	}

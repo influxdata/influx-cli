@@ -17,13 +17,15 @@ import (
 
 // Organization struct for Organization
 type Organization struct {
-	Links       *OrganizationLinks `json:"links,omitempty" yaml:"links,omitempty"`
-	Id          *string            `json:"id,omitempty" yaml:"id,omitempty"`
-	Name        string             `json:"name" yaml:"name"`
-	Description *string            `json:"description,omitempty" yaml:"description,omitempty"`
-	CreatedAt   *time.Time         `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
-	UpdatedAt   *time.Time         `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
-	// If inactive the organization is inactive.
+	Links *OrganizationLinks `json:"links,omitempty" yaml:"links,omitempty"`
+	Id    *string            `json:"id,omitempty" yaml:"id,omitempty"`
+	Name  string             `json:"name" yaml:"name"`
+	// Discloses whether the organization uses TSM or IOx.
+	DefaultStorageType *string    `json:"defaultStorageType,omitempty" yaml:"defaultStorageType,omitempty"`
+	Description        *string    `json:"description,omitempty" yaml:"description,omitempty"`
+	CreatedAt          *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
+	UpdatedAt          *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
+	// If inactive, the organization is inactive.
 	Status *string `json:"status,omitempty" yaml:"status,omitempty"`
 }
 
@@ -135,6 +137,38 @@ func (o *Organization) GetNameOk() (*string, bool) {
 // SetName sets field value
 func (o *Organization) SetName(v string) {
 	o.Name = v
+}
+
+// GetDefaultStorageType returns the DefaultStorageType field value if set, zero value otherwise.
+func (o *Organization) GetDefaultStorageType() string {
+	if o == nil || o.DefaultStorageType == nil {
+		var ret string
+		return ret
+	}
+	return *o.DefaultStorageType
+}
+
+// GetDefaultStorageTypeOk returns a tuple with the DefaultStorageType field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Organization) GetDefaultStorageTypeOk() (*string, bool) {
+	if o == nil || o.DefaultStorageType == nil {
+		return nil, false
+	}
+	return o.DefaultStorageType, true
+}
+
+// HasDefaultStorageType returns a boolean if a field has been set.
+func (o *Organization) HasDefaultStorageType() bool {
+	if o != nil && o.DefaultStorageType != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetDefaultStorageType gets a reference to the given string and assigns it to the DefaultStorageType field.
+func (o *Organization) SetDefaultStorageType(v string) {
+	o.DefaultStorageType = &v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -275,6 +309,9 @@ func (o Organization) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["name"] = o.Name
+	}
+	if o.DefaultStorageType != nil {
+		toSerialize["defaultStorageType"] = o.DefaultStorageType
 	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description

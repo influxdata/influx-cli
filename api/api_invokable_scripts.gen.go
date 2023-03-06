@@ -16,7 +16,6 @@ import (
 	_io "io"
 	_nethttp "net/http"
 	_neturl "net/url"
-	"reflect"
 	"strings"
 )
 
@@ -28,12 +27,23 @@ var (
 type InvokableScriptsApi interface {
 
 	/*
-	 * DeleteScriptsID Delete a script
-	 * Deletes a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/) and all associated records.
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param scriptID A script ID. Deletes the specified script.
-	 * @return ApiDeleteScriptsIDRequest
-	 */
+			 * DeleteScriptsID Delete a script
+			 * Deletes a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/) and all associated records.
+
+		#### Limitations
+
+		- You can delete only one script per request.
+		- If the script ID you provide doesn't exist for the organization, InfluxDB
+		responds with an HTTP `204` status code.
+
+		#### Related Guides
+
+		- [Invoke custom scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param scriptID A script ID. Deletes the specified script.
+			 * @return ApiDeleteScriptsIDRequest
+	*/
 	DeleteScriptsID(ctx _context.Context, scriptID string) ApiDeleteScriptsIDRequest
 
 	/*
@@ -50,7 +60,7 @@ type InvokableScriptsApi interface {
 
 	/*
 			 * GetScripts List scripts
-			 * Retrieves a list of [scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
+			 * Lists [scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
 
 		#### Related guides
 
@@ -76,13 +86,17 @@ type InvokableScriptsApi interface {
 	GetScriptsExecuteWithHttpInfo(r ApiGetScriptsRequest) (Scripts, *_nethttp.Response, error)
 
 	/*
-	 * GetScriptsID Retrieve a script
-	 * Retrieves a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
+			 * GetScriptsID Retrieve a script
+			 * Retrieves a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
 
-	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	 * @param scriptID A script ID. Retrieves the specified script.
-	 * @return ApiGetScriptsIDRequest
-	 */
+		#### Related Guides
+
+		- [Invoke custom scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/)
+
+			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+			 * @param scriptID A script ID. Retrieves the specified script.
+			 * @return ApiGetScriptsIDRequest
+	*/
 	GetScriptsID(ctx _context.Context, scriptID string) ApiGetScriptsIDRequest
 
 	/*
@@ -101,9 +115,21 @@ type InvokableScriptsApi interface {
 
 	/*
 			 * PatchScriptsID Update a script
-			 * Updates a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/) and returns the script.
+			 * Updates an invokable script.
 
-		Use this endpoint to update the properties (`name`, `description`, and `script`) of an invokable script.
+		Use this endpoint to modify values for script properties (`description` and `script`).
+
+		To update a script, pass an object that contains the updated key-value pairs.
+
+		#### Limitations
+
+		- If you send an empty request body, the script will neither update nor
+		store an empty script, but InfluxDB will respond with an HTTP `200` status
+		code.
+
+		#### Related Guides
+
+		- [Invoke custom scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/)
 
 			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 			 * @param scriptID A script ID. Updates the specified script.
@@ -204,12 +230,23 @@ func (r ApiDeleteScriptsIDRequest) ExecuteWithHttpInfo() (*_nethttp.Response, er
 }
 
 /*
- * DeleteScriptsID Delete a script
- * Deletes a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/) and all associated records.
- * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param scriptID A script ID. Deletes the specified script.
- * @return ApiDeleteScriptsIDRequest
- */
+  - DeleteScriptsID Delete a script
+  - Deletes a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/) and all associated records.
+
+#### Limitations
+
+- You can delete only one script per request.
+- If the script ID you provide doesn't exist for the organization, InfluxDB
+responds with an HTTP `204` status code.
+
+#### Related Guides
+
+- [Invoke custom scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/)
+
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param scriptID A script ID. Deletes the specified script.
+  - @return ApiDeleteScriptsIDRequest
+*/
 func (a *InvokableScriptsApiService) DeleteScriptsID(ctx _context.Context, scriptID string) ApiDeleteScriptsIDRequest {
 	return ApiDeleteScriptsIDRequest{
 		ApiService: a,
@@ -324,13 +361,11 @@ func (a *InvokableScriptsApiService) DeleteScriptsIDExecuteWithHttpInfo(r ApiDel
 }
 
 type ApiGetScriptsRequest struct {
-	ctx           _context.Context
-	ApiService    InvokableScriptsApi
-	offset        *int32
-	limit         *int32
-	name          *string
-	labelNames    *[]string
-	labelContains *string
+	ctx        _context.Context
+	ApiService InvokableScriptsApi
+	offset     *int32
+	limit      *int32
+	name       *string
 }
 
 func (r ApiGetScriptsRequest) Offset(offset int32) ApiGetScriptsRequest {
@@ -357,22 +392,6 @@ func (r ApiGetScriptsRequest) GetName() *string {
 	return r.name
 }
 
-func (r ApiGetScriptsRequest) LabelNames(labelNames []string) ApiGetScriptsRequest {
-	r.labelNames = &labelNames
-	return r
-}
-func (r ApiGetScriptsRequest) GetLabelNames() *[]string {
-	return r.labelNames
-}
-
-func (r ApiGetScriptsRequest) LabelContains(labelContains string) ApiGetScriptsRequest {
-	r.labelContains = &labelContains
-	return r
-}
-func (r ApiGetScriptsRequest) GetLabelContains() *string {
-	return r.labelContains
-}
-
 func (r ApiGetScriptsRequest) Execute() (Scripts, error) {
 	return r.ApiService.GetScriptsExecute(r)
 }
@@ -383,7 +402,7 @@ func (r ApiGetScriptsRequest) ExecuteWithHttpInfo() (Scripts, *_nethttp.Response
 
 /*
   - GetScripts List scripts
-  - Retrieves a list of [scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
+  - Lists [scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
 
 #### Related guides
 
@@ -443,20 +462,6 @@ func (a *InvokableScriptsApiService) GetScriptsExecuteWithHttpInfo(r ApiGetScrip
 	}
 	if r.name != nil {
 		localVarQueryParams.Add("name", parameterToString(*r.name, ""))
-	}
-	if r.labelNames != nil {
-		t := *r.labelNames
-		if reflect.TypeOf(t).Kind() == reflect.Slice {
-			s := reflect.ValueOf(t)
-			for i := 0; i < s.Len(); i++ {
-				localVarQueryParams.Add("labelNames", parameterToString(s.Index(i), "multi"))
-			}
-		} else {
-			localVarQueryParams.Add("labelNames", parameterToString(t, "multi"))
-		}
-	}
-	if r.labelContains != nil {
-		localVarQueryParams.Add("labelContains", parameterToString(*r.labelContains, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -582,13 +587,17 @@ func (r ApiGetScriptsIDRequest) ExecuteWithHttpInfo() (Script, *_nethttp.Respons
 }
 
 /*
-* GetScriptsID Retrieve a script
-* Retrieves a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
+  - GetScriptsID Retrieve a script
+  - Retrieves a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/).
 
-* @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-* @param scriptID A script ID. Retrieves the specified script.
-* @return ApiGetScriptsIDRequest
- */
+#### Related Guides
+
+- [Invoke custom scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/)
+
+  - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param scriptID A script ID. Retrieves the specified script.
+  - @return ApiGetScriptsIDRequest
+*/
 func (a *InvokableScriptsApiService) GetScriptsID(ctx _context.Context, scriptID string) ApiGetScriptsIDRequest {
 	return ApiGetScriptsIDRequest{
 		ApiService: a,
@@ -691,6 +700,17 @@ func (a *InvokableScriptsApiService) GetScriptsIDExecuteWithHttpInfo(r ApiGetScr
 			newErr.model = &v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		var v Error
 		err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
@@ -757,9 +777,21 @@ func (r ApiPatchScriptsIDRequest) ExecuteWithHttpInfo() (Script, *_nethttp.Respo
 
 /*
   - PatchScriptsID Update a script
-  - Updates a [script](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/) and returns the script.
+  - Updates an invokable script.
 
-Use this endpoint to update the properties (`name`, `description`, and `script`) of an invokable script.
+Use this endpoint to modify values for script properties (`description` and `script`).
+
+To update a script, pass an object that contains the updated key-value pairs.
+
+#### Limitations
+
+- If you send an empty request body, the script will neither update nor
+store an empty script, but InfluxDB will respond with an HTTP `200` status
+code.
+
+#### Related Guides
+
+- [Invoke custom scripts](https://docs.influxdata.com/influxdb/cloud/api-guide/api-invokable-scripts/)
 
   - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
   - @param scriptID A script ID. Updates the specified script.
@@ -863,6 +895,17 @@ func (a *InvokableScriptsApiService) PatchScriptsIDExecuteWithHttpInfo(r ApiPatc
 		newErr.error = localVarHTTPResponse.Status
 		if localVarHTTPResponse.StatusCode == 401 {
 			var v UnauthorizedRequestError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			v.SetMessage(_fmt.Sprintf("%s: %s", newErr.Error(), v.GetMessage()))
+			newErr.model = &v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v Error
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = _fmt.Sprintf("%s: %s", newErr.Error(), err.Error())

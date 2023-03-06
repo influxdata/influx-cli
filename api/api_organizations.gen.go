@@ -76,13 +76,14 @@ type OrganizationsApi interface {
 			 * DeleteOrgsIDMembersID Remove a member from an organization
 			 * Removes a member from an organization.
 
-		Use this endpoint to remove a user's member privileges from a bucket. This
-		removes the user's `read` and `write` permissions from the organization.
+		Use this endpoint to remove a user's member privileges for an organization.
+		Removing member privileges removes the user's `read` and `write` permissions
+		from the organization.
 
 		#### InfluxDB Cloud
 
 		- Doesn't use `owner` and `member` roles.
-		  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+		  Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 		#### Limitations
 
@@ -129,7 +130,7 @@ type OrganizationsApi interface {
 
 		#### InfluxDB Cloud
 		- Doesn't use `owner` and `member` roles.
-		  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+		  Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 		#### Limitations
 
@@ -144,7 +145,7 @@ type OrganizationsApi interface {
 		remove an owner from.
 
 		#### Related endpoints
-		- [Authorizations](#tag/Authorizations)
+		- [Authorizations](#tag/Authorizations-(API-tokens))
 
 			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 			 * @param userID The ID of the user to remove.
@@ -167,7 +168,7 @@ type OrganizationsApi interface {
 
 	/*
 			 * GetOrgs List organizations
-			 * Retrieves a list of [organizations]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization/).
+			 * Lists [organizations]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization/).
 
 		To limit which organizations are returned, pass query parameters in your request.
 		If no query parameters are passed, InfluxDB returns all organizations up to the default `limit`.
@@ -231,7 +232,7 @@ type OrganizationsApi interface {
 
 	/*
 			 * GetOrgsIDMembers List all members of an organization
-			 * Retrieves a list of all users that belong to an organization.
+			 * Lists all users that belong to an organization.
 
 		InfluxDB [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) have
 		permission to access InfluxDB.
@@ -242,7 +243,7 @@ type OrganizationsApi interface {
 		#### InfluxDB Cloud
 
 		- Doesn't use `owner` and `member` roles.
-		  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+		  Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 		#### Limitations
 
@@ -283,12 +284,12 @@ type OrganizationsApi interface {
 
 	/*
 			 * GetOrgsIDOwners List all owners of an organization
-			 * Retrieves a list of all owners of an organization.
+			 * Lists all owners of an organization.
 
 		#### InfluxDB Cloud
 
 		- Doesn't use `owner` and `member` roles.
-		  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+		  Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 		#### Required permissions
 
@@ -404,7 +405,7 @@ type OrganizationsApi interface {
 
 		#### InfluxDB Cloud
 		- Doesn't use `owner` and `member` roles.
-		  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+		  Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 		#### Limitations
 
@@ -451,7 +452,7 @@ type OrganizationsApi interface {
 		#### InfluxDB Cloud
 
 		- Doesn't use `owner` and `member` roles.
-		  Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+		  Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 		#### Required permissions
 
@@ -461,7 +462,7 @@ type OrganizationsApi interface {
 
 		#### Related endpoints
 
-		- [Authorizations](#tag/Authorizations)
+		- [Authorizations](#tag/Authorizations-(API-tokens))
 
 			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 			 * @param orgID The ID of the organization that you want to add an owner for.
@@ -721,13 +722,14 @@ func (r ApiDeleteOrgsIDMembersIDRequest) ExecuteWithHttpInfo() (*_nethttp.Respon
   - DeleteOrgsIDMembersID Remove a member from an organization
   - Removes a member from an organization.
 
-Use this endpoint to remove a user's member privileges from a bucket. This
-removes the user's `read` and `write` permissions from the organization.
+Use this endpoint to remove a user's member privileges for an organization.
+Removing member privileges removes the user's `read` and `write` permissions
+from the organization.
 
 #### InfluxDB Cloud
 
   - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+    Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 #### Limitations
 
@@ -919,7 +921,7 @@ permissions from the organization.
 
 #### InfluxDB Cloud
   - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+    Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 #### Limitations
 
@@ -934,7 +936,7 @@ permissions from the organization.
 remove an owner from.
 
 #### Related endpoints
-- [Authorizations](#tag/Authorizations)
+- [Authorizations](#tag/Authorizations-(API-tokens))
 
   - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
   - @param userID The ID of the user to remove.
@@ -1137,7 +1139,7 @@ func (r ApiGetOrgsRequest) ExecuteWithHttpInfo() (Organizations, *_nethttp.Respo
 
 /*
   - GetOrgs List organizations
-  - Retrieves a list of [organizations]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization/).
+  - Lists [organizations]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization/).
 
 To limit which organizations are returned, pass query parameters in your request.
 If no query parameters are passed, InfluxDB returns all organizations up to the default `limit`.
@@ -1567,7 +1569,7 @@ func (r ApiGetOrgsIDMembersRequest) ExecuteWithHttpInfo() (ResourceMembers, *_ne
 
 /*
   - GetOrgsIDMembers List all members of an organization
-  - Retrieves a list of all users that belong to an organization.
+  - Lists all users that belong to an organization.
 
 InfluxDB [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user) have
 permission to access InfluxDB.
@@ -1578,7 +1580,7 @@ within the organization.
 #### InfluxDB Cloud
 
   - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+    Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 #### Limitations
 
@@ -1783,12 +1785,12 @@ func (r ApiGetOrgsIDOwnersRequest) ExecuteWithHttpInfo() (ResourceOwners, *_neth
 
 /*
   - GetOrgsIDOwners List all owners of an organization
-  - Retrieves a list of all owners of an organization.
+  - Lists all owners of an organization.
 
 #### InfluxDB Cloud
 
   - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+    Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 #### Required permissions
 
@@ -2390,7 +2392,7 @@ within the organization.
 
 #### InfluxDB Cloud
   - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+    Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 #### Limitations
 
@@ -2604,7 +2606,7 @@ Use this endpoint to assign the organization `owner` role to a user.
 #### InfluxDB Cloud
 
   - Doesn't use `owner` and `member` roles.
-    Use [`/api/v2/authorizations`](#tag/Authorizations) to assign user permissions.
+    Use [`/api/v2/authorizations`](#tag/Authorizations-(API-tokens)) to assign user permissions.
 
 #### Required permissions
 
@@ -2614,7 +2616,7 @@ Use this endpoint to assign the organization `owner` role to a user.
 
 #### Related endpoints
 
-- [Authorizations](#tag/Authorizations)
+- [Authorizations](#tag/Authorizations-(API-tokens))
 
   - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
   - @param orgID The ID of the organization that you want to add an owner for.

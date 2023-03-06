@@ -62,7 +62,7 @@ type UsersApi interface {
 
 	/*
 			 * GetUsers List users
-			 * Retrieves a list of [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+			 * Lists [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
 		Default limit is `20`.
 
 		To limit which users are returned, pass query parameters in your request.
@@ -75,6 +75,10 @@ type UsersApi interface {
 		| List a specific user | `read-users` or `read-user USER_ID` | |
 
 		*`USER_ID`* is the ID of the user that you want to retrieve.
+
+		#### Related guides
+
+		- [View users](https://docs.influxdata.com/influxdb/latest/users/view-users/).
 
 			 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 			 * @return ApiGetUsersRequest
@@ -174,8 +178,8 @@ type UsersApi interface {
 		This endpoint represents the first two steps in a four-step process to allow a user
 		to authenticate with a username and password, and then access data in an organization:
 
-		  1. Create a user: send a `POST` request to `POST /api/v2/users`. `name` is required.
-		  2. Extract the user ID (`id`) value from the API response for _step 1_.
+		  1. Create a user: send a `POST` request to `POST /api/v2/users`. The `name` property is required.
+		  2. Extract the user ID (`id` property) value from the API response for _step 1_.
 		  3. Create an authorization (and API token) for the user: send a `POST` request to [`POST /api/v2/authorizations`](#operation/PostAuthorizations), passing the user ID (`id`) from _step 2_.
 		  4. Create a password for the user: send a `POST` request to [`POST /api/v2/users/USER_ID/password`](#operation/PostUsersIDPassword), passing the user ID from _step 2_.
 
@@ -528,7 +532,7 @@ func (r ApiGetUsersRequest) ExecuteWithHttpInfo() (Users, *_nethttp.Response, er
 
 /*
   - GetUsers List users
-  - Retrieves a list of [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
+  - Lists [users]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#user).
 
 Default limit is `20`.
 
@@ -542,6 +546,10 @@ To limit which users are returned, pass query parameters in your request.
 | List a specific user | `read-users` or `read-user USER_ID` | |
 
 *`USER_ID`* is the ID of the user that you want to retrieve.
+
+#### Related guides
+
+- [View users](https://docs.influxdata.com/influxdb/latest/users/view-users/).
 
   - @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
   - @return ApiGetUsersRequest
@@ -1128,8 +1136,8 @@ through one of the following interfaces:
 This endpoint represents the first two steps in a four-step process to allow a user
 to authenticate with a username and password, and then access data in an organization:
 
- 1. Create a user: send a `POST` request to `POST /api/v2/users`. `name` is required.
- 2. Extract the user ID (`id`) value from the API response for _step 1_.
+ 1. Create a user: send a `POST` request to `POST /api/v2/users`. The `name` property is required.
+ 2. Extract the user ID (`id` property) value from the API response for _step 1_.
  3. Create an authorization (and API token) for the user: send a `POST` request to [`POST /api/v2/authorizations`](#operation/PostAuthorizations), passing the user ID (`id`) from _step 2_.
  4. Create a password for the user: send a `POST` request to [`POST /api/v2/users/USER_ID/password`](#operation/PostUsersIDPassword), passing the user ID from _step 2_.
 
