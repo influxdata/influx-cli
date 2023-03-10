@@ -18,8 +18,6 @@ import (
 type User struct {
 	// The user ID.
 	Id *string `json:"id,omitempty" yaml:"id,omitempty"`
-	// The OAuth ID.
-	OauthID *string `json:"oauthID,omitempty" yaml:"oauthID,omitempty"`
 	// The user name.
 	Name string `json:"name" yaml:"name"`
 	// If `inactive`, the user is inactive. Default is `active`.
@@ -78,38 +76,6 @@ func (o *User) HasId() bool {
 // SetId gets a reference to the given string and assigns it to the Id field.
 func (o *User) SetId(v string) {
 	o.Id = &v
-}
-
-// GetOauthID returns the OauthID field value if set, zero value otherwise.
-func (o *User) GetOauthID() string {
-	if o == nil || o.OauthID == nil {
-		var ret string
-		return ret
-	}
-	return *o.OauthID
-}
-
-// GetOauthIDOk returns a tuple with the OauthID field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *User) GetOauthIDOk() (*string, bool) {
-	if o == nil || o.OauthID == nil {
-		return nil, false
-	}
-	return o.OauthID, true
-}
-
-// HasOauthID returns a boolean if a field has been set.
-func (o *User) HasOauthID() bool {
-	if o != nil && o.OauthID != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetOauthID gets a reference to the given string and assigns it to the OauthID field.
-func (o *User) SetOauthID(v string) {
-	o.OauthID = &v
 }
 
 // GetName returns the Name field value
@@ -172,9 +138,6 @@ func (o User) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Id != nil {
 		toSerialize["id"] = o.Id
-	}
-	if o.OauthID != nil {
-		toSerialize["oauthID"] = o.OauthID
 	}
 	if true {
 		toSerialize["name"] = o.Name

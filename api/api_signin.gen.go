@@ -39,7 +39,7 @@ type SigninApi interface {
 		If authentication is successful, InfluxDB creates a new session for the user
 		and then returns the session cookie in the `Set-Cookie` response header.
 
-		User sessions exist only in memory.
+		InfluxDB stores user sessions in memory only.
 		They expire within ten minutes and during restarts of the InfluxDB instance.
 
 		#### User sessions with authorizations
@@ -111,7 +111,7 @@ syntax and more information.
 If authentication is successful, InfluxDB creates a new session for the user
 and then returns the session cookie in the `Set-Cookie` response header.
 
-User sessions exist only in memory.
+InfluxDB stores user sessions in memory only.
 They expire within ten minutes and during restarts of the InfluxDB instance.
 
 #### User sessions with authorizations

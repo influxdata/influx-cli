@@ -133,11 +133,11 @@ func newCreateCommand() cli.Command {
 
 			api := getAPI(ctx)
 			client := auth.Client{
-				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
-				UsersApi:          api.UsersApi,
-				OrganizationsApi:  api.OrganizationsApi,
-				ResourcesApi:      api.ResourcesApi,
+				CLI:                        getCLI(ctx),
+				AuthorizationsAPITokensApi: api.AuthorizationsAPITokensApi,
+				UsersApi:                   api.UsersApi,
+				OrganizationsApi:           api.OrganizationsApi,
+				ResourcesApi:               api.ResourcesApi,
 			}
 			return client.Create(getContext(ctx), &params)
 		},
@@ -160,10 +160,10 @@ func newDeleteCommand() cli.Command {
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := auth.Client{
-				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
-				UsersApi:          api.UsersApi,
-				OrganizationsApi:  api.OrganizationsApi,
+				CLI:                        getCLI(ctx),
+				AuthorizationsAPITokensApi: api.AuthorizationsAPITokensApi,
+				UsersApi:                   api.UsersApi,
+				OrganizationsApi:           api.OrganizationsApi,
 			}
 			return client.Remove(getContext(ctx), ctx.String("id"))
 		},
@@ -202,10 +202,10 @@ func newListCommand() cli.Command {
 			}
 			api := getAPI(ctx)
 			client := auth.Client{
-				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
-				UsersApi:          api.UsersApi,
-				OrganizationsApi:  api.OrganizationsApi,
+				CLI:                        getCLI(ctx),
+				AuthorizationsAPITokensApi: api.AuthorizationsAPITokensApi,
+				UsersApi:                   api.UsersApi,
+				OrganizationsApi:           api.OrganizationsApi,
 			}
 			return client.List(getContext(ctx), &params)
 		},
@@ -227,10 +227,10 @@ func newSetActiveCommand() cli.Command {
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := auth.Client{
-				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
-				UsersApi:          api.UsersApi,
-				OrganizationsApi:  api.OrganizationsApi,
+				CLI:                        getCLI(ctx),
+				AuthorizationsAPITokensApi: api.AuthorizationsAPITokensApi,
+				UsersApi:                   api.UsersApi,
+				OrganizationsApi:           api.OrganizationsApi,
 			}
 			return client.SetActive(getContext(ctx), ctx.String("id"), true)
 		},
@@ -252,10 +252,10 @@ func newSetInactiveCommand() cli.Command {
 		Action: func(ctx *cli.Context) error {
 			api := getAPI(ctx)
 			client := auth.Client{
-				CLI:               getCLI(ctx),
-				AuthorizationsApi: api.AuthorizationsApi,
-				UsersApi:          api.UsersApi,
-				OrganizationsApi:  api.OrganizationsApi,
+				CLI:                        getCLI(ctx),
+				AuthorizationsAPITokensApi: api.AuthorizationsAPITokensApi,
+				UsersApi:                   api.UsersApi,
+				OrganizationsApi:           api.OrganizationsApi,
 			}
 			return client.SetActive(getContext(ctx), ctx.String("id"), false)
 		},

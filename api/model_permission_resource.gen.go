@@ -16,15 +16,15 @@ import (
 
 // PermissionResource struct for PermissionResource
 type PermissionResource struct {
-	// The type of resource. In a `permission`, applies the permission to all resources of this type.
+	// A resource type. Identifies the API resource's type (or _kind_).
 	Type string `json:"type" yaml:"type"`
-	// The ID of a specific resource. In a `permission`, applies the permission to only the resource with this ID.
+	// A resource ID. Identifies a specific resource.
 	Id *string `json:"id,omitempty" yaml:"id,omitempty"`
-	// Optional: A name for the resource. Not all resource types have a name field.
+	// The name of the resource. _Note: not all resource types have a `name` property_.
 	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
-	// The ID of the organization that owns the resource. In a `permission`, applies the permission to all resources of `type` owned by this organization.
+	// An organization ID. Identifies the organization that owns the resource.
 	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
-	// Optional: The name of the organization with `orgID`.
+	// An organization name. The organization that owns the resource.
 	Org *string `json:"org,omitempty" yaml:"org,omitempty"`
 }
 

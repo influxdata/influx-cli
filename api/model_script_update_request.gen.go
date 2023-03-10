@@ -16,9 +16,9 @@ import (
 
 // ScriptUpdateRequest struct for ScriptUpdateRequest
 type ScriptUpdateRequest struct {
-	Name        *string `json:"name,omitempty" yaml:"name,omitempty"`
+	// A description of the script.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
-	// script is script to be executed
+	// The script to execute.
 	Script *string `json:"script,omitempty" yaml:"script,omitempty"`
 }
 
@@ -37,38 +37,6 @@ func NewScriptUpdateRequest() *ScriptUpdateRequest {
 func NewScriptUpdateRequestWithDefaults() *ScriptUpdateRequest {
 	this := ScriptUpdateRequest{}
 	return &this
-}
-
-// GetName returns the Name field value if set, zero value otherwise.
-func (o *ScriptUpdateRequest) GetName() string {
-	if o == nil || o.Name == nil {
-		var ret string
-		return ret
-	}
-	return *o.Name
-}
-
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *ScriptUpdateRequest) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
-		return nil, false
-	}
-	return o.Name, true
-}
-
-// HasName returns a boolean if a field has been set.
-func (o *ScriptUpdateRequest) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
-func (o *ScriptUpdateRequest) SetName(v string) {
-	o.Name = &v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
@@ -137,9 +105,6 @@ func (o *ScriptUpdateRequest) SetScript(v string) {
 
 func (o ScriptUpdateRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Name != nil {
-		toSerialize["name"] = o.Name
-	}
 	if o.Description != nil {
 		toSerialize["description"] = o.Description
 	}

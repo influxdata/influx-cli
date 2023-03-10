@@ -16,26 +16,27 @@ import (
 
 // Replication struct for Replication
 type Replication struct {
-	Id                    string  `json:"id" yaml:"id"`
-	Name                  string  `json:"name" yaml:"name"`
-	Description           *string `json:"description,omitempty" yaml:"description,omitempty"`
-	OrgID                 string  `json:"orgID" yaml:"orgID"`
-	RemoteID              string  `json:"remoteID" yaml:"remoteID"`
-	LocalBucketID         string  `json:"localBucketID" yaml:"localBucketID"`
-	RemoteBucketID        *string `json:"remoteBucketID,omitempty" yaml:"remoteBucketID,omitempty"`
-	RemoteBucketName      *string `json:"remoteBucketName,omitempty" yaml:"remoteBucketName,omitempty"`
-	MaxQueueSizeBytes     int64   `json:"maxQueueSizeBytes" yaml:"maxQueueSizeBytes"`
-	CurrentQueueSizeBytes int64   `json:"currentQueueSizeBytes" yaml:"currentQueueSizeBytes"`
-	LatestResponseCode    *int32  `json:"latestResponseCode,omitempty" yaml:"latestResponseCode,omitempty"`
-	LatestErrorMessage    *string `json:"latestErrorMessage,omitempty" yaml:"latestErrorMessage,omitempty"`
-	DropNonRetryableData  *bool   `json:"dropNonRetryableData,omitempty" yaml:"dropNonRetryableData,omitempty"`
+	Id                       string  `json:"id" yaml:"id"`
+	Name                     string  `json:"name" yaml:"name"`
+	Description              *string `json:"description,omitempty" yaml:"description,omitempty"`
+	OrgID                    string  `json:"orgID" yaml:"orgID"`
+	RemoteID                 string  `json:"remoteID" yaml:"remoteID"`
+	LocalBucketID            string  `json:"localBucketID" yaml:"localBucketID"`
+	RemoteBucketID           *string `json:"remoteBucketID,omitempty" yaml:"remoteBucketID,omitempty"`
+	RemoteBucketName         *string `json:"remoteBucketName,omitempty" yaml:"remoteBucketName,omitempty"`
+	MaxQueueSizeBytes        int64   `json:"maxQueueSizeBytes" yaml:"maxQueueSizeBytes"`
+	CurrentQueueSizeBytes    *int64  `json:"currentQueueSizeBytes,omitempty" yaml:"currentQueueSizeBytes,omitempty"`
+	RemainingBytesToBeSynced *int64  `json:"remainingBytesToBeSynced,omitempty" yaml:"remainingBytesToBeSynced,omitempty"`
+	LatestResponseCode       *int32  `json:"latestResponseCode,omitempty" yaml:"latestResponseCode,omitempty"`
+	LatestErrorMessage       *string `json:"latestErrorMessage,omitempty" yaml:"latestErrorMessage,omitempty"`
+	DropNonRetryableData     *bool   `json:"dropNonRetryableData,omitempty" yaml:"dropNonRetryableData,omitempty"`
 }
 
 // NewReplication instantiates a new Replication object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewReplication(id string, name string, orgID string, remoteID string, localBucketID string, maxQueueSizeBytes int64, currentQueueSizeBytes int64) *Replication {
+func NewReplication(id string, name string, orgID string, remoteID string, localBucketID string, maxQueueSizeBytes int64) *Replication {
 	this := Replication{}
 	this.Id = id
 	this.Name = name
@@ -43,7 +44,6 @@ func NewReplication(id string, name string, orgID string, remoteID string, local
 	this.RemoteID = remoteID
 	this.LocalBucketID = localBucketID
 	this.MaxQueueSizeBytes = maxQueueSizeBytes
-	this.CurrentQueueSizeBytes = currentQueueSizeBytes
 	return &this
 }
 
@@ -295,28 +295,68 @@ func (o *Replication) SetMaxQueueSizeBytes(v int64) {
 	o.MaxQueueSizeBytes = v
 }
 
-// GetCurrentQueueSizeBytes returns the CurrentQueueSizeBytes field value
+// GetCurrentQueueSizeBytes returns the CurrentQueueSizeBytes field value if set, zero value otherwise.
 func (o *Replication) GetCurrentQueueSizeBytes() int64 {
-	if o == nil {
+	if o == nil || o.CurrentQueueSizeBytes == nil {
 		var ret int64
 		return ret
 	}
-
-	return o.CurrentQueueSizeBytes
+	return *o.CurrentQueueSizeBytes
 }
 
-// GetCurrentQueueSizeBytesOk returns a tuple with the CurrentQueueSizeBytes field value
+// GetCurrentQueueSizeBytesOk returns a tuple with the CurrentQueueSizeBytes field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *Replication) GetCurrentQueueSizeBytesOk() (*int64, bool) {
-	if o == nil {
+	if o == nil || o.CurrentQueueSizeBytes == nil {
 		return nil, false
 	}
-	return &o.CurrentQueueSizeBytes, true
+	return o.CurrentQueueSizeBytes, true
 }
 
-// SetCurrentQueueSizeBytes sets field value
+// HasCurrentQueueSizeBytes returns a boolean if a field has been set.
+func (o *Replication) HasCurrentQueueSizeBytes() bool {
+	if o != nil && o.CurrentQueueSizeBytes != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetCurrentQueueSizeBytes gets a reference to the given int64 and assigns it to the CurrentQueueSizeBytes field.
 func (o *Replication) SetCurrentQueueSizeBytes(v int64) {
-	o.CurrentQueueSizeBytes = v
+	o.CurrentQueueSizeBytes = &v
+}
+
+// GetRemainingBytesToBeSynced returns the RemainingBytesToBeSynced field value if set, zero value otherwise.
+func (o *Replication) GetRemainingBytesToBeSynced() int64 {
+	if o == nil || o.RemainingBytesToBeSynced == nil {
+		var ret int64
+		return ret
+	}
+	return *o.RemainingBytesToBeSynced
+}
+
+// GetRemainingBytesToBeSyncedOk returns a tuple with the RemainingBytesToBeSynced field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Replication) GetRemainingBytesToBeSyncedOk() (*int64, bool) {
+	if o == nil || o.RemainingBytesToBeSynced == nil {
+		return nil, false
+	}
+	return o.RemainingBytesToBeSynced, true
+}
+
+// HasRemainingBytesToBeSynced returns a boolean if a field has been set.
+func (o *Replication) HasRemainingBytesToBeSynced() bool {
+	if o != nil && o.RemainingBytesToBeSynced != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetRemainingBytesToBeSynced gets a reference to the given int64 and assigns it to the RemainingBytesToBeSynced field.
+func (o *Replication) SetRemainingBytesToBeSynced(v int64) {
+	o.RemainingBytesToBeSynced = &v
 }
 
 // GetLatestResponseCode returns the LatestResponseCode field value if set, zero value otherwise.
@@ -444,8 +484,11 @@ func (o Replication) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["maxQueueSizeBytes"] = o.MaxQueueSizeBytes
 	}
-	if true {
+	if o.CurrentQueueSizeBytes != nil {
 		toSerialize["currentQueueSizeBytes"] = o.CurrentQueueSizeBytes
+	}
+	if o.RemainingBytesToBeSynced != nil {
+		toSerialize["remainingBytesToBeSynced"] = o.RemainingBytesToBeSynced
 	}
 	if o.LatestResponseCode != nil {
 		toSerialize["latestResponseCode"] = o.LatestResponseCode

@@ -96,7 +96,7 @@ type BucketSchemasApi interface {
 
 	/*
 			 * GetMeasurementSchemas List measurement schemas of a bucket
-			 * Retrieves a list of _explicit_
+			 * Lists _explicit_
 		[schemas]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema)
 		(`"schemaType": "explicit"`) for a bucket.
 
@@ -175,9 +175,9 @@ type ApiCreateMeasurementSchemaRequest struct {
 	ctx                            _context.Context
 	ApiService                     BucketSchemasApi
 	bucketID                       string
+	measurementSchemaCreateRequest *MeasurementSchemaCreateRequest
 	org                            *string
 	orgID                          *string
-	measurementSchemaCreateRequest *MeasurementSchemaCreateRequest
 }
 
 func (r ApiCreateMeasurementSchemaRequest) BucketID(bucketID string) ApiCreateMeasurementSchemaRequest {
@@ -186,6 +186,14 @@ func (r ApiCreateMeasurementSchemaRequest) BucketID(bucketID string) ApiCreateMe
 }
 func (r ApiCreateMeasurementSchemaRequest) GetBucketID() string {
 	return r.bucketID
+}
+
+func (r ApiCreateMeasurementSchemaRequest) MeasurementSchemaCreateRequest(measurementSchemaCreateRequest MeasurementSchemaCreateRequest) ApiCreateMeasurementSchemaRequest {
+	r.measurementSchemaCreateRequest = &measurementSchemaCreateRequest
+	return r
+}
+func (r ApiCreateMeasurementSchemaRequest) GetMeasurementSchemaCreateRequest() *MeasurementSchemaCreateRequest {
+	return r.measurementSchemaCreateRequest
 }
 
 func (r ApiCreateMeasurementSchemaRequest) Org(org string) ApiCreateMeasurementSchemaRequest {
@@ -202,14 +210,6 @@ func (r ApiCreateMeasurementSchemaRequest) OrgID(orgID string) ApiCreateMeasurem
 }
 func (r ApiCreateMeasurementSchemaRequest) GetOrgID() *string {
 	return r.orgID
-}
-
-func (r ApiCreateMeasurementSchemaRequest) MeasurementSchemaCreateRequest(measurementSchemaCreateRequest MeasurementSchemaCreateRequest) ApiCreateMeasurementSchemaRequest {
-	r.measurementSchemaCreateRequest = &measurementSchemaCreateRequest
-	return r
-}
-func (r ApiCreateMeasurementSchemaRequest) GetMeasurementSchemaCreateRequest() *MeasurementSchemaCreateRequest {
-	return r.measurementSchemaCreateRequest
 }
 
 func (r ApiCreateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
@@ -292,6 +292,9 @@ func (a *BucketSchemasApiService) CreateMeasurementSchemaExecuteWithHttpInfo(r A
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.measurementSchemaCreateRequest == nil {
+		return localVarReturnValue, nil, reportError("measurementSchemaCreateRequest is required and must be specified")
+	}
 
 	if r.org != nil {
 		localVarQueryParams.Add("org", parameterToString(*r.org, ""))
@@ -638,7 +641,7 @@ func (r ApiGetMeasurementSchemasRequest) ExecuteWithHttpInfo() (MeasurementSchem
 
 /*
   - GetMeasurementSchemas List measurement schemas of a bucket
-  - Retrieves a list of _explicit_
+  - Lists _explicit_
 
 [schemas]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#schema)
 (`"schemaType": "explicit"`) for a bucket.
@@ -809,9 +812,9 @@ type ApiUpdateMeasurementSchemaRequest struct {
 	ApiService                     BucketSchemasApi
 	bucketID                       string
 	measurementID                  string
+	measurementSchemaUpdateRequest *MeasurementSchemaUpdateRequest
 	org                            *string
 	orgID                          *string
-	measurementSchemaUpdateRequest *MeasurementSchemaUpdateRequest
 }
 
 func (r ApiUpdateMeasurementSchemaRequest) BucketID(bucketID string) ApiUpdateMeasurementSchemaRequest {
@@ -830,6 +833,14 @@ func (r ApiUpdateMeasurementSchemaRequest) GetMeasurementID() string {
 	return r.measurementID
 }
 
+func (r ApiUpdateMeasurementSchemaRequest) MeasurementSchemaUpdateRequest(measurementSchemaUpdateRequest MeasurementSchemaUpdateRequest) ApiUpdateMeasurementSchemaRequest {
+	r.measurementSchemaUpdateRequest = &measurementSchemaUpdateRequest
+	return r
+}
+func (r ApiUpdateMeasurementSchemaRequest) GetMeasurementSchemaUpdateRequest() *MeasurementSchemaUpdateRequest {
+	return r.measurementSchemaUpdateRequest
+}
+
 func (r ApiUpdateMeasurementSchemaRequest) Org(org string) ApiUpdateMeasurementSchemaRequest {
 	r.org = &org
 	return r
@@ -844,14 +855,6 @@ func (r ApiUpdateMeasurementSchemaRequest) OrgID(orgID string) ApiUpdateMeasurem
 }
 func (r ApiUpdateMeasurementSchemaRequest) GetOrgID() *string {
 	return r.orgID
-}
-
-func (r ApiUpdateMeasurementSchemaRequest) MeasurementSchemaUpdateRequest(measurementSchemaUpdateRequest MeasurementSchemaUpdateRequest) ApiUpdateMeasurementSchemaRequest {
-	r.measurementSchemaUpdateRequest = &measurementSchemaUpdateRequest
-	return r
-}
-func (r ApiUpdateMeasurementSchemaRequest) GetMeasurementSchemaUpdateRequest() *MeasurementSchemaUpdateRequest {
-	return r.measurementSchemaUpdateRequest
 }
 
 func (r ApiUpdateMeasurementSchemaRequest) Execute() (MeasurementSchema, error) {
@@ -929,6 +932,9 @@ func (a *BucketSchemasApiService) UpdateMeasurementSchemaExecuteWithHttpInfo(r A
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.measurementSchemaUpdateRequest == nil {
+		return localVarReturnValue, nil, reportError("measurementSchemaUpdateRequest is required and must be specified")
+	}
 
 	if r.org != nil {
 		localVarQueryParams.Add("org", parameterToString(*r.org, ""))

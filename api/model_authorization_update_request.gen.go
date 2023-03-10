@@ -16,7 +16,7 @@ import (
 
 // AuthorizationUpdateRequest struct for AuthorizationUpdateRequest
 type AuthorizationUpdateRequest struct {
-	// Status of the token. If `inactive`, requests using the token will be rejected.
+	// Status of the token. If `inactive`, InfluxDB rejects requests that use the token.
 	Status *string `json:"status,omitempty" yaml:"status,omitempty"`
 	// A description of the token.
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`

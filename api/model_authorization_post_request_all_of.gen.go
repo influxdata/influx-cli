@@ -16,11 +16,11 @@ import (
 
 // AuthorizationPostRequestAllOf struct for AuthorizationPostRequestAllOf
 type AuthorizationPostRequestAllOf struct {
-	// The ID of the organization that owns the authorization.
+	// An organization ID. Specifies the organization that owns the authorization.
 	OrgID *string `json:"orgID,omitempty" yaml:"orgID,omitempty"`
-	// The ID of the user that the authorization is scoped to.
+	// A user ID. Specifies the user that the authorization is scoped to.  When a user authenticates with username and password, InfluxDB generates a _user session_ with all the permissions specified by all the user's authorizations.
 	UserID *string `json:"userID,omitempty" yaml:"userID,omitempty"`
-	// A list of permissions for an authorization. An authorization must have at least one permission.
+	// A list of permissions for an authorization. In the list, provide at least one `permission` object.  In a `permission`, the `resource.type` property grants access to all resources of the specified type. To grant access to only a specific resource, specify the `resource.id` property.
 	Permissions *[]Permission `json:"permissions,omitempty" yaml:"permissions,omitempty"`
 }
 
