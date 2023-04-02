@@ -164,7 +164,7 @@ func newBucketUpdateCmd() cli.Command {
 	return cli.Command{
 		Name:    "update",
 		Usage:   "Update bucket",
-		Aliases: []string{"find", "ls"},
+		Aliases: []string{"set"},
 		Before:  middleware.WithBeforeFns(withCli(), withApi(true), middleware.NoArgs),
 		Flags: append(
 			commonFlags(),
