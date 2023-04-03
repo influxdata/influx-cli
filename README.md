@@ -1,3 +1,4 @@
+TESTING
 # influx-cli
 
 CLI for managing resources in InfluxDB v2
@@ -18,13 +19,13 @@ Follow these steps to build the CLI. If you're updating your CLI build, see *Upd
    git clone git@github.com:influxdata/influx-cli.git
    cd influx-cli
    ```
-   
+
 2. Build the CLI. The `make` and `make influx` commands write the new binary to `bin/$(GOOS)/influx`.
-   
+
    ```
    make
    ```
-   
+
 ### Updating openapi
 
 If you change or update your branch, you may also need to update `influx-cli/openapi` and regenerate the client code.
@@ -37,15 +38,15 @@ To update, run the following commands in your `influx-cli` repo:
 1. Update the _openapi_ Git submodule. The following command pulls the latest commits for the branch and all submodules.
 
    `git pull --recurse-submodules`
-   
+
 2. With [Docker](https://docs.docker.com/get-docker/) running locally, regenerate _openapi_.
 
    `make openapi`
-   
+
 3. Rebuild the CLI
 
    `make`
- 
+
 ## Running the CLI
 
 After building, use `influx -h` to see the list of available commands.
