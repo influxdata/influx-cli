@@ -29,9 +29,16 @@ build_archive()
 
   pushd "${workspace}"
 
-  local target="${PKG_OUT_PATH}/influxdb2-client-${VERSION}_${OS}_${ARCH}.tar.gz"
+  if [[ ${OS} != windows ]]
+  then
+    local target="${PKG_OUT_PATH}/influxdb2-client-${VERSION}_${OS}_${ARCH}.tar.gz"
 
-  tar -czf "${target}" .
+    tar -czf "${target}" .
+  else
+    local target="${PKG_OUT_PATH}/influxdb2-client-${VERSION}_${OS}_${ARCH}.zip"
+    zip -r "${target}" .
+  fi
+
 
   # generate signature and checksums
   generate_signature "${target}"
@@ -146,6 +153,9 @@ case ${OS} in
     build_package_linux
     ;;
   darwin)
+    build_archive
+    ;;
+  windows)
     build_archive
     ;;
 esac
