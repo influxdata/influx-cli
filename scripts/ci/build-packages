@@ -80,15 +80,6 @@ fpm_wrapper()
     esac
   fi
 
-  case ${1} in
-    rpm)
-      REPLACES='influxdb < 2.1.0'
-      ;;
-    deb)
-      REPLACES='influxdb (<< 2.1.0)'
-      ;;
-  esac
-
   fpm                                                            \
     --log error                                                  \
     `# package description`                                      \
