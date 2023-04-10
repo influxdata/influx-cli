@@ -31,11 +31,11 @@ build_archive()
 
   if [[ ${OS} != windows ]]
   then
-    local target="${PKG_OUT_PATH}/influxdb2-client-${VERSION}_${OS}_${ARCH}.tar.gz"
+    local target="${PKG_OUT_PATH}/influxdb2-client-${VERSION}-${OS}-${ARCH}.tar.gz"
 
     tar -czf "${target}" .
   else
-    local target="${PKG_OUT_PATH}/influxdb2-client-${VERSION}_${OS}_${ARCH}.zip"
+    local target="${PKG_OUT_PATH}/influxdb2-client-${VERSION}-${OS}-${ARCH}.zip"
     zip -r "${target}" .
   fi
 
@@ -83,7 +83,7 @@ fpm_wrapper()
   fpm                                                            \
     --log error                                                  \
     `# package description`                                      \
-    --name           influxdb2-client                            \
+    --name           influxdb2-cli                               \
     --vendor         InfluxData                                  \
     --description    'CLI for managing resources in InfluxDB v2' \
     --url            https://influxdata.com                      \
@@ -105,7 +105,7 @@ fpm_wrapper()
     # maintain compatibility.
     case ${1} in
       deb)
-        mv "${PKG_OUT_PATH}/influxdb2-client_${VERSION}-1_${ARCH}.deb" \
+        mv "${PKG_OUT_PATH}/influxdb2-cli_${VERSION}-1_${ARCH}.deb" \
            "${PKG_OUT_PATH}/influxdb2-client-${VERSION}-${ARCH}.deb"
 
         # generate signature and checksums
@@ -113,7 +113,7 @@ fpm_wrapper()
         generate_checksums "${PKG_OUT_PATH}/influxdb2-client-${VERSION}-${ARCH}.deb"
         ;;
       rpm)
-        mv "${PKG_OUT_PATH}/influxdb2-client-${VERSION//-/_}-1.${ARCH}.rpm" \
+        mv "${PKG_OUT_PATH}/influxdb2-cli-${VERSION//-/_}-1.${ARCH}.rpm" \
            "${PKG_OUT_PATH}/influxdb2-client-${VERSION//-/_}.${ARCH}.rpm"
 
         # generate signature and checksums
