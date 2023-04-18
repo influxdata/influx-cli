@@ -39,9 +39,6 @@ build_archive()
     zip -r "${target}" .
   fi
 
-
-  # generate signature and checksums
-  generate_signature "${target}"
   generate_checksums "${target}"
 
   popd
@@ -108,27 +105,15 @@ fpm_wrapper()
         mv "${PKG_OUT_PATH}/influxdb2-cli_${VERSION}-1_${ARCH}.deb" \
            "${PKG_OUT_PATH}/influxdb2-client-${VERSION}-${ARCH}.deb"
 
-        # generate signature and checksums
-        generate_signature "${PKG_OUT_PATH}/influxdb2-client-${VERSION}-${ARCH}.deb"
         generate_checksums "${PKG_OUT_PATH}/influxdb2-client-${VERSION}-${ARCH}.deb"
         ;;
       rpm)
         mv "${PKG_OUT_PATH}/influxdb2-cli-${VERSION//-/_}-1.${ARCH}.rpm" \
            "${PKG_OUT_PATH}/influxdb2-client-${VERSION//-/_}.${ARCH}.rpm"
 
-        # generate signature and checksums
         generate_checksums "${PKG_OUT_PATH}/influxdb2-client-${VERSION//-/_}.${ARCH}.rpm"
-        generate_signature "${PKG_OUT_PATH}/influxdb2-client-${VERSION//-/_}.${ARCH}.rpm"
         ;;
     esac
-}
-
-generate_signature()
-{
-  if [[ ( "${SIGN_PACKAGES:-}" ) ]]
-  then
-    gpg --passphrase "${PASSPHRASE}" --pinentry-mode=loopback --batch --armor --detach-sign "${1}"
-  fi
 }
 
 generate_checksums()
