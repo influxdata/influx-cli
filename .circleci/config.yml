@@ -442,10 +442,10 @@ jobs:
             gem install fpm
 
             mkdir -p packages
-            OS=darwin  ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/darwin/amd64/influx  "${PWD}/packages"
-            OS=linux   ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/linux/amd64/influx   "${PWD}/packages"
-            OS=linux   ARCH=arm64 scripts/ci/build-packages /tmp/workspace/bin/linux/arm64/influx   "${PWD}/packages"
-            OS=windows ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/windows/amd64/influx "${PWD}/packages"
+            OS=darwin  ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/darwin/amd64/influx      "${PWD}/packages"
+            OS=linux   ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/linux/amd64/influx       "${PWD}/packages"
+            OS=linux   ARCH=arm64 scripts/ci/build-packages /tmp/workspace/bin/linux/arm64/influx       "${PWD}/packages"
+            OS=windows ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/windows/amd64/influx.exe "${PWD}/packages"
       - store_artifacts:
           path: packages/
       - persist_to_workspace:
