@@ -56,7 +56,7 @@ fmt: $(FMT_FILES)
 	go run github.com/daixiang0/gci -w $^
 
 bin/$(GOOS)/$(GOARCH)/influx: $(SOURCES)
-	CGO_ENABLED=0 $(GO_BUILD) -o $@ ./cmd/$(shell basename "$@")
+	CGO_ENABLED=0 $(GO_BUILD) -o bin/$(GOOS)/$(GOARCH)/ ./cmd/$(shell basename "$@")
 
 .DEFAULT_GOAL := influx
 influx: bin/$(GOOS)/$(GOARCH)/influx
