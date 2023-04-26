@@ -160,7 +160,7 @@ func (s baseRW) parsePreviousActive() (Config, error) {
 // ListConfigs decodes configs from io readers
 func (s baseRW) ListConfigs() (Configs, error) {
 	cfgs := make(Configs)
-	_, err := toml.DecodeReader(s.r, &cfgs)
+	_, err := toml.NewDecoder(s.r).Decode(&cfgs)
 	for n, cfg := range cfgs {
 		cfg.Name = n
 		cfgs[n] = cfg

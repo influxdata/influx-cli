@@ -48,9 +48,12 @@ func GetCookie(ctx context.Context, params api.ConfigParams, userPass string) (s
 	}
 
 	cookies := res.Cookies()
-	if len(cookies) != 1 {
-		return "", fmt.Errorf("failure getting session cookie, multiple cookies")
+
+	for _, cookie := range cookies {
+		if strings.Contains(cookie.Name, "influxdb") {
+			return cookie.Value, nil
+		}
 	}
 
-	return cookies[0].Value, nil
+	return "", fmt.Errorf("failure getting session cookie, invalid cookies")
 }

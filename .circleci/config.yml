@@ -6,7 +6,7 @@ executors:
       # NOTE: To upgrade the Go version, first push the upgrade to the cross-builder Dockerfile in the edge repo,
       # then update the version here to match. Until we finish the migration to using the cross-builder image,
       # you'll also need to update references to `cimg/go` and `GO_VERSION` in this file.
-      - image: quay.io/influxdb/cross-builder:go1.19.4-cb1343dd74ecba8ec07fe810195530a0b9055aa9
+      - image: quay.io/influxdb/cross-builder:go1.20.3-a38b5cac193a1bdf7436f45581167a43835cc727
     resource_class: medium
   linux-amd64:
     machine:
@@ -89,7 +89,6 @@ workflows:
               - os: windows
                 arch: arm64
       - build-packages:
-          sign: false
           requires:
             - build-darwin-amd64
             - build-linux-amd64
@@ -156,12 +155,14 @@ workflows:
               - os: windows
                 arch: arm64
       - build-packages:
-          sign: true
           requires:
             - build-darwin-amd64
             - build-linux-amd64
             - build-linux-arm64
             - build-windows-amd64
+      - sign-packages:
+          requires:
+            - build-packages
       - release:
           is-nightly: true
           requires:
@@ -172,7 +173,7 @@ workflows:
             - test-linux-arm64
             - test-mac
             - test-windows
-            - build-packages
+            - sign-packages
   release-tag:
     jobs:
       - changelog:
@@ -237,12 +238,15 @@ workflows:
                 arch: arm64
       - build-packages:
           <<: *release_filter
-          sign: true
           requires:
             - build-darwin-amd64
             - build-linux-amd64
             - build-linux-arm64
             - build-windows-amd64
+      - sign-packages:
+          <<: *release_filter
+          requires:
+            - build-packages
       - release:
           <<: *release_filter
           is-nightly: false
@@ -254,7 +258,7 @@ workflows:
             - test-linux-arm64
             - test-mac
             - test-windows
-            - build-packages
+            - sign-packages
 
 commands:
   setup:
@@ -420,9 +424,6 @@ jobs:
     docker:
       - image: ubuntu:latest
     resource_class: small
-    parameters:
-      sign:
-        type: boolean
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -440,24 +441,50 @@ jobs:
               ruby-dev
             gem install fpm
 
-            if [[ "<< parameters.sign >>" == "true" ]]
-            then
-              gpg --import --batch \<<<"${GPG_PRIVATE_KEY//$'\\n'/$'\n'}"
-
-              export SIGN_PACKAGES=1
-            fi
-
             mkdir -p packages
-            OS=darwin  ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/darwin/amd64/influx  "${PWD}/packages"
-            OS=linux   ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/linux/amd64/influx   "${PWD}/packages"
-            OS=linux   ARCH=arm64 scripts/ci/build-packages /tmp/workspace/bin/linux/arm64/influx   "${PWD}/packages"
-            OS=windows ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/windows/amd64/influx "${PWD}/packages"
+            OS=darwin  ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/darwin/amd64/influx      "${PWD}/packages"
+            OS=linux   ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/linux/amd64/influx       "${PWD}/packages"
+            OS=linux   ARCH=arm64 scripts/ci/build-packages /tmp/workspace/bin/linux/arm64/influx       "${PWD}/packages"
+            OS=windows ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/windows/amd64/influx.exe "${PWD}/packages"
       - store_artifacts:
           path: packages/
       - persist_to_workspace:
           root: .
           paths:
             - packages
+
+  sign-packages:
+    circleci_ip_ranges: true
+    docker:
+      - image: quay.io/influxdb/rsign:latest
+        auth:
+          username: $QUAY_RSIGN_USERNAME
+          password: $QUAY_RSIGN_PASSWORD
+    steps:
+      - add_ssh_keys:
+          fingerpints:
+            -
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: |
+          for target in /tmp/workspace/packages/*
+          do
+            case "${target}"
+            in
+              # rsign is shipped on Alpine Linux which uses "busybox ash" instead
+              # of bash. ash is somewhat more posix compliant and is missing some
+              # extensions and niceties from bash.
+              *.deb|*.rpm|*.tar.gz|*.zip)
+                rsign "${target}"
+              ;;
+            esac
+          done
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - packages
+      - store_artifacts:
+          path: /tmp/workspace/packages
 
   changelog:
     docker:
