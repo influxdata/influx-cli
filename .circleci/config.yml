@@ -329,10 +329,8 @@ jobs:
       - run:
           command: |
             export DEBIAN_FRONTEND=noninteractive
-            sudo apt-get update -y
-            sudo apt-get install -y awscli gnupg
-
-            gpg --import --batch \<<<"${GPG_PRIVATE_KEY//$'\\n'/$'\n'}"
+            sudo -E apt-get update
+            sudo -E apt-get install --yes awscli
       - when:
           condition: << parameters.is-nightly >>
           steps:
