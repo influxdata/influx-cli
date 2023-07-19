@@ -56,6 +56,16 @@ func (p *writeParams) makeErrorFile() (*os.File, error) {
 	if p.ErrorsFile == "" {
 		return nil, nil
 	}
+
+	_, err := os.Stat(p.ErrorsFile)
+	if os.IsNotExist(err) {
+		file, err := os.Create(p.ErrorsFile)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create errors-file: %w", err)
+		}
+		return file, nil
+	}
+
 	errorFile, err := os.Open(p.ErrorsFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open errors-file: %w", err)
