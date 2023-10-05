@@ -98,7 +98,7 @@ func TestConvertBucketManifest(t *testing.T) {
 		}, nil
 	}
 
-	converted, err := br.ConvertBucketManifest(manifest, fakeGetShard)
+	converted, err := br.ConvertBucketManifest(manifest, 1, fakeGetShard)
 	require.NoError(t, err)
 
 	expected := br.ManifestBucketEntry{
