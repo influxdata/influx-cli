@@ -71,7 +71,7 @@ type BucketsApi interface {
 
 	/*
 			 * GetBuckets List buckets
-			 * Retrieves a list of [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
+			 * Lists [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
 
 		InfluxDB retrieves buckets owned by the
 		[organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization)
@@ -80,10 +80,6 @@ type BucketsApi interface {
 		To limit which buckets are returned, pass query parameters in your request.
 		If no query parameters are passed, InfluxDB returns all buckets up to the
 		default `limit`.
-
-		#### InfluxDB Cloud
-
-		- Doesn't use `org` or `orgID` parameters.
 
 		#### InfluxDB OSS
 
@@ -524,7 +520,7 @@ func (r ApiGetBucketsRequest) ExecuteWithHttpInfo() (Buckets, *_nethttp.Response
 
 /*
   - GetBuckets List buckets
-  - Retrieves a list of [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
+  - Lists [buckets]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#bucket).
 
 InfluxDB retrieves buckets owned by the
 [organization]({{% INFLUXDB_DOCS_URL %}}/reference/glossary/#organization)
@@ -533,10 +529,6 @@ associated with the authorization
 To limit which buckets are returned, pass query parameters in your request.
 If no query parameters are passed, InfluxDB returns all buckets up to the
 default `limit`.
-
-#### InfluxDB Cloud
-
-- Doesn't use `org` or `orgID` parameters.
 
 #### InfluxDB OSS
 

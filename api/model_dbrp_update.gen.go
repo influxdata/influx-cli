@@ -16,9 +16,10 @@ import (
 
 // DBRPUpdate struct for DBRPUpdate
 type DBRPUpdate struct {
-	// InfluxDB v1 retention policy
+	// A [retention policy](https://docs.influxdata.com/influxdb/v1.8/concepts/glossary/#retention-policy-rp) name. Identifies the InfluxDB v1 retention policy mapping.
 	RetentionPolicy *string `json:"retention_policy,omitempty" yaml:"retention_policy,omitempty"`
-	Default         *bool   `json:"default,omitempty" yaml:"default,omitempty"`
+	// Set to `true` to use this DBRP mapping as the default retention policy for the database (specified by the `database` property's value). To remove the default mapping, set to `false`.
+	Default *bool `json:"default,omitempty" yaml:"default,omitempty"`
 }
 
 // NewDBRPUpdate instantiates a new DBRPUpdate object

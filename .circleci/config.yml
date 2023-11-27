@@ -6,7 +6,7 @@ executors:
       # NOTE: To upgrade the Go version, first push the upgrade to the cross-builder Dockerfile in the edge repo,
       # then update the version here to match. Until we finish the migration to using the cross-builder image,
       # you'll also need to update references to `cimg/go` and `GO_VERSION` in this file.
-      - image: quay.io/influxdb/cross-builder:go1.19.4-cb1343dd74ecba8ec07fe810195530a0b9055aa9
+      - image: quay.io/influxdb/cross-builder:go1.20.3-a38b5cac193a1bdf7436f45581167a43835cc727
     resource_class: medium
   linux-amd64:
     machine:
@@ -16,9 +16,9 @@ executors:
       image: ubuntu-2004:202104-01
       resource_class: arm.medium
   mac:
+    resource_class: macos.m1.medium.gen1
     macos:
-      xcode: 12.5.1
-      resource_class: medium
+      xcode: 15.0.0
     shell: /bin/bash -eo pipefail
   windows:
     machine:
@@ -26,13 +26,20 @@ executors:
       resource_class: windows.medium
     shell: bash.exe -eo pipefail
 
+
+release_filter: &release_filter
+  filters:
+    tags:
+      only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+    branches:
+      ignore: /.*/
+
 workflows:
   version: 2
   build-and-test:
     jobs:
       - lint
       - check-openapi
-      - build-all
       - test-race:
           name: test-linux-amd64
       - test-build:
@@ -70,6 +77,24 @@ workflows:
           arch: amd64
           requires:
             - test-build-amd64-windows
+      - build:
+          name: build-<< matrix.os >>-<< matrix.arch >>
+          matrix:
+            parameters:
+              os:       [ linux, darwin, windows ]
+              arch:     [ amd64, arm64 ]
+              workflow: [ snapshot ]
+            exclude:
+              - os: darwin
+                arch: arm64
+              - os: windows
+                arch: arm64
+      - build-packages:
+          requires:
+            - build-darwin-amd64
+            - build-linux-amd64
+            - build-linux-arm64
+            - build-windows-amd64
   release-nightly:
     triggers:
       - schedule:
@@ -119,6 +144,27 @@ workflows:
           arch: amd64
           requires:
             - test-build-amd64-windows
+      - build:
+          name: build-<< matrix.os >>-<< matrix.arch >>
+          matrix:
+            parameters:
+              os:       [ linux, darwin, windows ]
+              arch:     [ amd64, arm64 ]
+              workflow: [ snapshot ]
+            exclude:
+              - os: darwin
+                arch: arm64
+              - os: windows
+                arch: arm64
+      - build-packages:
+          requires:
+            - build-darwin-amd64
+            - build-linux-amd64
+            - build-linux-arm64
+            - build-windows-amd64
+      - sign-packages:
+          requires:
+            - build-packages
       - release:
           is-nightly: true
           requires:
@@ -129,39 +175,20 @@ workflows:
             - test-linux-arm64
             - test-mac
             - test-windows
+            - sign-packages
   release-tag:
     jobs:
       - changelog:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          <<: *release_filter
       - lint:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          <<: *release_filter
       - check-openapi:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          <<: *release_filter
       - test-race:
           name: test-linux-amd64
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          <<: *release_filter
       - test-build:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          <<: *release_filter
           matrix:
             parameters:
               os: [ linux, darwin, windows ]
@@ -176,47 +203,55 @@ workflows:
               - os: linux
                 arch: amd64
       - test-prebuilt:
+          <<: *release_filter
           name: test-linux-arm64
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
           executor: linux-arm64
           os: linux
           arch: arm64
           requires:
             - test-build-arm64-linux
       - test-prebuilt:
+          <<: *release_filter
           name: test-mac
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
           executor: mac
           os: darwin
           arch: amd64
           requires:
             - test-build-amd64-darwin
       - test-prebuilt:
+          <<: *release_filter
           name: test-windows
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
           executor: windows
           os: windows
           arch: amd64
           requires:
             - test-build-amd64-windows
+      - build:
+          <<: *release_filter
+          name: build-<< matrix.os >>-<< matrix.arch >>
+          matrix:
+            parameters:
+              os:       [ linux, darwin, windows ]
+              arch:     [ amd64, arm64 ]
+              workflow: [ release ]
+            exclude:
+              - os: darwin
+                arch: arm64
+              - os: windows
+                arch: arm64
+      - build-packages:
+          <<: *release_filter
+          requires:
+            - build-darwin-amd64
+            - build-linux-amd64
+            - build-linux-arm64
+            - build-windows-amd64
+      - sign-packages:
+          <<: *release_filter
+          requires:
+            - build-packages
       - release:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|alpha|beta)[0-9]+)?$/
+          <<: *release_filter
           is-nightly: false
           requires:
             - changelog
@@ -226,6 +261,7 @@ workflows:
             - test-linux-arm64
             - test-mac
             - test-windows
+            - sign-packages
 
 commands:
   setup:
@@ -247,11 +283,6 @@ commands:
             echo 'export PATH=${GOPATH}/bin:${PATH}' >> $BASH_ENV
             mkdir -p ${HOME}/.cache
             echo 'export GOCACHE=${HOME}/.cache' >> $BASH_ENV
-  install-goreleaser:
-    steps:
-      - run:
-          name: Install goreleaser
-          command: ./scripts/ci/download-goreleaser.sh v1.14.0
 
 jobs:
   lint:
@@ -289,23 +320,6 @@ jobs:
           command: git submodule update --init --recursive
       - run: make checkopenapi
 
-  build-all:
-    executor: linux-amd64
-    steps:
-      - checkout
-      - setup
-      - install-goreleaser
-      - run:
-          name: Make a pseudo-tag for the snapshot build
-          command: |
-            latest_tag=$(git describe --tags --abbrev=0)
-            git tag ${latest_tag}+SNAPSHOT.$(git rev-parse --short HEAD)
-      - run:
-          name: Cross-build all targets
-          command: IS_SNAPSHOT=1 goreleaser release --rm-dist --skip-publish --skip-sign --skip-validate
-      - store_artifacts:
-          path: dist
-
   release:
     parameters:
       is-nightly:
@@ -315,38 +329,23 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - setup
       - run:
-          name: Import GPG key
           command: |
-            echo -e "$GPG_PRIVATE_KEY" > private.key
-            gpg --batch --import private.key
-      - install-goreleaser
+            export DEBIAN_FRONTEND=noninteractive
+            sudo -E apt-get update
+            sudo -E apt-get install --yes awscli
       - when:
           condition: << parameters.is-nightly >>
           steps:
             - run:
-                name: Make a pseudo-tag for the nightly build
-                command: |
-                  latest_tag=$(git describe --tags --abbrev=0)
-                  git tag ${latest_tag}+nightly.$(date +%Y.%m.%d)
-            - run:
-                name: Publish nightly snapshot release
-                command: IS_NIGHTLY=1 goreleaser release --rm-dist
+                command: .circleci/scripts/upload-artifacts nightly
       - unless:
           condition: << parameters.is-nightly >>
           steps:
             - run:
-                name: Publish tagged release
-                command: goreleaser release --rm-dist
-            - run:
-                command: |
-                  export DEBIAN_FRONTEND=noninteractive
-                  sudo apt-get update
-                  sudo apt-get install awscli
-                  .circleci/scripts/upload-latest-artifacts
+                command: .circleci/scripts/upload-artifacts release
       - store_artifacts:
-          path: dist
+          path: packages
 
   test-build:
     executor: cross-builder
@@ -382,6 +381,9 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name: Install Rosetta
+          command: ./scripts/ci/install-rosetta.sh
+      - run:
           name: Run tests
           command: ./scripts/ci/run-prebuilt-tests.sh $(pwd)/test-bin-<< parameters.os >>-<< parameters.arch >> $(pwd)/test-results
       - store_artifacts:
@@ -402,6 +404,101 @@ jobs:
           destination: raw-test-output
       - store_test_results:
           path: ./test-results
+
+  build:
+    executor: cross-builder
+    parameters:
+      os:
+        type: string
+      arch:
+        type: string
+      workflow:
+        type: string
+    steps:
+      - checkout
+      - when:
+          condition:
+            equals: [ << parameters.workflow >>, snapshot ]
+          steps:
+            - run: |
+                GOOS=<< parameters.os >> GOARCH=<< parameters.arch >> COMMIT=<< pipeline.git.revision >> make
+      - when:
+          condition:
+            equals: [ << parameters.workflow >>, release ]
+          steps:
+            - run: |
+                GOOS=<< parameters.os >> GOARCH=<< parameters.arch >> COMMIT=<< pipeline.git.revision >> VERSION=<< pipeline.git.tag >> make
+      - store_artifacts:
+          path: bin
+      - persist_to_workspace:
+          root: .
+          paths: bin
+
+  build-packages:
+    docker:
+      - image: ubuntu:latest
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout
+      - run:
+          name: Build Packages
+          command: |
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update
+            apt-get install --yes \
+              build-essential     \
+              git                 \
+              gnupg               \
+              rpm                 \
+              ruby-dev
+            gem install fpm
+
+            mkdir -p packages
+            OS=darwin  ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/darwin/amd64/influx      "${PWD}/packages"
+            OS=linux   ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/linux/amd64/influx       "${PWD}/packages"
+            OS=linux   ARCH=arm64 scripts/ci/build-packages /tmp/workspace/bin/linux/arm64/influx       "${PWD}/packages"
+            OS=windows ARCH=amd64 scripts/ci/build-packages /tmp/workspace/bin/windows/amd64/influx.exe "${PWD}/packages"
+      - store_artifacts:
+          path: packages/
+      - persist_to_workspace:
+          root: .
+          paths:
+            - packages
+
+  sign-packages:
+    circleci_ip_ranges: true
+    docker:
+      - image: quay.io/influxdb/rsign:latest
+        auth:
+          username: $QUAY_RSIGN_USERNAME
+          password: $QUAY_RSIGN_PASSWORD
+    steps:
+      - add_ssh_keys:
+          fingerpints:
+            -
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: |
+          for target in /tmp/workspace/packages/*
+          do
+            case "${target}"
+            in
+              # rsign is shipped on Alpine Linux which uses "busybox ash" instead
+              # of bash. ash is somewhat more posix compliant and is missing some
+              # extensions and niceties from bash.
+              *.deb|*.rpm|*.tar.gz|*.zip)
+                rsign "${target}"
+              ;;
+            esac
+          done
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - packages
+      - store_artifacts:
+          path: /tmp/workspace/packages
 
   changelog:
     docker:

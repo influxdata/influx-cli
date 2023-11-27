@@ -28,8 +28,6 @@ type Script struct {
 	Url       *string    `json:"url,omitempty" yaml:"url,omitempty"`
 	CreatedAt *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
-	// The list of label names associated with the script.
-	Labels *[]string `json:"labels,omitempty" yaml:"labels,omitempty"`
 }
 
 // NewScript instantiates a new Script object
@@ -316,38 +314,6 @@ func (o *Script) SetUpdatedAt(v time.Time) {
 	o.UpdatedAt = &v
 }
 
-// GetLabels returns the Labels field value if set, zero value otherwise.
-func (o *Script) GetLabels() []string {
-	if o == nil || o.Labels == nil {
-		var ret []string
-		return ret
-	}
-	return *o.Labels
-}
-
-// GetLabelsOk returns a tuple with the Labels field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *Script) GetLabelsOk() (*[]string, bool) {
-	if o == nil || o.Labels == nil {
-		return nil, false
-	}
-	return o.Labels, true
-}
-
-// HasLabels returns a boolean if a field has been set.
-func (o *Script) HasLabels() bool {
-	if o != nil && o.Labels != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetLabels gets a reference to the given []string and assigns it to the Labels field.
-func (o *Script) SetLabels(v []string) {
-	o.Labels = &v
-}
-
 func (o Script) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Id != nil {
@@ -376,9 +342,6 @@ func (o Script) MarshalJSON() ([]byte, error) {
 	}
 	if o.UpdatedAt != nil {
 		toSerialize["updatedAt"] = o.UpdatedAt
-	}
-	if o.Labels != nil {
-		toSerialize["labels"] = o.Labels
 	}
 	return json.Marshal(toSerialize)
 }

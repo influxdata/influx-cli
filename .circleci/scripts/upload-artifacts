@@ -1,0 +1,52 @@
+#!/bin/bash
+set -o errexit \
+    -o nounset \
+    -o pipefail
+
+# Determine if "${CIRCLE_TAG}" matches the semantic version regex. Otherwise,
+# assume that "${CIRCLE_TAG}" is not intended to tag a release. The regex is
+# permissive of what occurs after the semantic version. This allows for
+# alphas, betas, and release candidates.
+if [[ "${CIRCLE_TAG:-}" =~ ^v[0-9]+.[0-9]+.[0-9]+ ]]
+then
+  VERSION_REGEX="${CIRCLE_TAG/#v/}"
+else
+  # When "${CIRCLE_TAG}" cannot be used to construct the package version,
+  # use "${CIRCLE_SHA1}". Since "${CIRCLE_SHA1}" can start with an alpha
+  # (non-numeric) character, prefix it with "2.x-".
+  VERSION_REGEX="2.x[-_]${CIRCLE_SHA1:0:8}"
+fi
+
+REGEX='^packages/influxdb2-client[-_]'"${VERSION_REGEX}"'(.*)'
+
+for target in packages/*
+do
+  if [[ "${target}" =~ ${REGEX} ]]
+  then
+    # After renaming the artifact to the "latest/nightly" version, append
+    # the artifact to the `invalidations` file. Since `dl.influxdata.com`
+    # contains many 100GBs, this should only invalidate artifacts
+    # that have changed.
+    case ${1} in
+      nightly)
+        mv -v "${target}" "packages/influxdb2-client-nightly${BASH_REMATCH[1]}"
+        printf '/platform/nightlies/influxdb2-client-nightly%s\n' "${BASH_REMATCH[1]}" >>invalidations
+        ;;
+      release)
+        cp -v "${target}" "packages/influxdb2-client-latest${BASH_REMATCH[1]}"
+        printf '/influxdb/releases/influxdb2-client-latest%s\n' "${BASH_REMATCH[1]}" >>invalidations
+        ;;
+    esac
+  fi
+done
+
+case ${1} in
+  nightly)
+    aws s3 sync packages s3://dl.influxdata.com/platform/nightlies
+    ;;
+  release)
+    aws s3 sync packages s3://dl.influxdata.com/influxdb/releases
+    ;;
+esac
+
+aws cloudfront create-invalidation --distribution-id "${AWS_DISTRIBUTION_ID}" --paths $(<invalidations)

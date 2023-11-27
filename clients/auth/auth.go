@@ -12,7 +12,7 @@ import (
 
 type Client struct {
 	clients.CLI
-	api.AuthorizationsApi
+	api.AuthorizationsAPITokensApi
 	api.UsersApi
 	api.OrganizationsApi
 	api.ResourcesApi

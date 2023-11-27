@@ -1,8 +1,18 @@
+# TOP is the directory where Makefile lives (i.e. top-level project).
+# This must be before any includes.
+TOP := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+
+include $(TOP)/support.mk
+
 ### Environment setup
 export GOPATH=$(shell go env GOPATH)
 export GOOS=$(shell go env GOOS)
 export GOARCH=$(shell go env GOARCH)
 export GOVERSION=$(shell go list -m -f '{{.GoVersion}}')
+
+ifeq ($(GOOS),windows)
+  GOTAGS += timetzdata,
+endif
 
 LDFLAGS := $(LDFLAGS) -X main.date=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
@@ -20,7 +30,7 @@ ifneq ($(GCFLAGS),)
 GCFLAGS := -gcflags "$(GCFLAGS)"
 endif
 
-export GO_BUILD=go build $(GCFLAGS) -ldflags "$(LDFLAGS)"
+export GO_BUILD=go build $(call with-param,-tags ,$(GOTAGS)) $(GCFLAGS) -ldflags "$(LDFLAGS)"
 
 # SOURCES are the files that affect building the main binary.
 SOURCES := $(shell find . -name '*.go' -not -name '*_test.go') go.mod go.sum
@@ -45,11 +55,11 @@ fmt: $(FMT_FILES)
 	# Format imports.
 	go run github.com/daixiang0/gci -w $^
 
-bin/$(GOOS)/influx: $(SOURCES)
-	CGO_ENABLED=0 $(GO_BUILD) -o $@ ./cmd/$(shell basename "$@")
+bin/$(GOOS)/$(GOARCH)/influx: $(SOURCES)
+	CGO_ENABLED=0 $(GO_BUILD) -o bin/$(GOOS)/$(GOARCH)/ ./cmd/$(shell basename "$@")
 
 .DEFAULT_GOAL := influx
-influx: bin/$(GOOS)/influx
+influx: bin/$(GOOS)/$(GOARCH)/influx
 
 clean:
 	$(RM) -r bin
