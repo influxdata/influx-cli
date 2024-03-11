@@ -294,6 +294,11 @@ func (c *APIClient) prepareRequest(
 		return nil, err
 	}
 
+	// Prepend request base path, if applicable
+    if c.cfg.Path != "" {
+        url.Path = c.cfg.Path + url.Path
+    }
+
 	// Override request host, if applicable
 	if c.cfg.Host != "" {
 		url.Host = c.cfg.Host

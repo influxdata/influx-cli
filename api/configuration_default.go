@@ -24,6 +24,7 @@ func NewAPIConfig(params ConfigParams) *Configuration {
 
 	apiConfig := NewConfiguration()
 	apiConfig.Host = params.Host.Host
+	apiConfig.Path = params.Host.Path
 	apiConfig.Scheme = params.Host.Scheme
 	apiConfig.UserAgent = params.UserAgent
 	apiConfig.HTTPClient = &http.Client{Transport: clientTransport}
