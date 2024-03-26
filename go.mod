@@ -26,7 +26,7 @@ require (
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467
 	golang.org/x/text v0.3.8
 	golang.org/x/tools v0.8.0
-	google.golang.org/protobuf v1.30.0
+	google.golang.org/protobuf v1.33.0
 	gopkg.in/yaml.v3 v3.0.1
 	honnef.co/go/tools v0.4.3
 )

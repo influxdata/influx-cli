@@ -16,9 +16,9 @@ executors:
       image: ubuntu-2004:202104-01
       resource_class: arm.medium
   mac:
+    resource_class: macos.m1.medium.gen1
     macos:
-      xcode: 12.5.1
-      resource_class: medium
+      xcode: 15.0.0
     shell: /bin/bash -eo pipefail
   windows:
     machine:
@@ -81,8 +81,9 @@ workflows:
           name: build-<< matrix.os >>-<< matrix.arch >>
           matrix:
             parameters:
-              os:   [ linux, darwin, windows ]
-              arch: [ amd64, arm64 ]
+              os:       [ linux, darwin, windows ]
+              arch:     [ amd64, arm64 ]
+              workflow: [ snapshot ]
             exclude:
               - os: darwin
                 arch: arm64
@@ -147,8 +148,9 @@ workflows:
           name: build-<< matrix.os >>-<< matrix.arch >>
           matrix:
             parameters:
-              os:   [ linux, darwin, windows ]
-              arch: [ amd64, arm64 ]
+              os:       [ linux, darwin, windows ]
+              arch:     [ amd64, arm64 ]
+              workflow: [ snapshot ]
             exclude:
               - os: darwin
                 arch: arm64
@@ -229,8 +231,9 @@ workflows:
           name: build-<< matrix.os >>-<< matrix.arch >>
           matrix:
             parameters:
-              os:   [ linux, darwin, windows ]
-              arch: [ amd64, arm64 ]
+              os:       [ linux, darwin, windows ]
+              arch:     [ amd64, arm64 ]
+              workflow: [ release ]
             exclude:
               - os: darwin
                 arch: arm64
@@ -329,8 +332,8 @@ jobs:
       - run:
           command: |
             export DEBIAN_FRONTEND=noninteractive
-            sudo apt-get update -y
-            sudo apt-get install -y awscli gnupg
+            sudo -E apt-get update
+            sudo -E apt-get install --yes awscli
       - when:
           condition: << parameters.is-nightly >>
           steps:
@@ -378,6 +381,9 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name: Install Rosetta
+          command: ./scripts/ci/install-rosetta.sh
+      - run:
           name: Run tests
           command: ./scripts/ci/run-prebuilt-tests.sh $(pwd)/test-bin-<< parameters.os >>-<< parameters.arch >> $(pwd)/test-results
       - store_artifacts:
@@ -406,12 +412,22 @@ jobs:
         type: string
       arch:
         type: string
+      workflow:
+        type: string
     steps:
       - checkout
-      - run:
-          name: Build Binaries
-          command: |
-            GOOS=<<parameters.os>> GOARCH=<<parameters.arch>> make
+      - when:
+          condition:
+            equals: [ << parameters.workflow >>, snapshot ]
+          steps:
+            - run: |
+                GOOS=<< parameters.os >> GOARCH=<< parameters.arch >> COMMIT=<< pipeline.git.revision >> make
+      - when:
+          condition:
+            equals: [ << parameters.workflow >>, release ]
+          steps:
+            - run: |
+                GOOS=<< parameters.os >> GOARCH=<< parameters.arch >> COMMIT=<< pipeline.git.revision >> VERSION=<< pipeline.git.tag >> make
       - store_artifacts:
           path: bin
       - persist_to_workspace:
