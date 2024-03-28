@@ -93,6 +93,7 @@ type ServerConfigurations []ServerConfiguration
 // Configuration stores the configuration of the API client
 type Configuration struct {
 	Host             string            `json:"host,omitempty"`
+	Path             string            `json:"path,omitempty"`
 	Scheme           string            `json:"scheme,omitempty"`
 	DefaultHeader    map[string]string `json:"defaultHeader,omitempty"`
 	UserAgent        string            `json:"userAgent,omitempty"`
