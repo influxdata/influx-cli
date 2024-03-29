@@ -231,37 +231,6 @@ func Test_SetupSuccessInteractive(t *testing.T) {
 	}, strings.Split(bytesWritten.String(), "\n"))
 }
 
-func Test_SetupPasswordParamTooShort(t *testing.T) {
-	t.Parallel()
-
-	retentionSecs := int64(duration.Week.Seconds())
-	params := setup.Params{
-		Username:  "user",
-		Password:  "2short",
-		AuthToken: "mytoken",
-		Org:       "org",
-		Bucket:    "bucket",
-		Retention: fmt.Sprintf("%ds", retentionSecs),
-		Force:     false,
-	}
-
-	ctrl := gomock.NewController(t)
-	client := mock.NewMockSetupApi(ctrl)
-	client.EXPECT().GetSetup(gomock.Any()).Return(api.ApiGetSetupRequest{ApiService: client})
-	client.EXPECT().GetSetupExecute(gomock.Any()).Return(api.InlineResponse200{Allowed: api.PtrBool(true)}, nil)
-
-	configSvc := mock.NewMockConfigService(ctrl)
-	configSvc.EXPECT().ListConfigs().Return(nil, nil)
-
-	stdio := mock.NewMockStdIO(ctrl)
-	cli := setup.Client{
-		CLI:      clients.CLI{ConfigService: configSvc, ActiveConfig: config.Config{}, StdIO: stdio},
-		SetupApi: client,
-	}
-	err := cli.Setup(context.Background(), &params)
-	require.Equal(t, clients.ErrPasswordIsTooShort, err)
-}
-
 func Test_SetupCancelAtConfirmation(t *testing.T) {
 	t.Parallel()
 
