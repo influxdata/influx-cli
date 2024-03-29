@@ -9,7 +9,8 @@ import (
 	"github.com/mattn/go-isatty"
 )
 
-const MinPasswordLen = 8
+// Disable password length checking to let influxdb handle it
+const MinPasswordLen = 0
 
 type StdIO interface {
 	// Write prints some bytes to stdout.
