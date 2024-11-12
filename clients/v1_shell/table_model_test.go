@@ -2,9 +2,11 @@ package v1shell
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -12,7 +14,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Explore(t *testing.T) {
+type holder struct {
+	buffer *bytes.Buffer
+	mu     sync.Mutex
+}
+
+func Test_checkEmptyTagValueRender(t *testing.T) {
+
 	r, w, e := os.Pipe()
 	if e != nil {
 		assert.FailNow(t, e.Error())
@@ -24,6 +32,8 @@ func Test_Explore(t *testing.T) {
 	}()
 
 	print()
+
+	h := &holder{buffer: &bytes.Buffer{}}
 	seriesName := "tagless"
 	seriesTags := map[string]string{"state": ""}
 	seriesPartial := false
@@ -49,20 +59,28 @@ func Test_Explore(t *testing.T) {
 		false,
 	)
 
-	buffer := &bytes.Buffer{}
-	go func() {
-		_, err := io.Copy(buffer, r)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*1000)
+	defer cancel()
+	go func(ctx context.Context) {
+		h.mu.Lock()
+		_, err := io.CopyN(h.buffer, r, 29)
+		h.mu.Unlock()
 		if err != nil {
 			assert.FailNow(t, err.Error())
 		}
-	}()
+		return
+	}(ctx)
+
 	model.Init()
-	model.View()
-	// Tried WG and Chan but both seem to get hung-up with tea for some reason
-	time.Sleep(100 * time.Millisecond)
-	os.Stdout = old
-	check := buffer.String()
-	checkLines := strings.Split(check, "\n")
-	assert.Equal(t, "Name: test", checkLines[0])
-	assert.Equal(t, "Tags: foo=N/A", checkLines[1])
+
+	select {
+	case <-ctx.Done():
+		os.Stdout = old
+		h.mu.Lock()
+		check := h.buffer.String()
+		h.mu.Unlock()
+		checkLines := strings.Split(check, "\n")
+		assert.Equal(t, "Name: test", checkLines[0])
+		assert.Equal(t, "Tags: foo= ----- ", checkLines[1])
+	}
 }
