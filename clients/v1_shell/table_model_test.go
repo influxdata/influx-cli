@@ -68,19 +68,17 @@ func Test_checkEmptyTagValueRender(t *testing.T) {
 		if err != nil {
 			assert.FailNow(t, err.Error())
 		}
-		return
 	}(ctx)
 
 	model.Init()
 
-	select {
-	case <-ctx.Done():
-		os.Stdout = old
-		h.mu.Lock()
-		check := h.buffer.String()
-		h.mu.Unlock()
-		checkLines := strings.Split(check, "\n")
-		assert.Equal(t, "Name: test", checkLines[0])
-		assert.Equal(t, "Tags: foo= ----- ", checkLines[1])
-	}
+	assert.NotNil(t, <-ctx.Done())
+	os.Stdout = old
+	h.mu.Lock()
+	check := h.buffer.String()
+	h.mu.Unlock()
+	checkLines := strings.Split(check, "\n")
+	assert.Equal(t, "Name: test", checkLines[0])
+	assert.Equal(t, "Tags: foo= ----- ", checkLines[1])
+
 }
