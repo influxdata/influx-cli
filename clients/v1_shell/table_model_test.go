@@ -79,6 +79,6 @@ func Test_checkEmptyTagValueRender(t *testing.T) {
 	h.mu.Unlock()
 	checkLines := strings.Split(check, "\n")
 	assert.Equal(t, "Name: test", checkLines[0])
-	assert.Equal(t, "Tags: foo= ----- ", checkLines[1])
+	assert.Equal(t, "Tags: foo= <nil> ", checkLines[1])
 
 }
