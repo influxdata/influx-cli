@@ -63,7 +63,7 @@ func Test_checkEmptyTagValueRender(t *testing.T) {
 	defer cancel()
 	go func(ctx context.Context) {
 		h.mu.Lock()
-		_, err := io.CopyN(h.buffer, r, 29)
+		_, err := io.CopyN(h.buffer, r, 27)
 		h.mu.Unlock()
 		if err != nil {
 			assert.FailNow(t, err.Error())
@@ -79,6 +79,6 @@ func Test_checkEmptyTagValueRender(t *testing.T) {
 	h.mu.Unlock()
 	checkLines := strings.Split(check, "\n")
 	assert.Equal(t, "Name: test", checkLines[0])
-	assert.Equal(t, "Tags: foo= <nil> ", checkLines[1])
+	assert.Equal(t, "Tags: foo=<nil>", checkLines[1])
 
 }

@@ -175,7 +175,7 @@ func (m Model) Init() tea.Cmd {
 				continue
 			}
 			if val == "" {
-				val = " <nil> "
+				val = "<nil>"
 			}
 			builder.WriteString(fmt.Sprintf("%s=%s, ", color.YellowString(key), color.CyanString(val)))
 		}
