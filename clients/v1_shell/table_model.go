@@ -171,8 +171,11 @@ func (m Model) Init() tea.Cmd {
 	if len(m.tags) > 0 {
 		fmt.Print("Tags: ")
 		for key, val := range m.tags {
-			if key == "" || val == "" {
+			if key == "" {
 				continue
+			}
+			if val == "" {
+				val = "<nil>"
 			}
 			builder.WriteString(fmt.Sprintf("%s=%s, ", color.YellowString(key), color.CyanString(val)))
 		}
