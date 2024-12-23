@@ -31,21 +31,25 @@ var DefaultConfig = Config{
 // DefaultPath computes the path where CLI configs will be stored if not overridden.
 func DefaultPath() (string, error) {
 	var dir string
-	// By default, store meta and data files in current users home directory
-	u, err := user.Current()
-	if err == nil {
-		dir = u.HomeDir
-	} else if home := os.Getenv("HOME"); home != "" {
-		dir = home
-	} else {
-		wd, err := os.Getwd()
-		if err != nil {
-			return "", err
-		}
-		dir = wd
-	}
-	dir = filepath.Join(dir, ".influxdbv2", "configs")
-
+    if configDir := os.Getenv("INFLUX_CONFIG_DIR"); configDir != "" {
+        dir = filepath.Join(configDir, "configs")
+    }
+    else {
+        // By default, store meta and data files in current users home directory
+        u, err := user.Current()
+        if err == nil {
+            dir = u.HomeDir
+        } else if home := os.Getenv("HOME"); home != "" {
+            dir = home
+        } else {
+            wd, err := os.Getwd()
+            if err != nil {
+                return "", err
+            }
+            dir = wd
+        }
+        dir = filepath.Join(dir, ".influxdbv2", "configs")
+    }
 	return dir, nil
 }
 
