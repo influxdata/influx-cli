@@ -57,6 +57,11 @@ type Params struct {
 	// If true, replace all data on the server with the local backup.
 	// Otherwise only restore the requested org/bucket, leaving other data untouched.
 	Full bool
+
+	// Operator token for backup. This is used if the restored KV store does not have
+	// a plaintext operator token available. If the restored KV store does have a
+	// plaintext operator token available, then this is ignored.
+	OperatorToken string
 }
 
 func (p *Params) matches(bkt br.ManifestBucketEntry) bool {
@@ -87,7 +92,7 @@ func (c *Client) Restore(ctx context.Context, params *Params) error {
 	}
 
 	if params.Full {
-		return c.fullRestore(ctx, params.Path, legacyServer)
+		return c.fullRestore(ctx, params.Path, legacyServer, params.OperatorToken)
 	}
 	return c.partialRestore(ctx, params, legacyServer)
 }
@@ -140,7 +145,7 @@ func (c *Client) loadManifests(path string) error {
 }
 
 // fullRestore completely replaces all metadata and data on the server with the contents of a local backup.
-func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error {
+func (c Client) fullRestore(ctx context.Context, path string, legacy bool, operatorToken string) error {
 	if legacy && c.manifest.SQL != nil {
 		return fmt.Errorf("cannot fully restore data from %s: target server's version too old to restore SQL metadata", path)
 	}
@@ -174,12 +179,20 @@ func (c Client) fullRestore(ctx context.Context, path string, legacy bool) error
 	}
 
 	// Deal with new token
-	newOperatorToken, err := kvReq.Execute()
+	newOperatorTokenResp, err := kvReq.Execute()
 	if err != nil {
 		return fmt.Errorf("failed to restore KV snapshot: %w", err)
 	}
-	if newOperatorToken.Token != nil {
-		newAuthorization := fmt.Sprintf("Token %s", *newOperatorToken.Token)
+	var newOperatorToken string
+	if len(*newOperatorTokenResp.Token) > 0 {
+		newOperatorToken = *newOperatorTokenResp.Token
+	}
+	if len(newOperatorToken) == 0 {
+		// The backup might have used a hashed operator token, so try operator token from command line.
+		newOperatorToken = operatorToken
+	}
+	if len(newOperatorToken) > 0 {
+		newAuthorization := fmt.Sprintf("Token %s", newOperatorToken)
 		const authorizationHeader = "Authorization"
 		if newAuthorization != c.ApiConfig.GetConfig().DefaultHeader[authorizationHeader] {
 			log.Println("WARN: Restoring KV snapshot overwrote the operator token, ensure following commands use the correct token")
