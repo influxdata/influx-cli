@@ -61,6 +61,11 @@ Examples:
 				Usage:       "New name to use for the restored organization",
 				Destination: &params.NewOrgName,
 			},
+			&cli.StringFlag{
+				Name:        "operator-token",
+				Usage:       "Operator token to use if backup lacks plaintext token",
+				Destination: &params.OperatorToken,
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			if ctx.NArg() != 1 {
