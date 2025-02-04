@@ -43,6 +43,9 @@ type Params struct {
 
 	// Compression to use for local copies of snapshot files.
 	Compression br.FileCompression
+
+	// Amount of Workers to create to copy bucket data in parallel.
+	Workers int
 }
 
 func (p *Params) matches(bkt api.BucketMetadataManifest) bool {
@@ -282,7 +285,7 @@ func (c *Client) downloadBucketData(ctx context.Context, params *Params) error {
 		if !params.matches(b) {
 			continue
 		}
-		bktManifest, err := br.ConvertBucketManifest(b, func(shardId int64) (*br.ManifestFileEntry, error) {
+		bktManifest, err := br.ConvertBucketManifest(b, params.Workers, func(shardId int64) (*br.ManifestFileEntry, error) {
 			return c.downloadShardData(ctx, params, shardId)
 		})
 		if err != nil {
