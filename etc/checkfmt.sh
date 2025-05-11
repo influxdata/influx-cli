@@ -6,7 +6,7 @@ for file in $(go list -f '{{$dir := .Dir}}{{range .GoFiles}}{{printf "%s/%s\n" $
   # ... if file does not contain standard generated code comment (https://golang.org/s/generatedcode)...
   if ! grep -Exq '^// Code generated .* DO NOT EDIT\.$' $file; then
     FMT_OUT="$(gofmt -l -d -e $file)" # gofmt exits 0 regardless of whether it's formatted.
-    GCI_OUT="$(go run github.com/daixiang0/gci -d $file)"
+    GCI_OUT="$(go run github.com/daixiang0/gci diff $file)"
 
     # Work around annoying output of gci
     if [[ "$GCI_OUT" = "skip file $file since no import" ]]; then
