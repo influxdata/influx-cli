@@ -53,7 +53,7 @@ fmt: $(FMT_FILES)
 	# Remove unused imports.
 	go run golang.org/x/tools/cmd/goimports -w $^
 	# Format imports.
-	go run github.com/daixiang0/gci -w $^
+	go run github.com/daixiang0/gci write $^
 
 bin/$(GOOS)/$(GOARCH)/influx: $(SOURCES)
 	CGO_ENABLED=0 $(GO_BUILD) -o bin/$(GOOS)/$(GOARCH)/ ./cmd/$(shell basename "$@")

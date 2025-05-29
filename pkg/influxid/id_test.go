@@ -9,7 +9,7 @@ import (
 
 func TestDecode(t *testing.T) {
 	if _, err := influxid.Decode("020f755c3c082000"); err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("decode error: %v", err)
 	}
 }
 
