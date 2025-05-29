@@ -427,7 +427,7 @@ jobs:
             equals: [ << parameters.workflow >>, release ]
           steps:
             - run: |
-                GOOS=<< parameters.os >> GOARCH=<< parameters.arch >> COMMIT=<< pipeline.git.revision >> VERSION=<< pipeline.git.tag >> make
+                GOOS=<< parameters.os >> GOARCH=<< parameters.arch >> COMMIT=<< pipeline.git.revision >> VERSION=<< pipeline.git.tag >> LDFLAGS='-w -s' make
       - store_artifacts:
           path: bin
       - persist_to_workspace:
