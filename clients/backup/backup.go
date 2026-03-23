@@ -45,7 +45,8 @@ type Params struct {
 	Compression br.FileCompression
 
 	// GzipCompressionLevel controls the gzip compression level for backup files.
-	GzipCompressionLevel br.GzipCompressionLevel
+	// Uses compress/gzip constants (e.g. gzip.DefaultCompression, gzip.BestSpeed, gzip.BestCompression).
+	GzipCompressionLevel int
 }
 
 func (p *Params) matches(bkt api.BucketMetadataManifest) bool {
@@ -137,7 +138,7 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 
 			var outW io.Writer = out
 			if params.Compression == br.GzipCompression {
-				gw, err := gzip.NewWriterLevel(out, params.GzipCompressionLevel.GzipLevel())
+				gw, err := gzip.NewWriterLevel(out, params.GzipCompressionLevel)
 				if err != nil {
 					return err
 				}
@@ -257,7 +258,7 @@ func (c *Client) downloadMetadataLegacy(ctx context.Context, params *Params) err
 		}
 		defer out.Close()
 
-		gzw, err := gzip.NewWriterLevel(out, params.GzipCompressionLevel.GzipLevel())
+		gzw, err := gzip.NewWriterLevel(out, params.GzipCompressionLevel)
 		if err != nil {
 			return err
 		}
@@ -338,7 +339,7 @@ func (c Client) downloadShardData(ctx context.Context, params *Params, shardId i
 
 		// Make sure the locally-written data is compressed according to the user's request.
 		if params.Compression == br.GzipCompression && res.Header.Get("Content-Encoding") != "gzip" {
-			gzw, err := gzip.NewWriterLevel(outW, params.GzipCompressionLevel.GzipLevel())
+			gzw, err := gzip.NewWriterLevel(outW, params.GzipCompressionLevel)
 			if err != nil {
 				return err
 			}

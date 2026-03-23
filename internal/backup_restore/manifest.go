@@ -1,7 +1,6 @@
 package backup_restore
 
 import (
-	"compress/gzip"
 	"fmt"
 	"time"
 
@@ -35,51 +34,6 @@ func (c FileCompression) String() string {
 		return "gzip"
 	default:
 		panic("Impossible!")
-	}
-}
-
-type GzipCompressionLevel int
-
-const (
-	DefaultCompression GzipCompressionLevel = iota
-	FullCompression
-	SpeedyCompression
-)
-
-func (cl *GzipCompressionLevel) Set(v string) error {
-	switch v {
-	case "default":
-		*cl = DefaultCompression
-	case "full":
-		*cl = FullCompression
-	case "speedy":
-		*cl = SpeedyCompression
-	default:
-		return fmt.Errorf("unknown compression level: %q, required: [default, full, speedy]", v)
-	}
-	return nil
-}
-
-func (cl GzipCompressionLevel) String() string {
-	switch cl {
-	case FullCompression:
-		return "full"
-	case SpeedyCompression:
-		return "speedy"
-	default:
-		return "default"
-	}
-}
-
-// GzipLevel returns the compress/gzip constant corresponding to this GzipCompressionLevel.
-func (cl GzipCompressionLevel) GzipLevel() int {
-	switch cl {
-	case FullCompression:
-		return gzip.BestCompression
-	case SpeedyCompression:
-		return gzip.BestSpeed
-	default:
-		return gzip.DefaultCompression
 	}
 }
 
