@@ -240,11 +240,10 @@ func (a *BackupApiService) GetBackupKVExecuteWithHttpInfo(r ApiGetBackupKVReques
 }
 
 type ApiGetBackupMetadataRequest struct {
-	ctx                  _context.Context
-	ApiService           BackupApi
-	zapTraceSpan         *string
-	acceptEncoding       *string
-	gzipCompressionLevel *string
+	ctx            _context.Context
+	ApiService     BackupApi
+	zapTraceSpan   *string
+	acceptEncoding *string
 }
 
 func (r ApiGetBackupMetadataRequest) ZapTraceSpan(zapTraceSpan string) ApiGetBackupMetadataRequest {
@@ -261,14 +260,6 @@ func (r ApiGetBackupMetadataRequest) AcceptEncoding(acceptEncoding string) ApiGe
 }
 func (r ApiGetBackupMetadataRequest) GetAcceptEncoding() *string {
 	return r.acceptEncoding
-}
-
-func (r ApiGetBackupMetadataRequest) GzipCompressionLevel(gzipCompressionLevel string) ApiGetBackupMetadataRequest {
-	r.gzipCompressionLevel = &gzipCompressionLevel
-	return r
-}
-func (r ApiGetBackupMetadataRequest) GetGzipCompressionLevel() *string {
-	return r.gzipCompressionLevel
 }
 
 func (r ApiGetBackupMetadataRequest) Execute() (*_nethttp.Response, error) {
@@ -327,9 +318,6 @@ func (a *BackupApiService) GetBackupMetadataExecuteWithHttpInfo(r ApiGetBackupMe
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
 
-	if r.gzipCompressionLevel != nil {
-		localVarQueryParams.Add("gzip_compression_level", parameterToString(*r.gzipCompressionLevel, ""))
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -399,13 +387,12 @@ func (a *BackupApiService) GetBackupMetadataExecuteWithHttpInfo(r ApiGetBackupMe
 }
 
 type ApiGetBackupShardIdRequest struct {
-	ctx                  _context.Context
-	ApiService           BackupApi
-	shardID              int64
-	zapTraceSpan         *string
-	acceptEncoding       *string
-	since                *time.Time
-	gzipCompressionLevel *string
+	ctx            _context.Context
+	ApiService     BackupApi
+	shardID        int64
+	zapTraceSpan   *string
+	acceptEncoding *string
+	since          *time.Time
 }
 
 func (r ApiGetBackupShardIdRequest) ShardID(shardID int64) ApiGetBackupShardIdRequest {
@@ -438,14 +425,6 @@ func (r ApiGetBackupShardIdRequest) Since(since time.Time) ApiGetBackupShardIdRe
 }
 func (r ApiGetBackupShardIdRequest) GetSince() *time.Time {
 	return r.since
-}
-
-func (r ApiGetBackupShardIdRequest) GzipCompressionLevel(gzipCompressionLevel string) ApiGetBackupShardIdRequest {
-	r.gzipCompressionLevel = &gzipCompressionLevel
-	return r
-}
-func (r ApiGetBackupShardIdRequest) GetGzipCompressionLevel() *string {
-	return r.gzipCompressionLevel
 }
 
 func (r ApiGetBackupShardIdRequest) Execute() (*_nethttp.Response, error) {
@@ -509,9 +488,6 @@ func (a *BackupApiService) GetBackupShardIdExecuteWithHttpInfo(r ApiGetBackupSha
 
 	if r.since != nil {
 		localVarQueryParams.Add("since", parameterToString(*r.since, ""))
-	}
-	if r.gzipCompressionLevel != nil {
-		localVarQueryParams.Add("gzip_compression_level", parameterToString(*r.gzipCompressionLevel, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
