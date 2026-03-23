@@ -42,6 +42,11 @@ Examples:
 				Usage: "Compression to use for local backup files, either 'none' or 'gzip'",
 				Value: &params.Compression,
 			},
+			&cli.GenericFlag{
+				Name:  "gzip-compression-level",
+				Usage: "The level of gzip compression for backup files: 'default', 'full' (best compression), or 'speedy' (fastest)",
+				Value: &params.GzipCompressionLevel,
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			if err := checkOrgFlags(&params.OrgParams); err != nil {
