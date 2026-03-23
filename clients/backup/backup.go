@@ -44,9 +44,9 @@ type Params struct {
 	// Compression to use for local copies of snapshot files.
 	Compression br.FileCompression
 
-	// GzipCompressionLevel controls the gzip compression level for backup files.
-	// Uses compress/gzip constants (e.g. gzip.DefaultCompression, gzip.BestSpeed, gzip.BestCompression).
-	GzipCompressionLevel int
+	// GzipCompressionLevel controls the server-side gzip compression level.
+	// Valid values: "default", "full", "speedy", "none".
+	GzipCompressionLevel string
 }
 
 func (p *Params) matches(bkt api.BucketMetadataManifest) bool {
@@ -102,7 +102,11 @@ func (c *Client) Backup(ctx context.Context, params *Params) error {
 // are parsed into a slice for additional processing.
 func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 	log.Println("INFO: Downloading metadata snapshot")
-	rawResp, err := c.GetBackupMetadata(ctx).AcceptEncoding("gzip").Execute()
+	req := c.GetBackupMetadata(ctx).AcceptEncoding("gzip")
+	if params.GzipCompressionLevel != "" {
+		req = req.GzipCompressionLevel(params.GzipCompressionLevel)
+	}
+	rawResp, err := req.Execute()
 	if err != nil {
 		return fmt.Errorf("failed to download metadata snapshot: %w", err)
 	}
@@ -138,10 +142,7 @@ func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 
 			var outW io.Writer = out
 			if params.Compression == br.GzipCompression {
-				gw, err := gzip.NewWriterLevel(out, params.GzipCompressionLevel)
-				if err != nil {
-					return err
-				}
+				gw := gzip.NewWriter(out)
 				defer gw.Close()
 				outW = gw
 			}
@@ -258,10 +259,7 @@ func (c *Client) downloadMetadataLegacy(ctx context.Context, params *Params) err
 		}
 		defer out.Close()
 
-		gzw, err := gzip.NewWriterLevel(out, params.GzipCompressionLevel)
-		if err != nil {
-			return err
-		}
+		gzw := gzip.NewWriter(out)
 		defer gzw.Close()
 
 		_, err = io.Copy(gzw, tmpIn)
@@ -307,7 +305,11 @@ func (c *Client) downloadBucketData(ctx context.Context, params *Params) error {
 // to a local file, and its metadata is returned for aggregation.
 func (c Client) downloadShardData(ctx context.Context, params *Params, shardId int64) (*br.ManifestFileEntry, error) {
 	log.Printf("INFO: Backing up TSM for shard %d", shardId)
-	res, err := c.GetBackupShardId(ctx, shardId).AcceptEncoding("gzip").Execute()
+	req := c.GetBackupShardId(ctx, shardId).AcceptEncoding("gzip")
+	if params.GzipCompressionLevel != "" {
+		req = req.GzipCompressionLevel(params.GzipCompressionLevel)
+	}
+	res, err := req.Execute()
 	if err != nil {
 		if apiError, ok := err.(api.ApiError); ok {
 			if apiError.ErrorCode() == api.ERRORCODE_NOT_FOUND {
@@ -339,10 +341,7 @@ func (c Client) downloadShardData(ctx context.Context, params *Params, shardId i
 
 		// Make sure the locally-written data is compressed according to the user's request.
 		if params.Compression == br.GzipCompression && res.Header.Get("Content-Encoding") != "gzip" {
-			gzw, err := gzip.NewWriterLevel(outW, params.GzipCompressionLevel)
-			if err != nil {
-				return err
-			}
+			gzw := gzip.NewWriter(outW)
 			defer gzw.Close()
 			outW = gzw
 		}
