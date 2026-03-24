@@ -20,12 +20,13 @@ type ScriptLanguage string
 
 // List of ScriptLanguage
 const (
-	SCRIPTLANGUAGE_FLUX ScriptLanguage = "flux"
-	SCRIPTLANGUAGE_SQL  ScriptLanguage = "sql"
+	SCRIPTLANGUAGE_FLUX     ScriptLanguage = "flux"
+	SCRIPTLANGUAGE_SQL      ScriptLanguage = "sql"
+	SCRIPTLANGUAGE_INFLUXQL ScriptLanguage = "influxql"
 )
 
 func ScriptLanguageValues() []ScriptLanguage {
-	return []ScriptLanguage{"flux", "sql"}
+	return []ScriptLanguage{"flux", "sql", "influxql"}
 }
 
 func (v *ScriptLanguage) UnmarshalJSON(src []byte) error {
@@ -35,7 +36,7 @@ func (v *ScriptLanguage) UnmarshalJSON(src []byte) error {
 		return err
 	}
 	enumTypeValue := ScriptLanguage(value)
-	for _, existing := range []ScriptLanguage{"flux", "sql"} {
+	for _, existing := range []ScriptLanguage{"flux", "sql", "influxql"} {
 		if existing == enumTypeValue {
 			*v = enumTypeValue
 			return nil
