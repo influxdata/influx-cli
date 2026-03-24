@@ -399,13 +399,12 @@ func (a *BackupApiService) GetBackupMetadataExecuteWithHttpInfo(r ApiGetBackupMe
 }
 
 type ApiGetBackupShardIdRequest struct {
-	ctx                  _context.Context
-	ApiService           BackupApi
-	shardID              int64
-	zapTraceSpan         *string
-	acceptEncoding       *string
-	gzipCompressionLevel *string
-	since                *time.Time
+	ctx            _context.Context
+	ApiService     BackupApi
+	shardID        int64
+	zapTraceSpan   *string
+	acceptEncoding *string
+	since          *time.Time
 }
 
 func (r ApiGetBackupShardIdRequest) ShardID(shardID int64) ApiGetBackupShardIdRequest {
@@ -430,14 +429,6 @@ func (r ApiGetBackupShardIdRequest) AcceptEncoding(acceptEncoding string) ApiGet
 }
 func (r ApiGetBackupShardIdRequest) GetAcceptEncoding() *string {
 	return r.acceptEncoding
-}
-
-func (r ApiGetBackupShardIdRequest) GzipCompressionLevel(gzipCompressionLevel string) ApiGetBackupShardIdRequest {
-	r.gzipCompressionLevel = &gzipCompressionLevel
-	return r
-}
-func (r ApiGetBackupShardIdRequest) GetGzipCompressionLevel() *string {
-	return r.gzipCompressionLevel
 }
 
 func (r ApiGetBackupShardIdRequest) Since(since time.Time) ApiGetBackupShardIdRequest {
@@ -532,9 +523,6 @@ func (a *BackupApiService) GetBackupShardIdExecuteWithHttpInfo(r ApiGetBackupSha
 	}
 	if r.acceptEncoding != nil {
 		localVarHeaderParams["Accept-Encoding"] = parameterToString(*r.acceptEncoding, "")
-	}
-	if r.gzipCompressionLevel != nil {
-		localVarHeaderParams["Gzip-Compression-Level"] = parameterToString(*r.gzipCompressionLevel, "")
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
