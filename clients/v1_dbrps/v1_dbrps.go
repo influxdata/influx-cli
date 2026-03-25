@@ -70,7 +70,11 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	}
 
 	if c.PrintAsJSON {
-		return c.printDBRPs(dbrpPrintOpts{dbrps: dbrps.GetContent()})
+		content := dbrps.GetContent()
+		if content == nil {
+			content = []api.DBRP{}
+		}
+		return c.printDBRPs(dbrpPrintOpts{dbrps: content})
 	}
 
 	var virtDbrps []api.DBRP
