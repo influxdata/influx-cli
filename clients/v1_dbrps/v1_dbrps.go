@@ -68,6 +68,11 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 	if err != nil {
 		return fmt.Errorf("failed to list dbrps: %w", err)
 	}
+
+	if c.PrintAsJSON {
+		return c.printDBRPs(dbrpPrintOpts{dbrps: dbrps.GetContent()})
+	}
+
 	var virtDbrps []api.DBRP
 	var physDbrps []api.DBRP
 	for _, dbrp := range dbrps.GetContent() {
@@ -76,10 +81,6 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 		} else {
 			physDbrps = append(physDbrps, dbrp)
 		}
-	}
-
-	if c.PrintAsJSON {
-		return c.PrintJSON(dbrps.GetContent())
 	}
 
 	c.printDBRPs(dbrpPrintOpts{dbrps: physDbrps})
