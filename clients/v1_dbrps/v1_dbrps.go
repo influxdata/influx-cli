@@ -78,6 +78,10 @@ func (c Client) List(ctx context.Context, params *ListParams) error {
 		}
 	}
 
+	if c.PrintAsJSON {
+		return c.PrintJSON(dbrps.GetContent())
+	}
+
 	c.printDBRPs(dbrpPrintOpts{dbrps: physDbrps})
 	fmt.Fprintln(c.StdIO, "\nVIRTUAL DBRP MAPPINGS (READ-ONLY)")
 	fmt.Fprintln(c.StdIO, "----------------------------------")

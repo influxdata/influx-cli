@@ -3,6 +3,7 @@ package v1dbrps_test
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -146,6 +147,54 @@ func TestClient_List(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestClient_ListJSON(t *testing.T) {
+	t.Parallel()
+
+	ctrl := gomock.NewController(t)
+	DBRPsApi := mock.NewMockDBRPsApi(ctrl)
+
+	DBRPsApi.EXPECT().GetDBRPs(gomock.Any()).Return(api.ApiGetDBRPsRequest{ApiService: DBRPsApi})
+	DBRPsApi.EXPECT().GetDBRPsExecute(gomock.Any()).Return(api.DBRPs{
+		Content: &[]api.DBRP{
+			{
+				Id:              "123",
+				Database:        "someDB",
+				BucketID:        "456",
+				RetentionPolicy: "someRP",
+				Default:         false,
+				OrgID:           "1234123412341234",
+			},
+			{
+				Id:              "567",
+				Database:        "someDB",
+				BucketID:        "456",
+				RetentionPolicy: "someRP",
+				Default:         true,
+				Virtual:         api.PtrBool(true),
+				OrgID:           "1234123412341234",
+			},
+		},
+	}, nil)
+
+	stdout := bytes.Buffer{}
+	stdio := mock.NewMockStdIO(ctrl)
+	stdio.EXPECT().Write(gomock.Any()).DoAndReturn(stdout.Write).AnyTimes()
+
+	cli := v1dbrps.Client{CLI: clients.CLI{StdIO: stdio, PrintAsJSON: true}, DBRPsApi: DBRPsApi}
+
+	err := cli.List(context.Background(), &v1dbrps.ListParams{
+		OrgParams: clients.OrgParams{OrgID: id1},
+	})
+	require.NoError(t, err)
+
+	// The output should be valid JSON — a single array, not two arrays separated by text.
+	var parsed []api.DBRP
+	require.NoError(t, json.Unmarshal(stdout.Bytes(), &parsed), "output should be valid JSON")
+	require.Len(t, parsed, 2)
+	require.Equal(t, "123", parsed[0].Id)
+	require.Equal(t, "567", parsed[1].Id)
 }
 
 func TestClient_Create(t *testing.T) {
