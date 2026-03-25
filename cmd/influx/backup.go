@@ -42,6 +42,11 @@ Examples:
 				Usage: "Compression to use for local backup files, either 'none' or 'gzip'",
 				Value: &params.Compression,
 			},
+			&cli.StringFlag{
+				Name:        "gzip-compression-level",
+				Usage:       "The level of gzip compression for server-side backup: 'default', 'full' (best compression), 'speedy' (fastest), or 'none'",
+				Destination: &params.GzipCompressionLevel,
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			if err := checkOrgFlags(&params.OrgParams); err != nil {

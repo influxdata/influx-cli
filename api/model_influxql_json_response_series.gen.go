@@ -16,11 +16,16 @@ import (
 
 // InfluxqlJsonResponseSeries struct for InfluxqlJsonResponseSeries
 type InfluxqlJsonResponseSeries struct {
-	Name    *string            `json:"name,omitempty" yaml:"name,omitempty"`
-	Tags    *map[string]string `json:"tags,omitempty" yaml:"tags,omitempty"`
-	Partial *bool              `json:"partial,omitempty" yaml:"partial,omitempty"`
-	Columns *[]string          `json:"columns,omitempty" yaml:"columns,omitempty"`
-	Values  *[][]interface{}   `json:"values,omitempty" yaml:"values,omitempty"`
+	// The name of the series
+	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
+	// A map of tag key-value pairs. If a tag key is not present, it is assumed to be `null`.
+	Tags *map[string]string `json:"tags,omitempty" yaml:"tags,omitempty"`
+	// True if the series is not complete--the response data is chunked; otherwise, false or omitted.
+	Partial *bool `json:"partial,omitempty" yaml:"partial,omitempty"`
+	// An array of column names
+	Columns *[]string `json:"columns,omitempty" yaml:"columns,omitempty"`
+	// An array of rows, where each row is an array of values.
+	Values *[][]interface{} `json:"values,omitempty" yaml:"values,omitempty"`
 }
 
 // NewInfluxqlJsonResponseSeries instantiates a new InfluxqlJsonResponseSeries object

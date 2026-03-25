@@ -15,6 +15,16 @@ get:
         enum:
           - gzip
           - identity
+    - in: header
+      name: Gzip-Compression-Level
+      description: The gzip compression level to use when compressing the response.
+      schema:
+        type: string
+        enum:
+          - none
+          - default
+          - speedy
+          - full
   responses:
     "200":
       description: Snapshot of metadata
