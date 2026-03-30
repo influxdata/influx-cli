@@ -57,6 +57,12 @@ Examples:
 			}
 			params.Path = ctx.Args().Get(0)
 
+			// If the user requested no server-side compression and didn't
+			// explicitly set local compression, skip local gzip too.
+			if params.GzipCompressionLevel == "none" && !ctx.IsSet("compression") {
+				params.Compression = br.NoCompression
+			}
+
 			api := getAPI(ctx)
 			client := backup.Client{
 				CLI:       getCLI(ctx),
