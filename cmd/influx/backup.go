@@ -39,7 +39,7 @@ Examples:
 			},
 			&cli.GenericFlag{
 				Name:  "compression",
-				Usage: "Compression to use for local backup files, either 'none' or 'gzip'",
+				Usage: "Compression to use for local backup files on the client-side, either 'none' or 'gzip'. When -gzip-compression-level is set to 'none' this defaults to 'none'",
 				Value: &params.Compression,
 			},
 			&cli.StringFlag{
