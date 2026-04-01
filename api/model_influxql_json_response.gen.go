@@ -14,7 +14,7 @@ import (
 	"encoding/json"
 )
 
-// InfluxqlJsonResponse JSON Response to InfluxQL Query
+// InfluxqlJsonResponse The JSON response for an InfluxQL query.  A response contains the collection of results for a query. `results` is an array of resultset objects.  If the response is chunked, the `transfer-encoding` response header is set to `chunked` and each resultset object is sent in a separate JSON object.
 type InfluxqlJsonResponse struct {
 	Results *[]InfluxqlJsonResponseResults `json:"results,omitempty" yaml:"results,omitempty"`
 }

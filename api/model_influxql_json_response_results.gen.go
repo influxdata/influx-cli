@@ -14,11 +14,15 @@ import (
 	"encoding/json"
 )
 
-// InfluxqlJsonResponseResults struct for InfluxqlJsonResponseResults
+// InfluxqlJsonResponseResults A resultset object that contains the `statement_id` and the `series` array.  Except for `statement_id`, all properties are optional and omitted if empty. If a property is not present, it is assumed to be `null`.
 type InfluxqlJsonResponseResults struct {
-	StatementId *int32                        `json:"statement_id,omitempty" yaml:"statement_id,omitempty"`
-	Error       *string                       `json:"error,omitempty" yaml:"error,omitempty"`
-	Series      *[]InfluxqlJsonResponseSeries `json:"series,omitempty" yaml:"series,omitempty"`
+	// An integer that represents the statement's position in the query. If statement results are buffered in memory, `statement_id` is used to combine statement results.
+	StatementId *int32  `json:"statement_id,omitempty" yaml:"statement_id,omitempty"`
+	Error       *string `json:"error,omitempty" yaml:"error,omitempty"`
+	// An array of series objects--the results of the query. A series of rows shares the same group key returned from the execution of a statement.  If a property is not present, it is assumed to be `null`.
+	Series *[]InfluxqlJsonResponseSeries `json:"series,omitempty" yaml:"series,omitempty"`
+	// True if the resultset is not complete--the response data is chunked; otherwise, false or omitted.
+	Partial *bool `json:"partial,omitempty" yaml:"partial,omitempty"`
 }
 
 // NewInfluxqlJsonResponseResults instantiates a new InfluxqlJsonResponseResults object
@@ -134,6 +138,38 @@ func (o *InfluxqlJsonResponseResults) SetSeries(v []InfluxqlJsonResponseSeries) 
 	o.Series = &v
 }
 
+// GetPartial returns the Partial field value if set, zero value otherwise.
+func (o *InfluxqlJsonResponseResults) GetPartial() bool {
+	if o == nil || o.Partial == nil {
+		var ret bool
+		return ret
+	}
+	return *o.Partial
+}
+
+// GetPartialOk returns a tuple with the Partial field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *InfluxqlJsonResponseResults) GetPartialOk() (*bool, bool) {
+	if o == nil || o.Partial == nil {
+		return nil, false
+	}
+	return o.Partial, true
+}
+
+// HasPartial returns a boolean if a field has been set.
+func (o *InfluxqlJsonResponseResults) HasPartial() bool {
+	if o != nil && o.Partial != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetPartial gets a reference to the given bool and assigns it to the Partial field.
+func (o *InfluxqlJsonResponseResults) SetPartial(v bool) {
+	o.Partial = &v
+}
+
 func (o InfluxqlJsonResponseResults) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.StatementId != nil {
@@ -144,6 +180,9 @@ func (o InfluxqlJsonResponseResults) MarshalJSON() ([]byte, error) {
 	}
 	if o.Series != nil {
 		toSerialize["series"] = o.Series
+	}
+	if o.Partial != nil {
+		toSerialize["partial"] = o.Partial
 	}
 	return json.Marshal(toSerialize)
 }

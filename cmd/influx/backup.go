@@ -39,8 +39,13 @@ Examples:
 			},
 			&cli.GenericFlag{
 				Name:  "compression",
-				Usage: "Compression to use for local backup files, either 'none' or 'gzip'",
+				Usage: "Compression to use for local backup files on the client-side, either 'none' or 'gzip'. When -gzip-compression-level is set to 'none' this defaults to 'none'",
 				Value: &params.Compression,
+			},
+			&cli.StringFlag{
+				Name:        "gzip-compression-level",
+				Usage:       "The level of gzip compression for server-side backup: 'default', 'full' (best compression), 'speedy' (fastest), or 'none'",
+				Destination: &params.ServerGzipCompressionLevel,
 			},
 		),
 		Action: func(ctx *cli.Context) error {
@@ -51,6 +56,12 @@ Examples:
 				return errors.New("backup path must be specified as a single positional argument")
 			}
 			params.Path = ctx.Args().Get(0)
+
+			// If the user requested no server-side compression and didn't
+			// explicitly set local compression, skip local gzip too.
+			if params.ServerGzipCompressionLevel == "none" && !ctx.IsSet("compression") {
+				params.Compression = br.NoCompression
+			}
 
 			api := getAPI(ctx)
 			client := backup.Client{
