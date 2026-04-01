@@ -44,9 +44,9 @@ type Params struct {
 	// Compression to use for local copies of snapshot files.
 	Compression br.FileCompression
 
-	// GzipCompressionLevel controls the server-side gzip compression level.
+	// ServerGzipCompressionLevel controls the server-side gzip compression level.
 	// Valid values: "default", "full", "speedy", "none".
-	GzipCompressionLevel string
+	ServerGzipCompressionLevel string
 }
 
 func (p *Params) matches(bkt api.BucketMetadataManifest) bool {
@@ -103,8 +103,8 @@ func (c *Client) Backup(ctx context.Context, params *Params) error {
 func (c *Client) downloadMetadata(ctx context.Context, params *Params) error {
 	log.Println("INFO: Downloading metadata snapshot")
 	req := c.GetBackupMetadata(ctx).AcceptEncoding("gzip")
-	if params.GzipCompressionLevel != "" {
-		req = req.GzipCompressionLevel(params.GzipCompressionLevel)
+	if params.ServerGzipCompressionLevel != "" {
+		req = req.GzipCompressionLevel(params.ServerGzipCompressionLevel)
 	}
 	rawResp, err := req.Execute()
 	if err != nil {
@@ -306,8 +306,8 @@ func (c *Client) downloadBucketData(ctx context.Context, params *Params) error {
 func (c Client) downloadShardData(ctx context.Context, params *Params, shardId int64) (*br.ManifestFileEntry, error) {
 	log.Printf("INFO: Backing up TSM for shard %d", shardId)
 	req := c.GetBackupShardId(ctx, shardId).AcceptEncoding("gzip")
-	if params.GzipCompressionLevel != "" {
-		req = req.GzipCompressionLevel(params.GzipCompressionLevel)
+	if params.ServerGzipCompressionLevel != "" {
+		req = req.GzipCompressionLevel(params.ServerGzipCompressionLevel)
 	}
 	res, err := req.Execute()
 	if err != nil {
