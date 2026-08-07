@@ -23,18 +23,12 @@ for target in packages/*
 do
   if [[ "${target}" =~ ${REGEX} ]]
   then
-    # After renaming the artifact to the "latest/nightly" version, append
-    # the artifact to the `invalidations` file. Since `dl.influxdata.com`
-    # contains many 100GBs, this should only invalidate artifacts
-    # that have changed.
     case ${1} in
       nightly)
         mv -v "${target}" "packages/influxdb2-client-nightly${BASH_REMATCH[1]}"
-        printf '/platform/nightlies/influxdb2-client-nightly%s\n' "${BASH_REMATCH[1]}" >>invalidations
         ;;
       release)
         cp -v "${target}" "packages/influxdb2-client-latest${BASH_REMATCH[1]}"
-        printf '/influxdb/releases/influxdb2-client-latest%s\n' "${BASH_REMATCH[1]}" >>invalidations
         ;;
     esac
   fi
@@ -42,11 +36,13 @@ done
 
 case ${1} in
   nightly)
-    aws s3 sync packages s3://dl.influxdata.com/platform/nightlies
+    aws s3 sync packages s3://dl-influxdata-com/platform/nightlies \
+      --endpoint-url "${AWS_ENDPOINT_URL_S3}" \
+      --region auto
     ;;
   release)
-    aws s3 sync packages s3://dl.influxdata.com/influxdb/releases
+    aws s3 sync packages s3://dl-influxdata-com/influxdb/releases \
+      --endpoint-url "${AWS_ENDPOINT_URL_S3}" \
+      --region auto
     ;;
 esac
-
-aws cloudfront create-invalidation --distribution-id "${AWS_DISTRIBUTION_ID}" --paths $(<invalidations)

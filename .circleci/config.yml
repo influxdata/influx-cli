@@ -325,6 +325,10 @@ jobs:
       is-nightly:
         type: boolean
     executor: linux-amd64
+    environment:
+      # Newer awscli/boto3 send CRC32 checksum headers that Cloudflare R2
+      # rejects unless checksum calculation is limited to when required.
+      AWS_REQUEST_CHECKSUM_CALCULATION: when_required
     steps:
       - checkout
       - attach_workspace:
