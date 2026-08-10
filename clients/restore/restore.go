@@ -55,7 +55,7 @@ func ToConflictOption(opt string) (ConflictOption, error) {
 		return Error, nil
 	}
 
-	return Invalid, fmt.Errorf("%s is not a valid option for conflicts. Please use 'skip', 'replace', or 'error'.", opt)
+	return Invalid, fmt.Errorf("%s is not a valid option for conflicts. Please use 'skip', 'replace', or 'error'", opt)
 }
 
 func (c ConflictOption) ToString() string {
