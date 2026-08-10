@@ -68,7 +68,7 @@ Examples:
 			},
 			&cli.StringFlag{
 				Name:        "on-conflict",
-				Usage:       "How to handle conflicting buckets -- i.e. buckets that already exist. Valid inputs: 'skip', 'replace', or 'error'.",
+				Usage:       "How to handle conflicting buckets -- i.e. buckets that already exist. Valid inputs: 'skip', 'replace', or 'error'. Default is 'error'.",
 				Destination: &params.OnConflict,
 			},
 		),
