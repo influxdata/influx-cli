@@ -34,6 +34,45 @@ type Client struct {
 	manifest br.Manifest
 }
 
+type ConflictOption int
+
+const (
+	Invalid ConflictOption = iota
+	Skip
+	Replace
+	Error
+)
+
+func ToConflictOption(opt string) (ConflictOption, error) {
+	switch opt {
+	case "":
+		return Error, nil
+	case "skip":
+		return Skip, nil
+	case "replace":
+		return Replace, nil
+	case "error":
+		return Error, nil
+	}
+
+	return Invalid, fmt.Errorf("%q is not a valid conflict option; use 'skip', 'replace', or 'error'", opt)
+}
+
+func (c ConflictOption) ToString() string {
+	switch c {
+	case Skip:
+		return "skip"
+	case Replace:
+		return "replace"
+	case Error:
+		return "error"
+	case Invalid:
+		return "invalid"
+	}
+
+	return "invalid"
+}
+
 type Params struct {
 	// Path to local backup data created using `influx backup`
 	Path string
@@ -62,6 +101,10 @@ type Params struct {
 	// a plaintext operator token available. If the restored KV store does have a
 	// plaintext operator token available, then this is ignored.
 	OperatorToken string
+
+	// OnConflict indicates what to do when there is an already existing bucket with the
+	// same name as one being restored. Valid options are 'skip', 'replace', and 'error'.
+	OnConflict string
 }
 
 func (p *Params) matches(bkt br.ManifestBucketEntry) bool {
@@ -272,7 +315,11 @@ func (c Client) partialRestore(ctx context.Context, params *Params, legacy bool)
 		if legacy {
 			restoreBucket = c.restoreBucketLegacy
 		}
-		shardIdMap, err := restoreBucket(ctx, bkt)
+		onConflict, err := ToConflictOption(params.OnConflict)
+		if err != nil {
+			return err
+		}
+		shardIdMap, err := restoreBucket(ctx, bkt, onConflict)
 		if err != nil {
 			return fmt.Errorf("failed to restore bucket %q: %w", bkt.BucketName, err)
 		}
@@ -299,9 +346,10 @@ func (c Client) partialRestore(ctx context.Context, params *Params, legacy bool)
 
 // restoreBucket creates a new bucket and pre-generates a set of shards within that bucket, returning
 // a mapping between the shard IDs stored in a local backup and the new shard IDs generated on the server.
-func (c Client) restoreBucket(ctx context.Context, bkt br.ManifestBucketEntry) (map[int64]int64, error) {
+func (c Client) restoreBucket(ctx context.Context, bkt br.ManifestBucketEntry, onConflict ConflictOption) (map[int64]int64, error) {
 	log.Printf("INFO: Restoring bucket %q as %q\n", bkt.BucketID, bkt.BucketName)
 	bucketMapping, err := c.PostRestoreBucketMetadata(ctx).
+		OnConflict(onConflict.ToString()).
 		BucketMetadataManifest(ConvertBucketManifest(bkt)).
 		Execute()
 	if err != nil {
@@ -320,7 +368,7 @@ func (c Client) restoreBucket(ctx context.Context, bkt br.ManifestBucketEntry) (
 //
 // The server-side logic to do all this was introduced in v2.1.0. To support using newer CLI versions against
 // v2.0.x of the server, we replicate the logic here via multiple API calls.
-func (c Client) restoreBucketLegacy(ctx context.Context, bkt br.ManifestBucketEntry) (map[int64]int64, error) {
+func (c Client) restoreBucketLegacy(ctx context.Context, bkt br.ManifestBucketEntry, onConflict ConflictOption) (map[int64]int64, error) {
 	log.Printf("INFO: Restoring bucket %q as %q using legacy APIs\n", bkt.BucketID, bkt.BucketName)
 	// Legacy APIs require creating the bucket as a separate call.
 	rps := make([]api.RetentionRule, len(bkt.RetentionPolicies))

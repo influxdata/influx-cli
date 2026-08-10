@@ -328,6 +328,7 @@ type ApiPostRestoreBucketMetadataRequest struct {
 	ApiService             RestoreApi
 	bucketMetadataManifest *BucketMetadataManifest
 	zapTraceSpan           *string
+	onConflict             *string
 }
 
 func (r ApiPostRestoreBucketMetadataRequest) BucketMetadataManifest(bucketMetadataManifest BucketMetadataManifest) ApiPostRestoreBucketMetadataRequest {
@@ -344,6 +345,14 @@ func (r ApiPostRestoreBucketMetadataRequest) ZapTraceSpan(zapTraceSpan string) A
 }
 func (r ApiPostRestoreBucketMetadataRequest) GetZapTraceSpan() *string {
 	return r.zapTraceSpan
+}
+
+func (r ApiPostRestoreBucketMetadataRequest) OnConflict(onConflict string) ApiPostRestoreBucketMetadataRequest {
+	r.onConflict = &onConflict
+	return r
+}
+func (r ApiPostRestoreBucketMetadataRequest) GetOnConflict() *string {
+	return r.onConflict
 }
 
 func (r ApiPostRestoreBucketMetadataRequest) Execute() (RestoredBucketMappings, error) {
@@ -405,6 +414,9 @@ func (a *RestoreApiService) PostRestoreBucketMetadataExecuteWithHttpInfo(r ApiPo
 		return localVarReturnValue, nil, reportError("bucketMetadataManifest is required and must be specified")
 	}
 
+	if r.onConflict != nil {
+		localVarQueryParams.Add("onConflict", parameterToString(*r.onConflict, ""))
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
 
