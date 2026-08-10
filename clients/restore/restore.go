@@ -70,7 +70,7 @@ func (c ConflictOption) ToString() string {
 		return "invalid"
 	}
 
-	return ""
+	return "invalid"
 }
 
 type Params struct {
