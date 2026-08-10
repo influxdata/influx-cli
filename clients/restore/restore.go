@@ -55,7 +55,7 @@ func ToConflictOption(opt string) (ConflictOption, error) {
 		return Error, nil
 	}
 
-	return Invalid, fmt.Errorf("%s is not a valid option for conflicts. Please use 'skip', 'replace', or 'error'", opt)
+	return Invalid, fmt.Errorf("%q is not a valid conflict option; use 'skip', 'replace', or 'error'", opt)
 }
 
 func (c ConflictOption) ToString() string {
@@ -103,7 +103,7 @@ type Params struct {
 	OperatorToken string
 
 	// OnConflict indicates what to do when there is an already existing bucket with the
-	// same name as one being backed up. Valid options are 'Skip', 'Replace', and 'Error'.
+	// same name as one being restored. Valid options are 'skip', 'replace', and 'error'.
 	OnConflict string
 }
 
@@ -315,8 +315,10 @@ func (c Client) partialRestore(ctx context.Context, params *Params, legacy bool)
 		if legacy {
 			restoreBucket = c.restoreBucketLegacy
 		}
-		// error path for this was checked previously
-		onConflict, _ := ToConflictOption(params.OnConflict)
+		onConflict, err := ToConflictOption(params.OnConflict)
+		if err != nil {
+			return err
+		}
 		shardIdMap, err := restoreBucket(ctx, bkt, onConflict)
 		if err != nil {
 			return fmt.Errorf("failed to restore bucket %q: %w", bkt.BucketName, err)
