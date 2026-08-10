@@ -37,10 +37,10 @@ type Client struct {
 type ConflictOption int
 
 const (
-	Skip ConflictOption = iota
+	Invalid ConflictOption = iota
+	Skip
 	Replace
 	Error
-	Invalid
 )
 
 func ToConflictOption(opt string) (ConflictOption, error) {
