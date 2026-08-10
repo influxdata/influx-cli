@@ -66,6 +66,11 @@ Examples:
 				Usage:       "Operator token to use if backup lacks plaintext token",
 				Destination: &params.OperatorToken,
 			},
+			&cli.StringFlag{
+				Name:        "on-conflict",
+				Usage:       "How to handle conflicting buckets -- i.e. buckets that already exist. Valid inputs: 'skip', 'replace', or 'error'.",
+				Destination: &params.OnConflict,
+			},
 		),
 		Action: func(ctx *cli.Context) error {
 			if ctx.NArg() != 1 {
@@ -87,6 +92,12 @@ Examples:
 			}
 			if params.NewBucketName != "" && params.BucketID == "" && params.BucketName == "" {
 				return errors.New("--bucket-id or --bucket must be set to use --new-bucket")
+			}
+
+			// Verify that we have gotten valid on-conflict option
+			_, err := restore.ToConflictOption(params.OnConflict)
+			if err != nil {
+				return err
 			}
 
 			api := getAPI(ctx)
