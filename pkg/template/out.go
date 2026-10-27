@@ -57,7 +57,7 @@ func (o OutParams) WriteTemplate(template []api.TemplateEntry) error {
 			}
 		}
 	default:
-		return fmt.Errorf("encoding %q is not recognized", o.Encoding)
+		return fmt.Errorf("encoding %d is not recognized", o.Encoding)
 	}
 	return nil
 }
