@@ -120,6 +120,36 @@ func TestBucketsCreate(t *testing.T) {
 			},
 		},
 		{
+			name: "shard-group duration and infinite retention",
+			params: bucket.BucketsCreateParams{
+				OrgParams:          clients.OrgParams{OrgID: "123"},
+				Name:               "my-bucket",
+				Retention:          "0",
+				ShardGroupDuration: "10s",
+			},
+			registerBucketExpectations: func(t *testing.T, bucketsApi *mock.MockBucketsApi) {
+				bucketsApi.EXPECT().PostBuckets(gomock.Any()).Return(api.ApiPostBucketsRequest{ApiService: bucketsApi})
+				bucketsApi.EXPECT().
+					PostBucketsExecute(tmock.MatchedBy(func(in api.ApiPostBucketsRequest) bool {
+						body := in.GetPostBucketRequest()
+						retentionRules := *body.RetentionRules
+						return assert.NotNil(t, body) &&
+							assert.Equal(t, "123", body.OrgID) &&
+							assert.Equal(t, "my-bucket", body.Name) &&
+							assert.Nil(t, body.Description) &&
+							assert.Len(t, *body.RetentionRules, 1) &&
+							assert.Equal(t, int64(0), retentionRules[0].EverySeconds) &&
+							assert.Equal(t, int64(10), *(retentionRules[0].ShardGroupDurationSeconds))
+					})).
+					Return(api.Bucket{
+						Id:             api.PtrString("456"),
+						OrgID:          api.PtrString("123"),
+						Name:           "my-bucket",
+						RetentionRules: []api.RetentionRule{{EverySeconds: 0, ShardGroupDurationSeconds: api.PtrInt64(10)}},
+					}, nil)
+			},
+		},
+		{
 			name: "create bucket with explicit schema",
 			params: bucket.BucketsCreateParams{
 				OrgParams:  clients.OrgParams{OrgID: "123"},

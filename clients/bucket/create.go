@@ -45,16 +45,17 @@ func (c Client) Create(ctx context.Context, params *BucketsCreateParams) error {
 		reqBody.Description = &params.Description
 	}
 	// Only append a retention rule if the user wants to explicitly set
-	// a parameter on the rule.
+	// a parameter on the rule,
+	// or the shard group duration is set, to be able to set a retention of infinity
 	//
 	// This is for backwards-compatibility with older versions of the API,
 	// which didn't support setting shard-group durations and used an empty
 	// array of rules to represent infinite retention.
 	if rp > 0 || sgd > 0 {
 		rule := api.NewRetentionRuleWithDefaults()
-		if rp > 0 {
-			rule.SetEverySeconds(int64(rp.Round(time.Second) / time.Second))
-		}
+
+		rule.SetEverySeconds(int64(rp.Round(time.Second) / time.Second))
+
 		if sgd > 0 {
 			rule.SetShardGroupDurationSeconds(int64(sgd.Round(time.Second) / time.Second))
 		}
