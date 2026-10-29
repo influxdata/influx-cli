@@ -27,6 +27,15 @@ func NewAPIConfig(params ConfigParams) *Configuration {
 	apiConfig.Scheme = params.Host.Scheme
 	apiConfig.UserAgent = params.UserAgent
 	apiConfig.HTTPClient = &http.Client{Transport: clientTransport}
+
+	if params.Host.Path != "" {
+		// initialize api server configurations with path of host  url
+		apiConfig.Servers = ServerConfigurations{{URL: params.Host.Path}}
+		for key := range apiConfig.OperationServers {
+			apiConfig.OperationServers[key] = ServerConfigurations{{URL: params.Host.Path}}
+		}
+	}
+
 	if params.Token != nil && *params.Token != "" {
 		apiConfig.DefaultHeader["Authorization"] = fmt.Sprintf("Token %s", *params.Token)
 	} else if params.Cookie != nil && *params.Cookie != "" {
